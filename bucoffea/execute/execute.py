@@ -6,14 +6,14 @@ from bucoffea.processors.monojet import monojetProcessor
 import lz4.frame as lz4f
 import cloudpickle
 import htcondor
+from pathlib import Path
+
+
 
 
 pjoin = os.path.join
 def do_run(args):
-    # Create output directory
-    if not os.path.exists(args.outpath):
-        os.makedirs(args.outpath)
-    
+
     # Run over all files associated to dataset
     datasets = get_datasets()
     fileset = { args.dataset : datasets[args.dataset]}
@@ -37,8 +37,11 @@ def do_submit(args):
     schedd = htcondor.Schedd()
     for dataset in datasets.keys():
         sub = htcondor.Submit({
-            "executable": "execute.py", 
+            "executable": str(Path(__file__).absolute()),
+            "getenv" : "true",
             "arguments": " --outpath {} run --dataset {}".format(dataset, args.outpath),
+            # "Output" : pjoin(args.outpath,"out_{}.txt".format(dataset)),
+            # "Error" : pjoin(args.outpath,"err_{}.txt".format(dataset)),
             "log" : "/dev/null"
             })
         with schedd.transaction() as txn:
@@ -48,9 +51,9 @@ def main():
     # create the top-level parser
     parser = argparse.ArgumentParser(prog='PROG')
     parser.add_argument('--outpath', type=str, help='Path to save output under.')
-    
+
     subparsers = parser.add_subparsers(help='sub-command help')
-    
+
     parser_run = subparsers.add_parser('run', help='run help')
     parser_run.add_argument('--dataset', type=str, help='Dataset name to run over.')
     parser_run.set_defaults(func=do_run)
@@ -62,6 +65,10 @@ def main():
 
 
     args = parser.parse_args()
+
+    # Create output directory
+    if not os.path.exists(args.outpath):
+        os.makedirs(args.outpath)
 
     args.func(args)
 
