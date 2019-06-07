@@ -9,8 +9,8 @@ with lz4f.open("hists.cpkl.lz4", mode="r", compression_level=5) as fin:
 
 fig, ax, _ = hist.plot1d(hists["sr_met"],overlay="dataset")
 # ax.set_xscale('log')
-# ax.set_yscale('log')
-# ax.set_ylim(0.1, 1e6)
+ax.set_yscale('log')
+ax.set_ylim(0.1, 1e5)
 fig.savefig("test.pdf")
 
 # print(hists)
