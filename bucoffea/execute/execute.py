@@ -37,16 +37,16 @@ def do_submit(args):
     schedd = htcondor.Schedd()
     for dataset in datasets.keys():
         sub = htcondor.Submit({
-            "executable": str(Path(__file__).absolute()),
+            "executable": pjoin(str(Path(__file__).absolute().parent), "htcondor_wrap.sh"),
             "getenv" : "true",
-            "arguments": " --outpath {} run --dataset {}".format(dataset, args.outpath),
-            # "Output" : pjoin(args.outpath,"out_{}.txt".format(dataset)),
-            # "Error" : pjoin(args.outpath,"err_{}.txt".format(dataset)),
-            "log" : "/dev/null"
+            "arguments": "{} --outpath {} run --dataset {}".format(str(Path(__file__).absolute()),dataset, args.outpath),
+            "Output" : pjoin(args.outpath,"out_{}.txt".format(dataset)),
+            "Error" : pjoin(args.outpath,"err_{}.txt".format(dataset)),
+            "log" :pjoin(args.outpath,"log_{}.txt".format(dataset))
             })
         with schedd.transaction() as txn:
             print(sub.queue(txn))
-
+        break
 def main():
     # create the top-level parser
     parser = argparse.ArgumentParser(prog='PROG')

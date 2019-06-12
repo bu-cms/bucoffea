@@ -82,7 +82,7 @@ def main():
                                   treename='Events',
                                   processor_instance=monojetProcessor(),
                                   executor=processor.futures_executor,
-                                  executor_args={'workers': 4, 'function_args': {'flatten': True}},
+                                  executor_args={'workers': 1, 'function_args': {'flatten': True}},
                                   chunksize=500000,
                                  )
 
