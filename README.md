@@ -32,6 +32,18 @@ git clone git@github.com:bu-cms/bucoffea.git
 python -m pip install -e bucoffea
 ```
 
+### Running an example
+You can run an example analysis to get started:
+
+```
+# GRID certificate required for file access!
+python ./bucoffea/processors/example.py
+```
+
+This example will run over two files from two different datasets, produce MET and jet pt histograms, and plot them as PDF files.
+Have a look at the code to see how this works below the hood. Also check out the [examples in the Coffea repository](https://github.com/CoffeaTeam/coffea/tree/master/binder), which are much more detailed than this one.
+
+
 ### XROOTD
 Ignore for now.
 
