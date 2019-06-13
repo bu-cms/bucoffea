@@ -9,26 +9,22 @@ It is generally a good idea to work in a python virtual environment. The virtual
 
 Instructions for how to setup a virtual environment are all over the internet, one example is [here](https://hepdata-lib.readthedocs.io/en/latest/setup.html#sec-setup-virtualenv). 
 
+### Setup at LPC
 If you want to run at LPC, use these instructions to create and activate a working environment:
 
 ```
-ENVNAME="bucoffeaenv"
-
-
 source /cvmfs/sft.cern.ch/lcg/views/LCG_95apython3/x86_64-centos7-gcc8-opt/setup.sh
-
-
+ENVNAME="bucoffeaenv"
 source ${ENVNAME}/bin/activate
 ```
 
-You can leave the environment by typing `deactivate`. You an later reactivate it by sourcing the `activate` script shown above.
+You can leave the environment by typing `deactivate`. You can later reactivate it by sourcing the `activate` script shown above.
 
 ### Package installation
 This package is installable via pip. For most purposes, you will want to check out a local copy of the repository and then install from that copy after activating your virtual environment.
 
 ```
 git clone git@github.com:bu-cms/bucoffea.git
-
 python -m pip install -e bucoffea
 ```
 
