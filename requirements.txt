@@ -1,3 +1,2 @@
 coffea
-lz4
-cloudpickle
+htcondor

@@ -13,7 +13,7 @@ from pathlib import Path
 
 pjoin = os.path.join
 def do_run(args):
-
+    """Run the analysis locally."""
     # Run over all files associated to dataset
     datasets = get_datasets()
     fileset = { args.dataset : datasets[args.dataset]}
@@ -32,6 +32,7 @@ def do_run(args):
 
 
 def do_submit(args):
+    """Submit the analysis to HTCondor."""
     datasets = get_datasets()
 
     schedd = htcondor.Schedd()
@@ -47,20 +48,21 @@ def do_submit(args):
         with schedd.transaction() as txn:
             print(sub.queue(txn))
         break
+
 def main():
-    # create the top-level parser
-    parser = argparse.ArgumentParser(prog='PROG')
+    parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
     parser.add_argument('--outpath', type=str, help='Path to save output under.')
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
-    parser_run = subparsers.add_parser('run', help='run help')
+    # Arguments passed to the "run" operation
+    parser_run = subparsers.add_parser('run', help='Running help')
     parser_run.add_argument('--dataset', type=str, help='Dataset name to run over.')
     parser_run.set_defaults(func=do_run)
 
-    # create the parser for the "b" command
-    parser_submit = subparsers.add_parser('submit', help='b help')
-    parser_submit.add_argument('--baz', choices='XYZ', help='baz help')
+    # Arguments passed to the "submit" operation
+    parser_submit = subparsers.add_parser('submit', help='Submission help')
+    # parser_submit.add_argument('--baz', choices='XYZ', help='baz help')
     parser_submit.set_defaults(func=do_submit)
 
 
