@@ -2,6 +2,11 @@ from coffea import hist
 import coffea.processor as processor
 import os
 
+import matplotlib
+# This just tells matplotlib not to open any
+# interactive windows.
+matplotlib.use('Agg')
+
 class exampleProcessor(processor.ProcessorABC):
     """Dummy processor used to demonstrate the processor principle"""
     def __init__(self):
