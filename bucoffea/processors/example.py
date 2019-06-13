@@ -18,6 +18,7 @@ class exampleProcessor(processor.ProcessorABC):
         self._accumulator = processor.dict_accumulator({
             "met" : hist.Hist("Counts", dataset_axis, met_axis),
             "jet_pt" : hist.Hist("Counts", dataset_axis, jet_pt_axis),
+            "jet_pt_met100" : hist.Hist("Counts", dataset_axis, jet_pt_axis),
             "new_variable" : hist.Hist("Counts", dataset_axis, new_axis),
         })
 
@@ -46,6 +47,14 @@ class exampleProcessor(processor.ProcessorABC):
         new_variable = df["MET_pt"] + df["Jet_pt"].max()
         output['new_variable'].fill(dataset=dataset,
                             new_variable=new_variable)
+
+        # To apply selections, simply mask
+        # Let's see events with MET > 100
+        mask = df["MET_pt"] > 100
+
+        # And plot the leading jet pt for these events
+        output['jet_pt_met100'].fill(dataset=dataset,
+                            jetpt=df["Jet_pt"][mask].max().flatten())
 
         return output
 
@@ -79,8 +88,8 @@ def main():
     outdir = "./tmp_plots"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    
-    for name in ["met", "jet_pt", "new_variable"]:
+
+    for name in ["met", "jet_pt", "new_variable","jet_pt_met100"]:
         histogram = output[name]
         fig, ax, _ = hist.plot1d(histogram,overlay="dataset")
         ax.set_yscale('log')
