@@ -39,7 +39,7 @@ def do_submit(args):
         sub = htcondor.Submit({
             "executable": pjoin(str(Path(__file__).absolute().parent), "htcondor_wrap.sh"),
             "getenv" : "true",
-            "arguments": "{} --outpath {} run --dataset {}".format(str(Path(__file__).absolute()),dataset, args.outpath),
+            "arguments": "{} --outpath {} run --dataset {}".format(str(Path(__file__).absolute()), args.outpath, dataset),
             "Output" : pjoin(args.outpath,"out_{}.txt".format(dataset)),
             "Error" : pjoin(args.outpath,"err_{}.txt".format(dataset)),
             "log" :pjoin(args.outpath,"log_{}.txt".format(dataset))
