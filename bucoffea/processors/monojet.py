@@ -23,6 +23,7 @@ def setup_candidates(df):
         mass=df['Muon_mass'].flatten(),
         charge=df['Muon_charge'].flatten(),
         mediumId=df['Muon_mediumId'].flatten(),
+        iso=df["Muon_pfRelIso04_all"].flatten(),
         tightId=df['Muon_tightId'].flatten()
     )
 
@@ -36,6 +37,15 @@ def setup_candidates(df):
         looseId=(df['Electron_cutBased']>=1).flatten(),
         tightId=(df['Electron_cutBased']==4).flatten()
     )
+    taus = JaggedCandidateArray.candidatesfromcounts(
+        df['nTau'].flatten(),
+        pt=df['Tau_pt'].flatten(),
+        eta=df['Tau_eta'].flatten(),
+        phi=df['Tau_phi'].flatten(),
+        mass=df['Tau_mass'].flatten(),
+        decaymode=df['Tau_idDecayModeNewDMs'].flatten(),
+        iso=df['Tau_idMVAnewDM2017v2'].flatten(),
+    )
     jets = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'].flatten(),
         pt=df['Jet_pt'].flatten(),
@@ -48,9 +58,10 @@ def setup_candidates(df):
         # nef=df['Jet_neEmEF'].flatten(),
         nhf=df['Jet_neHEF'].flatten(),
         chf=df['Jet_chHEF'].flatten(),
+        clean=df['Jet_cleanmask'].flatten()
         # cef=df['Jet_chEmEF'].flatten(),
     )
-    return jets, muons, electrons
+    return jets, muons, electrons, taus
 
 def met_triggers():
     return ["HLT_PFMET170_NotCleaned",
@@ -69,6 +80,7 @@ class monojetProcessor(processor.ProcessorABC):
         jet_eta_axis = hist.Bin("jeteta", r"$\eta$ (GeV)", 50, -5, 5)
         dpfcalo_axis = hist.Bin("dpfcalo", r"$1-Calo/PF$", 20, -1, 1)
         btag_axis = hist.Bin("btag", r"B tag discriminator", 20, 0, 1)
+        multiplicity_axis = hist.Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
 
         self._accumulator = processor.dict_accumulator({
             "met" : hist.Hist("Counts", dataset_axis, met_axis),
@@ -78,6 +90,13 @@ class monojetProcessor(processor.ProcessorABC):
             "jeteta" : hist.Hist("Counts", dataset_axis, jet_eta_axis),
             "dpfcalo" : hist.Hist("Counts", dataset_axis, dpfcalo_axis),
             "jetbtag" : hist.Hist("Counts", dataset_axis, btag_axis),
+            "jet_mult" : hist.Hist("Jets", dataset_axis, multiplicity_axis),
+            "bjet_mult" : hist.Hist("B Jets", dataset_axis, multiplicity_axis),
+            "loose_ele_mult" : hist.Hist("Loose electrons", dataset_axis, multiplicity_axis),
+            "tight_ele_mult" : hist.Hist("Tight electrons", dataset_axis, multiplicity_axis),
+            "loose_muo_mult" : hist.Hist("Loose muons", dataset_axis, multiplicity_axis),
+            "tight_muo_mult" : hist.Hist("Tight muons", dataset_axis, multiplicity_axis),
+            "veto_tau_mult" : hist.Hist("Veto taus", dataset_axis, multiplicity_axis),
         })
 
     @property
@@ -89,27 +108,28 @@ class monojetProcessor(processor.ProcessorABC):
         selection = processor.PackedSelection()
 
         # Lepton candidates
-        jets, muons, electrons = setup_candidates(df)
-        tight_muons = muons[muons.mediumId & (muons.pt>10)]
-        loose_muons = muons[muons.mediumId & (muons.pt>20)]
+        jets, muons, electrons, taus = setup_candidates(df)
+        loose_muons = muons[muons.mediumId & (muons.pt>10) & (muons.iso < 0.25)]
+        tight_muons = muons[muons.mediumId & (muons.pt>20) & (muons.iso < 0.15)]
         loose_electrons = electrons[electrons.looseId & (electrons.pt>10)]
         tight_electrons = electrons[electrons.tightId & (electrons.pt>20)]
 
         # Jets
-        jet_acceptance = (jets.eta<2.4)&(jets.eta>-2.4)
-        jet_fractions = (jets.chf>0.1)&(jets.nhf<0.8)
+        clean_jets = jets[jets.clean==1]
+        jet_acceptance = (clean_jets.eta<2.4)&(clean_jets.eta>-2.4)
+        jet_fractions = (clean_jets.chf>0.1)&(clean_jets.nhf<0.8)
 
         # B jets
-        btag_algo = config.get("{year}.btagalgo".format(year=self.year))
-        btag_wp = config.get("{year}.btagwp".format(year=self.year))
-        btag_cut = config.get("{year}.{algo}.wp.{wp}".format(year=self.year, algo=btag_algo, wp=btag_wp))
+        btag_algo = config.get(f"{self.year}.btagalgo")
+        btag_wp = config.get(f"{self.year}.btagwp")
+        btag_cut = config.get(f"{self.year}.{btag_algo}.wp.{btag_wp}")
         
-        jet_btagged = getattr(jets, btag_algo) > btag_cut
-        print(jet_btagged)
-        bjets = jets[jet_acceptance & jet_btagged]
-        goodjets = jets[jet_fractions & jet_acceptance & jet_btagged==0]
+        jet_btagged = getattr(clean_jets, btag_algo) > btag_cut
+        bjets = clean_jets[jet_acceptance & jet_btagged]
+        goodjets = clean_jets[jet_fractions & jet_acceptance & jet_btagged==0]
 
-
+        # Taus
+        veto_taus = taus[(taus.decaymode)&(taus.pt > 18)&((taus.iso&2)==2)]
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
@@ -122,6 +142,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add("no_loose_leptons", (loose_electrons.counts==0) & (loose_muons.counts==0))
         selection.add("pf_calo_0p4",np.abs(df["dPFCalo"]) < 0.4)
         selection.add("bveto",bjets.counts==0)
+        selection.add("tauveto",veto_taus.counts==0)
         # print(jets[jets.pt>100])
 
         output = self.accumulator.identity()
@@ -135,6 +156,19 @@ class monojetProcessor(processor.ProcessorABC):
 
         for seltag, mask in selection_masks.items():
             dataset = seltag
+
+            # Multiplicities
+            output['jet_mult'].fill(dataset=dataset, multiplicity=clean_jets[mask].counts.flatten())
+            output['bjet_mult'].fill(dataset=dataset, multiplicity=bjets[mask].counts.flatten())
+            output['loose_ele_mult'].fill(dataset=dataset, multiplicity=loose_electrons[mask].counts.flatten())
+            output['tight_ele_mult'].fill(dataset=dataset, multiplicity=tight_electrons[mask].counts.flatten())
+            output['loose_muo_mult'].fill(dataset=dataset, multiplicity=loose_muons[mask].counts.flatten())
+            output['tight_muo_mult'].fill(dataset=dataset, multiplicity=tight_muons[mask].counts.flatten())
+            output['veto_tau_mult'].fill(dataset=dataset, multiplicity=veto_taus[mask].counts.flatten())
+
+
+
+
             # All jets
             output['jeteta'].fill(dataset=dataset,
                                     jeteta=jets[mask].eta.flatten())
@@ -149,7 +183,7 @@ class monojetProcessor(processor.ProcessorABC):
             
             # B tag discriminator
             output['jetbtag'].fill(dataset=dataset,
-                                    btag=getattr(jets[mask&jet_acceptance], btag_algo).flatten())
+                                    btag=getattr(clean_jets[mask&jet_acceptance], btag_algo).flatten())
 
             # MET
             output['dpfcalo'].fill(dataset=dataset,
@@ -191,7 +225,7 @@ def main():
     outdir = "out"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    for name in ['jet0pt', 'jet0eta','jetpt','jeteta','met','dpfcalo','jetbtag']:
+    for name in ['jet0pt', 'jet0eta','jetpt','jeteta','met','dpfcalo','jetbtag'] + list(filter(lambda x: "mult" in x, output.keys())):
         fig, ax, _ = hist.plot1d(output[name],overlay="dataset",overflow='all')
         fig.suptitle(name)
         # ax.set_xscale('log')
