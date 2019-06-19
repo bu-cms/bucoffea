@@ -1,0 +1,34 @@
+
+"2016":
+  btagalgo: deepcsv
+  btagwp: medium
+  deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
+    wp:
+      loose : 0.2217
+      medium: 0.6321
+      tight: 0.8953
+
+"2017":
+  btagalgo: deepcsv
+  btagwp: medium
+  csvv2: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+    wp:
+      loose : 0.5803
+      medium : 0.8838
+      tight : 0.9693
+
+  deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+    wp:
+      loose : 0.1522
+      medium: 0.4941 
+      tight: 0.8001
+
+"2018":
+  btagalgo: deepcsv
+  btagwp: medium
+  deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
+    wp:
+      loose : 0.1241
+      medium: 0.4184
+      tight: 0.7527 
+  

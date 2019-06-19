@@ -6,9 +6,14 @@ import numpy as np
 
 import lz4.frame as lz4f
 import cloudpickle
-
+import kaptan
 import os
 pjoin = os.path.join
+
+config = kaptan.Kaptan(handler="yaml")
+with open("config.yaml","r") as cfgfile:
+    config.import_config(cfgfile.read())
+
 def setup_candidates(df):
     muons = JaggedCandidateArray.candidatesfromcounts(
         df['nMuon'].flatten(),
@@ -28,8 +33,8 @@ def setup_candidates(df):
         phi=df['Electron_phi'].flatten(),
         mass=df['Electron_mass'].flatten(),
         charge=df['Electron_charge'].flatten(),
-        looseId=(df['Electron_cutBased_Sum16']>=1).flatten(),
-        tightId=(df['Electron_cutBased_Sum16']==4).flatten()
+        looseId=(df['Electron_cutBased']>=1).flatten(),
+        tightId=(df['Electron_cutBased']==4).flatten()
     )
     jets = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'].flatten(),
@@ -37,20 +42,33 @@ def setup_candidates(df):
         eta=df['Jet_eta'].flatten(),
         phi=df['Jet_phi'].flatten(),
         mass=df['Jet_mass'].flatten(),
-        nef=df['Jet_neEmEF'].flatten(),
+        tightId=df['Jet_jetId'].flatten(),
+        csvv2=df["Jet_btagCSVV2"].flatten(),
+        deepcsv=df['Jet_btagDeepB'].flatten(),
+        # nef=df['Jet_neEmEF'].flatten(),
         nhf=df['Jet_neHEF'].flatten(),
         chf=df['Jet_chHEF'].flatten(),
-        cef=df['Jet_chEmEF'].flatten(),
+        # cef=df['Jet_chEmEF'].flatten(),
     )
     return jets, muons, electrons
 
+def met_triggers():
+    return ["HLT_PFMET170_NotCleaned",
+    "HLT_PFMET170_NoiseCleaned",
+    "HLT_PFMET170_HBHECleaned",
+    "HLT_PFMET170_JetIdCleaned",
+    "HLT_PFMET170_BeamHaloCleaned",
+    "HLT_PFMET170_HBHE_BeamHaloCleaned"]
+
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, year="2018"):
+        self.year=year
         dataset_axis = hist.Cat("dataset", "Primary dataset")
         met_axis = hist.Bin("met", r"$p_{T}^{miss}$ (GeV)", 100, 0, 1000)
         jet_pt_axis = hist.Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
         jet_eta_axis = hist.Bin("jeteta", r"$\eta$ (GeV)", 50, -5, 5)
         dpfcalo_axis = hist.Bin("dpfcalo", r"$1-Calo/PF$", 20, -1, 1)
+        btag_axis = hist.Bin("btag", r"B tag discriminator", 20, 0, 1)
 
         self._accumulator = processor.dict_accumulator({
             "met" : hist.Hist("Counts", dataset_axis, met_axis),
@@ -59,6 +77,7 @@ class monojetProcessor(processor.ProcessorABC):
             "jetpt" : hist.Hist("Counts", dataset_axis, jet_pt_axis),
             "jeteta" : hist.Hist("Counts", dataset_axis, jet_eta_axis),
             "dpfcalo" : hist.Hist("Counts", dataset_axis, dpfcalo_axis),
+            "jetbtag" : hist.Hist("Counts", dataset_axis, btag_axis),
         })
 
     @property
@@ -79,16 +98,30 @@ class monojetProcessor(processor.ProcessorABC):
         # Jets
         jet_acceptance = (jets.eta<2.4)&(jets.eta>-2.4)
         jet_fractions = (jets.chf>0.1)&(jets.nhf<0.8)
-        goodjets = jets[jet_fractions & jet_acceptance]
+
+        # B jets
+        btag_algo = config.get("{year}.btagalgo".format(year=self.year))
+        btag_wp = config.get("{year}.btagwp".format(year=self.year))
+        btag_cut = config.get("{year}.{algo}.wp.{wp}".format(year=self.year, algo=btag_algo, wp=btag_wp))
+        
+        jet_btagged = getattr(jets, btag_algo) > btag_cut
+        print(jet_btagged)
+        bjets = jets[jet_acceptance & jet_btagged]
+        goodjets = jets[jet_fractions & jet_acceptance & jet_btagged==0]
+
+
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
 
         # Selection
+        selection.add("filt_met", df["Flag_METFilters"])
+        selection.add("trig_met", df["HLT_PFMET170_NotCleaned"])
         selection.add("met_250", df["MET_pt"]>250)
-        selection.add("leadjet_100", goodjets.pt.max()>100)
+        selection.add("leadjet_100", (goodjets.counts>0) & (goodjets.pt.max()>100))
         selection.add("no_loose_leptons", (loose_electrons.counts==0) & (loose_muons.counts==0))
         selection.add("pf_calo_0p4",np.abs(df["dPFCalo"]) < 0.4)
+        selection.add("bveto",bjets.counts==0)
         # print(jets[jets.pt>100])
 
         output = self.accumulator.identity()
@@ -114,6 +147,9 @@ class monojetProcessor(processor.ProcessorABC):
             output['jet0pt'].fill(dataset=dataset,
                                     jetpt=goodjets[mask].pt.max().flatten())
             
+            # B tag discriminator
+            output['jetbtag'].fill(dataset=dataset,
+                                    btag=getattr(jets[mask&jet_acceptance], btag_algo).flatten())
 
             # MET
             output['dpfcalo'].fill(dataset=dataset,
@@ -128,8 +164,11 @@ class monojetProcessor(processor.ProcessorABC):
 
 def main():
     fileset = {
-        "Znunu_ht200to400" : [
-            "./data/FFD69E5A-A941-2D41-A629-9D62D9E8BE9A.root"
+        # "Znunu_ht200to400" : [
+        #     "./data/FFD69E5A-A941-2D41-A629-9D62D9E8BE9A.root"
+        # ],
+        "NonthDM" : [
+            "./data/24EE25F5-FB54-E911-AB96-40F2E9C6B000.root"
         ]
     }
 
@@ -143,7 +182,7 @@ def main():
 
     output = processor.run_uproot_job(fileset,
                                   treename='Events',
-                                  processor_instance=monojetProcessor(),
+                                  processor_instance=monojetProcessor(2017),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': 4, 'function_args': {'flatten': False}},
                                   chunksize=500000,
@@ -152,7 +191,7 @@ def main():
     outdir = "out"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    for name in ['jet0pt', 'jet0eta','jetpt','jeteta','met','dpfcalo']:
+    for name in ['jet0pt', 'jet0eta','jetpt','jeteta','met','dpfcalo','jetbtag']:
         fig, ax, _ = hist.plot1d(output[name],overlay="dataset",overflow='all')
         fig.suptitle(name)
         # ax.set_xscale('log')
