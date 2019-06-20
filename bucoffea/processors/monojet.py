@@ -6,12 +6,13 @@ import numpy as np
 
 import lz4.frame as lz4f
 import cloudpickle
+from copy import deepcopy
 import os
 pjoin = os.path.join
-
+from collections import defaultdict
 os.environ["ENV_FOR_DYNACONF"] = "era2016"
-os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
-from dynaconf import settings
+os.environ["cfg_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
+from dynaconf import settings as cfg
 
 def setup_candidates(df):
     muons = JaggedCandidateArray.candidatesfromcounts(
@@ -43,6 +44,7 @@ def setup_candidates(df):
         phi=df['Tau_phi'].flatten(),
         mass=df['Tau_mass'].flatten(),
         decaymode=df['Tau_idDecayModeNewDMs'].flatten(),
+        clean=df['Tau_cleanmask'].flatten(),
         iso=df['Tau_idMVAnewDM2017v2'].flatten(),
     )
     jets = JaggedCandidateArray.candidatesfromcounts(
@@ -109,6 +111,8 @@ class monojetProcessor(processor.ProcessorABC):
             "tight_muo_mult" : hist.Hist("Tight muons", dataset_axis, multiplicity_axis),
             "veto_tau_mult" : hist.Hist("Veto taus", dataset_axis, multiplicity_axis),
             "dphijm" : hist.Hist("min(4 leading jets, MET)", dataset_axis, dphi_axis),
+            "cutflow_sr_j": processor.defaultdict_accumulator(int),
+            "cutflow_sr_v": processor.defaultdict_accumulator(int)
         })
 
     @property
@@ -117,7 +121,6 @@ class monojetProcessor(processor.ProcessorABC):
 
     def process(self, df):
 
-        selection = processor.PackedSelection()
 
         # Lepton candidates
         jets, muons, electrons, taus = setup_candidates(df)
@@ -132,43 +135,66 @@ class monojetProcessor(processor.ProcessorABC):
         jet_fractions = (clean_jets.chf>0.1)&(clean_jets.nhf<0.8)
 
         # B jets
-        btag_algo = settings.BTAG.algo
-        btag_wp = settings.BTAG.wp
-        btag_cut = settings.BTAG.CUTS[btag_algo][btag_wp]
+        btag_algo = cfg.BTAG.algo
+        btag_wp = cfg.BTAG.wp
+        btag_cut = cfg.BTAG.CUTS[btag_algo][btag_wp]
 
         jet_btagged = getattr(clean_jets, btag_algo) > btag_cut
         bjets = clean_jets[jet_acceptance & jet_btagged]
-        goodjets = clean_jets[jet_fractions & jet_acceptance & jet_btagged==0]
+        goodjets = clean_jets[jet_fractions \
+                              & jet_acceptance \
+                              & jet_btagged==0 \
+                              & clean_jets.tightId ]
 
         # Taus
-        veto_taus = taus[(taus.decaymode)&(taus.pt > 18)&((taus.iso&2)==2)]
+        veto_taus = taus[ (taus.clean==1) \
+                         & (taus.decaymode) \
+                         & (taus.pt > cfg.TAU.CUTS.PT)\
+                         & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
+                         & ((taus.iso&2)==2)]
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
         df["minDPhiJetMet"] = define_dphi_jet_met(goodjets, df['MET_phi'], njet=4, ptmin=30)
 
         # Selection
-        selection.add("filt_met", df["Flag_METFilters"])
-        selection.add("trig_met", df["HLT_PFMET170_NotCleaned"])
-        selection.add("met_250", df["MET_pt"]>250)
-        selection.add("leadjet_100", (goodjets.counts>0) & (goodjets.pt.max()>100))
-        selection.add("no_loose_leptons", (loose_electrons.counts==0) & (loose_muons.counts==0))
-        selection.add("pf_calo_0p4",np.abs(df["dPFCalo"]) < 0.4)
-        selection.add("bveto",bjets.counts==0)
-        selection.add("tauveto",veto_taus.counts==0)
-        selection.add("dphijm",df["minDPhiJetMet"] > 0.5)
+        # TODO:
+        #   Photons
+        # Naming syntax:
+        # sr = signal region
+        # j = monojet
+        # v = mono-V
+        # -> "sr_j" = Monojet signal region
+        selections = defaultdict(processor.PackedSelection)
+
+        selections["sr_j"].add('filt_met', df['Flag_METFilters'])
+        selections["sr_j"].add('trig_met', df[cfg.TRIGGERS.MET])
+        selections["sr_j"].add('veto_ele', loose_electrons.counts==0)
+        selections["sr_j"].add('veto_muo', loose_muons.counts==0)
+        selections["sr_j"].add('veto_photon',np.ones(df.size)==1) # TODO
+        selections["sr_j"].add('veto_tau',veto_taus.counts==0)
+        selections["sr_j"].add('veto_b',bjets.counts==0)
+        selections["sr_j"].add('leadjet_signal', (goodjets.counts>0) & (goodjets.pt.max()>cfg.SELECTION.SIGNAL.LEADJET))
+        selections["sr_j"].add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
+        selections["sr_j"].add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
+        selections["sr_j"].add('met_signal', df['MET_pt']>cfg.SELECTION.SIGNAL.MET)
+
+        selections["sr_v"] = deepcopy(selections["sr_j"])
+        selections["sr_v"].add("tau21", np.ones(df.size)==1)
 
         output = self.accumulator.identity()
 
-        dataset = "inclusive"
+        
+        for seltag, selection in selections.items():
 
-        selection_masks = {
-            "sr" : selection.all(*selection.names),
-            "inclusive" : selection.all()
-        }
+            # Cutflow plot for signal and control regions
+            if any(x in seltag for x in ["sr", "cr"]):
+                output['cutflow_' + seltag]['all']+=df.size
+                for icut, cutname in enumerate(selection.names):
+                    output['cutflow_' + seltag][cutname] += selection.all(*selection.names[:icut+1]).sum()
 
-        for seltag, mask in selection_masks.items():
             dataset = seltag
+            mask = selection.all(*selection.names)
 
             # Multiplicities
             def fill_mult(name, candidates):
@@ -236,12 +262,21 @@ def main():
                                   executor_args={'workers': 4, 'function_args': {'flatten': False}},
                                   chunksize=500000,
                                  )
+    with lz4f.open("hists.cpkl.lz4", mode="wb", compression_level=5) as fout:
+        cloudpickle.dump(output, fout)
 
+    # Debugging / testing output
+    debug_print_cutflows(output)
+
+def debug_plot_output(output):
+    """Dump all histograms as PDF."""
     outdir = "out"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     for name in output.keys():
         if name.startswith("_"):
+            continue
+        if name.startswith("cutflow"):
             continue
         fig, ax, _ = hist.plot1d(output[name],overlay="dataset",overflow='all')
         fig.suptitle(name)
@@ -250,8 +285,21 @@ def main():
         ax.set_ylim(0.1, 1e8)
         fig.savefig(pjoin(outdir, "{}.pdf".format(name)))
 
-    with lz4f.open("hists.cpkl.lz4", mode="wb", compression_level=5) as fout:
-        cloudpickle.dump(output, fout)
+
+
+def debug_print_cutflows(output):
+    """Pretty-print cutflow data to the terminal."""
+    import tabulate
+    for cutflow_name in [ x for x in output.keys() if x.startswith("cutflow")]:
+        table = []
+        print("----")
+        print(cutflow_name)
+        print("----")
+        for cut, count in sorted(output[cutflow_name].items(), key=lambda x:x[1], reverse=True):
+            table.append([cut, count])
+        print(tabulate.tabulate(table, headers=["Cut", "Passing events"]))
+
+
 
 if __name__ == "__main__":
     main()

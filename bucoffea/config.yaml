@@ -1,11 +1,21 @@
 default:
   test: false
-
+  selection:
+    signal:
+      met: 250
+      leadjet : 100
+      mindphijm : 0.5
+      dpfcalo : 0.4
+  tau:
+    cuts:
+      pt: 18
+      eta: 2.4
 env:
   test: false
 
 global:
   test: false
+
 
 era2016:
   triggers:
