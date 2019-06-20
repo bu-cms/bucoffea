@@ -10,9 +10,13 @@ import kaptan
 import os
 pjoin = os.path.join
 
-config = kaptan.Kaptan(handler="yaml")
-with open("config.yaml","r") as cfgfile:
-    config.import_config(cfgfile.read())
+# config = kaptan.Kaptan(handler="yaml")
+# with open("config.yaml","r") as cfgfile:
+#     config.import_config(cfgfile.read())
+
+os.environ["ENV_FOR_DYNACONF"] = "era2016"
+os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
+from dynaconf import settings
 
 def setup_candidates(df):
     muons = JaggedCandidateArray.candidatesfromcounts(
@@ -71,6 +75,25 @@ def met_triggers():
     "HLT_PFMET170_BeamHaloCleaned",
     "HLT_PFMET170_HBHE_BeamHaloCleaned"]
 
+def define_dphi_jet_met(jets, met_phi, njet=4, ptmin=30):
+    """Calculate minimal delta phi between jets and met
+
+    :param jets: Jet candidates to use, must be sorted by pT
+    :type jets: JaggedCandidateArray
+    :param met_phi: MET phi values, one per event
+    :type met_phi: array
+    :param njet: Number of leading jets to consider, defaults to 4
+    :type njet: int, optional
+    """
+
+    # Use the first njet jets with pT > ptmin
+    jets=jets[jets.pt>30]
+    jets = jets[:,:njet]
+
+    dphi = np.abs((jets.phi - met_phi + np.pi) % (2*np.pi)  - np.pi)
+
+    return dphi.min()
+
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, year="2018"):
         self.year=year
@@ -81,6 +104,7 @@ class monojetProcessor(processor.ProcessorABC):
         dpfcalo_axis = hist.Bin("dpfcalo", r"$1-Calo/PF$", 20, -1, 1)
         btag_axis = hist.Bin("btag", r"B tag discriminator", 20, 0, 1)
         multiplicity_axis = hist.Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
+        dphi_axis = hist.Bin("dphi", r"$\Delta\phi$", 50, 0, 2*np.pi)
 
         self._accumulator = processor.dict_accumulator({
             "met" : hist.Hist("Counts", dataset_axis, met_axis),
@@ -97,6 +121,7 @@ class monojetProcessor(processor.ProcessorABC):
             "loose_muo_mult" : hist.Hist("Loose muons", dataset_axis, multiplicity_axis),
             "tight_muo_mult" : hist.Hist("Tight muons", dataset_axis, multiplicity_axis),
             "veto_tau_mult" : hist.Hist("Veto taus", dataset_axis, multiplicity_axis),
+            "dphijm" : hist.Hist("min(4 leading jets, MET)", dataset_axis, dphi_axis),
         })
 
     @property
@@ -120,10 +145,11 @@ class monojetProcessor(processor.ProcessorABC):
         jet_fractions = (clean_jets.chf>0.1)&(clean_jets.nhf<0.8)
 
         # B jets
+
         btag_algo = config.get(f"{self.year}.btagalgo")
         btag_wp = config.get(f"{self.year}.btagwp")
         btag_cut = config.get(f"{self.year}.{btag_algo}.wp.{btag_wp}")
-        
+
         jet_btagged = getattr(clean_jets, btag_algo) > btag_cut
         bjets = clean_jets[jet_acceptance & jet_btagged]
         goodjets = clean_jets[jet_fractions & jet_acceptance & jet_btagged==0]
@@ -133,6 +159,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
+        df["minDPhiJetMet"] = define_dphi_jet_met(goodjets, df['MET_phi'], njet=4, ptmin=30)
 
         # Selection
         selection.add("filt_met", df["Flag_METFilters"])
@@ -143,7 +170,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add("pf_calo_0p4",np.abs(df["dPFCalo"]) < 0.4)
         selection.add("bveto",bjets.counts==0)
         selection.add("tauveto",veto_taus.counts==0)
-        # print(jets[jets.pt>100])
+        selection.add("dphijm",df["minDPhiJetMet"] > 0.5)
 
         output = self.accumulator.identity()
 
@@ -158,29 +185,29 @@ class monojetProcessor(processor.ProcessorABC):
             dataset = seltag
 
             # Multiplicities
-            output['jet_mult'].fill(dataset=dataset, multiplicity=clean_jets[mask].counts.flatten())
-            output['bjet_mult'].fill(dataset=dataset, multiplicity=bjets[mask].counts.flatten())
-            output['loose_ele_mult'].fill(dataset=dataset, multiplicity=loose_electrons[mask].counts.flatten())
-            output['tight_ele_mult'].fill(dataset=dataset, multiplicity=tight_electrons[mask].counts.flatten())
-            output['loose_muo_mult'].fill(dataset=dataset, multiplicity=loose_muons[mask].counts.flatten())
-            output['tight_muo_mult'].fill(dataset=dataset, multiplicity=tight_muons[mask].counts.flatten())
-            output['veto_tau_mult'].fill(dataset=dataset, multiplicity=veto_taus[mask].counts.flatten())
+            def fill_mult(name, candidates):
+                output[name].fill(dataset=dataset, multiplicity=candidates[mask].counts)
 
-
-
+            fill_mult('jet_mult', clean_jets)
+            fill_mult('bjet_mult',bjets)
+            fill_mult('loose_ele_mult',loose_electrons)
+            fill_mult('tight_ele_mult',tight_electrons)
+            fill_mult('loose_muo_mult',loose_muons)
+            fill_mult('tight_muo_mult',tight_muons)
+            fill_mult('veto_tau_mult',veto_taus)
 
             # All jets
             output['jeteta'].fill(dataset=dataset,
                                     jeteta=jets[mask].eta.flatten())
             output['jetpt'].fill(dataset=dataset,
                                     jetpt=jets[mask].pt.flatten())
-            
+
             # Leading jet (has to be in acceptance)
             output['jet0eta'].fill(dataset=dataset,
                                     jeteta=goodjets[mask].eta[goodjets[mask].pt.argmax()].flatten())
             output['jet0pt'].fill(dataset=dataset,
                                     jetpt=goodjets[mask].pt.max().flatten())
-            
+
             # B tag discriminator
             output['jetbtag'].fill(dataset=dataset,
                                     btag=getattr(clean_jets[mask&jet_acceptance], btag_algo).flatten())
@@ -190,6 +217,8 @@ class monojetProcessor(processor.ProcessorABC):
                                     dpfcalo=df["dPFCalo"][mask])
             output['met'].fill(dataset=dataset,
                                     met=df["MET_pt"][mask])
+            output['dphijm'].fill(dataset=dataset,
+                                    dphi=df["minDPhiJetMet"][mask])
         return output
 
     def postprocess(self, accumulator):
@@ -225,7 +254,9 @@ def main():
     outdir = "out"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    for name in ['jet0pt', 'jet0eta','jetpt','jeteta','met','dpfcalo','jetbtag'] + list(filter(lambda x: "mult" in x, output.keys())):
+    for name in output.keys():
+        if name.startswith("_"):
+            continue
         fig, ax, _ = hist.plot1d(output[name],overlay="dataset",overflow='all')
         fig.suptitle(name)
         # ax.set_xscale('log')
