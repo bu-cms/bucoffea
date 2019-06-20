@@ -3,7 +3,9 @@ default:
   selection:
     signal:
       met: 250
-      leadjet : 100
+      leadjet:
+        pt: 100
+        eta: 2.4
       mindphijm : 0.5
       dpfcalo : 0.4
   tau:

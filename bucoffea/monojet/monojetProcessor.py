@@ -53,7 +53,11 @@ def setup_candidates(df):
         eta=df['Jet_eta'],
         phi=df['Jet_phi'],
         mass=df['Jet_mass'],
-        tightId=df['Jet_jetId'],
+
+        # Jet ID bit mask:
+        # Bit 0 = Loose
+        # Bit 1 = Tight
+        tightId=(df['Jet_jetId']&2) == 2,
         csvv2=df["Jet_btagCSVV2"],
         deepcsv=df['Jet_btagDeepB'],
         # nef=df['Jet_neEmEF'],
@@ -134,13 +138,13 @@ class monojetProcessor(processor.ProcessorABC):
         jet_acceptance = (clean_jets.eta<2.4)&(clean_jets.eta>-2.4)
         jet_fractions = (clean_jets.chf>0.1)&(clean_jets.nhf<0.8)
 
-        # B jets
-        btag_algo = cfg.BTAG.algo
-        btag_wp = cfg.BTAG.wp
-        btag_cut = cfg.BTAG.CUTS[btag_algo][btag_wp]
 
-        jet_btagged = getattr(clean_jets, btag_algo) > btag_cut
+        btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
+
+        jet_btagged = getattr(clean_jets, cfg.BTAG.algo) > btag_cut
         bjets = clean_jets[jet_acceptance & jet_btagged]
+
+
         goodjets = clean_jets[jet_fractions \
                               & jet_acceptance \
                               & jet_btagged==0 \
@@ -166,6 +170,7 @@ class monojetProcessor(processor.ProcessorABC):
         # v = mono-V
         # -> "sr_j" = Monojet signal region
         selections = defaultdict(processor.PackedSelection)
+        selections['inclusive'].add("all", np.ones(df.size)==1)
 
         selections["sr_j"].add('filt_met', df['Flag_METFilters'])
         selections["sr_j"].add('trig_met', df[cfg.TRIGGERS.MET])
@@ -174,7 +179,9 @@ class monojetProcessor(processor.ProcessorABC):
         selections["sr_j"].add('veto_photon',np.ones(df.size)==1) # TODO
         selections["sr_j"].add('veto_tau',veto_taus.counts==0)
         selections["sr_j"].add('veto_b',bjets.counts==0)
-        selections["sr_j"].add('leadjet_signal', (goodjets.counts>0) & (goodjets.pt.max()>cfg.SELECTION.SIGNAL.LEADJET))
+        selections["sr_j"].add('leadjet_pt_eta', (jets.pt[:,0] > cfg.SELECTION.SIGNAL.LEADJET.PT) \
+                                                 & (np.abs(jets.eta[:,0]) < cfg.SELECTION.SIGNAL.LEADJET.ETA))
+        selections["sr_j"].add('leadjet_id',jets[:,0].tightId)
         selections["sr_j"].add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
         selections["sr_j"].add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selections["sr_j"].add('met_signal', df['MET_pt']>cfg.SELECTION.SIGNAL.MET)
@@ -182,6 +189,8 @@ class monojetProcessor(processor.ProcessorABC):
         selections["sr_v"] = deepcopy(selections["sr_j"])
         selections["sr_v"].add("tau21", np.ones(df.size)==1)
 
+        
+        
         output = self.accumulator.identity()
 
         
@@ -216,13 +225,13 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Leading jet (has to be in acceptance)
             output['jet0eta'].fill(dataset=dataset,
-                                    jeteta=goodjets[mask].eta[goodjets[mask].pt.argmax()].flatten())
+                                    jeteta=jets[mask].eta[:,0].flatten())
             output['jet0pt'].fill(dataset=dataset,
-                                    jetpt=goodjets[mask].pt.max().flatten())
+                                    jetpt=jets[mask].pt[:,0].flatten())
 
             # B tag discriminator
             output['jetbtag'].fill(dataset=dataset,
-                                    btag=getattr(clean_jets[mask&jet_acceptance], btag_algo).flatten())
+                                    btag=getattr(clean_jets[mask&jet_acceptance], cfg.BTAG.algo).flatten())
 
             # MET
             output['dpfcalo'].fill(dataset=dataset,
@@ -242,8 +251,11 @@ def main():
         # "Znunu_ht200to400" : [
         #     "./data/FFD69E5A-A941-2D41-A629-9D62D9E8BE9A.root"
         # ],
-        "NonthDM" : [
-            "./data/24EE25F5-FB54-E911-AB96-40F2E9C6B000.root"
+        # "NonthDM" : [
+        #     "./data/24EE25F5-FB54-E911-AB96-40F2E9C6B000.root"
+        # ]
+        "TTbarDM" : [
+            "./data/A13AF968-8A88-754A-BE73-7264241D71D5.root"
         ]
     }
 
@@ -266,6 +278,7 @@ def main():
         cloudpickle.dump(output, fout)
 
     # Debugging / testing output
+    debug_plot_output(output)
     debug_print_cutflows(output)
 
 def debug_plot_output(output):
