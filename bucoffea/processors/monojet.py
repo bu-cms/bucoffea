@@ -6,13 +6,8 @@ import numpy as np
 
 import lz4.frame as lz4f
 import cloudpickle
-import kaptan
 import os
 pjoin = os.path.join
-
-# config = kaptan.Kaptan(handler="yaml")
-# with open("config.yaml","r") as cfgfile:
-#     config.import_config(cfgfile.read())
 
 os.environ["ENV_FOR_DYNACONF"] = "era2016"
 os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
@@ -66,14 +61,6 @@ def setup_candidates(df):
         # cef=df['Jet_chEmEF'].flatten(),
     )
     return jets, muons, electrons, taus
-
-def met_triggers():
-    return ["HLT_PFMET170_NotCleaned",
-    "HLT_PFMET170_NoiseCleaned",
-    "HLT_PFMET170_HBHECleaned",
-    "HLT_PFMET170_JetIdCleaned",
-    "HLT_PFMET170_BeamHaloCleaned",
-    "HLT_PFMET170_HBHE_BeamHaloCleaned"]
 
 def define_dphi_jet_met(jets, met_phi, njet=4, ptmin=30):
     """Calculate minimal delta phi between jets and met
@@ -145,10 +132,9 @@ class monojetProcessor(processor.ProcessorABC):
         jet_fractions = (clean_jets.chf>0.1)&(clean_jets.nhf<0.8)
 
         # B jets
-
-        btag_algo = config.get(f"{self.year}.btagalgo")
-        btag_wp = config.get(f"{self.year}.btagwp")
-        btag_cut = config.get(f"{self.year}.{btag_algo}.wp.{btag_wp}")
+        btag_algo = settings.BTAG.algo
+        btag_wp = settings.BTAG.wp
+        btag_cut = settings.BTAG.CUTS[btag_algo][btag_wp]
 
         jet_btagged = getattr(clean_jets, btag_algo) > btag_cut
         bjets = clean_jets[jet_acceptance & jet_btagged]

@@ -1,34 +1,52 @@
+default:
+  test: false
 
-"2016":
-  btagalgo: deepcsv
-  btagwp: medium
-  deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
-    wp:
-      loose : 0.2217
-      medium: 0.6321
-      tight: 0.8953
+env:
+  test: false
 
-"2017":
-  btagalgo: deepcsv
-  btagwp: medium
-  csvv2: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-    wp:
-      loose : 0.5803
-      medium : 0.8838
-      tight : 0.9693
+global:
+  test: false
 
-  deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-    wp:
-      loose : 0.1522
-      medium: 0.4941 
-      tight: 0.8001
+era2016:
+  triggers:
+    met:
+      HLT_PFMET170_NotCleaned
+  btag:
+    algo: deepcsv
+    wp: medium
+    cuts:
+      deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
+        loose : 0.2217
+        medium: 0.6321
+        tight: 0.8953
 
-"2018":
-  btagalgo: deepcsv
-  btagwp: medium
-  deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
-    wp:
-      loose : 0.1241
-      medium: 0.4184
-      tight: 0.7527 
+era2017:
+  triggers:
+    met:
+      HLT_PFMET170_NotCleaned
+  btag:
+    algo: deepcsv
+    wp: medium
+    cuts:
+      csvv2: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+        loose : 0.5803
+        medium : 0.8838
+        tight : 0.9693
+      deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+        loose : 0.1522
+        medium: 0.4941 
+        tight: 0.8001
+
+era2018:
+  triggers:
+    met:
+      HLT_PFMET170_NotCleaned
+  btag:
+    algo: deepcsv
+    wp: medium
+    cuts:
+      deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
+        loose : 0.1241
+        medium: 0.4184
+        tight: 0.7527 
   
