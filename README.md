@@ -34,7 +34,7 @@ You can run an example analysis to get started:
 
 ```
 # GRID certificate required for file access!
-python ./bucoffea/processors/example.py
+python ./bucoffea/example/exampleProcessor.py
 ```
 
 This example will run over two files from two different datasets, produce MET and jet pt histograms, and plot them as PDF files.
