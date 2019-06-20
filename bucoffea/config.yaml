@@ -12,6 +12,10 @@ default:
     cuts:
       pt: 18
       eta: 2.4
+  photon:
+    cuts:
+      pt: 15
+      eta: 2.4
 env:
   test: false
 

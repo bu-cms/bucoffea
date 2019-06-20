@@ -47,6 +47,26 @@ def setup_candidates(df):
         clean=df['Tau_cleanmask'],
         iso=df['Tau_idMVAnewDM2017v2'],
     )
+
+    taus = taus[ (taus.clean==1) \
+                         & (taus.decaymode) \
+                         & (taus.pt > cfg.TAU.CUTS.PT)\
+                         & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
+                         & ((taus.iso&2)==2)]
+
+    photons = JaggedCandidateArray.candidatesfromcounts(
+        df['nPhoton'],
+        pt=df['Photon_pt'],
+        eta=df['Photon_eta'],
+        phi=df['Photon_phi'],
+        mass=df['Photon_mass'],
+        id=(df['Photon_cutBased']==1) & (df['Photon_electronVeto']==1),
+        clean=df['Photon_cleanmask'],
+    )
+    photons = photons[(photons.clean==1) \
+              & photons.id \
+              & (photons.pt > cfg.PHOTON.CUTS.pt) \
+              & (np.abs(photons.eta) < cfg.PHOTON.CUTS.eta)]
     jets = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'],
         pt=df['Jet_pt'],
@@ -66,7 +86,7 @@ def setup_candidates(df):
         clean=df['Jet_cleanmask']
         # cef=df['Jet_chEmEF'],
     )
-    return jets, muons, electrons, taus
+    return jets, muons, electrons, taus, photons
 
 def define_dphi_jet_met(jets, met_phi, njet=4, ptmin=30):
     """Calculate minimal delta phi between jets and met
@@ -113,7 +133,8 @@ class monojetProcessor(processor.ProcessorABC):
             "tight_ele_mult" : hist.Hist("Tight electrons", dataset_axis, multiplicity_axis),
             "loose_muo_mult" : hist.Hist("Loose muons", dataset_axis, multiplicity_axis),
             "tight_muo_mult" : hist.Hist("Tight muons", dataset_axis, multiplicity_axis),
-            "veto_tau_mult" : hist.Hist("Veto taus", dataset_axis, multiplicity_axis),
+            "tau_mult" : hist.Hist("Taus", dataset_axis, multiplicity_axis),
+            "photon_mult" : hist.Hist("Photons", dataset_axis, multiplicity_axis),
             "dphijm" : hist.Hist("min(4 leading jets, MET)", dataset_axis, dphi_axis),
             "cutflow_sr_j": processor.defaultdict_accumulator(int),
             "cutflow_sr_v": processor.defaultdict_accumulator(int)
@@ -127,7 +148,7 @@ class monojetProcessor(processor.ProcessorABC):
 
 
         # Lepton candidates
-        jets, muons, electrons, taus = setup_candidates(df)
+        jets, muons, electrons, taus, photons = setup_candidates(df)
         loose_muons = muons[muons.mediumId & (muons.pt>10) & (muons.iso < 0.25)]
         tight_muons = muons[muons.mediumId & (muons.pt>20) & (muons.iso < 0.15)]
         loose_electrons = electrons[electrons.looseId & (electrons.pt>10)]
@@ -150,12 +171,6 @@ class monojetProcessor(processor.ProcessorABC):
                               & jet_btagged==0 \
                               & clean_jets.tightId ]
 
-        # Taus
-        veto_taus = taus[ (taus.clean==1) \
-                         & (taus.decaymode) \
-                         & (taus.pt > cfg.TAU.CUTS.PT)\
-                         & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
-                         & ((taus.iso&2)==2)]
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
@@ -176,8 +191,8 @@ class monojetProcessor(processor.ProcessorABC):
         selections["sr_j"].add('trig_met', df[cfg.TRIGGERS.MET])
         selections["sr_j"].add('veto_ele', loose_electrons.counts==0)
         selections["sr_j"].add('veto_muo', loose_muons.counts==0)
-        selections["sr_j"].add('veto_photon',np.ones(df.size)==1) # TODO
-        selections["sr_j"].add('veto_tau',veto_taus.counts==0)
+        selections["sr_j"].add('veto_photon', photons.counts==0)
+        selections["sr_j"].add('veto_tau',taus.counts==0)
         selections["sr_j"].add('veto_b',bjets.counts==0)
         selections["sr_j"].add('leadjet_pt_eta', (jets.pt[:,0] > cfg.SELECTION.SIGNAL.LEADJET.PT) \
                                                  & (np.abs(jets.eta[:,0]) < cfg.SELECTION.SIGNAL.LEADJET.ETA))
@@ -215,7 +230,8 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('tight_ele_mult',tight_electrons)
             fill_mult('loose_muo_mult',loose_muons)
             fill_mult('tight_muo_mult',tight_muons)
-            fill_mult('veto_tau_mult',veto_taus)
+            fill_mult('tau_mult',taus)
+            fill_mult('photon_mult',photons)
 
             # All jets
             output['jeteta'].fill(dataset=dataset,
