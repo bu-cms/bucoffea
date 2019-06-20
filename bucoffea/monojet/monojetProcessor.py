@@ -11,56 +11,56 @@ import os
 pjoin = os.path.join
 from collections import defaultdict
 os.environ["ENV_FOR_DYNACONF"] = "era2016"
-os.environ["cfg_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
+os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
 from dynaconf import settings as cfg
 
 def setup_candidates(df):
     muons = JaggedCandidateArray.candidatesfromcounts(
-        df['nMuon'].flatten(),
-        pt=df['Muon_pt'].flatten(),
-        eta=df['Muon_eta'].flatten(),
-        phi=df['Muon_phi'].flatten(),
-        mass=df['Muon_mass'].flatten(),
-        charge=df['Muon_charge'].flatten(),
-        mediumId=df['Muon_mediumId'].flatten(),
-        iso=df["Muon_pfRelIso04_all"].flatten(),
-        tightId=df['Muon_tightId'].flatten()
+        df['nMuon'],
+        pt=df['Muon_pt'],
+        eta=df['Muon_eta'],
+        phi=df['Muon_phi'],
+        mass=df['Muon_mass'],
+        charge=df['Muon_charge'],
+        mediumId=df['Muon_mediumId'],
+        iso=df["Muon_pfRelIso04_all"],
+        tightId=df['Muon_tightId']
     )
 
     electrons = JaggedCandidateArray.candidatesfromcounts(
-        df['nElectron'].flatten(),
-        pt=df['Electron_pt'].flatten(),
-        eta=df['Electron_eta'].flatten(),
-        phi=df['Electron_phi'].flatten(),
-        mass=df['Electron_mass'].flatten(),
-        charge=df['Electron_charge'].flatten(),
-        looseId=(df['Electron_cutBased']>=1).flatten(),
-        tightId=(df['Electron_cutBased']==4).flatten()
+        df['nElectron'],
+        pt=df['Electron_pt'],
+        eta=df['Electron_eta'],
+        phi=df['Electron_phi'],
+        mass=df['Electron_mass'],
+        charge=df['Electron_charge'],
+        looseId=(df['Electron_cutBased']>=1),
+        tightId=(df['Electron_cutBased']==4)
     )
     taus = JaggedCandidateArray.candidatesfromcounts(
-        df['nTau'].flatten(),
-        pt=df['Tau_pt'].flatten(),
-        eta=df['Tau_eta'].flatten(),
-        phi=df['Tau_phi'].flatten(),
-        mass=df['Tau_mass'].flatten(),
-        decaymode=df['Tau_idDecayModeNewDMs'].flatten(),
-        clean=df['Tau_cleanmask'].flatten(),
-        iso=df['Tau_idMVAnewDM2017v2'].flatten(),
+        df['nTau'],
+        pt=df['Tau_pt'],
+        eta=df['Tau_eta'],
+        phi=df['Tau_phi'],
+        mass=df['Tau_mass'],
+        decaymode=df['Tau_idDecayModeNewDMs'],
+        clean=df['Tau_cleanmask'],
+        iso=df['Tau_idMVAnewDM2017v2'],
     )
     jets = JaggedCandidateArray.candidatesfromcounts(
-        df['nJet'].flatten(),
-        pt=df['Jet_pt'].flatten(),
-        eta=df['Jet_eta'].flatten(),
-        phi=df['Jet_phi'].flatten(),
-        mass=df['Jet_mass'].flatten(),
-        tightId=df['Jet_jetId'].flatten(),
-        csvv2=df["Jet_btagCSVV2"].flatten(),
-        deepcsv=df['Jet_btagDeepB'].flatten(),
-        # nef=df['Jet_neEmEF'].flatten(),
-        nhf=df['Jet_neHEF'].flatten(),
-        chf=df['Jet_chHEF'].flatten(),
-        clean=df['Jet_cleanmask'].flatten()
-        # cef=df['Jet_chEmEF'].flatten(),
+        df['nJet'],
+        pt=df['Jet_pt'],
+        eta=df['Jet_eta'],
+        phi=df['Jet_phi'],
+        mass=df['Jet_mass'],
+        tightId=df['Jet_jetId'],
+        csvv2=df["Jet_btagCSVV2"],
+        deepcsv=df['Jet_btagDeepB'],
+        # nef=df['Jet_neEmEF'],
+        nhf=df['Jet_neHEF'],
+        chf=df['Jet_chHEF'],
+        clean=df['Jet_cleanmask']
+        # cef=df['Jet_chEmEF'],
     )
     return jets, muons, electrons, taus
 
@@ -259,7 +259,7 @@ def main():
                                   treename='Events',
                                   processor_instance=monojetProcessor(2017),
                                   executor=processor.futures_executor,
-                                  executor_args={'workers': 4, 'function_args': {'flatten': False}},
+                                  executor_args={'workers': 4, 'function_args': {'flatten': True}},
                                   chunksize=500000,
                                  )
     with lz4f.open("hists.cpkl.lz4", mode="wb", compression_level=5) as fout:
