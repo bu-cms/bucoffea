@@ -108,39 +108,45 @@ def define_dphi_jet_met(jets, met_phi, njet=4, ptmin=30):
 
     return dphi.min()
 
+def monojet_accumulator():
+    dataset_ax = hist.Cat("dataset", "Primary dataset")
+    region_ax = hist.Cat("region", "Selection region")
+    met_ax = hist.Bin("met", r"$p_{T}^{miss}$ (GeV)", 100, 0, 1000)
+    jet_pt_ax = hist.Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
+    jet_eta_ax = hist.Bin("jeteta", r"$\eta$ (GeV)", 50, -5, 5)
+    dpfcalo_ax = hist.Bin("dpfcalo", r"$1-Calo/PF$", 20, -1, 1)
+    btag_ax = hist.Bin("btag", r"B tag discriminator", 20, 0, 1)
+    multiplicity_ax = hist.Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
+    dphi_ax = hist.Bin("dphi", r"$\Delta\phi$", 50, 0, 3*np.pi)
+
+    Hist = hist.Hist
+    items = {}
+    items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["jet0pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["jet0eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["jetpt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["jeteta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    items["jetbtag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
+    items["jet_mult"] = Hist("Jets", dataset_ax, region_ax, multiplicity_ax)
+    items["bjet_mult"] = Hist("B Jets", dataset_ax, region_ax, multiplicity_ax)
+    items["loose_ele_mult"] = Hist("Loose electrons", dataset_ax, region_ax, multiplicity_ax)
+    items["tight_ele_mult"] = Hist("Tight electrons", dataset_ax, region_ax, multiplicity_ax)
+    items["loose_muo_mult"] = Hist("Loose muons", dataset_ax, region_ax, multiplicity_ax)
+    items["tight_muo_mult"] = Hist("Tight muons", dataset_ax, region_ax, multiplicity_ax)
+    items["tau_mult"] = Hist("Taus", dataset_ax, region_ax, multiplicity_ax)
+    items["photon_mult"] = Hist("Photons", dataset_ax, region_ax, multiplicity_ax)
+    items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
+
+    items["cutflow_sr_j"] = processor.defaultdict_accumulator(int)
+    items["cutflow_sr_v"] = processor.defaultdict_accumulator(int)
+
+    return  processor.dict_accumulator(items)
+
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, year="2018"):
         self.year=year
-        dataset_axis = hist.Cat("dataset", "Primary dataset")
-        region_axis = hist.Cat("region", "Selection region")
-        met_axis = hist.Bin("met", r"$p_{T}^{miss}$ (GeV)", 100, 0, 1000)
-        jet_pt_axis = hist.Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
-        jet_eta_axis = hist.Bin("jeteta", r"$\eta$ (GeV)", 50, -5, 5)
-        dpfcalo_axis = hist.Bin("dpfcalo", r"$1-Calo/PF$", 20, -1, 1)
-        btag_axis = hist.Bin("btag", r"B tag discriminator", 20, 0, 1)
-        multiplicity_axis = hist.Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
-        dphi_axis = hist.Bin("dphi", r"$\Delta\phi$", 50, 0, 3*np.pi)
-
-        self._accumulator = processor.dict_accumulator({
-            "met" : hist.Hist("Counts", dataset_axis, region_axis, met_axis),
-            "jet0pt" : hist.Hist("Counts", dataset_axis, region_axis, jet_pt_axis),
-            "jet0eta" : hist.Hist("Counts", dataset_axis, region_axis, jet_eta_axis),
-            "jetpt" : hist.Hist("Counts", dataset_axis, region_axis, jet_pt_axis),
-            "jeteta" : hist.Hist("Counts", dataset_axis, region_axis, jet_eta_axis),
-            "dpfcalo" : hist.Hist("Counts", dataset_axis, region_axis, dpfcalo_axis),
-            "jetbtag" : hist.Hist("Counts", dataset_axis, region_axis, btag_axis),
-            "jet_mult" : hist.Hist("Jets", dataset_axis, region_axis, multiplicity_axis),
-            "bjet_mult" : hist.Hist("B Jets", dataset_axis, region_axis, multiplicity_axis),
-            "loose_ele_mult" : hist.Hist("Loose electrons", dataset_axis, region_axis, multiplicity_axis),
-            "tight_ele_mult" : hist.Hist("Tight electrons", dataset_axis, region_axis, multiplicity_axis),
-            "loose_muo_mult" : hist.Hist("Loose muons", dataset_axis, region_axis, multiplicity_axis),
-            "tight_muo_mult" : hist.Hist("Tight muons", dataset_axis, region_axis, multiplicity_axis),
-            "tau_mult" : hist.Hist("Taus", dataset_axis, region_axis, multiplicity_axis),
-            "photon_mult" : hist.Hist("Photons", dataset_axis, region_axis, multiplicity_axis),
-            "dphijm" : hist.Hist("min(4 leading jets, MET)", dataset_axis, region_axis, dphi_axis),
-            "cutflow_sr_j": processor.defaultdict_accumulator(int),
-            "cutflow_sr_v": processor.defaultdict_accumulator(int)
-        })
+        self._accumulator = monojet_accumulator()
 
     @property
     def accumulator(self):
@@ -257,8 +263,6 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Leading jet
             leadjet_indices = jets.pt.argmax()
-            print(leadjet_indices)
-            print(mask)
             output['jet0eta'].fill(
                                    dataset=dataset,
                                    region=region,
