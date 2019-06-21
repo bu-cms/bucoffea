@@ -112,6 +112,7 @@ class monojetProcessor(processor.ProcessorABC):
     def __init__(self, year="2018"):
         self.year=year
         dataset_axis = hist.Cat("dataset", "Primary dataset")
+        region_axis = hist.Cat("region", "Selection region")
         met_axis = hist.Bin("met", r"$p_{T}^{miss}$ (GeV)", 100, 0, 1000)
         jet_pt_axis = hist.Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
         jet_eta_axis = hist.Bin("jeteta", r"$\eta$ (GeV)", 50, -5, 5)
@@ -121,22 +122,22 @@ class monojetProcessor(processor.ProcessorABC):
         dphi_axis = hist.Bin("dphi", r"$\Delta\phi$", 50, 0, 3*np.pi)
 
         self._accumulator = processor.dict_accumulator({
-            "met" : hist.Hist("Counts", dataset_axis, met_axis),
-            "jet0pt" : hist.Hist("Counts", dataset_axis, jet_pt_axis),
-            "jet0eta" : hist.Hist("Counts", dataset_axis, jet_eta_axis),
-            "jetpt" : hist.Hist("Counts", dataset_axis, jet_pt_axis),
-            "jeteta" : hist.Hist("Counts", dataset_axis, jet_eta_axis),
-            "dpfcalo" : hist.Hist("Counts", dataset_axis, dpfcalo_axis),
-            "jetbtag" : hist.Hist("Counts", dataset_axis, btag_axis),
-            "jet_mult" : hist.Hist("Jets", dataset_axis, multiplicity_axis),
-            "bjet_mult" : hist.Hist("B Jets", dataset_axis, multiplicity_axis),
-            "loose_ele_mult" : hist.Hist("Loose electrons", dataset_axis, multiplicity_axis),
-            "tight_ele_mult" : hist.Hist("Tight electrons", dataset_axis, multiplicity_axis),
-            "loose_muo_mult" : hist.Hist("Loose muons", dataset_axis, multiplicity_axis),
-            "tight_muo_mult" : hist.Hist("Tight muons", dataset_axis, multiplicity_axis),
-            "tau_mult" : hist.Hist("Taus", dataset_axis, multiplicity_axis),
-            "photon_mult" : hist.Hist("Photons", dataset_axis, multiplicity_axis),
-            "dphijm" : hist.Hist("min(4 leading jets, MET)", dataset_axis, dphi_axis),
+            "met" : hist.Hist("Counts", dataset_axis, region_axis, met_axis),
+            "jet0pt" : hist.Hist("Counts", dataset_axis, region_axis, jet_pt_axis),
+            "jet0eta" : hist.Hist("Counts", dataset_axis, region_axis, jet_eta_axis),
+            "jetpt" : hist.Hist("Counts", dataset_axis, region_axis, jet_pt_axis),
+            "jeteta" : hist.Hist("Counts", dataset_axis, region_axis, jet_eta_axis),
+            "dpfcalo" : hist.Hist("Counts", dataset_axis, region_axis, dpfcalo_axis),
+            "jetbtag" : hist.Hist("Counts", dataset_axis, region_axis, btag_axis),
+            "jet_mult" : hist.Hist("Jets", dataset_axis, region_axis, multiplicity_axis),
+            "bjet_mult" : hist.Hist("B Jets", dataset_axis, region_axis, multiplicity_axis),
+            "loose_ele_mult" : hist.Hist("Loose electrons", dataset_axis, region_axis, multiplicity_axis),
+            "tight_ele_mult" : hist.Hist("Tight electrons", dataset_axis, region_axis, multiplicity_axis),
+            "loose_muo_mult" : hist.Hist("Loose muons", dataset_axis, region_axis, multiplicity_axis),
+            "tight_muo_mult" : hist.Hist("Tight muons", dataset_axis, region_axis, multiplicity_axis),
+            "tau_mult" : hist.Hist("Taus", dataset_axis, region_axis, multiplicity_axis),
+            "photon_mult" : hist.Hist("Photons", dataset_axis, region_axis, multiplicity_axis),
+            "dphijm" : hist.Hist("min(4 leading jets, MET)", dataset_axis, region_axis, dphi_axis),
             "cutflow_sr_j": processor.defaultdict_accumulator(int),
             "cutflow_sr_v": processor.defaultdict_accumulator(int)
         })
@@ -168,65 +169,70 @@ class monojetProcessor(processor.ProcessorABC):
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
         df["minDPhiJetMet"] = define_dphi_jet_met(jets[jets.clean==1], df['MET_phi'], njet=4, ptmin=30)
 
-        print(df["minDPhiJetMet"][df["minDPhiJetMet"]>4])
-        print(df["MET_phi"][df["minDPhiJetMet"]>4][0])
-        print(jets[df["minDPhiJetMet"]>4].phi[0])
-        # Selection
-        # TODO:
-        #   Photons
-        # Naming syntax:
-        # sr = signal region
-        # j = monojet
-        # v = mono-V
-        # -> "sr_j" = Monojet signal region
-        selections = defaultdict(processor.PackedSelection)
-        selections['inclusive'].add("all", np.ones(df.size)==1)
+        selection = processor.PackedSelection()
 
-        selection_name = "common"
-        selections[selection_name].add('filt_met', df['Flag_METFilters'])
-        selections[selection_name].add('trig_met', df[cfg.TRIGGERS.MET])
-        selections[selection_name].add('veto_ele', loose_electrons.counts==0)
-        selections[selection_name].add('veto_muo', loose_muons.counts==0)
-        selections[selection_name].add('veto_photon', photons.counts==0)
-        selections[selection_name].add('veto_tau',taus.counts==0)
-        selections[selection_name].add('veto_b',bjets.counts==0)
+        selection.add('inclusive', np.ones(df.size)==1)
+        selection.add('filt_met', df['Flag_METFilters'])
+        selection.add('trig_met', df[cfg.TRIGGERS.MET])
+        selection.add('veto_ele', loose_electrons.counts==0)
+        selection.add('veto_muo', loose_muons.counts==0)
+        selection.add('veto_photon', photons.counts==0)
+        selection.add('veto_tau',taus.counts==0)
+        selection.add('veto_b',bjets.counts==0)
 
         leadjet_index=jets.pt.argmax()
-        selections[selection_name].add('leadjet_pt_eta', (jets.pt.max() > cfg.SELECTION.SIGNAL.LEADJET.PT) \
+        selection.add('leadjet_pt_eta', (jets.pt.max() > cfg.SELECTION.SIGNAL.LEADJET.PT) \
                                                          & (np.abs(jets.eta[leadjet_index]) < cfg.SELECTION.SIGNAL.LEADJET.ETA).any())
-        selections[selection_name].add('leadjet_id',(jets.tightId[leadjet_index] \
+        selection.add('leadjet_id',(jets.tightId[leadjet_index] \
                                                     & (jets.chf[leadjet_index] >cfg.SELECTION.SIGNAL.LEADJET.CHF) \
                                                     & (jets.nhf[leadjet_index]<cfg.SELECTION.SIGNAL.LEADJET.NHF)).any())
-        selections[selection_name].add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
-        selections[selection_name].add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
-        selections[selection_name].add('met_signal', df['MET_pt']>cfg.SELECTION.SIGNAL.MET)
-
-        selections["sr_v"] = deepcopy(selections["common"])
-
-        selections["sr_j"] = deepcopy(selections["common"])
-        selections["sr_j"].add("veto_vtag", selections["sr_v"].all(*selections["sr_v"].names))
+        selection.add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
+        selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
+        selection.add('met_signal', df['MET_pt']>cfg.SELECTION.SIGNAL.MET)
+        selection.add('tau21', np.ones(df.size)==0)
+        selection.add('veto_vtag', np.ones(df.size)==1)
 
 
-        
-        
+        common_cuts = [
+            'filt_met',
+            'trig_met',
+            'veto_ele',
+            'veto_muo',
+            'veto_photon',
+            'veto_tau',
+            'veto_b',
+            'leadjet_pt_eta',
+            'leadjet_id',
+            'dphijm',
+            'dpfcalo',
+            'met_signal'
+        ]
+        regions = {}
+        regions['inclusive'] = ['inclusive']
+        regions['sr_v'] = common_cuts + ['tau21']
+        regions['sr_j'] = common_cuts + ['veto_vtag']
 
         output = self.accumulator.identity()
 
-        
-        for seltag, selection in selections.items():
+        for region, cuts in regions.items():
 
             # Cutflow plot for signal and control regions
-            if any(x in seltag for x in ["sr", "cr"]):
-                output['cutflow_' + seltag]['all']+=df.size
-                for icut, cutname in enumerate(selection.names):
-                    output['cutflow_' + seltag][cutname] += selection.all(*selection.names[:icut+1]).sum()
+            if any(x in region for x in ["sr", "cr"]):
+                output['cutflow_' + region]['all']+=df.size
+                for icut, cutname in enumerate(cuts):
+                    output['cutflow_' + region][cutname] += selection.all(*cuts[:icut+1]).sum()
 
-            dataset = seltag
-            mask = selection.all(*selection.names)
+            dataset = df['dataset']
 
+            mask = selection.all(*cuts)
+            print(region, mask)
             # Multiplicities
             def fill_mult(name, candidates):
-                output[name].fill(dataset=dataset, multiplicity=candidates[mask].counts)
+                output[name].fill(
+                                  dataset=dataset,
+                                  region=region,
+                                  multiplicity=candidates[mask].counts
+                                  )
 
             fill_mult('jet_mult', jets)
             fill_mult('bjet_mult',bjets)
@@ -238,29 +244,55 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('photon_mult',photons)
 
             # All jets
-            output['jeteta'].fill(dataset=dataset,
-                                    jeteta=jets[mask].eta.flatten())
-            output['jetpt'].fill(dataset=dataset,
-                                    jetpt=jets[mask].pt.flatten())
+            output['jeteta'].fill(
+                                  dataset=dataset,
+                                  region=region,
+                                  jeteta=jets[mask].eta.flatten()
+                                  )
+            output['jetpt'].fill(
+                                 dataset=dataset,
+                                 region=region,
+                                 jetpt=jets[mask].pt.flatten()
+                                 )
 
-            # Leading jet (has to be in acceptance)
-            leadjet_indices = jets[mask].pt.argmax()
-            output['jet0eta'].fill(dataset=dataset,
-                                    jeteta=jets[mask].eta[leadjet_indices].flatten())
-            output['jet0pt'].fill(dataset=dataset,
-                                    jetpt=jets[mask].pt[leadjet_indices].flatten())
+            # Leading jet
+            leadjet_indices = jets.pt.argmax()
+            print(leadjet_indices)
+            print(mask)
+            output['jet0eta'].fill(
+                                   dataset=dataset,
+                                   region=region,
+                                   jeteta=jets[leadjet_indices].eta[mask].flatten()
+                                   )
+            output['jet0pt'].fill(
+                                  dataset=dataset,
+                                  region=region,
+                                  jetpt=jets[leadjet_indices].pt[mask].flatten()
+                                  )
 
             # B tag discriminator
-            output['jetbtag'].fill(dataset=dataset,
-                                    btag=getattr(jets[mask&jet_acceptance], cfg.BTAG.algo).flatten())
+            output['jetbtag'].fill(
+                                   dataset=dataset,
+                                   region=region,
+                                   btag=getattr(jets[mask&jet_acceptance], cfg.BTAG.algo).flatten()
+                                   )
 
             # MET
-            output['dpfcalo'].fill(dataset=dataset,
-                                    dpfcalo=df["dPFCalo"][mask])
-            output['met'].fill(dataset=dataset,
-                                    met=df["MET_pt"][mask])
-            output['dphijm'].fill(dataset=dataset,
-                                    dphi=df["minDPhiJetMet"][mask])
+            output['dpfcalo'].fill(
+                                   dataset=dataset,
+                                   region=region,
+                                   dpfcalo=df["dPFCalo"][mask]
+                                   )
+            output['met'].fill(
+                               dataset=dataset,
+                               region=region,
+                               met=df["MET_pt"][mask]
+                                )
+            output['dphijm'].fill(
+                                  dataset=dataset,
+                                  region=region,
+                                  dphi=df["minDPhiJetMet"][mask]
+                                  )
         return output
 
     def postprocess(self, accumulator):
@@ -312,7 +344,11 @@ def debug_plot_output(output):
             continue
         if name.startswith("cutflow"):
             continue
-        fig, ax, _ = hist.plot1d(output[name],overlay="dataset",overflow='all')
+        fig, ax, _ = hist.plot1d(
+            output[name]. project('dataset'),
+            overlay='region',
+            overflow='all',
+            )
         fig.suptitle(name)
         # ax.set_xscale('log')
         ax.set_yscale('log')
