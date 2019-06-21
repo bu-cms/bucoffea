@@ -14,134 +14,8 @@ os.environ["ENV_FOR_DYNACONF"] = "era2016"
 os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
 from dynaconf import settings as cfg
 
-def setup_candidates(df):
-    muons = JaggedCandidateArray.candidatesfromcounts(
-        df['nMuon'],
-        pt=df['Muon_pt'],
-        eta=df['Muon_eta'],
-        phi=df['Muon_phi'],
-        mass=df['Muon_mass'],
-        charge=df['Muon_charge'],
-        mediumId=df['Muon_mediumId'],
-        iso=df["Muon_pfRelIso04_all"],
-        tightId=df['Muon_tightId']
-    )
-
-    electrons = JaggedCandidateArray.candidatesfromcounts(
-        df['nElectron'],
-        pt=df['Electron_pt'],
-        eta=df['Electron_eta'],
-        phi=df['Electron_phi'],
-        mass=df['Electron_mass'],
-        charge=df['Electron_charge'],
-        looseId=(df['Electron_cutBased']>=1),
-        tightId=(df['Electron_cutBased']==4)
-    )
-    taus = JaggedCandidateArray.candidatesfromcounts(
-        df['nTau'],
-        pt=df['Tau_pt'],
-        eta=df['Tau_eta'],
-        phi=df['Tau_phi'],
-        mass=df['Tau_mass'],
-        decaymode=df['Tau_idDecayModeNewDMs'],
-        clean=df['Tau_cleanmask'],
-        iso=df['Tau_idMVAnewDM2017v2'],
-    )
-
-    taus = taus[ (taus.clean==1) \
-                         & (taus.decaymode) \
-                         & (taus.pt > cfg.TAU.CUTS.PT)\
-                         & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
-                         & ((taus.iso&2)==2)]
-
-    photons = JaggedCandidateArray.candidatesfromcounts(
-        df['nPhoton'],
-        pt=df['Photon_pt'],
-        eta=df['Photon_eta'],
-        phi=df['Photon_phi'],
-        mass=df['Photon_mass'],
-        id=(df['Photon_cutBased']==1) & (df['Photon_electronVeto']==1),
-        clean=df['Photon_cleanmask'],
-    )
-    photons = photons[(photons.clean==1) \
-              & photons.id \
-              & (photons.pt > cfg.PHOTON.CUTS.pt) \
-              & (np.abs(photons.eta) < cfg.PHOTON.CUTS.eta)]
-    jets = JaggedCandidateArray.candidatesfromcounts(
-        df['nJet'],
-        pt=df['Jet_pt'],
-        eta=df['Jet_eta'],
-        phi=df['Jet_phi'],
-        mass=df['Jet_mass'],
-
-        # Jet ID bit mask:
-        # Bit 0 = Loose
-        # Bit 1 = Tight
-        tightId=(df['Jet_jetId']&2) == 2,
-        csvv2=df["Jet_btagCSVV2"],
-        deepcsv=df['Jet_btagDeepB'],
-        # nef=df['Jet_neEmEF'],
-        nhf=df['Jet_neHEF'],
-        chf=df['Jet_chHEF'],
-        clean=df['Jet_cleanmask']
-        # cef=df['Jet_chEmEF'],
-    )
-    jets = jets[jets.clean==1]
-    return jets, muons, electrons, taus, photons
-
-def define_dphi_jet_met(jets, met_phi, njet=4, ptmin=30):
-    """Calculate minimal delta phi between jets and met
-
-    :param jets: Jet candidates to use, must be sorted by pT
-    :type jets: JaggedCandidateArray
-    :param met_phi: MET phi values, one per event
-    :type met_phi: array
-    :param njet: Number of leading jets to consider, defaults to 4
-    :type njet: int, optional
-    """
-
-    # Use the first njet jets with pT > ptmin
-    jets=jets[jets.pt>ptmin]
-    jets = jets[:,:njet]
-
-    dphi = np.abs((jets.phi - met_phi + np.pi) % (2*np.pi)  - np.pi)
-
-    return dphi.min()
-
-def monojet_accumulator():
-    dataset_ax = hist.Cat("dataset", "Primary dataset")
-    region_ax = hist.Cat("region", "Selection region")
-    met_ax = hist.Bin("met", r"$p_{T}^{miss}$ (GeV)", 100, 0, 1000)
-    jet_pt_ax = hist.Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
-    jet_eta_ax = hist.Bin("jeteta", r"$\eta$ (GeV)", 50, -5, 5)
-    dpfcalo_ax = hist.Bin("dpfcalo", r"$1-Calo/PF$", 20, -1, 1)
-    btag_ax = hist.Bin("btag", r"B tag discriminator", 20, 0, 1)
-    multiplicity_ax = hist.Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
-    dphi_ax = hist.Bin("dphi", r"$\Delta\phi$", 50, 0, 3*np.pi)
-
-    Hist = hist.Hist
-    items = {}
-    items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
-    items["jet0pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["jet0eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["jetpt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["jeteta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
-    items["jetbtag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
-    items["jet_mult"] = Hist("Jets", dataset_ax, region_ax, multiplicity_ax)
-    items["bjet_mult"] = Hist("B Jets", dataset_ax, region_ax, multiplicity_ax)
-    items["loose_ele_mult"] = Hist("Loose electrons", dataset_ax, region_ax, multiplicity_ax)
-    items["tight_ele_mult"] = Hist("Tight electrons", dataset_ax, region_ax, multiplicity_ax)
-    items["loose_muo_mult"] = Hist("Loose muons", dataset_ax, region_ax, multiplicity_ax)
-    items["tight_muo_mult"] = Hist("Tight muons", dataset_ax, region_ax, multiplicity_ax)
-    items["tau_mult"] = Hist("Taus", dataset_ax, region_ax, multiplicity_ax)
-    items["photon_mult"] = Hist("Photons", dataset_ax, region_ax, multiplicity_ax)
-    items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
-
-    items["cutflow_sr_j"] = processor.defaultdict_accumulator(int)
-    items["cutflow_sr_v"] = processor.defaultdict_accumulator(int)
-
-    return  processor.dict_accumulator(items)
+from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates
+from bucoffea.helpers import dphi_jet_met
 
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, year="2018"):
@@ -155,7 +29,7 @@ class monojetProcessor(processor.ProcessorABC):
     def process(self, df):
 
         # Lepton candidates
-        jets, muons, electrons, taus, photons = setup_candidates(df)
+        jets, muons, electrons, taus, photons = setup_candidates(df, cfg)
         loose_muons = muons[muons.mediumId & (muons.pt>10) & (muons.iso < 0.25)]
         tight_muons = muons[muons.mediumId & (muons.pt>20) & (muons.iso < 0.15)]
         loose_electrons = electrons[electrons.looseId & (electrons.pt>10)]
@@ -173,7 +47,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
-        df["minDPhiJetMet"] = define_dphi_jet_met(jets[jets.clean==1], df['MET_phi'], njet=4, ptmin=30)
+        df["minDPhiJetMet"] = dphi_jet_met(jets[jets.clean==1], df['MET_phi'], njet=4, ptmin=30)
 
         selection = processor.PackedSelection()
 
@@ -231,7 +105,7 @@ class monojetProcessor(processor.ProcessorABC):
             dataset = df['dataset']
 
             mask = selection.all(*cuts)
-            print(region, mask)
+
             # Multiplicities
             def fill_mult(name, candidates):
                 output[name].fill(
