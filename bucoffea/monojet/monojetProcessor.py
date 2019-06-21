@@ -86,6 +86,7 @@ def setup_candidates(df):
         clean=df['Jet_cleanmask']
         # cef=df['Jet_chEmEF'],
     )
+    jets = jets[jets.clean==1]
     return jets, muons, electrons, taus, photons
 
 def define_dphi_jet_met(jets, met_phi, njet=4, ptmin=30):
@@ -100,7 +101,7 @@ def define_dphi_jet_met(jets, met_phi, njet=4, ptmin=30):
     """
 
     # Use the first njet jets with pT > ptmin
-    jets=jets[jets.pt>30]
+    jets=jets[jets.pt>ptmin]
     jets = jets[:,:njet]
 
     dphi = np.abs((jets.phi - met_phi + np.pi) % (2*np.pi)  - np.pi)
@@ -117,7 +118,7 @@ class monojetProcessor(processor.ProcessorABC):
         dpfcalo_axis = hist.Bin("dpfcalo", r"$1-Calo/PF$", 20, -1, 1)
         btag_axis = hist.Bin("btag", r"B tag discriminator", 20, 0, 1)
         multiplicity_axis = hist.Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
-        dphi_axis = hist.Bin("dphi", r"$\Delta\phi$", 50, 0, 2*np.pi)
+        dphi_axis = hist.Bin("dphi", r"$\Delta\phi$", 50, 0, 3*np.pi)
 
         self._accumulator = processor.dict_accumulator({
             "met" : hist.Hist("Counts", dataset_axis, met_axis),
@@ -146,7 +147,6 @@ class monojetProcessor(processor.ProcessorABC):
 
     def process(self, df):
 
-
         # Lepton candidates
         jets, muons, electrons, taus, photons = setup_candidates(df)
         loose_muons = muons[muons.mediumId & (muons.pt>10) & (muons.iso < 0.25)]
@@ -155,27 +155,22 @@ class monojetProcessor(processor.ProcessorABC):
         tight_electrons = electrons[electrons.tightId & (electrons.pt>20)]
 
         # Jets
-        clean_jets = jets[jets.clean==1]
-        jet_acceptance = (clean_jets.eta<2.4)&(clean_jets.eta>-2.4)
-        jet_fractions = (clean_jets.chf>0.1)&(clean_jets.nhf<0.8)
+        jet_acceptance = (jets.eta<2.4)&(jets.eta>-2.4)
+        jet_fractions = (jets.chf>0.1)&(jets.nhf<0.8)
 
 
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
 
-        jet_btagged = getattr(clean_jets, cfg.BTAG.algo) > btag_cut
-        bjets = clean_jets[jet_acceptance & jet_btagged]
-
-
-        goodjets = clean_jets[jet_fractions \
-                              & jet_acceptance \
-                              & jet_btagged==0 \
-                              & clean_jets.tightId ]
-
+        jet_btagged = getattr(jets, cfg.BTAG.algo) > btag_cut
+        bjets = jets[(jets.clean==1) & jet_acceptance & jet_btagged]
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
-        df["minDPhiJetMet"] = define_dphi_jet_met(goodjets, df['MET_phi'], njet=4, ptmin=30)
+        df["minDPhiJetMet"] = define_dphi_jet_met(jets[jets.clean==1], df['MET_phi'], njet=4, ptmin=30)
 
+        print(df["minDPhiJetMet"][df["minDPhiJetMet"]>4])
+        print(df["MET_phi"][df["minDPhiJetMet"]>4][0])
+        print(jets[df["minDPhiJetMet"]>4].phi[0])
         # Selection
         # TODO:
         #   Photons
@@ -187,25 +182,34 @@ class monojetProcessor(processor.ProcessorABC):
         selections = defaultdict(processor.PackedSelection)
         selections['inclusive'].add("all", np.ones(df.size)==1)
 
-        selections["sr_j"].add('filt_met', df['Flag_METFilters'])
-        selections["sr_j"].add('trig_met', df[cfg.TRIGGERS.MET])
-        selections["sr_j"].add('veto_ele', loose_electrons.counts==0)
-        selections["sr_j"].add('veto_muo', loose_muons.counts==0)
-        selections["sr_j"].add('veto_photon', photons.counts==0)
-        selections["sr_j"].add('veto_tau',taus.counts==0)
-        selections["sr_j"].add('veto_b',bjets.counts==0)
-        selections["sr_j"].add('leadjet_pt_eta', (jets.pt[:,0] > cfg.SELECTION.SIGNAL.LEADJET.PT) \
-                                                 & (np.abs(jets.eta[:,0]) < cfg.SELECTION.SIGNAL.LEADJET.ETA))
-        selections["sr_j"].add('leadjet_id',jets[:,0].tightId)
-        selections["sr_j"].add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
-        selections["sr_j"].add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
-        selections["sr_j"].add('met_signal', df['MET_pt']>cfg.SELECTION.SIGNAL.MET)
+        selection_name = "common"
+        selections[selection_name].add('filt_met', df['Flag_METFilters'])
+        selections[selection_name].add('trig_met', df[cfg.TRIGGERS.MET])
+        selections[selection_name].add('veto_ele', loose_electrons.counts==0)
+        selections[selection_name].add('veto_muo', loose_muons.counts==0)
+        selections[selection_name].add('veto_photon', photons.counts==0)
+        selections[selection_name].add('veto_tau',taus.counts==0)
+        selections[selection_name].add('veto_b',bjets.counts==0)
 
-        selections["sr_v"] = deepcopy(selections["sr_j"])
-        selections["sr_v"].add("tau21", np.ones(df.size)==1)
+        leadjet_index=jets.pt.argmax()
+        selections[selection_name].add('leadjet_pt_eta', (jets.pt.max() > cfg.SELECTION.SIGNAL.LEADJET.PT) \
+                                                         & (np.abs(jets.eta[leadjet_index]) < cfg.SELECTION.SIGNAL.LEADJET.ETA).any())
+        selections[selection_name].add('leadjet_id',(jets.tightId[leadjet_index] \
+                                                    & (jets.chf[leadjet_index] >cfg.SELECTION.SIGNAL.LEADJET.CHF) \
+                                                    & (jets.nhf[leadjet_index]<cfg.SELECTION.SIGNAL.LEADJET.NHF)).any())
+        selections[selection_name].add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
+        selections[selection_name].add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
+        selections[selection_name].add('met_signal', df['MET_pt']>cfg.SELECTION.SIGNAL.MET)
+
+        selections["sr_v"] = deepcopy(selections["common"])
+
+        selections["sr_j"] = deepcopy(selections["common"])
+        selections["sr_j"].add("veto_vtag", selections["sr_v"].all(*selections["sr_v"].names))
+
 
         
         
+
         output = self.accumulator.identity()
 
         
@@ -224,7 +228,7 @@ class monojetProcessor(processor.ProcessorABC):
             def fill_mult(name, candidates):
                 output[name].fill(dataset=dataset, multiplicity=candidates[mask].counts)
 
-            fill_mult('jet_mult', clean_jets)
+            fill_mult('jet_mult', jets)
             fill_mult('bjet_mult',bjets)
             fill_mult('loose_ele_mult',loose_electrons)
             fill_mult('tight_ele_mult',tight_electrons)
@@ -240,14 +244,15 @@ class monojetProcessor(processor.ProcessorABC):
                                     jetpt=jets[mask].pt.flatten())
 
             # Leading jet (has to be in acceptance)
+            leadjet_indices = jets[mask].pt.argmax()
             output['jet0eta'].fill(dataset=dataset,
-                                    jeteta=jets[mask].eta[:,0].flatten())
+                                    jeteta=jets[mask].eta[leadjet_indices].flatten())
             output['jet0pt'].fill(dataset=dataset,
-                                    jetpt=jets[mask].pt[:,0].flatten())
+                                    jetpt=jets[mask].pt[leadjet_indices].flatten())
 
             # B tag discriminator
             output['jetbtag'].fill(dataset=dataset,
-                                    btag=getattr(clean_jets[mask&jet_acceptance], cfg.BTAG.algo).flatten())
+                                    btag=getattr(jets[mask&jet_acceptance], cfg.BTAG.algo).flatten())
 
             # MET
             output['dpfcalo'].fill(dataset=dataset,

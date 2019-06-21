@@ -2,12 +2,14 @@ default:
   test: false
   selection:
     signal:
-      met: 250
+      met: 250    # min
       leadjet:
-        pt: 100
-        eta: 2.4
-      mindphijm : 0.5
-      dpfcalo : 0.4
+        pt: 100   # min
+        eta: 2.4  # max
+        nhf: 0.8  # max
+        chf: 0.1  # min
+      mindphijm : 0.5 # min
+      dpfcalo : 0.4 # max
   tau:
     cuts:
       pt: 18
