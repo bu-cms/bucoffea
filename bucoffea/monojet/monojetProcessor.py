@@ -54,6 +54,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         selection = processor.PackedSelection()
 
+        # Common selection
         selection.add('inclusive', np.ones(df.size)==1)
         selection.add('filt_met', df['Flag_METFilters'])
         selection.add('trig_met', df[cfg.TRIGGERS.MET])
@@ -72,13 +73,14 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
+
+        # Mono-V selection
         selection.add('tau21', np.ones(df.size)==0)
         selection.add('veto_vtag', np.ones(df.size)==1)
 
-        selection.add('one_muon', loose_muons.counts==1)
+        # Dimuon CR
 
         is_tight_mu = loose_muons.tightId & (loose_muons.iso < 0.15) & (loose_muons.pt>20)
-        selection.add('all_muons_tight', is_tight_mu.all())
         selection.add('at_least_one_tight_mu', is_tight_mu.any())
 
         dimuons = loose_muons.distincts()
@@ -87,6 +89,9 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('dimuon_mass', ((dimuons.mass > 60) & (dimuons.mass < 120)).any())
         selection.add('dimuon_charge', (dimuon_charge==0).any())
         selection.add('two_muons', loose_muons.counts==2)
+
+        # Single muon CR
+        selection.add('one_muon', loose_muons.counts==1)
 
         common_cuts = [
             # 'filt_met',
@@ -106,9 +111,12 @@ class monojetProcessor(processor.ProcessorABC):
         regions['inclusive'] = ['inclusive']
         regions['sr_v'] = common_cuts + ['tau21']
         regions['sr_j'] = common_cuts + ['veto_vtag']
-        
-        regions['cr_2m_j'] = ['two_muons','dimuon_mass', 'dimuon_charge'] + common_cuts
+
+        regions['cr_2m_j'] = ['two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
         regions['cr_2m_j'].remove('veto_muo')
+
+        regions['cr_1m_j'] = ['one_muon', 'at_least_one_tight_mu'] + common_cuts
+        regions['cr_1m_j'].remove('veto_muo')
 
 
         # regions['cr_1m'] = common_cuts + ['veto_vtag']
