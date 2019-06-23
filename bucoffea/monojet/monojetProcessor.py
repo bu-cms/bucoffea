@@ -15,7 +15,7 @@ os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
 from dynaconf import settings as cfg
 
 from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates
-from bucoffea.helpers import dphi_jet_met, recoil
+from bucoffea.helpers import min_dphi_jet_met, recoil
 
 
 class monojetProcessor(processor.ProcessorABC):
@@ -48,7 +48,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
-        df["minDPhiJetMet"] = dphi_jet_met(jets[jets.clean==1], df['MET_phi'], njet=4, ptmin=30)
+        df["minDPhiJetMet"] = min_dphi_jet_met(jets[jets.clean==1], df['MET_phi'], njet=4, ptmin=30)
 
         df['recoil_pt'], df['recoil_phi'] = recoil(df['MET_pt'],df['MET_phi'], loose_electrons, loose_muons)
 

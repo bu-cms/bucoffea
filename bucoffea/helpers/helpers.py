@@ -1,6 +1,12 @@
 import numpy as np
 
-def dphi_jet_met(jets, met_phi, njet=4, ptmin=30):
+def dphi(phi1, phi2):
+    """Calculates delta phi between objects"""
+    x = np.abs(phi1 - phi2)
+    sign = x<=np.pi
+    dphi = sign* x + ~sign * (2*np.pi - x)
+    return dphi
+def min_dphi_jet_met(jets, met_phi, njet=4, ptmin=30):
     """Calculate minimal delta phi between jets and met
 
     :param jets: Jet candidates to use, must be sorted by pT
@@ -15,9 +21,7 @@ def dphi_jet_met(jets, met_phi, njet=4, ptmin=30):
     jets=jets[jets.pt>ptmin]
     jets = jets[:,:njet]
 
-    dphi = np.abs((jets.phi - met_phi + np.pi) % (2*np.pi)  - np.pi)
-
-    return dphi.min()
+    return dphi(jets.phi, met_phi).min()
 
 
 
