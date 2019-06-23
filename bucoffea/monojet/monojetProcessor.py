@@ -15,7 +15,8 @@ os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
 from dynaconf import settings as cfg
 
 from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates
-from bucoffea.helpers import dphi_jet_met
+from bucoffea.helpers import dphi_jet_met, recoil
+
 
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, year="2018"):
@@ -49,6 +50,8 @@ class monojetProcessor(processor.ProcessorABC):
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
         df["minDPhiJetMet"] = dphi_jet_met(jets[jets.clean==1], df['MET_phi'], njet=4, ptmin=30)
 
+        df['recoil_pt'], df['recoil_phi'] = recoil(df['MET_pt'],df['MET_phi'], loose_electrons, loose_muons)
+
         selection = processor.PackedSelection()
 
         selection.add('inclusive', np.ones(df.size)==1)
@@ -68,14 +71,26 @@ class monojetProcessor(processor.ProcessorABC):
                                                     & (jets.nhf[leadjet_index]<cfg.SELECTION.SIGNAL.LEADJET.NHF)).any())
         selection.add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
-        selection.add('met_signal', df['MET_pt']>cfg.SELECTION.SIGNAL.MET)
+        selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('tau21', np.ones(df.size)==0)
         selection.add('veto_vtag', np.ones(df.size)==1)
 
+        selection.add('one_muon', loose_muons.counts==1)
+
+        is_tight_mu = loose_muons.tightId & (loose_muons.iso < 0.15) & (loose_muons.pt>20)
+        selection.add('all_muons_tight', is_tight_mu.all())
+        selection.add('at_least_one_tight_mu', is_tight_mu.any())
+
+        dimuons = loose_muons.distincts()
+        dimuon_charge = dimuons.i0['charge'] + dimuons.i1['charge']
+
+        selection.add('dimuon_mass', ((dimuons.mass > 60) & (dimuons.mass < 120)).any())
+        selection.add('dimuon_charge', (dimuon_charge==0).any())
+        selection.add('two_muons', loose_muons.counts==2)
 
         common_cuts = [
-            'filt_met',
-            'trig_met',
+            # 'filt_met',
+            # 'trig_met',
             'veto_ele',
             'veto_muo',
             'veto_photon',
@@ -85,12 +100,18 @@ class monojetProcessor(processor.ProcessorABC):
             'leadjet_id',
             'dphijm',
             'dpfcalo',
-            'met_signal'
+            'recoil'
         ]
         regions = {}
         regions['inclusive'] = ['inclusive']
         regions['sr_v'] = common_cuts + ['tau21']
         regions['sr_j'] = common_cuts + ['veto_vtag']
+        
+        regions['cr_2m_j'] = ['two_muons','dimuon_mass', 'dimuon_charge'] + common_cuts
+        regions['cr_2m_j'].remove('veto_muo')
+
+
+        # regions['cr_1m'] = common_cuts + ['veto_vtag']
 
         output = self.accumulator.identity()
 
@@ -166,11 +187,44 @@ class monojetProcessor(processor.ProcessorABC):
                                region=region,
                                met=df["MET_pt"][mask]
                                 )
+            output['recoil'].fill(
+                               dataset=dataset,
+                               region=region,
+                               recoil=df["recoil_pt"][mask]
+                                )
             output['dphijm'].fill(
                                   dataset=dataset,
                                   region=region,
                                   dphi=df["minDPhiJetMet"][mask]
                                   )
+
+            # Muons
+            output['muon_pt'].fill(
+                dataset=dataset,
+                region=region,
+                pt=muons.pt[mask].flatten(),
+            )
+            output['muon_eta'].fill(
+                dataset=dataset,
+                region=region,
+                eta=muons.eta[mask].flatten(),
+            )
+            # Dimuon
+            output['dimuon_pt'].fill(
+                dataset=dataset,
+                region=region,
+                pt=dimuons.pt[mask].flatten(),
+            )
+            output['dimuon_eta'].fill(
+                dataset=dataset,
+                region=region,
+                eta=dimuons.eta[mask].flatten(),
+            )
+            output['dimuon_mass'].fill(
+                dataset=dataset,
+                region=region,
+                dilepton_mass=dimuons.mass[mask].flatten(),
+            )
         return output
 
     def postprocess(self, accumulator):
@@ -185,8 +239,11 @@ def main():
         # "NonthDM" : [
         #     "./data/24EE25F5-FB54-E911-AB96-40F2E9C6B000.root"
         # ]
-        "TTbarDM" : [
-            "./data/A13AF968-8A88-754A-BE73-7264241D71D5.root"
+        # "TTbarDM" : [
+        #     "./data/A13AF968-8A88-754A-BE73-7264241D71D5.root"
+        # ],
+        'dy_zpt200_m50_mlm_2016_nanov4' : [
+            "./data/dy_zpt200_m50_mlm_2016_nanov4.root"
         ]
     }
 
@@ -214,6 +271,7 @@ def main():
 
 def debug_plot_output(output):
     """Dump all histograms as PDF."""
+    from matplotlib import pyplot as plt
     outdir = "out"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -232,6 +290,7 @@ def debug_plot_output(output):
         ax.set_yscale('log')
         ax.set_ylim(0.1, 1e8)
         fig.savefig(pjoin(outdir, "{}.pdf".format(name)))
+        plt.close(fig)
 
 
 
@@ -239,6 +298,8 @@ def debug_print_cutflows(output):
     """Pretty-print cutflow data to the terminal."""
     import tabulate
     for cutflow_name in [ x for x in output.keys() if x.startswith("cutflow")]:
+        if not len(output[cutflow_name]):
+            continue
         table = []
         print("----")
         print(cutflow_name)

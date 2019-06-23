@@ -12,16 +12,22 @@ def monojet_accumulator():
     dataset_ax = Cat("dataset", "Primary dataset")
     region_ax = Cat("region", "Selection region")
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 100, 0, 1000)
+    recoil_ax = Bin("recoil", r"Recoil (GeV)", 100, 0, 1000)
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     jet_eta_ax = Bin("jeteta", r"$\eta$ (GeV)", 50, -5, 5)
     dpfcalo_ax = Bin("dpfcalo", r"$1-Calo/PF$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
-    dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3*np.pi)
+    dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
+
+    pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
+    eta_ax = Bin("eta", r"$\eta$ (GeV)", 50, -5, 5)
+    dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 100,50,150)
 
     Hist = hist.Hist
     items = {}
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["jet0pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["jet0eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["jetpt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -38,9 +44,28 @@ def monojet_accumulator():
     items["photon_mult"] = Hist("Photons", dataset_ax, region_ax, multiplicity_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
 
-    items["cutflow_sr_j"] = processor.defaultdict_accumulator(int)
-    items["cutflow_sr_v"] = processor.defaultdict_accumulator(int)
+    items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["dimuon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    items["dimuon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["dimuon_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
 
+    items["electron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    items["electron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["dielectron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    items["dielectron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["dielectron_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
+
+    items["cutflow_sr_j"] = processor.defaultdict_accumulator(int)
+    items["cutflow_cr_2m_j"] = processor.defaultdict_accumulator(int)
+    items["cutflow_cr_1m_j"] = processor.defaultdict_accumulator(int)
+    items["cutflow_cr_2e_j"] = processor.defaultdict_accumulator(int)
+    items["cutflow_cr_1e_j"] = processor.defaultdict_accumulator(int)
+    items["cutflow_sr_v"] = processor.defaultdict_accumulator(int)
+    items["cutflow_cr_2m_v"] = processor.defaultdict_accumulator(int)
+    items["cutflow_cr_1m_v"] = processor.defaultdict_accumulator(int)
+    items["cutflow_cr_2e_v"] = processor.defaultdict_accumulator(int)
+    items["cutflow_cr_1e_v"] = processor.defaultdict_accumulator(int)
     return  processor.dict_accumulator(items)
 
 
@@ -76,13 +101,17 @@ def setup_candidates(df, cfg):
         decaymode=df['Tau_idDecayModeNewDMs'],
         clean=df['Tau_cleanmask'],
         iso=df['Tau_idMVAnewDM2017v2'],
+        antimu=df['Tau_idAntiMu'],
+        antiele=df['Tau_idAntiEle'],
     )
 
     taus = taus[ (taus.clean==1) \
                          & (taus.decaymode) \
                          & (taus.pt > cfg.TAU.CUTS.PT)\
                          & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
-                         & ((taus.iso&2)==2)]
+                         & ((taus.iso&2)==2) \
+                         & (taus.antimu>0) \
+                         & (taus.antiele>0)]
 
     photons = JaggedCandidateArray.candidatesfromcounts(
         df['nPhoton'],
@@ -118,3 +147,4 @@ def setup_candidates(df, cfg):
     )
     jets = jets[jets.clean==1]
     return jets, muons, electrons, taus, photons
+

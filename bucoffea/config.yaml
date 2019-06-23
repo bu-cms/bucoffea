@@ -2,7 +2,7 @@ default:
   test: false
   selection:
     signal:
-      met: 250    # min
+      recoil: 250    # min
       leadjet:
         pt: 100   # min
         eta: 2.4  # max
@@ -28,7 +28,7 @@ global:
 era2016:
   triggers:
     met:
-      HLT_PFMET170_NotCleaned
+      HLT_PFMETNoMu120_PFMHTNoMu120_IDTight
   btag:
     algo: deepcsv
     wp: medium
