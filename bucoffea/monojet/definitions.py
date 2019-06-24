@@ -151,3 +151,43 @@ def setup_candidates(df, cfg):
     jets = jets[jets.clean==1]
     return jets, muons, electrons, taus, photons
 
+
+def monojet_regions():
+    common_cuts = [
+        # 'filt_met',
+        # 'trig_met',
+        'veto_ele',
+        'veto_muo',
+        'veto_photon',
+        'veto_tau',
+        'veto_b',
+        'leadjet_pt_eta',
+        'leadjet_id',
+        'dphijm',
+        'dpfcalo',
+        'recoil'
+    ]
+    regions = {}
+    regions['inclusive'] = ['inclusive']
+
+    # Signal regions (v = mono-V, j = mono-jet)
+    regions['sr_v'] = common_cuts + ['tau21']
+    regions['sr_j'] = common_cuts + ['veto_vtag']
+
+    # Dimuon CR
+    regions['cr_2m_j'] = ['two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
+    regions['cr_2m_j'].remove('veto_muo')
+
+    # Single muon CR
+    regions['cr_1m_j'] = ['one_muon', 'at_least_one_tight_mu', 'mt_mu'] + common_cuts
+    regions['cr_1m_j'].remove('veto_muo')
+
+    # Dielectron CR
+    regions['cr_2e_j'] = ['two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'dielectron_charge'] + common_cuts
+    regions['cr_2e_j'].remove('veto_ele')
+
+    # Single electron CR
+    regions['cr_1e_j'] = ['one_electron', 'at_least_one_tight_el', 'mt_el'] + common_cuts
+    regions['cr_1e_j'].remove('veto_ele')
+
+    return regions
