@@ -1,15 +1,12 @@
-from coffea import hist
-from coffea.analysis_objects import JaggedCandidateArray
-import coffea.processor as processor
-from awkward import JaggedArray
+import os
 import numpy as np
 
-import lz4.frame as lz4f
-import cloudpickle
-from copy import deepcopy
-import os
-pjoin = os.path.join
+from coffea import hist
+import coffea.processor as processor
+from coffea.analysis_objects import JaggedCandidateArray
+from coffea.util import load, save
 from collections import defaultdict
+
 os.environ["ENV_FOR_DYNACONF"] = "era2016"
 os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
 from dynaconf import settings as cfg
@@ -90,7 +87,7 @@ class monojetProcessor(processor.ProcessorABC):
         leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
                          & (np.abs(ak4.eta[leadak4_index]) < cfg.SELECTION.SIGNAL.leadak4.ETA).any()
         selection.add('leadak4_pt_eta', leadak4_pt_eta)
-        
+
         selection.add('leadak4_id',(ak4.tightId[leadak4_index] \
                                                     & (ak4.chf[leadak4_index] >cfg.SELECTION.SIGNAL.leadak4.CHF) \
                                                     & (ak4.nhf[leadak4_index]<cfg.SELECTION.SIGNAL.leadak4.NHF)).any())
@@ -107,7 +104,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('leadak8_tau21', ((ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]) < cfg.SELECTION.SIGNAL.LEADAK8.TAU21).any())
         selection.add('leadak8_mass', ((ak8.mass[leadak8_index] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
                                     & (ak8.mass[leadak8_index] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
-        
+
         selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_tau21", "leadak8_mass"))
 
         # Dimuon CR
@@ -137,8 +134,14 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Fill histograms
         weight = df['Generator_weight']
-        regions = monojet_regions()
         output = self.accumulator.identity()
+        dataset = df['dataset']
+
+        # Sum of all weights to use for normalization
+        # TODO: Deal with systematic variations
+        output['sumw'][dataset] += weight.sum()
+
+        regions = monojet_regions()
         for region, cuts in regions.items():
 
             # Cutflow plot for signal and control regions
@@ -147,7 +150,6 @@ class monojetProcessor(processor.ProcessorABC):
                 for icut, cutname in enumerate(cuts):
                     output['cutflow_' + region][cutname] += selection.all(*cuts[:icut+1]).sum()
 
-            dataset = df['dataset']
 
             mask = selection.all(*cuts)
 
@@ -404,9 +406,7 @@ def main():
                                   executor_args={'workers': 4, 'function_args': {'flatten': True}},
                                   chunksize=500000,
                                  )
-    with lz4f.open("hists.cpkl.lz4", mode="wb", compression_level=5) as fout:
-        cloudpickle.dump(output, fout)
-
+    save(output, "monojet.coffea")
     # Debugging / testing output
     debug_plot_output(output)
     debug_print_cutflows(output)
@@ -420,7 +420,7 @@ def debug_plot_output(output):
     for name in output.keys():
         if name.startswith("_"):
             continue
-        if name.startswith("cutflow"):
+        if any([x in name for x in ['sumw','cutflow']]):
             continue
         if np.sum(output[name].values().values()) == 0:
             continue
@@ -433,7 +433,7 @@ def debug_plot_output(output):
         # ax.set_xscale('log')
         ax.set_yscale('log')
         ax.set_ylim(0.1, 1e8)
-        fig.savefig(pjoin(outdir, "{}.pdf".format(name)))
+        fig.savefig(os.path.join(outdir, "{}.pdf".format(name)))
         plt.close(fig)
 
 

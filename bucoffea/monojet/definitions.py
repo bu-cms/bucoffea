@@ -76,6 +76,7 @@ def monojet_accumulator():
             continue
         items[f'cutflow_{region}']  = processor.defaultdict_accumulator(int)
 
+    items['sumw'] = processor.defaultdict_accumulator(float)
     return  processor.dict_accumulator(items)
 
 
