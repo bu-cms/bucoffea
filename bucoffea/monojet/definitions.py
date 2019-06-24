@@ -11,10 +11,15 @@ import numpy as np
 def monojet_accumulator():
     dataset_ax = Cat("dataset", "Primary dataset")
     region_ax = Cat("region", "Selection region")
+
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 100, 0, 1000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 100, 0, 1000)
+
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     jet_eta_ax = Bin("jeteta", r"$\eta$ (GeV)", 50, -5, 5)
+
+    jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
+
     dpfcalo_ax = Bin("dpfcalo", r"$1-Calo/PF$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
@@ -35,6 +40,13 @@ def monojet_accumulator():
     items["ak4pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
+
+    items["ak8pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak8eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak8mass0"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
+    items["ak8pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak8eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak8mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
 
     items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
@@ -196,6 +208,7 @@ def monojet_regions():
     v_cuts = [
         'leadak8_pt_eta',
         'leadak8_id',
+        'leadak8_mass',
     ]
 
     regions = {}

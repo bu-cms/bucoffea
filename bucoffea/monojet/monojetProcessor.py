@@ -158,6 +158,7 @@ class monojetProcessor(processor.ProcessorABC):
                                   multiplicity=candidates[mask].counts
                                   )
 
+            fill_mult('ak8_mult', ak8)
             fill_mult('ak4_mult', ak4)
             fill_mult('bjet_mult',bjets)
             fill_mult('loose_ele_mult',electrons)
@@ -179,7 +180,7 @@ class monojetProcessor(processor.ProcessorABC):
                                  jetpt=ak4[mask].pt.flatten()
                                  )
 
-            # Leading jet
+            # Leading ak4
             leadak4_indices = ak4.pt.argmax()
             output['ak4eta0'].fill(
                                    dataset=dataset,
@@ -191,6 +192,41 @@ class monojetProcessor(processor.ProcessorABC):
                                   region=region,
                                   jetpt=ak4[leadak4_indices].pt[mask].flatten()
                                   )
+
+            # All ak8
+            output['ak8eta'].fill(
+                                  dataset=dataset,
+                                  region=region,
+                                  jeteta=ak8[mask].eta.flatten()
+                                  )
+            output['ak8pt'].fill(
+                                 dataset=dataset,
+                                 region=region,
+                                 jetpt=ak8[mask].pt.flatten()
+                                 )
+            output['ak8mass'].fill(
+                                 dataset=dataset,
+                                 region=region,
+                                 mass=ak8[mask].mass.flatten()
+                                 )
+
+            # Leading ak8
+            leadak8_indices = ak8.pt.argmax()
+            output['ak8eta0'].fill(
+                                   dataset=dataset,
+                                   region=region,
+                                   jeteta=ak8[leadak8_indices].eta[mask].flatten()
+                                   )
+            output['ak8pt0'].fill(
+                                  dataset=dataset,
+                                  region=region,
+                                  jetpt=ak8[leadak8_indices].pt[mask].flatten()
+                                  )
+            output['ak8mass0'].fill(
+                                 dataset=dataset,
+                                 region=region,
+                                 mass=ak8[leadak8_indices].mass[mask].flatten()
+                                 )
 
             # B tag discriminator
             output['ak4btag'].fill(
