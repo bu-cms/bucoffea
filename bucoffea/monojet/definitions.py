@@ -21,6 +21,7 @@ def monojet_accumulator():
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
+    mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$ (GeV)", 50, -5, 5)
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 100,50,150)
 
@@ -46,12 +47,14 @@ def monojet_accumulator():
 
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["muon_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
     items["dimuon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["dimuon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["dimuon_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
 
     items["electron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["electron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["electron_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
     items["dielectron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["dielectron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["dielectron_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
