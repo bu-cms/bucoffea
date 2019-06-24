@@ -4,7 +4,8 @@ from bucoffea.helpers import dasgowrapper
 def get_datasets():
     datasets = {}
     for line in np.loadtxt("../datasets_2016.txt",dtype=str):
-        name, dataset = line.split(" ")
+        name = line[0]
+        dataset = line[1]
         files = dasgowrapper.das_go_query(f"file dataset={dataset}")
         datasets[name] = files.split()
 

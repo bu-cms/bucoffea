@@ -5,7 +5,6 @@ from coffea import processor
 from bucoffea.monojet import monojetProcessor
 import lz4.frame as lz4f
 import cloudpickle
-import htcondor
 from pathlib import Path
 from dataset_definitions import get_datasets
 
@@ -22,7 +21,7 @@ def do_run(args):
                                   treename='Events',
                                   processor_instance=monojetProcessor(),
                                   executor=processor.futures_executor,
-                                  executor_args={'workers': args.j, 'function_args': {'flatten': False}},
+                                  executor_args={'workers': args.jobs, 'function_args': {'flatten': False}},
                                   chunksize=500000,
                                  )
 
@@ -34,6 +33,8 @@ def do_run(args):
 
 def do_submit(args):
     """Submit the analysis to HTCondor."""
+    import htcondor
+
     datasets = get_datasets()
 
     schedd = htcondor.Schedd()
