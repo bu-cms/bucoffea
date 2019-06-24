@@ -175,7 +175,9 @@ class monojetProcessor(processor.ProcessorABC):
             # All ak4
             # This is a workaround to create a weight array of the right dimension
             w_alljets = weight_shape(ak4[mask].eta, weight[mask])
+
             def ezfill(name, **kwargs):
+                """Helper function to make filling easier."""
                 output[name].fill(
                                   dataset=dataset,
                                   region=region,
