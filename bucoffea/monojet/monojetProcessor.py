@@ -30,43 +30,33 @@ class monojetProcessor(processor.ProcessorABC):
     def process(self, df):
 
         # Candidates
+        # Already pre-filtered! Check out setup_candidates for filtering details
         jets, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Muons
-        loose_muons = muons[muons.mediumId \
-                            & (muons.iso < cfg.MUON.CUTS.LOOSE.ISO) \
-                            & (muons.pt > cfg.MUON.CUTS.LOOSE.PT) \
-                            & (np.abs(muons.eta)<cfg.MUON.CUTS.LOOSE.ETA) \
-                            ]
+        is_tight_mu = muons.tightId \
+                      & (muons.iso < cfg.MUON.CUTS.TIGHT.ISO) \
+                      & (muons.pt>cfg.MUON.CUTS.TIGHT.PT) \
+                      & (np.abs(muons.eta)<cfg.MUON.CUTS.TIGHT.ETA)
 
-        is_tight_mu = loose_muons.tightId \
-                      & (loose_muons.iso < cfg.MUON.CUTS.TIGHT.ISO) \
-                      & (loose_muons.pt>cfg.MUON.CUTS.TIGHT.PT) \
-                      & (np.abs(loose_muons.eta)<cfg.MUON.CUTS.TIGHT.ETA)
-
-        dimuons = loose_muons.distincts()
+        dimuons = muons.distincts()
         dimuon_charge = dimuons.i0['charge'] + dimuons.i1['charge']
 
-        df['MT_mu'] = ((loose_muons.counts==1) * mt(loose_muons.pt, loose_muons.phi, df['MET_pt'], df['MET_phi'])).max()
+        df['MT_mu'] = ((muons.counts==1) * mt(muons.pt, muons.phi, df['MET_pt'], df['MET_phi'])).max()
 
         # Electrons
-        loose_electrons = electrons[electrons.looseId \
-                                    & (electrons.pt>cfg.ELECTRON.CUTS.LOOSE.PT) \
-                                    & (np.abs(electrons.eta)<cfg.ELECTRON.CUTS.LOOSE.ETA)
-                                    ]
-        is_tight_electron = loose_electrons.tightId \
-                            & (loose_electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
-                            & (np.abs(loose_electrons.eta) < cfg.ELECTRON.CUTS.TIGHT.ETA)
+        is_tight_electron = electrons.tightId \
+                            & (electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
+                            & (np.abs(electrons.eta) < cfg.ELECTRON.CUTS.TIGHT.ETA)
 
-        dielectrons = loose_electrons.distincts()
+        dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
 
-        df['MT_el'] = ((loose_electrons.counts==1) * mt(loose_electrons.pt, loose_electrons.phi, df['MET_pt'], df['MET_phi'])).max()
+        df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, df['MET_pt'], df['MET_phi'])).max()
 
 
         # Jets
         jet_acceptance = (jets.eta<2.4)&(jets.eta>-2.4)
-        jet_fractions = (jets.chf>0.1)&(jets.nhf<0.8)
 
         # B jets
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
@@ -76,7 +66,7 @@ class monojetProcessor(processor.ProcessorABC):
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
         df["minDPhiJetMet"] = min_dphi_jet_met(jets[jets.clean==1], df['MET_phi'], njet=4, ptmin=30)
-        df['recoil_pt'], df['recoil_phi'] = recoil(df['MET_pt'],df['MET_phi'], loose_electrons, loose_muons)
+        df['recoil_pt'], df['recoil_phi'] = recoil(df['MET_pt'],df['MET_phi'], electrons, muons)
 
         selection = processor.PackedSelection()
 
@@ -84,8 +74,8 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('inclusive', np.ones(df.size)==1)
         selection.add('filt_met', df['Flag_METFilters'])
         selection.add('trig_met', df[cfg.TRIGGERS.MET])
-        selection.add('veto_ele', loose_electrons.counts==0)
-        selection.add('veto_muo', loose_muons.counts==0)
+        selection.add('veto_ele', electrons.counts==0)
+        selection.add('veto_muo', muons.counts==0)
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau',taus.counts==0)
         selection.add('veto_b',bjets.counts==0)
@@ -110,21 +100,21 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
                                     & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
         selection.add('dimuon_charge', (dimuon_charge==0).any())
-        selection.add('two_muons', loose_muons.counts==2)
+        selection.add('two_muons', muons.counts==2)
 
         # Single muon CR
-        selection.add('one_muon', loose_muons.counts==1)
+        selection.add('one_muon', muons.counts==1)
         selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
 
         # Diele CR
-        selection.add('one_electron', loose_electrons.counts==1)
-        selection.add('two_electrons', loose_electrons.counts==2)
+        selection.add('one_electron', electrons.counts==1)
+        selection.add('two_electrons', electrons.counts==2)
         selection.add('at_least_one_tight_el', is_tight_electron.any())
 
         selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
                                         & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
         selection.add('dielectron_charge', (dielectron_charge==0).any())
-        selection.add('two_electrons', loose_electrons.counts==2)
+        selection.add('two_electrons', electrons.counts==2)
 
         # Single Ele CR
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
@@ -155,10 +145,10 @@ class monojetProcessor(processor.ProcessorABC):
 
             fill_mult('jet_mult', jets)
             fill_mult('bjet_mult',bjets)
-            fill_mult('loose_ele_mult',loose_electrons)
-            fill_mult('tight_ele_mult',loose_electrons[is_tight_electron])
-            fill_mult('loose_muo_mult',loose_muons)
-            fill_mult('tight_muo_mult',loose_muons[is_tight_mu])
+            fill_mult('loose_ele_mult',electrons)
+            fill_mult('tight_ele_mult',electrons[is_tight_electron])
+            fill_mult('loose_muo_mult',muons)
+            fill_mult('tight_muo_mult',muons[is_tight_mu])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
 

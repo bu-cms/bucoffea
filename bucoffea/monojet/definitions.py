@@ -84,6 +84,14 @@ def setup_candidates(df, cfg):
         iso=df["Muon_pfRelIso04_all"],
         tightId=df['Muon_tightId']
     )
+    
+    # All muons must be at least loose
+    muons = muons[muons.mediumId \
+                    & (muons.iso < cfg.MUON.CUTS.LOOSE.ISO) \
+                    & (muons.pt > cfg.MUON.CUTS.LOOSE.PT) \
+                    & (np.abs(muons.eta)<cfg.MUON.CUTS.LOOSE.ETA) \
+                    ]
+
 
     electrons = JaggedCandidateArray.candidatesfromcounts(
         df['nElectron'],
@@ -95,6 +103,11 @@ def setup_candidates(df, cfg):
         looseId=(df['Electron_cutBased']>=1),
         tightId=(df['Electron_cutBased']==4)
     )
+    # All electrons must be at least loose
+    electrons = electrons[electrons.looseId \
+                                    & (electrons.pt>cfg.ELECTRON.CUTS.LOOSE.PT) \
+                                    & (np.abs(electrons.eta)<cfg.ELECTRON.CUTS.LOOSE.ETA)
+                                    ]
     taus = JaggedCandidateArray.candidatesfromcounts(
         df['nTau'],
         pt=df['Tau_pt'],
