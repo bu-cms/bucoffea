@@ -30,7 +30,9 @@ class monojetProcessor(processor.ProcessorABC):
     def process(self, df):
 
         # Candidates
-        # Already pre-filtered! Check out setup_candidates for filtering details
+        # Already pre-filtered!
+        # All leptons are at least loose
+        # Check out setup_candidates for filtering details
         jets, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Muons
@@ -56,7 +58,7 @@ class monojetProcessor(processor.ProcessorABC):
 
 
         # Jets
-        jet_acceptance = (jets.eta<2.4)&(jets.eta>-2.4)
+        jet_acceptance = np.abs(jets.eta)<2.4)
 
         # B jets
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
@@ -119,10 +121,10 @@ class monojetProcessor(processor.ProcessorABC):
         # Single Ele CR
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
+
+        # Fill histograms
         regions = monojet_regions()
-
         output = self.accumulator.identity()
-
         for region, cuts in regions.items():
 
             # Cutflow plot for signal and control regions
