@@ -336,12 +336,13 @@ def main():
         # "NonthDM" : [
         #     "./data/24EE25F5-FB54-E911-AB96-40F2E9C6B000.root"
         # ]
-        # "TTbarDM" : [
-        #     "./data/A13AF968-8A88-754A-BE73-7264241D71D5.root"
-        # ],
-        'dy_zpt200_m50_mlm_2016_nanov4' : [
-            "./data/dy_zpt200_m50_mlm_2016_nanov4.root"
-        ]
+        "ttbardm_mmed10000_mchi1_nanoaodv5" : [
+            "./data/ttbardm_mmed10000_mchi1_nanoaodv5/64888F08-B888-ED40-84A5-F321A4BEAC27.root",
+            "./data/ttbardm_mmed10000_mchi1_nanoaodv5/DBCA1773-BF28-E54F-8046-5EB316C2F725.root"
+        ],
+        # 'dy_zpt200_m50_mlm_2016_nanov4' : [
+            # "./data/dy_zpt200_m50_mlm_2016_nanov4.root"
+        # ]
     }
 
     for dataset, filelist in fileset.items():
