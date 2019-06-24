@@ -29,21 +29,19 @@ def monojet_accumulator():
     items = {}
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["jet0pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["jet0eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["jetpt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["jeteta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+
+    items["ak4pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak4eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak4pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak4eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak4btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
+
     items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
-    items["jetbtag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
-    items["jet_mult"] = Hist("Jets", dataset_ax, region_ax, multiplicity_ax)
-    items["bjet_mult"] = Hist("B Jets", dataset_ax, region_ax, multiplicity_ax)
-    items["loose_ele_mult"] = Hist("Loose electrons", dataset_ax, region_ax, multiplicity_ax)
-    items["tight_ele_mult"] = Hist("Tight electrons", dataset_ax, region_ax, multiplicity_ax)
-    items["loose_muo_mult"] = Hist("Loose muons", dataset_ax, region_ax, multiplicity_ax)
-    items["tight_muo_mult"] = Hist("Tight muons", dataset_ax, region_ax, multiplicity_ax)
-    items["tau_mult"] = Hist("Taus", dataset_ax, region_ax, multiplicity_ax)
-    items["photon_mult"] = Hist("Photons", dataset_ax, region_ax, multiplicity_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
+
+    # Multiplicity histograms
+    for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon']:
+        items[f"{cand}_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
 
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
@@ -59,16 +57,13 @@ def monojet_accumulator():
     items["dielectron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["dielectron_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
 
-    items["cutflow_sr_j"] = processor.defaultdict_accumulator(int)
-    items["cutflow_cr_2m_j"] = processor.defaultdict_accumulator(int)
-    items["cutflow_cr_1m_j"] = processor.defaultdict_accumulator(int)
-    items["cutflow_cr_2e_j"] = processor.defaultdict_accumulator(int)
-    items["cutflow_cr_1e_j"] = processor.defaultdict_accumulator(int)
-    items["cutflow_sr_v"] = processor.defaultdict_accumulator(int)
-    items["cutflow_cr_2m_v"] = processor.defaultdict_accumulator(int)
-    items["cutflow_cr_1m_v"] = processor.defaultdict_accumulator(int)
-    items["cutflow_cr_2e_v"] = processor.defaultdict_accumulator(int)
-    items["cutflow_cr_1e_v"] = processor.defaultdict_accumulator(int)
+    # One cutflow counter per region
+    regions = monojet_regions().keys()
+    for region in regions:
+        if region=="inclusive":
+            continue
+        items[f'cutflow_{region}']  = processor.defaultdict_accumulator(int)
+
     return  processor.dict_accumulator(items)
 
 
@@ -84,7 +79,7 @@ def setup_candidates(df, cfg):
         iso=df["Muon_pfRelIso04_all"],
         tightId=df['Muon_tightId']
     )
-    
+
     # All muons must be at least loose
     muons = muons[muons.mediumId \
                     & (muons.iso < cfg.MUON.CUTS.LOOSE.ISO) \
