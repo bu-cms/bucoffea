@@ -14,7 +14,7 @@ os.environ["ENV_FOR_DYNACONF"] = "era2016"
 os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
 from dynaconf import settings as cfg
 
-from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates
+from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, monojet_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt
 
 
@@ -29,8 +29,10 @@ class monojetProcessor(processor.ProcessorABC):
 
     def process(self, df):
 
-        # Lepton candidates
+        # Candidates
         jets, muons, electrons, taus, photons = setup_candidates(df, cfg)
+
+        # Muons
         loose_muons = muons[muons.mediumId \
                             & (muons.iso < cfg.MUON.CUTS.LOOSE.ISO) \
                             & (muons.pt > cfg.MUON.CUTS.LOOSE.PT) \
@@ -42,6 +44,12 @@ class monojetProcessor(processor.ProcessorABC):
                       & (loose_muons.pt>cfg.MUON.CUTS.TIGHT.PT) \
                       & (np.abs(loose_muons.eta)<cfg.MUON.CUTS.TIGHT.ETA)
 
+        dimuons = loose_muons.distincts()
+        dimuon_charge = dimuons.i0['charge'] + dimuons.i1['charge']
+
+        df['MT_mu'] = ((loose_muons.counts==1) * mt(loose_muons.pt, loose_muons.phi, df['MET_pt'], df['MET_phi'])).max()
+
+        # Electrons
         loose_electrons = electrons[electrons.looseId \
                                     & (electrons.pt>cfg.ELECTRON.CUTS.LOOSE.PT) \
                                     & (np.abs(electrons.eta)<cfg.ELECTRON.CUTS.LOOSE.ETA)
@@ -50,20 +58,24 @@ class monojetProcessor(processor.ProcessorABC):
                             & (loose_electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
                             & (np.abs(loose_electrons.eta) < cfg.ELECTRON.CUTS.TIGHT.ETA)
 
+        dielectrons = loose_electrons.distincts()
+        dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
+
+        df['MT_el'] = ((loose_electrons.counts==1) * mt(loose_electrons.pt, loose_electrons.phi, df['MET_pt'], df['MET_phi'])).max()
+
+
         # Jets
         jet_acceptance = (jets.eta<2.4)&(jets.eta>-2.4)
         jet_fractions = (jets.chf>0.1)&(jets.nhf<0.8)
 
-
+        # B jets
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
-
         jet_btagged = getattr(jets, cfg.BTAG.algo) > btag_cut
         bjets = jets[(jets.clean==1) & jet_acceptance & jet_btagged]
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
         df["minDPhiJetMet"] = min_dphi_jet_met(jets[jets.clean==1], df['MET_phi'], njet=4, ptmin=30)
-
         df['recoil_pt'], df['recoil_phi'] = recoil(df['MET_pt'],df['MET_phi'], loose_electrons, loose_muons)
 
         selection = processor.PackedSelection()
@@ -89,31 +101,25 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
 
         # Mono-V selection
+        # TODO
         selection.add('tau21', np.ones(df.size)==0)
         selection.add('veto_vtag', np.ones(df.size)==1)
 
         # Dimuon CR
         selection.add('at_least_one_tight_mu', is_tight_mu.any())
-
-        dimuons = loose_muons.distincts()
-        dimuon_charge = dimuons.i0['charge'] + dimuons.i1['charge']
-
-        selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN) \
-                                    & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
+        selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
+                                    & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
         selection.add('dimuon_charge', (dimuon_charge==0).any())
         selection.add('two_muons', loose_muons.counts==2)
 
         # Single muon CR
         selection.add('one_muon', loose_muons.counts==1)
-        df['MT_mu'] = ((loose_muons.counts==1) * mt(loose_muons.pt, loose_muons.phi, df['MET_pt'], df['MET_phi'])).max()
         selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
 
         # Diele CR
         selection.add('one_electron', loose_electrons.counts==1)
         selection.add('two_electrons', loose_electrons.counts==2)
         selection.add('at_least_one_tight_el', is_tight_electron.any())
-        dielectrons = loose_electrons.distincts()
-        dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
 
         selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
                                         & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
@@ -121,42 +127,9 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('two_electrons', loose_electrons.counts==2)
 
         # Single Ele CR
-        df['MT_el'] = ((loose_electrons.counts==1) * mt(loose_electrons.pt, loose_electrons.phi, df['MET_pt'], df['MET_phi'])).max()
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
-        common_cuts = [
-            # 'filt_met',
-            # 'trig_met',
-            'veto_ele',
-            'veto_muo',
-            'veto_photon',
-            'veto_tau',
-            'veto_b',
-            'leadjet_pt_eta',
-            'leadjet_id',
-            'dphijm',
-            'dpfcalo',
-            'recoil'
-        ]
-        regions = {}
-        regions['inclusive'] = ['inclusive']
-        regions['sr_v'] = common_cuts + ['tau21']
-        regions['sr_j'] = common_cuts + ['veto_vtag']
-
-        regions['cr_2m_j'] = ['two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
-        regions['cr_2m_j'].remove('veto_muo')
-
-        regions['cr_1m_j'] = ['one_muon', 'at_least_one_tight_mu', 'mt_mu'] + common_cuts
-        regions['cr_1m_j'].remove('veto_muo')
-        
-        regions['cr_2e_j'] = ['two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'dielectron_charge'] + common_cuts
-        regions['cr_2e_j'].remove('veto_ele')
-
-        regions['cr_1e_j'] = ['one_electron', 'at_least_one_tight_el', 'mt_el'] + common_cuts
-        regions['cr_1e_j'].remove('veto_ele')
-
-
-        # regions['cr_1m'] = common_cuts + ['veto_vtag']
+        regions = monojet_regions()
 
         output = self.accumulator.identity()
 
@@ -274,6 +247,39 @@ class monojetProcessor(processor.ProcessorABC):
                 dataset=dataset,
                 region=region,
                 dilepton_mass=dimuons.mass[mask].flatten(),
+            )
+
+            # Electrons
+            output['electron_pt'].fill(
+                dataset=dataset,
+                region=region,
+                pt=electrons.pt[mask].flatten(),
+            )
+            output['electron_mt'].fill(
+                dataset=dataset,
+                region=region,
+                mt=df['MT_el'][mask],
+            )
+            output['electron_eta'].fill(
+                dataset=dataset,
+                region=region,
+                eta=electrons.eta[mask].flatten(),
+            )
+            # Dielectron
+            output['dielectron_pt'].fill(
+                dataset=dataset,
+                region=region,
+                pt=dielectrons.pt[mask].flatten(),
+            )
+            output['dielectron_eta'].fill(
+                dataset=dataset,
+                region=region,
+                eta=dielectrons.eta[mask].flatten(),
+            )
+            output['dielectron_mass'].fill(
+                dataset=dataset,
+                region=region,
+                dilepton_mass=dielectrons.mass[mask].flatten(),
             )
         return output
 
