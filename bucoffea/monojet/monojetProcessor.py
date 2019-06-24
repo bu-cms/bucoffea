@@ -158,7 +158,7 @@ class monojetProcessor(processor.ProcessorABC):
                                   multiplicity=candidates[mask].counts
                                   )
 
-            fill_mult('jet_mult', ak4)
+            fill_mult('ak4_mult', ak4)
             fill_mult('bjet_mult',bjets)
             fill_mult('loose_ele_mult',electrons)
             fill_mult('tight_ele_mult',electrons[is_tight_electron])
@@ -168,12 +168,12 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('photon_mult',photons)
 
             # All ak4
-            output['jeteta'].fill(
+            output['ak4eta'].fill(
                                   dataset=dataset,
                                   region=region,
                                   jeteta=ak4[mask].eta.flatten()
                                   )
-            output['jetpt'].fill(
+            output['ak4pt'].fill(
                                  dataset=dataset,
                                  region=region,
                                  jetpt=ak4[mask].pt.flatten()
@@ -181,19 +181,19 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Leading jet
             leadak4_indices = ak4.pt.argmax()
-            output['jet0eta'].fill(
+            output['ak4eta0'].fill(
                                    dataset=dataset,
                                    region=region,
                                    jeteta=ak4[leadak4_indices].eta[mask].flatten()
                                    )
-            output['jet0pt'].fill(
+            output['ak4pt0'].fill(
                                   dataset=dataset,
                                   region=region,
                                   jetpt=ak4[leadak4_indices].pt[mask].flatten()
                                   )
 
             # B tag discriminator
-            output['jetbtag'].fill(
+            output['ak4btag'].fill(
                                    dataset=dataset,
                                    region=region,
                                    btag=getattr(ak4[mask&jet_acceptance], cfg.BTAG.algo).flatten()
@@ -300,12 +300,12 @@ def main():
         # "NonthDM" : [
         #     "./data/24EE25F5-FB54-E911-AB96-40F2E9C6B000.root"
         # ]
-        "TTbarDM" : [
-            "./data/A13AF968-8A88-754A-BE73-7264241D71D5.root"
-        ],
-        # 'dy_zpt200_m50_mlm_2016_nanov4' : [
-        #     "./data/dy_zpt200_m50_mlm_2016_nanov4.root"
-        # ]
+        # "TTbarDM" : [
+        #     "./data/A13AF968-8A88-754A-BE73-7264241D71D5.root"
+        # ],
+        'dy_zpt200_m50_mlm_2016_nanov4' : [
+            "./data/dy_zpt200_m50_mlm_2016_nanov4.root"
+        ]
     }
 
     for dataset, filelist in fileset.items():
