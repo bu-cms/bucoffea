@@ -10,6 +10,19 @@ default:
         chf: 0.1  # min
       mindphijm : 0.5 # min
       dpfcalo : 0.4 # max
+    control:
+      doublemu:
+        mass:
+          min: 60
+          max: 120
+      doubleel:
+        mass:
+          min: 60
+          max: 120
+      singlemu:
+        mt : 160
+      singleel:
+        mt: 160
   tau:
     cuts:
       pt: 18
@@ -18,6 +31,24 @@ default:
     cuts:
       pt: 15
       eta: 2.4
+  muon:
+    cuts:
+      tight:
+        pt : 20
+        eta : 2.4
+        iso : 0.15
+      loose:
+        pt : 10
+        eta : 2.4
+        iso : 0.25
+  electron:
+    cuts:
+      tight:
+        pt : 40
+        eta : 2.4
+      loose:
+        pt : 10
+        eta : 2.4
 env:
   test: false
 
