@@ -2,7 +2,7 @@
 import os
 import argparse
 from coffea import processor
-from bucoffea.processors.monojet import monojetProcessor
+from bucoffea.monojet import monojetProcessor
 import lz4.frame as lz4f
 import cloudpickle
 import htcondor
@@ -21,7 +21,7 @@ def do_run(args):
                                   treename='Events',
                                   processor_instance=monojetProcessor(),
                                   executor=processor.futures_executor,
-                                  executor_args={'workers': 1, 'function_args': {'flatten': True}},
+                                  executor_args={'workers': args.j, 'function_args': {'flatten': False}},
                                   chunksize=500000,
                                  )
 
@@ -40,10 +40,11 @@ def do_submit(args):
         sub = htcondor.Submit({
             "executable": pjoin(str(Path(__file__).absolute().parent), "htcondor_wrap.sh"),
             "getenv" : "true",
-            "arguments": "{} --outpath {} run --dataset {}".format(str(Path(__file__).absolute()), args.outpath, dataset),
+            "arguments": "{} --outpath {} run --dataset {} -j {}".format(str(Path(__file__).absolute()), args.outpath, dataset, args.jobs),
             "Output" : pjoin(args.outpath,"out_{}.txt".format(dataset)),
             "Error" : pjoin(args.outpath,"err_{}.txt".format(dataset)),
-            "log" :pjoin(args.outpath,"log_{}.txt".format(dataset))
+            "log" :pjoin(args.outpath,"log_{}.txt".format(dataset)),
+            "request_cpus" : args.jobs
             })
         with schedd.transaction() as txn:
             print(sub.queue(txn))
@@ -52,6 +53,7 @@ def do_submit(args):
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
     parser.add_argument('--outpath', type=str, help='Path to save output under.')
+    parser.add_argument('--jobs','-j', type=int, help='Number of cores to use / request.')
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
