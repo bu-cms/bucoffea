@@ -33,7 +33,7 @@ class monojetProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        jets, muons, electrons, taus, photons = setup_candidates(df, cfg)
+        ak4, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Muons
         is_tight_mu = muons.tightId \
@@ -57,17 +57,17 @@ class monojetProcessor(processor.ProcessorABC):
         df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, df['MET_pt'], df['MET_phi'])).max()
 
 
-        # Jets
-        jet_acceptance = np.abs(jets.eta)<2.4)
+        # ak4
+        jet_acceptance = np.abs(ak4.eta)<2.4
 
-        # B jets
+        # B ak4
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
-        jet_btagged = getattr(jets, cfg.BTAG.algo) > btag_cut
-        bjets = jets[(jets.clean==1) & jet_acceptance & jet_btagged]
+        jet_btagged = getattr(ak4, cfg.BTAG.algo) > btag_cut
+        bjets = ak4[(ak4.clean==1) & jet_acceptance & jet_btagged]
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
-        df["minDPhiJetMet"] = min_dphi_jet_met(jets[jets.clean==1], df['MET_phi'], njet=4, ptmin=30)
+        df["minDPhiJetMet"] = min_dphi_jet_met(ak4[ak4.clean==1], df['MET_phi'], njet=4, ptmin=30)
         df['recoil_pt'], df['recoil_phi'] = recoil(df['MET_pt'],df['MET_phi'], electrons, muons)
 
         selection = processor.PackedSelection()
@@ -81,21 +81,34 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau',taus.counts==0)
         selection.add('veto_b',bjets.counts==0)
-
-        leadjet_index=jets.pt.argmax()
-        selection.add('leadjet_pt_eta', (jets.pt.max() > cfg.SELECTION.SIGNAL.LEADJET.PT) \
-                                                         & (np.abs(jets.eta[leadjet_index]) < cfg.SELECTION.SIGNAL.LEADJET.ETA).any())
-        selection.add('leadjet_id',(jets.tightId[leadjet_index] \
-                                                    & (jets.chf[leadjet_index] >cfg.SELECTION.SIGNAL.LEADJET.CHF) \
-                                                    & (jets.nhf[leadjet_index]<cfg.SELECTION.SIGNAL.LEADJET.NHF)).any())
         selection.add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
 
+        # AK4 Jet
+        leadak4_index=ak4.pt.argmax()
+        leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
+                         & (np.abs(ak4.eta[leadak4_index]) < cfg.SELECTION.SIGNAL.leadak4.ETA).any()
+        selection.add('leadak4_pt_eta', leadak4_pt_eta)
+        
+        selection.add('leadak4_id',(ak4.tightId[leadak4_index] \
+                                                    & (ak4.chf[leadak4_index] >cfg.SELECTION.SIGNAL.leadak4.CHF) \
+                                                    & (ak4.nhf[leadak4_index]<cfg.SELECTION.SIGNAL.leadak4.NHF)).any())
+
+        # AK8 Jet
+        leadak8_index=ak8.pt.argmax()
+        leadak8_pt_eta = (ak8.pt.max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
+                         & (np.abs(ak8.eta[leadak8_index]) < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
+        selection.add('leadak8_pt_eta', leadak8_pt_eta)
+
+        selection.add('leadak8_id',(ak8.tightId[leadak8_index]).any())
+
         # Mono-V selection
-        # TODO
-        selection.add('tau21', np.ones(df.size)==0)
-        selection.add('veto_vtag', np.ones(df.size)==1)
+        selection.add('leadak8_tau21', ((ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]) < cfg.SELECTION.SIGNAL.LEADAK8.TAU21).any())
+        selection.add('leadak8_mass', ((ak8.mass[leadak8_index] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
+                                    & (ak8.mass[leadak8_index] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
+        
+        selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_tau21", "leadak8_mass"))
 
         # Dimuon CR
         selection.add('at_least_one_tight_mu', is_tight_mu.any())
@@ -145,7 +158,7 @@ class monojetProcessor(processor.ProcessorABC):
                                   multiplicity=candidates[mask].counts
                                   )
 
-            fill_mult('jet_mult', jets)
+            fill_mult('jet_mult', ak4)
             fill_mult('bjet_mult',bjets)
             fill_mult('loose_ele_mult',electrons)
             fill_mult('tight_ele_mult',electrons[is_tight_electron])
@@ -154,36 +167,36 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
 
-            # All jets
+            # All ak4
             output['jeteta'].fill(
                                   dataset=dataset,
                                   region=region,
-                                  jeteta=jets[mask].eta.flatten()
+                                  jeteta=ak4[mask].eta.flatten()
                                   )
             output['jetpt'].fill(
                                  dataset=dataset,
                                  region=region,
-                                 jetpt=jets[mask].pt.flatten()
+                                 jetpt=ak4[mask].pt.flatten()
                                  )
 
             # Leading jet
-            leadjet_indices = jets.pt.argmax()
+            leadak4_indices = ak4.pt.argmax()
             output['jet0eta'].fill(
                                    dataset=dataset,
                                    region=region,
-                                   jeteta=jets[leadjet_indices].eta[mask].flatten()
+                                   jeteta=ak4[leadak4_indices].eta[mask].flatten()
                                    )
             output['jet0pt'].fill(
                                   dataset=dataset,
                                   region=region,
-                                  jetpt=jets[leadjet_indices].pt[mask].flatten()
+                                  jetpt=ak4[leadak4_indices].pt[mask].flatten()
                                   )
 
             # B tag discriminator
             output['jetbtag'].fill(
                                    dataset=dataset,
                                    region=region,
-                                   btag=getattr(jets[mask&jet_acceptance], cfg.BTAG.algo).flatten()
+                                   btag=getattr(ak4[mask&jet_acceptance], cfg.BTAG.algo).flatten()
                                    )
 
             # MET

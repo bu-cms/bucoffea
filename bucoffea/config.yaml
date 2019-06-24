@@ -3,11 +3,18 @@ default:
   selection:
     signal:
       recoil: 250    # min
-      leadjet:
+      leadak4:
         pt: 100   # min
         eta: 2.4  # max
         nhf: 0.8  # max
         chf: 0.1  # min
+      leadak8:
+        pt: 250   # min
+        eta: 2.4  # max
+        mass:
+          min: 65
+          max: 105
+        tau21: 0.5 # min
       mindphijm : 0.5 # min
       dpfcalo : 0.4 # max
     control:
