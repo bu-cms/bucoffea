@@ -15,7 +15,7 @@ os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
 from dynaconf import settings as cfg
 
 from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates
-from bucoffea.helpers import min_dphi_jet_met, recoil
+from bucoffea.helpers import min_dphi_jet_met, recoil, mt
 
 
 class monojetProcessor(processor.ProcessorABC):
@@ -31,10 +31,24 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Lepton candidates
         jets, muons, electrons, taus, photons = setup_candidates(df, cfg)
-        loose_muons = muons[muons.mediumId & (muons.pt>10) & (muons.iso < 0.25)]
-        tight_muons = muons[muons.mediumId & (muons.pt>20) & (muons.iso < 0.15)]
-        loose_electrons = electrons[electrons.looseId & (electrons.pt>10)]
-        tight_electrons = electrons[electrons.tightId & (electrons.pt>20)]
+        loose_muons = muons[muons.mediumId \
+                            & (muons.iso < cfg.MUON.CUTS.LOOSE.ISO) \
+                            & (muons.pt > cfg.MUON.CUTS.LOOSE.PT) \
+                            & (np.abs(muons.eta)<cfg.MUON.CUTS.LOOSE.ETA) \
+                            ]
+
+        is_tight_mu = loose_muons.tightId \
+                      & (loose_muons.iso < cfg.MUON.CUTS.TIGHT.ISO) \
+                      & (loose_muons.pt>cfg.MUON.CUTS.TIGHT.PT) \
+                      & (np.abs(loose_muons.eta)<cfg.MUON.CUTS.TIGHT.ETA)
+
+        loose_electrons = electrons[electrons.looseId \
+                                    & (electrons.pt>cfg.ELECTRON.CUTS.LOOSE.PT) \
+                                    & (np.abs(electrons.eta)<cfg.ELECTRON.CUTS.LOOSE.ETA)
+                                    ]
+        is_tight_electron = loose_electrons.tightId \
+                            & (loose_electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
+                            & (np.abs(loose_electrons.eta) < cfg.ELECTRON.CUTS.TIGHT.ETA)
 
         # Jets
         jet_acceptance = (jets.eta<2.4)&(jets.eta>-2.4)
@@ -79,19 +93,36 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_vtag', np.ones(df.size)==1)
 
         # Dimuon CR
-
-        is_tight_mu = loose_muons.tightId & (loose_muons.iso < 0.15) & (loose_muons.pt>20)
         selection.add('at_least_one_tight_mu', is_tight_mu.any())
 
         dimuons = loose_muons.distincts()
         dimuon_charge = dimuons.i0['charge'] + dimuons.i1['charge']
 
-        selection.add('dimuon_mass', ((dimuons.mass > 60) & (dimuons.mass < 120)).any())
+        selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN) \
+                                    & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
         selection.add('dimuon_charge', (dimuon_charge==0).any())
         selection.add('two_muons', loose_muons.counts==2)
 
         # Single muon CR
         selection.add('one_muon', loose_muons.counts==1)
+        df['MT_mu'] = ((loose_muons.counts==1) * mt(loose_muons.pt, loose_muons.phi, df['MET_pt'], df['MET_phi'])).max()
+        selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
+
+        # Diele CR
+        selection.add('one_electron', loose_electrons.counts==1)
+        selection.add('two_electrons', loose_electrons.counts==2)
+        selection.add('at_least_one_tight_el', is_tight_electron.any())
+        dielectrons = loose_electrons.distincts()
+        dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
+
+        selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
+                                        & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
+        selection.add('dielectron_charge', (dielectron_charge==0).any())
+        selection.add('two_electrons', loose_electrons.counts==2)
+
+        # Single Ele CR
+        df['MT_el'] = ((loose_electrons.counts==1) * mt(loose_electrons.pt, loose_electrons.phi, df['MET_pt'], df['MET_phi'])).max()
+        selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
         common_cuts = [
             # 'filt_met',
@@ -115,8 +146,14 @@ class monojetProcessor(processor.ProcessorABC):
         regions['cr_2m_j'] = ['two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
         regions['cr_2m_j'].remove('veto_muo')
 
-        regions['cr_1m_j'] = ['one_muon', 'at_least_one_tight_mu'] + common_cuts
+        regions['cr_1m_j'] = ['one_muon', 'at_least_one_tight_mu', 'mt_mu'] + common_cuts
         regions['cr_1m_j'].remove('veto_muo')
+        
+        regions['cr_2e_j'] = ['two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'dielectron_charge'] + common_cuts
+        regions['cr_2e_j'].remove('veto_ele')
+
+        regions['cr_1e_j'] = ['one_electron', 'at_least_one_tight_el', 'mt_el'] + common_cuts
+        regions['cr_1e_j'].remove('veto_ele')
 
 
         # regions['cr_1m'] = common_cuts + ['veto_vtag']
@@ -146,9 +183,9 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('jet_mult', jets)
             fill_mult('bjet_mult',bjets)
             fill_mult('loose_ele_mult',loose_electrons)
-            fill_mult('tight_ele_mult',tight_electrons)
+            fill_mult('tight_ele_mult',loose_electrons[is_tight_electron])
             fill_mult('loose_muo_mult',loose_muons)
-            fill_mult('tight_muo_mult',tight_muons)
+            fill_mult('tight_muo_mult',loose_muons[is_tight_mu])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
 
@@ -212,6 +249,11 @@ class monojetProcessor(processor.ProcessorABC):
                 region=region,
                 pt=muons.pt[mask].flatten(),
             )
+            output['muon_mt'].fill(
+                dataset=dataset,
+                region=region,
+                mt=df['MT_mu'][mask],
+            )
             output['muon_eta'].fill(
                 dataset=dataset,
                 region=region,
@@ -247,12 +289,12 @@ def main():
         # "NonthDM" : [
         #     "./data/24EE25F5-FB54-E911-AB96-40F2E9C6B000.root"
         # ]
-        # "TTbarDM" : [
-        #     "./data/A13AF968-8A88-754A-BE73-7264241D71D5.root"
-        # ],
-        'dy_zpt200_m50_mlm_2016_nanov4' : [
-            "./data/dy_zpt200_m50_mlm_2016_nanov4.root"
-        ]
+        "TTbarDM" : [
+            "./data/A13AF968-8A88-754A-BE73-7264241D71D5.root"
+        ],
+        # 'dy_zpt200_m50_mlm_2016_nanov4' : [
+        #     "./data/dy_zpt200_m50_mlm_2016_nanov4.root"
+        # ]
     }
 
     for dataset, filelist in fileset.items():
@@ -287,6 +329,8 @@ def debug_plot_output(output):
         if name.startswith("_"):
             continue
         if name.startswith("cutflow"):
+            continue
+        if np.sum(output[name].values().values()) == 0:
             continue
         fig, ax, _ = hist.plot1d(
             output[name]. project('dataset'),
