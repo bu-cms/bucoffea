@@ -16,8 +16,9 @@ from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape
 
 
 class monojetProcessor(processor.ProcessorABC):
-    def __init__(self, year="2018"):
-        self.year=year
+    def __init__(self, year="2018",blind=True):
+        self._year=year
+        self._blind=blind
         self._accumulator = monojet_accumulator()
 
     @property
@@ -143,6 +144,9 @@ class monojetProcessor(processor.ProcessorABC):
 
         regions = monojet_regions()
         for region, cuts in regions.items():
+            # Blinding
+            if(self._blind and df['dataset'].startswith('data') and region.startswith('sr')):
+                continue
 
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr"]):

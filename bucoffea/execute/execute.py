@@ -7,6 +7,7 @@ import lz4.frame as lz4f
 import cloudpickle
 import htcondor
 from pathlib import Path
+from dataset_definitions import get_datasets
 
 
 
@@ -76,7 +77,6 @@ def main():
 
     args.func(args)
 
-from dataset_definitions import get_datasets
 
 
 if __name__ == "__main__":
