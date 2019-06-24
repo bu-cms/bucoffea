@@ -136,6 +136,7 @@ class monojetProcessor(processor.ProcessorABC):
 
 
         # Fill histograms
+        weight = df['Generator_weight']
         regions = monojet_regions()
         output = self.accumulator.identity()
         for region, cuts in regions.items():
@@ -155,7 +156,8 @@ class monojetProcessor(processor.ProcessorABC):
                 output[name].fill(
                                   dataset=dataset,
                                   region=region,
-                                  multiplicity=candidates[mask].counts
+                                  multiplicity=candidates[mask].counts,
+                                  weight=weight
                                   )
 
             fill_mult('ak8_mult', ak8)
@@ -172,12 +174,14 @@ class monojetProcessor(processor.ProcessorABC):
             output['ak4eta'].fill(
                                   dataset=dataset,
                                   region=region,
-                                  jeteta=ak4[mask].eta.flatten()
+                                  jeteta=ak4[mask].eta.flatten(),
+                                  weight=weight
                                   )
             output['ak4pt'].fill(
                                  dataset=dataset,
                                  region=region,
-                                 jetpt=ak4[mask].pt.flatten()
+                                 jetpt=ak4[mask].pt.flatten(),
+                                 weight=weight
                                  )
 
             # Leading ak4
@@ -185,29 +189,34 @@ class monojetProcessor(processor.ProcessorABC):
             output['ak4eta0'].fill(
                                    dataset=dataset,
                                    region=region,
-                                   jeteta=ak4[leadak4_indices].eta[mask].flatten()
+                                   jeteta=ak4[leadak4_indices].eta[mask].flatten(),
+                                   weight=weight
                                    )
             output['ak4pt0'].fill(
                                   dataset=dataset,
                                   region=region,
-                                  jetpt=ak4[leadak4_indices].pt[mask].flatten()
+                                  jetpt=ak4[leadak4_indices].pt[mask].flatten(),
+                                  weight=weight
                                   )
 
             # All ak8
             output['ak8eta'].fill(
                                   dataset=dataset,
                                   region=region,
-                                  jeteta=ak8[mask].eta.flatten()
+                                  jeteta=ak8[mask].eta.flatten(),
+                                  weight=weight
                                   )
             output['ak8pt'].fill(
                                  dataset=dataset,
                                  region=region,
-                                 jetpt=ak8[mask].pt.flatten()
+                                 jetpt=ak8[mask].pt.flatten(),
+                                 weight=weight
                                  )
             output['ak8mass'].fill(
                                  dataset=dataset,
                                  region=region,
-                                 mass=ak8[mask].mass.flatten()
+                                 mass=ak8[mask].mass.flatten(),
+                                 weight=weight
                                  )
 
             # Leading ak8
@@ -215,46 +224,54 @@ class monojetProcessor(processor.ProcessorABC):
             output['ak8eta0'].fill(
                                    dataset=dataset,
                                    region=region,
-                                   jeteta=ak8[leadak8_indices].eta[mask].flatten()
+                                   jeteta=ak8[leadak8_indices].eta[mask].flatten(),
+                                   weight=weight
                                    )
             output['ak8pt0'].fill(
                                   dataset=dataset,
                                   region=region,
-                                  jetpt=ak8[leadak8_indices].pt[mask].flatten()
+                                  jetpt=ak8[leadak8_indices].pt[mask].flatten(),
+                                  weight=weight
                                   )
             output['ak8mass0'].fill(
                                  dataset=dataset,
                                  region=region,
-                                 mass=ak8[leadak8_indices].mass[mask].flatten()
+                                 mass=ak8[leadak8_indices].mass[mask].flatten(),
+                                 weight=weight
                                  )
 
             # B tag discriminator
             output['ak4btag'].fill(
                                    dataset=dataset,
                                    region=region,
-                                   btag=getattr(ak4[mask&jet_acceptance], cfg.BTAG.algo).flatten()
+                                   btag=getattr(ak4[mask&jet_acceptance], cfg.BTAG.algo).flatten(),
+                                   weight=weight
                                    )
 
             # MET
             output['dpfcalo'].fill(
                                    dataset=dataset,
                                    region=region,
-                                   dpfcalo=df["dPFCalo"][mask]
+                                   dpfcalo=df["dPFCalo"][mask],
+                                   weight=weight
                                    )
             output['met'].fill(
                                dataset=dataset,
                                region=region,
-                               met=df["MET_pt"][mask]
+                               met=df["MET_pt"][mask],
+                               weight=weight
                                 )
             output['recoil'].fill(
                                dataset=dataset,
                                region=region,
-                               recoil=df["recoil_pt"][mask]
+                               recoil=df["recoil_pt"][mask],
+                               weight=weight
                                 )
             output['dphijm'].fill(
                                   dataset=dataset,
                                   region=region,
-                                  dphi=df["minDPhiJetMet"][mask]
+                                  dphi=df["minDPhiJetMet"][mask],
+                                  weight=weight
                                   )
 
             # Muons
@@ -262,32 +279,38 @@ class monojetProcessor(processor.ProcessorABC):
                 dataset=dataset,
                 region=region,
                 pt=muons.pt[mask].flatten(),
+                weight=weight
             )
             output['muon_mt'].fill(
                 dataset=dataset,
                 region=region,
                 mt=df['MT_mu'][mask],
+                weight=weight
             )
             output['muon_eta'].fill(
                 dataset=dataset,
                 region=region,
                 eta=muons.eta[mask].flatten(),
+                weight=weight
             )
             # Dimuon
             output['dimuon_pt'].fill(
                 dataset=dataset,
                 region=region,
                 pt=dimuons.pt[mask].flatten(),
+                weight=weight
             )
             output['dimuon_eta'].fill(
                 dataset=dataset,
                 region=region,
                 eta=dimuons.eta[mask].flatten(),
+                weight=weight
             )
             output['dimuon_mass'].fill(
                 dataset=dataset,
                 region=region,
                 dilepton_mass=dimuons.mass[mask].flatten(),
+                weight=weight
             )
 
             # Electrons
@@ -295,32 +318,38 @@ class monojetProcessor(processor.ProcessorABC):
                 dataset=dataset,
                 region=region,
                 pt=electrons.pt[mask].flatten(),
+                weight=weight
             )
             output['electron_mt'].fill(
                 dataset=dataset,
                 region=region,
                 mt=df['MT_el'][mask],
+                weight=weight
             )
             output['electron_eta'].fill(
                 dataset=dataset,
                 region=region,
                 eta=electrons.eta[mask].flatten(),
+                weight=weight
             )
             # Dielectron
             output['dielectron_pt'].fill(
                 dataset=dataset,
                 region=region,
                 pt=dielectrons.pt[mask].flatten(),
+                weight=weight
             )
             output['dielectron_eta'].fill(
                 dataset=dataset,
                 region=region,
                 eta=dielectrons.eta[mask].flatten(),
+                weight=weight
             )
             output['dielectron_mass'].fill(
                 dataset=dataset,
                 region=region,
                 dilepton_mass=dielectrons.mass[mask].flatten(),
+                weight=weight
             )
         return output
 
