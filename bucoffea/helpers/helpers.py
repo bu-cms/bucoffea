@@ -59,3 +59,8 @@ def recoil(met_pt, met_phi, eles, mus):
     recoil_phi = np.arctan(recoil_y/recoil_x)
 
     return recoil_pt, recoil_phi
+
+
+def weight_shape(values, weight):
+    """Broadcasts weight array to right shape for given values"""
+    return (~np.isnan(values) * weight).flatten()

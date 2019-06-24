@@ -15,7 +15,7 @@ os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
 from dynaconf import settings as cfg
 
 from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, monojet_regions
-from bucoffea.helpers import min_dphi_jet_met, recoil, mt
+from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape
 
 
 class monojetProcessor(processor.ProcessorABC):
@@ -157,7 +157,7 @@ class monojetProcessor(processor.ProcessorABC):
                                   dataset=dataset,
                                   region=region,
                                   multiplicity=candidates[mask].counts,
-                                  weight=weight
+                                  weight=weight[mask]
                                   )
 
             fill_mult('ak8_mult', ak8)
@@ -171,81 +171,91 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('photon_mult',photons)
 
             # All ak4
+            # This is a workaround to create a weight array of the right dimension
+            w_alljets = weight_shape(ak4[mask].eta, weight[mask])
             output['ak4eta'].fill(
                                   dataset=dataset,
                                   region=region,
                                   jeteta=ak4[mask].eta.flatten(),
-                                  weight=weight
+                                  weight=w_alljets
                                   )
             output['ak4pt'].fill(
                                  dataset=dataset,
                                  region=region,
                                  jetpt=ak4[mask].pt.flatten(),
-                                 weight=weight
+                                 weight=w_alljets
                                  )
 
             # Leading ak4
             leadak4_indices = ak4.pt.argmax()
+            w_leadak4 = weight_shape(ak4[leadak4_indices].eta[mask], weight[mask])
+
             output['ak4eta0'].fill(
                                    dataset=dataset,
                                    region=region,
                                    jeteta=ak4[leadak4_indices].eta[mask].flatten(),
-                                   weight=weight
+                                   weight=w_leadak4
                                    )
             output['ak4pt0'].fill(
                                   dataset=dataset,
                                   region=region,
                                   jetpt=ak4[leadak4_indices].pt[mask].flatten(),
-                                  weight=weight
+                                  weight=w_leadak4
                                   )
 
             # All ak8
+            w_allak8 = weight_shape(ak8.eta[mask], weight[mask])
+
             output['ak8eta'].fill(
                                   dataset=dataset,
                                   region=region,
                                   jeteta=ak8[mask].eta.flatten(),
-                                  weight=weight
+                                  weight=w_allak8
                                   )
             output['ak8pt'].fill(
                                  dataset=dataset,
                                  region=region,
                                  jetpt=ak8[mask].pt.flatten(),
-                                 weight=weight
+                                 weight=w_allak8
                                  )
             output['ak8mass'].fill(
                                  dataset=dataset,
                                  region=region,
                                  mass=ak8[mask].mass.flatten(),
-                                 weight=weight
+                                 weight=w_allak8
                                  )
 
             # Leading ak8
             leadak8_indices = ak8.pt.argmax()
+            w_leadak8 = weight_shape(ak8[leadak8_indices].eta[mask], weight[mask])
+
             output['ak8eta0'].fill(
                                    dataset=dataset,
                                    region=region,
                                    jeteta=ak8[leadak8_indices].eta[mask].flatten(),
-                                   weight=weight
+                                   weight=w_leadak8
                                    )
             output['ak8pt0'].fill(
                                   dataset=dataset,
                                   region=region,
                                   jetpt=ak8[leadak8_indices].pt[mask].flatten(),
-                                  weight=weight
+                                  weight=w_leadak8
                                   )
             output['ak8mass0'].fill(
                                  dataset=dataset,
                                  region=region,
                                  mass=ak8[leadak8_indices].mass[mask].flatten(),
-                                 weight=weight
+                                 weight=w_leadak8
                                  )
 
             # B tag discriminator
+            btag = getattr(ak4, cfg.BTAG.ALGO)
+            w_btag = weight_shape(btag[mask], weight[mask])
             output['ak4btag'].fill(
                                    dataset=dataset,
                                    region=region,
-                                   btag=getattr(ak4[mask&jet_acceptance], cfg.BTAG.algo).flatten(),
-                                   weight=weight
+                                   btag=btag[mask].flatten(),
+                                   weight=w_btag
                                    )
 
             # MET
@@ -253,103 +263,108 @@ class monojetProcessor(processor.ProcessorABC):
                                    dataset=dataset,
                                    region=region,
                                    dpfcalo=df["dPFCalo"][mask],
-                                   weight=weight
+                                   weight=weight[mask]
                                    )
             output['met'].fill(
                                dataset=dataset,
                                region=region,
                                met=df["MET_pt"][mask],
-                               weight=weight
+                               weight=weight[mask]
                                 )
             output['recoil'].fill(
                                dataset=dataset,
                                region=region,
                                recoil=df["recoil_pt"][mask],
-                               weight=weight
+                               weight=weight[mask]
                                 )
             output['dphijm'].fill(
                                   dataset=dataset,
                                   region=region,
                                   dphi=df["minDPhiJetMet"][mask],
-                                  weight=weight
+                                  weight=weight[mask]
                                   )
 
             # Muons
+            w_allmu = weight_shape(muons.pt[mask], weight[mask])
             output['muon_pt'].fill(
                 dataset=dataset,
                 region=region,
                 pt=muons.pt[mask].flatten(),
-                weight=weight
+                weight=w_allmu
             )
             output['muon_mt'].fill(
                 dataset=dataset,
                 region=region,
                 mt=df['MT_mu'][mask],
-                weight=weight
+                weight=weight[mask]
             )
             output['muon_eta'].fill(
                 dataset=dataset,
                 region=region,
                 eta=muons.eta[mask].flatten(),
-                weight=weight
+                weight=w_allmu
             )
             # Dimuon
+            w_dimu = weight_shape(dimuons.pt[mask], weight[mask])
+
             output['dimuon_pt'].fill(
                 dataset=dataset,
                 region=region,
                 pt=dimuons.pt[mask].flatten(),
-                weight=weight
+                weight=w_dimu
             )
             output['dimuon_eta'].fill(
                 dataset=dataset,
                 region=region,
                 eta=dimuons.eta[mask].flatten(),
-                weight=weight
+                weight=w_dimu
             )
             output['dimuon_mass'].fill(
                 dataset=dataset,
                 region=region,
                 dilepton_mass=dimuons.mass[mask].flatten(),
-                weight=weight
+                weight=w_dimu
             )
 
             # Electrons
+            w_allel = weight_shape(electrons.pt[mask], weight[mask])
             output['electron_pt'].fill(
                 dataset=dataset,
                 region=region,
                 pt=electrons.pt[mask].flatten(),
-                weight=weight
+                weight=w_allel
             )
             output['electron_mt'].fill(
                 dataset=dataset,
                 region=region,
                 mt=df['MT_el'][mask],
-                weight=weight
+                weight=weight[mask]
             )
             output['electron_eta'].fill(
                 dataset=dataset,
                 region=region,
                 eta=electrons.eta[mask].flatten(),
-                weight=weight
+                weight=w_allel
             )
             # Dielectron
+            w_diel = weight_shape(dielectrons.pt[mask], weight[mask])
             output['dielectron_pt'].fill(
                 dataset=dataset,
                 region=region,
                 pt=dielectrons.pt[mask].flatten(),
-                weight=weight
+                weight=w_diel
             )
             output['dielectron_eta'].fill(
                 dataset=dataset,
                 region=region,
                 eta=dielectrons.eta[mask].flatten(),
-                weight=weight
+                weight=w_diel
             )
             output['dielectron_mass'].fill(
                 dataset=dataset,
                 region=region,
                 dilepton_mass=dielectrons.mass[mask].flatten(),
-                weight=weight
+                weight=w_diel
             )
         return output
 
