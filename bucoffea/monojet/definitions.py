@@ -7,6 +7,7 @@ from coffea.analysis_objects import JaggedCandidateArray
 import coffea.processor as processor
 from awkward import JaggedArray
 import numpy as np
+from bucoffea.helpers import object_overlap
 
 def monojet_accumulator():
     dataset_ax = Cat("dataset", "Primary dataset")
@@ -169,7 +170,7 @@ def setup_candidates(df, cfg):
         # cef=df['Jet_chEmEF'],
     )
 
-    # ak4 = ak4[ak4.clean==1]
+    ak4 = ak4[object_overlap(ak4, muons) & object_overlap(ak4, electrons)]
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
     df['nFatJet'],
