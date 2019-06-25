@@ -58,14 +58,17 @@ class monojetProcessor(processor.ProcessorABC):
         # ak4
         jet_acceptance = np.abs(ak4.eta)<2.4
 
-        # B ak4
+        # B tagged ak4
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
         jet_btagged = getattr(ak4, cfg.BTAG.algo) > btag_cut
-        bjets = ak4[(ak4.clean==1) & jet_acceptance & jet_btagged]
+        bjets = ak4[ \
+             jet_acceptance \
+            & jet_btagged\
+            & (ak4.pt>20)]
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
-        df["minDPhiJetMet"] = min_dphi_jet_met(ak4[ak4.clean==1], df['MET_phi'], njet=4, ptmin=30)
+        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, df['MET_phi'], njet=4, ptmin=30)
         df['recoil_pt'], df['recoil_phi'] = recoil(df['MET_pt'],df['MET_phi'], electrons, muons)
 
         selection = processor.PackedSelection()
@@ -263,6 +266,9 @@ def main():
             "./data/ttbardm_mmed10000_mchi1_nanoaodv5/64888F08-B888-ED40-84A5-F321A4BEAC27.root",
             "./data/ttbardm_mmed10000_mchi1_nanoaodv5/DBCA1773-BF28-E54F-8046-5EB316C2F725.root"
         ],
+        # "data_met_run2016c_v4" : [
+        #     "./data/data_met_run2016c_v4.root"
+        # ]
         # 'dy_zpt200_m50_mlm_2016_nanov4' : [
             # "./data/dy_zpt200_m50_mlm_2016_nanov4.root"
         # ]
@@ -285,7 +291,7 @@ def main():
                                  )
     save(output, "monojet.coffea")
     # Debugging / testing output
-    debug_plot_output(output)
+    # debug_plot_output(output)
     debug_print_cutflows(output)
 
 def debug_plot_output(output):
@@ -318,7 +324,7 @@ def debug_plot_output(output):
 def debug_print_cutflows(output):
     """Pretty-print cutflow data to the terminal."""
     import tabulate
-    for cutflow_name in [ x for x in output.keys() if x.startswith("cutflow")]:
+    for cutflow_name in [ x for x in output.keys() if x.startswith("cutflow_sr_j")]:
         if not len(output[cutflow_name]):
             continue
         table = []
