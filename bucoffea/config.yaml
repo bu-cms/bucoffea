@@ -36,8 +36,12 @@ default:
       eta: 2.3
   photon:
     cuts:
-      pt: 15
-      eta: 2.5
+      loose:
+        pt: 15
+        eta: 2.5
+      tight:
+        pt: 175
+        eta: 2.5
   muon:
     cuts:
       tight:

@@ -130,11 +130,13 @@ def setup_candidates(df, cfg):
         antiele=df['Tau_idAntiEle'],
     )
 
-    taus = taus[ (taus.clean==1) \
+
+    taus = taus[ object_overlap(taus, muons) \
+                 & object_overlap(taus, electrons) \
                          & (taus.decaymode) \
                          & (taus.pt > cfg.TAU.CUTS.PT)\
                          & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
-                         & ((taus.iso&1)==1) \
+                         & ((taus.iso&2)==2) \
                          & ((taus.antimu&1)==1) \
                          & ((taus.antiele&1)==1) ]
 
@@ -144,12 +146,13 @@ def setup_candidates(df, cfg):
         eta=df['Photon_eta'],
         phi=df['Photon_phi'],
         mass=df['Photon_mass'],
-        id=(df['Photon_cutBased']>=1) & (df['Photon_electronVeto']==1),
+        looseId=(df['Photon_cutBased']>=1) & df['Photon_electronVeto'],
+        mediumId=(df['Photon_cutBased']>=2) & df['Photon_electronVeto'],
         clean=df['Photon_cleanmask'],
     )
-    photons = photons[photons.id \
-              & (photons.pt > cfg.PHOTON.CUTS.pt) \
-              & (np.abs(photons.eta) < cfg.PHOTON.CUTS.eta)]
+    photons = photons[photons.looseId \
+              & (photons.pt > cfg.PHOTON.CUTS.LOOSE.pt) \
+              & (np.abs(photons.eta) < cfg.PHOTON.CUTS.LOOSE.eta)]
 
     ak4 = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'],
