@@ -61,10 +61,9 @@ class monojetProcessor(processor.ProcessorABC):
         # B tagged ak4
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
         jet_btagged = getattr(ak4, cfg.BTAG.algo) > btag_cut
-        bjets = ak4[ \
-             jet_acceptance \
+        bjets = ak4[ jet_acceptance \
             & jet_btagged\
-            & (ak4.pt>15)]
+            & (ak4.pt>20)]
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
@@ -81,7 +80,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_muo', muons.counts==0)
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', taus.counts==0)
-        selection.add('veto_b',np.ones(df.size)==1) #bjets.counts==0)
+        selection.add('veto_b', bjets.counts==0)
         selection.add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
@@ -149,7 +148,7 @@ class monojetProcessor(processor.ProcessorABC):
         isdata = dataset.startswith("data_")
 
         if isdata:
-            wight = np.ones(df.size)
+            weight = np.ones(df.size)
         else:
             weight = df['Generator_weight']
 

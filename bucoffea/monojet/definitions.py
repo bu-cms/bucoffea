@@ -123,22 +123,17 @@ def setup_candidates(df, cfg):
         eta=df['Tau_eta'],
         phi=df['Tau_phi'],
         mass=df['Tau_mass'],
-        decaymode=df['Tau_idDecayModeNewDMs'],
+        decaymode=df['Tau_idDecayModeNewDMs'] & df['Tau_idDecayMode'],
         clean=df['Tau_cleanmask'],
         iso=df['Tau_idMVAnewDM2017v2'],
-        antimu=df['Tau_idAntiMu'],
-        antiele=df['Tau_idAntiEle'],
     )
 
-
     taus = taus[ object_overlap(taus, muons) \
-                 & object_overlap(taus, electrons) \
-                         & (taus.decaymode) \
-                         & (taus.pt > cfg.TAU.CUTS.PT)\
-                         & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
-                         & ((taus.iso&2)==2) \
-                         & ((taus.antimu&1)==1) \
-                         & ((taus.antiele&1)==1) ]
+                & object_overlap(taus, electrons) \
+                & (taus.decaymode) \
+                & (taus.pt > cfg.TAU.CUTS.PT)\
+                & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
+                & ((taus.iso&4)==4)]
 
     photons = JaggedCandidateArray.candidatesfromcounts(
         df['nPhoton'],
