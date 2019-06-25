@@ -64,3 +64,21 @@ def recoil(met_pt, met_phi, eles, mus):
 def weight_shape(values, weight):
     """Broadcasts weight array to right shape for given values"""
     return (~np.isnan(values) * weight).flatten()
+
+def object_overlap(toclean, cleanagainst, dr=0.4):
+    """Generate a mask to use for overlap removal
+
+    :param toclean: Candidates that should be cleaned (lower priority candidats)
+    :type toclean: JaggedCandidateArray
+    :param cleanagainst: Candidates that should be cleaned against (higher priority)
+    :type cleanagainst: JaggedCandidateArray
+    :param dr: Delta R parameter, defaults to 0.4
+    :type dr: float, optional
+    :return: Mask to select non-overlapping candidates in the collection to be cleaned
+    :rtype: JaggedArray
+    """
+    comb_phi = toclean.phi.cross(cleanagainst.phi, nested=True)
+    comb_eta = toclean.eta.cross(cleanagainst.eta, nested=True)
+    delta_r = np.hypot( dphi(comb_phi.i0, comb_phi.i1), comb_eta.i0-comb_eta.i1)
+
+    return delta_r.min() > dr
