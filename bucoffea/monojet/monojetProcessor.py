@@ -64,7 +64,7 @@ class monojetProcessor(processor.ProcessorABC):
         bjets = ak4[ \
              jet_acceptance \
             & jet_btagged\
-            & (ak4.pt>20)]
+            & (ak4.pt>15)]
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
