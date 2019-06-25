@@ -52,10 +52,10 @@ default:
     cuts:
       tight:
         pt : 40
-        eta : 2.4
+        eta : 2.5
       loose:
         pt : 10
-        eta : 2.4
+        eta : 2.5
 env:
   test: false
 
