@@ -81,7 +81,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_muo', muons.counts==0)
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', np.ones(df.size)==1)#taus.counts==0)
-        selection.add('veto_b',bjets.counts==0)
+        selection.add('veto_b',np.ones(df.size)==1) #bjets.counts==0)
         selection.add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
