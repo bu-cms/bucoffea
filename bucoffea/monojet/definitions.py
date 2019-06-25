@@ -134,7 +134,7 @@ def setup_candidates(df, cfg):
                          & (taus.decaymode) \
                          & (taus.pt > cfg.TAU.CUTS.PT)\
                          & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
-                         & ((taus.iso&4)==4) \
+                         & ((taus.iso&1)==1) \
                          & ((taus.antimu&1)==1) \
                          & ((taus.antiele&1)==1) ]
 
