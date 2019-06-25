@@ -245,4 +245,11 @@ def monojet_regions():
     regions['cr_1e_j'] =  cr_1e_cuts + j_cuts
     regions['cr_1e_v'] =  cr_1e_cuts + v_cuts
 
+    # Photon CR
+    cr_g_cuts = ['one_photon', 'at_least_one_tight_photon'] + common_cuts
+    cr_g_cuts.remove('veto_photon')
+
+    regions['cr_g_j'] = cr_g_cuts + j_cuts
+    regions['cr_g_v'] = cr_g_cuts + v_cuts
+
     return regions

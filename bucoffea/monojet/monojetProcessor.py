@@ -135,6 +135,13 @@ class monojetProcessor(processor.ProcessorABC):
         # Single Ele CR
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
+        # Photon CR
+        is_tight_photon = photons.mediumId \
+                         & (photons.pt > cfg.PHOTON.TIGHT.PT) \
+                         & (np.abs(photons.eta) < cfg.PHOTON.TIGHT.ETA)
+
+        selection.add('one_photon', photons.counts==1)
+        selection.add('at_least_one_tight_photon', is_tight_photon.any())
 
         # Fill histograms
         weight = df['Generator_weight']
