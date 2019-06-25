@@ -143,11 +143,10 @@ def setup_candidates(df, cfg):
         eta=df['Photon_eta'],
         phi=df['Photon_phi'],
         mass=df['Photon_mass'],
-        id=(df['Photon_cutBased']==1) & (df['Photon_electronVeto']==1),
+        id=(df['Photon_cutBased']>=1) & (df['Photon_electronVeto']==1),
         clean=df['Photon_cleanmask'],
     )
-    photons = photons[(photons.clean==1) \
-              & photons.id \
+    photons = photons[photons.id \
               & (photons.pt > cfg.PHOTON.CUTS.pt) \
               & (np.abs(photons.eta) < cfg.PHOTON.CUTS.eta)]
     ak4 = JaggedCandidateArray.candidatesfromcounts(
@@ -170,7 +169,7 @@ def setup_candidates(df, cfg):
         # cef=df['Jet_chEmEF'],
     )
 
-    ak4 = ak4[ak4.clean==1]
+    # ak4 = ak4[ak4.clean==1]
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
     df['nFatJet'],
