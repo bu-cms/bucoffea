@@ -68,13 +68,17 @@ era2016:
     met:
       HLT_PFMETNoMu120_PFMHTNoMu120_IDTight
   btag:
-    algo: deepcsv
+    algo: csvv2
     wp: medium
     cuts:
       deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
         loose : 0.2217
         medium: 0.6321
         tight: 0.8953
+      csvv2:
+        loose:  0.5426
+        medium: 0.8484
+        tight: 0.9535
 
 era2017:
   triggers:
