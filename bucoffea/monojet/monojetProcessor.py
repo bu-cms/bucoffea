@@ -62,8 +62,8 @@ class monojetProcessor(processor.ProcessorABC):
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
         jet_btagged = getattr(ak4, cfg.BTAG.algo) > btag_cut
         bjets = ak4[ jet_acceptance \
-            & jet_btagged\
-            & (ak4.pt>20)]
+                     & jet_btagged \
+                     & (ak4.pt>20) ]
 
         # MET
         df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
