@@ -89,13 +89,13 @@ def setup_candidates(df, cfg):
         phi=df['Muon_phi'],
         mass=df['Muon_mass'],
         charge=df['Muon_charge'],
-        mediumId=df['Muon_mediumId'],
+        looseId=df['Muon_looseId'],
         iso=df["Muon_pfRelIso04_all"],
         tightId=df['Muon_tightId']
     )
 
     # All muons must be at least loose
-    muons = muons[muons.mediumId \
+    muons = muons[muons.looseId \
                     & (muons.iso < cfg.MUON.CUTS.LOOSE.ISO) \
                     & (muons.pt > cfg.MUON.CUTS.LOOSE.PT) \
                     & (np.abs(muons.eta)<cfg.MUON.CUTS.LOOSE.ETA) \
