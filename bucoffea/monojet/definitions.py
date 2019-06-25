@@ -150,23 +150,20 @@ def setup_candidates(df, cfg):
     photons = photons[photons.id \
               & (photons.pt > cfg.PHOTON.CUTS.pt) \
               & (np.abs(photons.eta) < cfg.PHOTON.CUTS.eta)]
+
     ak4 = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'],
         pt=df['Jet_pt'],
         eta=df['Jet_eta'],
         phi=df['Jet_phi'],
         mass=df['Jet_mass'],
-
-        # Jet ID bit mask:
-        # Bit 0 = Loose
-        # Bit 1 = Tight
-        tightId=(df['Jet_jetId']&2) == 2,
+        tightId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight
         csvv2=df["Jet_btagCSVV2"],
         deepcsv=df['Jet_btagDeepB'],
         # nef=df['Jet_neEmEF'],
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
-        clean=df['Jet_cleanmask']
+        # clean=df['Jet_cleanmask']
         # cef=df['Jet_chEmEF'],
     )
 
