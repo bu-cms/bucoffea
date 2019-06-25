@@ -144,9 +144,14 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('at_least_one_tight_photon', is_tight_photon.any())
 
         # Fill histograms
-        weight = df['Generator_weight']
         output = self.accumulator.identity()
         dataset = df['dataset']
+        isdata = dataset.startswith("data_")
+
+        if isdata:
+            wight = np.ones(df.size)
+        else:
+            weight = df['Generator_weight']
 
         # Sum of all weights to use for normalization
         # TODO: Deal with systematic variations
