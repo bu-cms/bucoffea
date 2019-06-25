@@ -109,8 +109,8 @@ def setup_candidates(df, cfg):
         phi=df['Electron_phi'],
         mass=df['Electron_mass'],
         charge=df['Electron_charge'],
-        looseId=(df['Electron_cutBased']>=1),
-        tightId=(df['Electron_cutBased']==4)
+        looseId=(df['Electron_cutBased_Sum16']>=1),
+        tightId=(df['Electron_cutBased_Sum16']==4)
     )
     # All electrons must be at least loose
     electrons = electrons[electrons.looseId \
