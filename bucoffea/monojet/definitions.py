@@ -157,6 +157,7 @@ def setup_candidates(df, cfg):
         eta=df['Jet_eta'],
         phi=df['Jet_phi'],
         mass=df['Jet_mass'],
+        looseId=(df['Jet_jetId']&1) == 1, # bitmask: 1 = loose, 2 = tight
         tightId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight
         csvv2=df["Jet_btagCSVV2"],
         deepcsv=df['Jet_btagDeepB'],
@@ -167,7 +168,7 @@ def setup_candidates(df, cfg):
         # cef=df['Jet_chEmEF'],
     )
 
-    ak4 = ak4[object_overlap(ak4, muons) & object_overlap(ak4, electrons)]
+    ak4 = ak4[ak4.looseId & object_overlap(ak4, muons) & object_overlap(ak4, electrons)]
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
     df['nFatJet'],
