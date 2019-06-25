@@ -33,11 +33,11 @@ default:
   tau:
     cuts:
       pt: 18
-      eta: 2.4
+      eta: 2.3
   photon:
     cuts:
       pt: 15
-      eta: 2.4
+      eta: 2.5
   muon:
     cuts:
       tight:
