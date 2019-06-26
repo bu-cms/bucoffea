@@ -60,6 +60,12 @@ default:
       loose:
         pt : 10
         eta : 2.5
+        dxy: # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
+          barrel: 0.05
+          endcap: 0.10
+        dz: # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
+          barrel: 0.10
+          endcap: 0.20
   files:
     theory:
       w: data/sf/theory/merged_kfactors_wjets.root

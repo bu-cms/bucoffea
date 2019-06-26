@@ -112,13 +112,28 @@ def setup_candidates(df, cfg):
         mass=df['Electron_mass'],
         charge=df['Electron_charge'],
         looseId=(df['Electron_cutBased_Sum16']>=1),
-        tightId=(df['Electron_cutBased_Sum16']==4)
+        tightId=(df['Electron_cutBased_Sum16']==4),
+        dxy=np.abs(df['Electron_dxy']),
+        dz=np.abs(df['Electron_dz']),
+        barrel=np.abs(df['Electron_eta'] < 1.479)
     )
     # All electrons must be at least loose
+    pass_dxy = (electrons.barrel & (electrons.dxy < cfg.ELECTRON.CUTS.LOOSE.DXY.BARREL)) \
+    | (~electrons.barrel & (electrons.dxy < cfg.ELECTRON.CUTS.LOOSE.DXY.ENDCAP))
+
+    pass_dz = (electrons.barrel & (electrons.dz < cfg.ELECTRON.CUTS.LOOSE.DZ.BARREL)) \
+    | (~electrons.barrel & (electrons.dz < cfg.ELECTRON.CUTS.LOOSE.DZ.ENDCAP))
+
     electrons = electrons[electrons.looseId \
                                     & (electrons.pt>cfg.ELECTRON.CUTS.LOOSE.PT) \
-                                    & (np.abs(electrons.eta)<cfg.ELECTRON.CUTS.LOOSE.ETA)
+                                    & (np.abs(electrons.eta)<cfg.ELECTRON.CUTS.LOOSE.ETA) \
+                                    & pass_dxy \
+                                    & pass_dz
                                     ]
+
+
+
+
     taus = JaggedCandidateArray.candidatesfromcounts(
         df['nTau'],
         pt=df['Tau_pt'],
