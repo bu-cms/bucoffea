@@ -264,3 +264,25 @@ def monojet_regions():
     regions['cr_g_v'] = cr_g_cuts + v_cuts
 
     return regions
+
+
+
+from coffea.lookup_tools import extractor
+
+def monojet_evaluator(cfg):
+    """Initiates the SF evaluator and populates it with the right values
+
+    :param cfg: Configuration
+    :type cfg: DynaConf object
+    :return: Ready-to-use SF evaluator
+    :rtype: coffea.lookup_tools.evaluator
+    """
+    ext = extractor()
+
+    for sfname, definition in cfg.SF.items():
+        ext.add_weight_sets([f"{sfname} {definition['histogram']} {definition['file']}"])
+
+    ext.finalize()
+
+    evaluator = ext.make_evaluator()
+    return evaluator

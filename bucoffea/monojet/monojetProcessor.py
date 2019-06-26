@@ -8,10 +8,10 @@ from coffea.util import load, save
 from collections import defaultdict
 
 
-os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
 from dynaconf import settings as cfg
 
-from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, monojet_regions
+
+from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, monojet_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape
 
 
@@ -20,7 +20,12 @@ class monojetProcessor(processor.ProcessorABC):
         self._year=year
         self._blind=blind
         self._accumulator = monojet_accumulator()
-        os.environ["ENV_FOR_DYNACONF"] = f"era{year}"
+        # os.environ["ENV_FOR_DYNACONF"] = f"era{self._year}"
+        # os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
+        cfg.SETTINGS_FILE_FOR_DYNACONF = os.path.abspath("config.yaml")
+        cfg.ENV_FOR_DYNACONF = f"era{self._year}"
+        cfg.reload()
+        self._evaluator = monojet_evaluator(cfg)
     @property
     def accumulator(self):
         return self._accumulator
@@ -34,7 +39,7 @@ class monojetProcessor(processor.ProcessorABC):
         ak4, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Muons
-        is_tight_mu = muons.tightId \
+        is_tight_muon = muons.tightId \
                       & (muons.iso < cfg.MUON.CUTS.TIGHT.ISO) \
                       & (muons.pt>cfg.MUON.CUTS.TIGHT.PT) \
                       & (np.abs(muons.eta)<cfg.MUON.CUTS.TIGHT.ETA)
@@ -111,7 +116,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_tau21", "leadak8_mass"))
 
         # Dimuon CR
-        selection.add('at_least_one_tight_mu', is_tight_mu.any())
+        selection.add('at_least_one_tight_mu', is_tight_muon.any())
         selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
                                     & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
         selection.add('dimuon_charge', (dimuon_charge==0).any())
@@ -152,6 +157,16 @@ class monojetProcessor(processor.ProcessorABC):
         else:
             weight = df['Generator_weight']
 
+            weight = weight * self._evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].eta).prod()
+            weight = weight * self._evaluator['muon_id_loose']( muons[~is_tight_muon].pt, muons[~is_tight_muon].eta).prod()
+
+            weight = weight * self._evaluator['ele_id_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod()
+            weight = weight * self._evaluator['ele_id_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod()
+
+            weight = weight * self._evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
+
+
+
         # Sum of all weights to use for normalization
         # TODO: Deal with systematic variations
         output['sumw'][dataset] += weight.sum()
@@ -191,7 +206,7 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('loose_ele_mult',electrons)
             fill_mult('tight_ele_mult',electrons[is_tight_electron])
             fill_mult('loose_muo_mult',muons)
-            fill_mult('tight_muo_mult',muons[is_tight_mu])
+            fill_mult('tight_muo_mult',muons[is_tight_muon])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
 
@@ -285,15 +300,17 @@ def main():
         # "a2HDM" : ["./data/a2HDM_monoz_mH900_ma200_2017_v5.root"]
         # "monozvec18" : ["./data/monozll_vec_mmed_1500_mxd_1_2017_v5.root"],
         # "wz_p8_2018" : ["./data/wz_p8_2018_v5.root"],
-        "wz_p8_2017" : ["./data/tt_amc_2017_v5.root"],
-        # "wz_p8_2018" : ["./data/tt_amc_2018_v5.root"],
+        # "wz_p8_2017" : ["./data/tt_amc_2017_v5.root"],
+        "wz_p8_2018" : ["./data/tt_amc_2018_v5.root"],
         # "monozvec17" : ["./data/monozll_vec_mmed_1500_mxd_1_2018_v5"]
         # "data_met_run2016c_v4" : [
         #     "./data/data_met_run2016c_v4.root"
         # ]
         # 'dy_zpt200_m50_mlm_2016_nanov4' : [
             # "./data/dy_zpt200_m50_mlm_2016_nanov4.root"
-        # ]
+        # ],
+        # "tt_amc_2017_v5" : ["./data/tt_amc_2017_v5.root"],
+        # "tt_amc_2018_v5" : ["./data/tt_amc_2018_v5.root"],
     }
 
     for dataset, filelist in fileset.items():
@@ -306,7 +323,7 @@ def main():
 
     output = processor.run_uproot_job(fileset,
                                   treename='Events',
-                                  processor_instance=monojetProcessor(2017),
+                                  processor_instance=monojetProcessor(2018),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': 4, 'function_args': {'flatten': True}},
                                   chunksize=500000,
@@ -330,8 +347,8 @@ def debug_plot_output(output):
         if np.sum(output[name].values().values()) == 0:
             continue
         fig, ax, _ = hist.plot1d(
-            output[name]. project('dataset'),
-            overlay='region',
+            output[name]. project('dataset').project("region","inclusive"),
+            # overlay='region',
             overflow='all',
             )
         fig.suptitle(name)
