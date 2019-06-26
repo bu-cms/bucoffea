@@ -195,7 +195,7 @@ def monojet_regions():
         'veto_photon',
         'veto_tau',
         'veto_b',
-        'dphijm',
+        'mindphijr',
         'dpfcalo',
         'recoil'
     ]

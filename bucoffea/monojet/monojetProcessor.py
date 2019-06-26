@@ -65,11 +65,11 @@ class monojetProcessor(processor.ProcessorABC):
                      & jet_btagged \
                      & (ak4.pt>20) ]
 
-        # MET
-        df["dPFCalo"] = 1 - df["CaloMET_pt"] / df["MET_pt"]
-        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, df['MET_phi'], njet=4, ptmin=30)
+        # Recoil
         df['recoil_pt'], df['recoil_phi'] = recoil(df['MET_pt'],df['MET_phi'], electrons, muons)
-
+        df["dPFCalo"] = (df['MET_pt'] - df["CaloMET_pt"]) / df["recoil_pt"]
+        df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30)
+        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, df['MET_phi'], njet=4, ptmin=30)
         selection = processor.PackedSelection()
 
         # Common selection
@@ -81,7 +81,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', taus.counts==0)
         selection.add('veto_b', bjets.counts==0)
-        selection.add('dphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJM)
+        selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
 
