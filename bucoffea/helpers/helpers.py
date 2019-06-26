@@ -34,7 +34,7 @@ def pt_phi_to_px_py(pt, phi):
 
     return x, y
 
-def recoil(met_pt, met_phi, eles, mus):
+def recoil(met_pt, met_phi, eles, mus, photons):
     """Calculates hadronic recoil by removing leptons from MET
 
     :param met_pt: MET pt values
@@ -50,10 +50,11 @@ def recoil(met_pt, met_phi, eles, mus):
     """
     met_x, met_y = pt_phi_to_px_py(met_pt, met_phi)
     ele_x, ele_y = pt_phi_to_px_py(eles.pt, eles.phi)
+    gam_x, gam_y = pt_phi_to_px_py(photons.pt, photons.phi)
     mu_x, mu_y = pt_phi_to_px_py(mus.pt, mus.phi)
 
-    recoil_x = met_x + ele_x.sum() + mu_x.sum()
-    recoil_y = met_y + ele_y.sum() + mu_y.sum()
+    recoil_x = met_x + ele_x.sum() + mu_x.sum() + gam_x.sum()
+    recoil_y = met_y + ele_y.sum() + mu_y.sum() + gam_y.sum()
 
     recoil_pt = np.hypot(recoil_x, recoil_y)
     recoil_phi = np.arctan2(recoil_y, recoil_x)
