@@ -240,7 +240,7 @@ def monojet_regions():
     regions['cr_2m_v'] = cr_2m_cuts + v_cuts
 
     # Single muon CR
-    cr_1m_cuts = ['one_muon', 'at_least_one_tight_mu', 'mt_mu'] + common_cuts  + j_cuts
+    cr_1m_cuts = ['one_muon', 'at_least_one_tight_mu', 'mt_mu'] + common_cuts
     cr_1m_cuts.remove('veto_muo')
     regions['cr_1m_j'] = cr_1m_cuts + j_cuts
     regions['cr_1m_v'] = cr_1m_cuts + v_cuts
