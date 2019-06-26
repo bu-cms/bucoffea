@@ -1,7 +1,2 @@
-data_met_2016b_v4 /MET/Run2016B_ver2-Nano14Dec2018_ver2-v1/NANOAOD
-data_met_2016c_v4 /MET/Run2016C-Nano14Dec2018-v1/NANOAOD
-data_met_2016d_v4 /MET/Run2016D-Nano14Dec2018-v1/NANOAOD
-data_met_2016e_v4 /MET/Run2016E-Nano14Dec2018-v1/NANOAOD
-data_met_2016f_v4 /MET/Run2016F-Nano14Dec2018-v1/NANOAOD
-data_met_2016g_v4 /MET/Run2016G-Nano14Dec2018-v1/NANOAOD
-data_met_2016h_v4 /MET/Run2016H-Nano14Dec2018-v1/NANOAOD
+ttjets_amc_2018_v5 /TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19_ext1-v1/NANOAODSIM
+ttjets_amc_2017_v5 /TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19_ext1-v1/NANOAODSIM
