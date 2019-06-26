@@ -7,7 +7,7 @@ from coffea.analysis_objects import JaggedCandidateArray
 from coffea.util import load, save
 from collections import defaultdict
 
-os.environ["ENV_FOR_DYNACONF"] = "era2016"
+
 os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
 from dynaconf import settings as cfg
 
@@ -16,11 +16,11 @@ from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape
 
 
 class monojetProcessor(processor.ProcessorABC):
-    def __init__(self, year="2018",blind=True):
+    def __init__(self, year="2017",blind=True):
         self._year=year
         self._blind=blind
         self._accumulator = monojet_accumulator()
-
+        os.environ["ENV_FOR_DYNACONF"] = f"era{year}"
     @property
     def accumulator(self):
         return self._accumulator
@@ -277,10 +277,16 @@ def main():
         # "NonthDM" : [
         #     "./data/24EE25F5-FB54-E911-AB96-40F2E9C6B000.root"
         # ]
-        "ttbardm_mmed10000_mchi1_nanoaodv5" : [
-            "./data/ttbardm_mmed10000_mchi1_nanoaodv5/64888F08-B888-ED40-84A5-F321A4BEAC27.root",
-            "./data/ttbardm_mmed10000_mchi1_nanoaodv5/DBCA1773-BF28-E54F-8046-5EB316C2F725.root"
-        ],
+        # "ttbardm_mmed10000_mchi1_nanoaodv5" : [
+        #     "./data/ttbardm_mmed10000_mchi1_nanoaodv5/64888F08-B888-ED40-84A5-F321A4BEAC27.root",
+        #     "./data/ttbardm_mmed10000_mchi1_nanoaodv5/DBCA1773-BF28-E54F-8046-5EB316C2F725.root"
+        # ],
+        # "a2HDM" : ["./data/a2HDM_monoz_mH900_ma200_2017_v5.root"]
+        # "monozvec18" : ["./data/monozll_vec_mmed_1500_mxd_1_2017_v5.root"],
+        # "wz_p8_2018" : ["./data/wz_p8_2018_v5.root"],
+        "wz_p8_2017" : ["./data/tt_amc_2017_v5.root"],
+        # "wz_p8_2018" : ["./data/tt_amc_2018_v5.root"],
+        # "monozvec17" : ["./data/monozll_vec_mmed_1500_mxd_1_2018_v5"]
         # "data_met_run2016c_v4" : [
         #     "./data/data_met_run2016c_v4.root"
         # ]
@@ -339,7 +345,7 @@ def debug_plot_output(output):
 def debug_print_cutflows(output):
     """Pretty-print cutflow data to the terminal."""
     import tabulate
-    for cutflow_name in [ x for x in output.keys() if x.startswith("cutflow_cr_2m") or x.startswith("cutflow_sr_j")]:
+    for cutflow_name in [ x for x in output.keys() if x.startswith("cutflow") and x.endswith("j")]:
         if not len(output[cutflow_name]):
             continue
         table = []
