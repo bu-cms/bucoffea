@@ -60,6 +60,12 @@ default:
       loose:
         pt : 10
         eta : 2.5
+  files:
+    theory:
+      w: data/sf/theory/merged_kfactors_wjets.root
+      z: data/sf/theory/merged_kfactors_zjets.root
+  run:
+    saveevents: True
 env:
   test: false
 

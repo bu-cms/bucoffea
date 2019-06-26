@@ -171,6 +171,10 @@ class monojetProcessor(processor.ProcessorABC):
 
             mask = selection.all(*cuts)
 
+            # Save the event numbers of events passing this selection
+            if cfg.RUN.SAVEEVENTS:
+                output['selected_events'][region] += list(df['event'][mask])
+
             # Multiplicities
             def fill_mult(name, candidates):
                 output[name].fill(
