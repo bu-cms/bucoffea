@@ -339,7 +339,7 @@ def debug_plot_output(output):
 def debug_print_cutflows(output):
     """Pretty-print cutflow data to the terminal."""
     import tabulate
-    for cutflow_name in [ x for x in output.keys() if x.startswith("cutflow_sr_j")]:
+    for cutflow_name in [ x for x in output.keys() if x.startswith("cutflow_cr_2m") or x.startswith("cutflow_sr_j")]:
         if not len(output[cutflow_name]):
             continue
         table = []
