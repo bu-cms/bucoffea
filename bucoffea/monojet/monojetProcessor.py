@@ -155,6 +155,7 @@ class monojetProcessor(processor.ProcessorABC):
         # Sum of all weights to use for normalization
         # TODO: Deal with systematic variations
         output['sumw'][dataset] += weight.sum()
+        output['sumw2'][dataset] += (weight**2).sum()
 
         regions = monojet_regions()
         for region, cuts in regions.items():
