@@ -56,7 +56,7 @@ def recoil(met_pt, met_phi, eles, mus):
     recoil_y = met_y + ele_y.sum() + mu_y.sum()
 
     recoil_pt = np.hypot(recoil_x, recoil_y)
-    recoil_phi = np.arctan2(recoil_y, recoil_x) % (2*np.pi)
+    recoil_phi = np.arctan2(recoil_y, recoil_x)
     return recoil_pt, recoil_phi
 
 
