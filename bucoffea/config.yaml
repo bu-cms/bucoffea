@@ -41,7 +41,9 @@ default:
         eta: 2.5
       tight:
         pt: 175
-        eta: 2.5
+        eta: 1.4442
+    branch:
+      id: Photon_cutBasedBitmap
   muon:
     cuts:
       tight:
@@ -66,6 +68,8 @@ default:
         dz: # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
           barrel: 0.10
           endcap: 0.20
+    branch:
+      id: Electron_cutBased
   files:
     theory:
       w: data/sf/theory/merged_kfactors_wjets.root
@@ -95,11 +99,14 @@ era2016:
         loose:  0.5426
         medium: 0.8484
         tight: 0.9535
+  electron:
+    branch:
+      id: Electron_cutBased_Sum16
 
 era2017:
   triggers:
     met:
-      HLT_PFMET170_NotCleaned
+      HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
   btag:
     algo: deepcsv
     wp: medium

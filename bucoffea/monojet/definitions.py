@@ -111,8 +111,8 @@ def setup_candidates(df, cfg):
         phi=df['Electron_phi'],
         mass=df['Electron_mass'],
         charge=df['Electron_charge'],
-        looseId=(df['Electron_cutBased_Sum16']>=1),
-        tightId=(df['Electron_cutBased_Sum16']==4),
+        looseId=(df[cfg.ELECTRON.BRANCH.ID]>=1),
+        tightId=(df[cfg.ELECTRON.BRANCH.ID]==4),
         dxy=np.abs(df['Electron_dxy']),
         dz=np.abs(df['Electron_dz']),
         barrel=np.abs(df['Electron_eta'] < 1.479)
@@ -130,8 +130,6 @@ def setup_candidates(df, cfg):
                                     & pass_dxy \
                                     & pass_dz
                                     ]
-
-
 
 
     taus = JaggedCandidateArray.candidatesfromcounts(
@@ -158,8 +156,8 @@ def setup_candidates(df, cfg):
         eta=df['Photon_eta'],
         phi=df['Photon_phi'],
         mass=df['Photon_mass'],
-        looseId=(df['Photon_cutBased']>=1) & df['Photon_electronVeto'],
-        mediumId=(df['Photon_cutBased']>=2) & df['Photon_electronVeto'],
+        looseId=(df[cfg.PHOTON.BRANCH.ID]>=1) & df['Photon_electronVeto'],
+        mediumId=(df[cfg.PHOTON.BRANCH.ID]>=2) & df['Photon_electronVeto'],
         clean=df['Photon_cleanmask'],
     )
     photons = photons[photons.looseId \
@@ -172,7 +170,7 @@ def setup_candidates(df, cfg):
         eta=df['Jet_eta'],
         phi=df['Jet_phi'],
         mass=df['Jet_mass'],
-        looseId=(df['Jet_jetId']&1) == 1, # bitmask: 1 = loose, 2 = tight
+        looseId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight
         tightId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight
         csvv2=df["Jet_btagCSVV2"],
         deepcsv=df['Jet_btagDeepB'],
