@@ -19,7 +19,7 @@ def do_run(args):
     fileset = { args.dataset : datasets[args.dataset]}
     output = processor.run_uproot_job(fileset,
                                   treename='Events',
-                                  processor_instance=monojetProcessor(),
+                                  processor_instance=monojetProcessor(year=2018),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': args.jobs, 'function_args': {'flatten': True}},
                                   chunksize=500000,
