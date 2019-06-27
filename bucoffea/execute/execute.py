@@ -8,7 +8,7 @@ import cloudpickle
 from pathlib import Path
 from dataset_definitions import get_datasets
 from coffea.util import save
-
+from bucoffea.helpers import bucoffea_path
 
 
 pjoin = os.path.join
@@ -42,15 +42,32 @@ def do_submit(args):
 
     datasets = get_datasets()
 
+    subdir = "./submission/"
+
+
+    # Get Proxy
+    proxy = vo_proxy_path()
+    shutil.copy2(proxy, subdir)
+    input_files = [
+        pjoin(subdir, os.path.basname(proxy)),
+        bucoffea_path("bucoffea/config.yaml"),
+
+    ]
+
     schedd = htcondor.Schedd()
     for dataset in datasets.keys():
+        print(f"Submitting dataset: {dataset}.")
         sub = htcondor.Submit({
-            "executable": pjoin(str(Path(__file__).absolute().parent), "htcondor_wrap.sh"),
+            "executable": bucoffea_path("bucoffea/execute/htcondor_wrap.sh"),
+            # "input": pjoin(str(Path(__file__).absolute().parent), "htcondor_wrap.sh"),
+            "should_transfer_files" : "YES",
+            "when_to_transfer_output" : "ON_EXIT",
+            "transfer_input_files" : ", ".join(input_files),
             "getenv" : "true",
             "arguments": "{} --outpath {} run --dataset {} -j {}".format(str(Path(__file__).absolute()), args.outpath, dataset, args.jobs),
-            "Output" : pjoin(args.outpath,"out_{}.txt".format(dataset)),
-            "Error" : pjoin(args.outpath,"err_{}.txt".format(dataset)),
-            "log" :pjoin(args.outpath,"log_{}.txt".format(dataset)),
+            "Output" : f"out_{dataset}.txt",
+            "Error" : f"err_{dataset}.txt",
+            "log" :f"log_{dataset}.txt",
             "request_cpus" : str(args.jobs)
             })
         with schedd.transaction() as txn:

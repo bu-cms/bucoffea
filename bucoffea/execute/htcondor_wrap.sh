@@ -1,4 +1,6 @@
 #!/bin/bash
+echo "Initiating VOMS proxy."
+export X509_USER_PROXY=$(readlink -e ./x509up*)
 
 echo "Arguments: " $@
 if [ ! -z "${VIRTUAL_ENV}" ]; then

@@ -1,9 +1,10 @@
 import numpy as np
-from bucoffea.helpers import dasgowrapper
+from bucoffea.helpers import dasgowrapper, bucoffea_path
 
 def get_datasets():
     datasets = {}
-    with open("datasets_2016.txt","r") as fin:
+    listpath = bucoffea_path("datasets_2016.txt")
+    with open(listpath,"r") as fin:
         lines = fin.readlines()
     for line in lines:
         name, dataset = line.strip().split(" ")
