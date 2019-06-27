@@ -22,6 +22,7 @@ def do_run(args):
     elif "2018" in args.dataset: year=2018
     else: raise RuntimeError("Cannot deduce year from dataset name.")
 
+    fileset = { args.dataset : datasets[args.dataset][:1]}
     output = processor.run_uproot_job(fileset,
                                   treename='Events',
                                   processor_instance=monojetProcessor(year=year),
@@ -50,7 +51,7 @@ def do_submit(args):
             "Output" : pjoin(args.outpath,"out_{}.txt".format(dataset)),
             "Error" : pjoin(args.outpath,"err_{}.txt".format(dataset)),
             "log" :pjoin(args.outpath,"log_{}.txt".format(dataset)),
-            "request_cpus" : args.jobs
+            "request_cpus" : str(args.jobs)
             })
         with schedd.transaction() as txn:
             print(sub.queue(txn))
