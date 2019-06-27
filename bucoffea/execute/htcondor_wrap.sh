@@ -1,9 +1,9 @@
 #!/bin/bash
 echo "Initiating VOMS proxy."
-echo "Arguments: " $ARGS
+ARGS=("$@")
+echo "Arguments: " ${ARGS[@]}
 
 export X509_USER_PROXY=$1
-ARGS=("$@")
 
 if [ ! -z "${VIRTUAL_ENV}" ]; then
     echo "Found VIRTUAL_ENV variable."
