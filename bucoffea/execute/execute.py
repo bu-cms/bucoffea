@@ -8,8 +8,8 @@ import cloudpickle
 from pathlib import Path
 from dataset_definitions import get_datasets
 from coffea.util import save
-from bucoffea.helpers import bucoffea_path
-
+from bucoffea.helpers import bucoffea_path, vo_proxy_path
+import shutil
 
 pjoin = os.path.join
 def do_run(args):
@@ -42,15 +42,19 @@ def do_submit(args):
 
     datasets = get_datasets()
 
-    subdir = "./submission/"
+    subdir = os.path.abspath(".")
+    if not os.path.exists(subdir):
+        os.makedirs(subdir)
 
-
-    # Get Proxy
+    # Get proxy and copy to a safe location on AFS
     proxy = vo_proxy_path()
-    shutil.copy2(proxy, subdir)
+    proxydir = os.path.expanduser("~/.voms/")
+    if not os.path.exists(proxydir):
+        os.makedirs(proxydir)
+    shutil.copy2(proxy, proxydir)
     input_files = [
-        pjoin(subdir, os.path.basname(proxy)),
-        bucoffea_path("bucoffea/config.yaml"),
+        # pjoin(proxydir, os.path.basename(proxy)),
+        bucoffea_path("config.yaml"),
 
     ]
 
@@ -58,18 +62,22 @@ def do_submit(args):
     for dataset in datasets.keys():
         print(f"Submitting dataset: {dataset}.")
         sub = htcondor.Submit({
-            "executable": bucoffea_path("bucoffea/execute/htcondor_wrap.sh"),
+            "Initialdir" : subdir,
+            "executable": bucoffea_path("execute/htcondor_wrap.sh"),
             # "input": pjoin(str(Path(__file__).absolute().parent), "htcondor_wrap.sh"),
             "should_transfer_files" : "YES",
             "when_to_transfer_output" : "ON_EXIT",
             "transfer_input_files" : ", ".join(input_files),
             "getenv" : "true",
-            "arguments": "{} --outpath {} run --dataset {} -j {}".format(str(Path(__file__).absolute()), args.outpath, dataset, args.jobs),
+            "arguments": "{} {} --outpath {} run --dataset {} -j {}".format(pjoin(proxydir, os.path.basename(proxy)), str(Path(__file__).absolute()), args.outpath, dataset, args.jobs),
             "Output" : f"out_{dataset}.txt",
             "Error" : f"err_{dataset}.txt",
-            "log" :f"log_{dataset}.txt",
-            "request_cpus" : str(args.jobs)
+            "log" :f"/dev/null",
+            "request_cpus" : str(args.jobs),
+            "+MaxRuntime" : f"{60*60*8}"
             })
+        with open("job.jdl","w") as f:
+            f.write(str(sub))
         with schedd.transaction() as txn:
             print(sub.queue(txn))
         break
