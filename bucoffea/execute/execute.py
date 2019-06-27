@@ -52,10 +52,17 @@ def do_submit(args):
     if not os.path.exists(proxydir):
         os.makedirs(proxydir)
     shutil.copy2(proxy, proxydir)
-    input_files = [
-        # pjoin(proxydir, os.path.basename(proxy)),
-        bucoffea_path("config.yaml"),
 
+    input_files = [
+        bucoffea_path("config.yaml"),
+    ]
+    arguments = [
+        pjoin(proxydir, os.path.basename(proxy)),
+        str(Path(__file__).absolute()),
+        f'--outpath {args.outpath}',
+        f'--jobs {args.jobs}',
+        'run',
+        f'--dataset {args.dataset}',
     ]
 
     schedd = htcondor.Schedd()
@@ -69,7 +76,7 @@ def do_submit(args):
             "when_to_transfer_output" : "ON_EXIT",
             "transfer_input_files" : ", ".join(input_files),
             "getenv" : "true",
-            "arguments": "{} {} --outpath {} run --dataset {} -j {}".format(pjoin(proxydir, os.path.basename(proxy)), str(Path(__file__).absolute()), args.outpath, dataset, args.jobs),
+            "arguments": " ".join(arguments),
             "Output" : f"out_{dataset}.txt",
             "Error" : f"err_{dataset}.txt",
             "log" :f"/dev/null",
