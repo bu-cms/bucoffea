@@ -152,18 +152,24 @@ class monojetProcessor(processor.ProcessorABC):
         dataset = df['dataset']
         isdata = dataset.startswith("data_")
 
+        all_weights = {}
         if isdata:
             weight = np.ones(df.size)
         else:
             weight = df['Generator_weight']
 
-            weight = weight * self._evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].eta).prod()
-            weight = weight * self._evaluator['muon_id_loose']( muons[~is_tight_muon].pt, muons[~is_tight_muon].eta).prod()
+            all_weights["muon_id_tight"] = self._evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].eta).prod()
+            all_weights["muon_id_loose"] = self._evaluator['muon_id_loose']( muons[~is_tight_muon].pt, muons[~is_tight_muon].eta).prod()
 
-            weight = weight * self._evaluator['ele_id_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod()
-            weight = weight * self._evaluator['ele_id_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod()
+            all_weights["ele_id_tight"] = self._evaluator['ele_id_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod()
+            all_weights["ele_id_loose"] = self._evaluator['ele_id_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod()
 
-            weight = weight * self._evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
+            all_weights["photon_id_tight"] = self._evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
+            all_weights["pileup"] = self._evaluator['pileup'](df['Pileup_nTrueInt'])
+
+            for iw in all_weights.values():
+                weight = weight * iw
+
 
 
 
@@ -184,8 +190,8 @@ class monojetProcessor(processor.ProcessorABC):
                 for icut, cutname in enumerate(cuts):
                     output['cutflow_' + region][cutname] += selection.all(*cuts[:icut+1]).sum()
 
-
             mask = selection.all(*cuts)
+
 
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVEEVENTS:
@@ -210,9 +216,6 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
 
-            # All ak4
-            # This is a workaround to create a weight array of the right dimension
-            w_alljets = weight_shape(ak4[mask].eta, weight[mask])
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
@@ -221,6 +224,15 @@ class monojetProcessor(processor.ProcessorABC):
                                   region=region,
                                   **kwargs
                                   )
+            # Monitor weights
+            for wname, wvalue in all_weights.items():
+                ezfill("weights", weight_type=wname, weight_value=wvalue)
+
+            # All ak4
+            # This is a workaround to create a weight array of the right dimension
+            w_alljets = weight_shape(ak4[mask].eta, weight[mask])
+
+
             ezfill('ak4eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
 

@@ -31,6 +31,9 @@ def monojet_accumulator():
     eta_ax = Bin("eta", r"$\eta$ (GeV)", 50, -5, 5)
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 100,50,150)
 
+    weight_type_ax = Cat("weight_type", "Weight type")
+    weight_ax = Bin("weight_value", "Weight",100,0.5,1.5)
+
     Hist = hist.Hist
     items = {}
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
@@ -81,6 +84,9 @@ def monojet_accumulator():
     items['sumw2'] = processor.defaultdict_accumulator(float)
 
     items['selected_events'] = processor.defaultdict_accumulator(list)
+
+    items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
+
     return  processor.dict_accumulator(items)
 
 
