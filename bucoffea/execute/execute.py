@@ -7,7 +7,7 @@ import lz4.frame as lz4f
 import cloudpickle
 from pathlib import Path
 from dataset_definitions import get_datasets
-
+from coffea.util import save
 
 
 
@@ -17,18 +17,22 @@ def do_run(args):
     # Run over all files associated to dataset
     datasets = get_datasets()
     fileset = { args.dataset : datasets[args.dataset]}
+    if "2016" in args.dataset: year=2016
+    elif "2017" in args.dataset: year=2017
+    elif "2018" in args.dataset: year=2018
+    else: raise RuntimeError("Cannot deduce year from dataset name.")
+
     output = processor.run_uproot_job(fileset,
                                   treename='Events',
-                                  processor_instance=monojetProcessor(year=2018),
+                                  processor_instance=monojetProcessor(year=year),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': args.jobs, 'function_args': {'flatten': True}},
                                   chunksize=500000,
                                  )
 
     # Save output
-    outname_base = "hists_{}.cpkl.lz4".format(args.dataset)
-    with lz4f.open(pjoin(args.outpath, outname_base), mode="wb", compression_level=5) as fout:
-        cloudpickle.dump(output, fout)
+    outpath = pjoin(args.outpath, f"monojet_{args.dataset}.coffea")
+    save(output, outpath)
 
 
 def do_submit(args):
