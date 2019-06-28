@@ -294,6 +294,12 @@ class monojetProcessor(processor.ProcessorABC):
     def postprocess(self, accumulator):
         return accumulator
 
+def extract_year(dataset):
+    for x in [6,7,8]:
+        if f"201{x}" in dataset:
+            return 2010+x
+    raise RuntimeError("Could not determine dataset year")
+
 
 def main():
     fileset = {
@@ -311,7 +317,7 @@ def main():
         # "monozvec18" : ["./data/monozll_vec_mmed_1500_mxd_1_2017_v5.root"],
         # "wz_p8_2018" : ["./data/wz_p8_2018_v5.root"],
         # "wz_p8_2017" : ["./data/tt_amc_2017_v5.root"],
-        "wz_p8_2018" : ["./data/tt_amc_2018_v5.root"],
+        # "wz_p8_2018" : ["./data/tt_amc_2018_v5.root"],
         # "monozvec17" : ["./data/monozll_vec_mmed_1500_mxd_1_2018_v5"]
         # "data_met_run2016c_v4" : [
         #     "./data/data_met_run2016c_v4.root"
@@ -321,7 +327,13 @@ def main():
         # ],
         # "tt_amc_2017_v5" : ["./data/tt_amc_2017_v5.root"],
         # "tt_amc_2018_v5" : ["./data/tt_amc_2018_v5.root"],
+        "vector_monoj_mmed1500_mdm300_2017_v5" :[
+        "./data/vector_monoj_mmed1500_mdm300_2017_v5.root"
+        ]
     }
+
+    years = list(set(map(extract_year, fileset.keys())))
+    assert(len(years)==1)
 
     for dataset, filelist in fileset.items():
         newlist = []
@@ -333,7 +345,7 @@ def main():
 
     output = processor.run_uproot_job(fileset,
                                   treename='Events',
-                                  processor_instance=monojetProcessor(2018),
+                                  processor_instance=monojetProcessor(years[0]),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': 4, 'function_args': {'flatten': True}},
                                   chunksize=500000,
