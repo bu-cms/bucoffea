@@ -8,7 +8,7 @@ import cloudpickle
 from pathlib import Path
 from dataset_definitions import get_datasets
 from coffea.util import save
-from bucoffea.helpers import bucoffea_path, vo_proxy_path
+from bucoffea.helpers import bucoffea_path, vo_proxy_path, xrootd_format
 import shutil
 
 pjoin = os.path.join
@@ -35,12 +35,45 @@ def do_run(args):
     outpath = pjoin(args.outpath, f"monojet_{args.dataset}.coffea")
     save(output, outpath)
 
+def do_worker(args):
+    """Run the analysis on a worker node."""
+    # Run over all files associated to dataset
+
+    with open(args.filelist, "r") as f:
+        files = [xrootd_format(x.strip()) for x in f.readlines()]
+
+    fileset = { args.dataset : files}
+    if "2016" in args.dataset: year=2016
+    elif "2017" in args.dataset: year=2017
+    elif "2018" in args.dataset: year=2018
+    else: raise RuntimeError("Cannot deduce year from dataset name.")
+
+    output = processor.run_uproot_job(fileset,
+                                  treename='Events',
+                                  processor_instance=monojetProcessor(year=year),
+                                  executor=processor.futures_executor,
+                                  executor_args={'workers': args.jobs, 'function_args': {'flatten': True}},
+                                  chunksize=500000,
+                                 )
+
+    # Save output
+    outpath = pjoin(args.outpath, f"monojet_{args.dataset}.coffea")
+    save(output, outpath)
+
+
+
+def chunkify(items, nchunk):
+    '''Split list of items into nchunk ~equal sized chunks'''
+    chunks = [[] for _ in range(nchunk)]
+    for i in range(len(items)):
+        chunks[i % nchunk].append(items[i])
+    return chunks
 
 def do_submit(args):
     """Submit the analysis to HTCondor."""
     import htcondor
 
-    datasets = get_datasets()
+    dataset_files = get_datasets()
 
     subdir = os.path.abspath(".")
     if not os.path.exists(subdir):
@@ -53,41 +86,54 @@ def do_submit(args):
         os.makedirs(proxydir)
     shutil.copy2(proxy, proxydir)
 
-    input_files = [
-        bucoffea_path("config.yaml"),
-    ]
-    arguments = [
-        pjoin(proxydir, os.path.basename(proxy)),
-        str(Path(__file__).absolute()),
-        f'--outpath {args.outpath}',
-        f'--jobs {args.jobs}',
-        'run',
-        f'--dataset {args.dataset}',
-    ]
-
     schedd = htcondor.Schedd()
-    for dataset in datasets.keys():
+    for dataset, files in dataset_files.items():
         print(f"Submitting dataset: {dataset}.")
-        sub = htcondor.Submit({
-            "Initialdir" : subdir,
-            "executable": bucoffea_path("execute/htcondor_wrap.sh"),
-            # "input": pjoin(str(Path(__file__).absolute().parent), "htcondor_wrap.sh"),
-            "should_transfer_files" : "YES",
-            "when_to_transfer_output" : "ON_EXIT",
-            "transfer_input_files" : ", ".join(input_files),
-            "getenv" : "true",
-            "arguments": " ".join(arguments),
-            "Output" : f"out_{dataset}.txt",
-            "Error" : f"err_{dataset}.txt",
-            "log" :f"/dev/null",
-            "request_cpus" : str(args.jobs),
-            "+MaxRuntime" : f"{60*60*8}"
-            })
-        with open("job.jdl","w") as f:
-            f.write(str(sub))
-        with schedd.transaction() as txn:
-            print(sub.queue(txn))
-        break
+
+        chunks = chunkify(files,int(len(files) / args.filesperjob + 1) )
+        for ichunk, chunk in enumerate(chunks):
+            # Save input files to a txt file and send to job
+            tmpfile = f"tmp_{dataset}_{ichunk}.txt"
+            with open(tmpfile, "w") as f:
+                for file in chunks:
+                    f.write(file)
+
+            arguments = [
+                pjoin(proxydir, os.path.basename(proxy)),
+                str(Path(__file__).absolute()),
+                f'--outpath {args.outpath}',
+                f'--jobs {args.jobs}',
+                'worker',
+                f'--dataset {dataset}',
+                f'--filelist {tmpfile}',
+            ]
+            input_files = [
+                bucoffea_path("config.yaml"),
+                os.path.abspath(tmpfile),
+            ]
+            sub = htcondor.Submit({
+                "Initialdir" : subdir,
+                "executable": bucoffea_path("execute/htcondor_wrap.sh"),
+                # "input": pjoin(str(Path(__file__).absolute().parent), "htcondor_wrap.sh"),
+                "should_transfer_files" : "YES",
+                "when_to_transfer_output" : "ON_EXIT",
+                "transfer_input_files" : ", ".join(input_files),
+                "getenv" : "true",
+                "arguments": " ".join(arguments),
+                "Output" : f"out_{dataset}.txt",
+                "Error" : f"err_{dataset}.txt",
+                "log" :f"/dev/null",
+                "request_cpus" : str(args.jobs),
+                "+MaxRuntime" : f"{60*60*8}"
+                })
+            with open("job.jdl","w") as f:
+                f.write(str(sub))
+            with schedd.transaction() as txn:
+                print(sub.queue(txn))
+
+            # Remove temporary file
+            # os.remove(tmpfile)
+            break
 
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
@@ -101,9 +147,15 @@ def main():
     parser_run.add_argument('--dataset', type=str, help='Dataset name to run over.')
     parser_run.set_defaults(func=do_run)
 
+    # Arguments passed to the "worker" operation
+    parser_run = subparsers.add_parser('worker', help='Running help')
+    parser_run.add_argument('--dataset', type=str, help='Dataset name to run over.')
+    parser_run.add_argument('--filelist', type=str, help='Text file with file names to run over.')
+    parser_run.set_defaults(func=do_run)
+
     # Arguments passed to the "submit" operation
     parser_submit = subparsers.add_parser('submit', help='Submission help')
-    # parser_submit.add_argument('--baz', choices='XYZ', help='baz help')
+    parser_submit.add_argument('--filesperjob', default=10, help='Number of files to process per job')
     parser_submit.set_defaults(func=do_submit)
 
 

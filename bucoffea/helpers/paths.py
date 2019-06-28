@@ -10,6 +10,14 @@ def bucoffea_path(path_in_repo):
     return pjoin(bucoffea.__path__[0], path_in_repo)
 
 
+def xrootd_format(fpath):
+    """Ensure that the file path is file:/* or xrootd"""
+    if fpath.startswith("/store/"):
+        return f"root://cms-xrd-global.cern.ch//{file}"
+    elif fpath.startswith("file:"):
+        return fpath
+    else:
+        return f"file://{fpath}"
 
 def vo_proxy_path():
     """Finds the path where the VO proxy file is stored."""
