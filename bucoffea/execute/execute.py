@@ -109,12 +109,12 @@ def do_submit(args):
             ]
             input_files = [
                 bucoffea_path("config.yaml"),
+                os.path.join(proxydir, os.path.basename(proxy)),
                 os.path.abspath(tmpfile),
             ]
             sub = htcondor.Submit({
                 "Initialdir" : subdir,
                 "executable": bucoffea_path("execute/htcondor_wrap.sh"),
-                # "input": pjoin(str(Path(__file__).absolute().parent), "htcondor_wrap.sh"),
                 "should_transfer_files" : "YES",
                 "when_to_transfer_output" : "ON_EXIT",
                 "transfer_input_files" : ", ".join(input_files),
