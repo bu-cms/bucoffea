@@ -12,7 +12,7 @@ from dynaconf import settings as cfg
 
 
 from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, monojet_regions
-from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape
+from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path
 
 
 class monojetProcessor(processor.ProcessorABC):
@@ -20,9 +20,7 @@ class monojetProcessor(processor.ProcessorABC):
         self._year=year
         self._blind=blind
         self._accumulator = monojet_accumulator()
-        # os.environ["ENV_FOR_DYNACONF"] = f"era{self._year}"
-        # os.environ["SETTINGS_FILE_FOR_DYNACONF"] = os.path.abspath("config.yaml")
-        cfg.SETTINGS_FILE_FOR_DYNACONF = os.path.abspath("config.yaml")
+        cfg.SETTINGS_FILE_FOR_DYNACONF = bucoffea_path("config/monojet.yaml")
         cfg.ENV_FOR_DYNACONF = f"era{self._year}"
         cfg.reload()
         self._evaluator = monojet_evaluator(cfg)
@@ -226,7 +224,7 @@ class monojetProcessor(processor.ProcessorABC):
                                   )
             # Monitor weights
             for wname, wvalue in all_weights.items():
-                ezfill("weights", weight_type=wname, weight_value=wvalue)
+                ezfill("weights", weight_type=wname, weight_value=wvalue[mask])
 
             # All ak4
             # This is a workaround to create a weight array of the right dimension

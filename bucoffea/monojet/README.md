@@ -32,8 +32,11 @@ print(cfg.SELECTION.SIGNAL.RECOIL)
 
 The parameters are trivially accessed by using the configuration dictionary keys as attributed to the configuration object. They are given in all caps in order to visually separate them from "normal" python code.
 
-## Speed benchmarking
+<!-- ## Speed benchmarking
 
 Running the monojet analysis without any systematic variations or external weight lookup on the a TTBar sample with 142M events over XRootD takes X minutes.
 
 `/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19_ext1-v1/NANOAODSIM`
+ -->
+
+## 
