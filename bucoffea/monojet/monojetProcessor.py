@@ -11,10 +11,16 @@ from collections import defaultdict
 from dynaconf import settings as cfg
 
 
-from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, monojet_regions
+from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, setup_gen_candidates,monojet_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path
+from bucoffea.helpers.gen import find_gen_dilepton
 
-
+def is_w_dataset(dataset):
+    """Dummy implementation"""
+    return "wjet" in dataset
+def is_z_dataset(dataset)
+    """Dummy implementation"""
+    return "zjet" in dataset
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, year="2017",blind=True):
         self._year=year
@@ -29,7 +35,14 @@ class monojetProcessor(processor.ProcessorABC):
         return self._accumulator
 
     def process(self, df):
-
+        # Gen info
+        gen = setup_gen_candidates(df)
+        if(is_z_dataset(df['dataset'])):
+            gen_v = find_gen_dilepton(gen, pdgsum=0)
+        elif(is_w_dataset(df['dataset'])):
+            gen_v = find_gen_dilepton(gen, pdgsum=1)
+        else:
+            gen_v = np.zeros(df.size)
         # Candidates
         # Already pre-filtered!
         # All leptons are at least loose

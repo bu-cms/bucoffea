@@ -82,3 +82,4 @@ def object_overlap(toclean, cleanagainst, dr=0.4):
     delta_r = np.hypot( dphi(comb_phi.i0, comb_phi.i1), comb_eta.i0-comb_eta.i1)
 
     return delta_r.min() > dr
+

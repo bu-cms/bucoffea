@@ -8,6 +8,7 @@ import coffea.processor as processor
 from awkward import JaggedArray
 import numpy as np
 from bucoffea.helpers import object_overlap
+from bucoffea.helpers.gen import find_first_parent
 
 def monojet_accumulator():
     dataset_ax = Cat("dataset", "Primary dataset")
@@ -89,6 +90,26 @@ def monojet_accumulator():
 
     return  processor.dict_accumulator(items)
 
+def setup_gen_candidates(df):
+    # Find first ancestor with different PDG ID
+    # before defining the gen candidates
+    mothers = JaggedArray.fromcounts(df['nGenPart'],df['GenPart_genPartIdxMother'] )
+    pdgids = JaggedArray.fromcounts(df['nGenPart'],df['GenPart_pdgId'] )
+    parent_index =  find_first_parent(mothers, pdgids)
+
+    gen = JaggedCandidateArray.candidatesfromcounts(
+        df['nGenPart'],
+        pt=df['GenPart_pt'],
+        eta=df['GenPart_eta'],
+        phi=df['GenPart_phi'],
+        mass=df['GenPart_mass'],
+        charge=df['GenPart_pdgId'],
+        pdg=df['GenPart_pdgId'],
+        status=df['GenPart_status'],
+        flag = df['GenPart_statusFlags'],
+        mother = df['GenPart_genPartIdxMother'],
+        parentIndex=parent_index.flatten())
+    return gen
 
 def setup_candidates(df, cfg):
     muons = JaggedCandidateArray.candidatesfromcounts(
