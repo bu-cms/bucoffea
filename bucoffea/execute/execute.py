@@ -22,7 +22,6 @@ def do_run(args):
     elif "2018" in args.dataset: year=2018
     else: raise RuntimeError("Cannot deduce year from dataset name.")
 
-    fileset = { args.dataset : datasets[args.dataset][:1]}
     output = processor.run_uproot_job(fileset,
                                   treename='Events',
                                   processor_instance=monojetProcessor(year=year),
@@ -95,11 +94,12 @@ def do_submit(args):
             # Save input files to a txt file and send to job
             tmpfile = f"tmp_{dataset}_{ichunk}.txt"
             with open(tmpfile, "w") as f:
-                for file in chunks:
-                    f.write(file)
+                for file in chunk:
+                    f.write(f"{file}\n")
 
             arguments = [
-                pjoin(proxydir, os.path.basename(proxy)),
+                # pjoin(proxydir, os.path.basename(proxy)),
+                "$(Proxy_path)",
                 str(Path(__file__).absolute()),
                 f'--outpath {args.outpath}',
                 f'--jobs {args.jobs}',
@@ -108,11 +108,12 @@ def do_submit(args):
                 f'--filelist {tmpfile}',
             ]
             input_files = [
-                bucoffea_path("config.yaml"),
-                os.path.join(proxydir, os.path.basename(proxy)),
+                # bucoffea_path("config.yaml"),
+                # os.path.join(proxydir, os.path.basename(proxy)),
                 os.path.abspath(tmpfile),
             ]
             sub = htcondor.Submit({
+                "Proxy_path" : pjoin(proxydir,os.path.basename(proxy)),
                 "Initialdir" : subdir,
                 "executable": bucoffea_path("execute/htcondor_wrap.sh"),
                 "should_transfer_files" : "YES",
@@ -134,6 +135,7 @@ def do_submit(args):
             # Remove temporary file
             # os.remove(tmpfile)
             break
+        break
 
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
@@ -155,7 +157,7 @@ def main():
 
     # Arguments passed to the "submit" operation
     parser_submit = subparsers.add_parser('submit', help='Submission help')
-    parser_submit.add_argument('--filesperjob', default=10, help='Number of files to process per job')
+    parser_submit.add_argument('--filesperjob', type=int, default=10, help='Number of files to process per job')
     parser_submit.set_defaults(func=do_submit)
 
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 ARGS=("$@")
 echo "Arguments: " ${ARGS[@]}
-
 echo "Initiating VOMS proxy."
-export X509_USER_PROXY=$(readlink -e ./x509*)
-voms-proxy-info
+export X509_USER_PROXY=${1}
+voms-proxy-info -all
+voms-proxy-info -all -file ${1}
 
 if [ ! -z "${VIRTUAL_ENV}" ]; then
     echo "Found VIRTUAL_ENV variable."
