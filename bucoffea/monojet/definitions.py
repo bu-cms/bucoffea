@@ -8,6 +8,7 @@ import coffea.processor as processor
 from awkward import JaggedArray
 import numpy as np
 from bucoffea.helpers import object_overlap
+from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.helpers.gen import find_first_parent
 
 def monojet_accumulator():
@@ -307,7 +308,8 @@ def monojet_evaluator(cfg):
     ext = extractor()
 
     for sfname, definition in cfg.SF.items():
-        ext.add_weight_sets([f"{sfname} {definition['histogram']} {definition['file']}"])
+        fpath = bucoffea_path(definition['file'])
+        ext.add_weight_sets([f"{sfname} {definition['histogram']} {fpath}"])
 
     ext.finalize()
 
