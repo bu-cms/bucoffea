@@ -18,7 +18,7 @@ from bucoffea.helpers.gen import find_gen_dilepton
 def is_w_dataset(dataset):
     """Dummy implementation"""
     return "wjet" in dataset
-def is_z_dataset(dataset)
+def is_z_dataset(dataset):
     """Dummy implementation"""
     return "zjet" in dataset
 class monojetProcessor(processor.ProcessorABC):

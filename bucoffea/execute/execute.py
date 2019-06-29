@@ -8,7 +8,7 @@ import cloudpickle
 from pathlib import Path
 from dataset_definitions import get_datasets
 from coffea.util import save
-from bucoffea.helpers import bucoffea_path, vo_proxy_path, xrootd_format
+from bucoffea.helpers import bucoffea_path, vo_proxy_path, xrootd_format, condor_submit
 import shutil
 
 pjoin = os.path.join
@@ -85,7 +85,7 @@ def do_submit(args):
         os.makedirs(proxydir)
     shutil.copy2(proxy, proxydir)
 
-    schedd = htcondor.Schedd()
+    # schedd = htcondor.Schedd()
     for dataset, files in dataset_files.items():
         print(f"Submitting dataset: {dataset}.")
 
@@ -129,9 +129,10 @@ def do_submit(args):
                 })
             with open("job.jdl","w") as f:
                 f.write(str(sub))
-            with schedd.transaction() as txn:
-                print(sub.queue(txn))
-
+                f.write("\nqueue 1")
+            # with schedd.transaction() as txn:
+                # print(sub.queue(txn))
+            condor_submit("job.jdl")
             # Remove temporary file
             # os.remove(tmpfile)
             break
