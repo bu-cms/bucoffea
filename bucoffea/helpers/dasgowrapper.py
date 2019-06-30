@@ -9,9 +9,9 @@ def das_go_query(query, json=False):
         cmd.append("-json")
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 
-    stdout, _ = proc.communicate()
+    stdout, stderr = proc.communicate()
     if proc.returncode != 0:
-        raise RuntimeError("Could not run DAS Go client query: {}.".format(query))
+        raise RuntimeError(f"Could not run DAS Go client query: {query}. Stderr: \n{stderr}")
 
     return stdout
 
