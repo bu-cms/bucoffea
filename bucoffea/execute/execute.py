@@ -8,9 +8,10 @@ import cloudpickle
 from pathlib import Path
 from dataset_definitions import get_datasets
 from coffea.util import save
-from bucoffea.helpers import bucoffea_path, vo_proxy_path, xrootd_format, condor_submit
+from bucoffea.helpers import bucoffea_path, vo_proxy_path, xrootd_format
+from bucoffea.helpers.condor import  condor_submit
 import shutil
-
+from datetime import datetime
 pjoin = os.path.join
 def do_run(args):
     """Run the analysis locally."""
@@ -132,7 +133,10 @@ def do_submit(args):
                 f.write("\nqueue 1")
             # with schedd.transaction() as txn:
                 # print(sub.queue(txn))
-            condor_submit("job.jdl")
+            jobid = condor_submit("job.jdl")
+            print(f"Submitted job {jobid}")
+            with open("submission_history.txt","a") as f:
+                f.write(f"{datetime.now()} {jobid}\n")
             # Remove temporary file
             # os.remove(tmpfile)
             break
@@ -154,7 +158,7 @@ def main():
     parser_run = subparsers.add_parser('worker', help='Running help')
     parser_run.add_argument('--dataset', type=str, help='Dataset name to run over.')
     parser_run.add_argument('--filelist', type=str, help='Text file with file names to run over.')
-    parser_run.set_defaults(func=do_run)
+    parser_run.set_defaults(func=do_worker)
 
     # Arguments passed to the "submit" operation
     parser_submit = subparsers.add_parser('submit', help='Submission help')
