@@ -195,22 +195,22 @@ era2018:
       file: data/sf/egamma/2018_PhotonsMedium.root
     muon_id_loose:
       histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta
-      file: data/sf/muon/2018_RunBCDEF_SF_ID.root
+      file: data/sf/muon/2018_RunABCD_SF_ID.root
     muon_id_loose_stat:
       histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta_stat
-      file: data/sf/muon/2018_RunBCDEF_SF_ID.root
+      file: data/sf/muon/2018_RunABCD_SF_ID.root
     muon_id_loose_syst:
       histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta_syst
-      file: data/sf/muon/2018_RunBCDEF_SF_ID.root
+      file: data/sf/muon/2018_RunABCD_SF_ID.root
     muon_id_tight:
       histogram: NUM_TightID_DEN_TrackerMuons_pt_abseta
-      file: data/sf/muon/2018_RunBCDEF_SF_ID.root
+      file: data/sf/muon/2018_RunABCD_SF_ID.root
     muon_id_tight_stat:
       histogram: NUM_TightID_DEN_TrackerMuons_pt_abseta_stat
-      file: data/sf/muon/2018_RunBCDEF_SF_ID.root
+      file: data/sf/muon/2018_RunABCD_SF_ID.root
     muon_id_tight_syst:
       histogram: NUM_TightID_DEN_TrackerMuons_pt_abseta_syst
-      file: data/sf/muon/2018_RunBCDEF_SF_ID.root
+      file: data/sf/muon/2018_RunABCD_SF_ID.root
     pileup:
       histogram: "sf2018_nominal"
       file: "data/sf/pileup/pileup.root"
