@@ -76,7 +76,7 @@ default:
       w: data/sf/theory/merged_kfactors_wjets.root
       z: data/sf/theory/merged_kfactors_zjets.root
   run:
-    saveevents: True
+    saveevents: False
 
 env:
   test: false
