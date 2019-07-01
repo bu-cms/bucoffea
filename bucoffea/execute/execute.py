@@ -27,7 +27,7 @@ def do_run(args):
                                   treename='Events',
                                   processor_instance=monojetProcessor(year=year),
                                   executor=processor.futures_executor,
-                                  executor_args={'workers': args.jobs, 'function_args': {'flatten': True}},
+                                  executor_args={'workers': args.jobs, 'flatten': True},
                                   chunksize=500000,
                                  )
 
@@ -52,7 +52,7 @@ def do_worker(args):
                                   treename='Events',
                                   processor_instance=monojetProcessor(year=year),
                                   executor=processor.futures_executor,
-                                  executor_args={'workers': args.jobs, 'function_args': {'flatten': True}},
+                                  executor_args={'workers': args.jobs, 'flatten': True},
                                   chunksize=500000,
                                  )
 

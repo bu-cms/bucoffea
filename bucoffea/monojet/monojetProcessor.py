@@ -360,7 +360,7 @@ def main():
                                   treename='Events',
                                   processor_instance=monojetProcessor(years[0]),
                                   executor=processor.futures_executor,
-                                  executor_args={'workers': 4, 'function_args': {'flatten': True}},
+                                  executor_args={'workers': 4, 'flatten': True},
                                   chunksize=500000,
                                  )
     save(output, "monojet.coffea")
