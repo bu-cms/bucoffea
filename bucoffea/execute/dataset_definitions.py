@@ -9,7 +9,7 @@ def get_datasets():
     for line in lines:
         line = line.strip()
         if not len(line): continue
-        name, dataset = line.split(" ")
+        name, dataset = line.split()
         files = dasgowrapper.das_go_query(f"file dataset={dataset}")
 
         datasets[name] = files.split()
