@@ -1,17 +1,57 @@
 import numpy as np
+import re
 from bucoffea.helpers import dasgowrapper, bucoffea_path
 
-def get_datasets():
-    datasets = {}
-    listpath = bucoffea_path("datasets_2016.txt")
-    with open(listpath,"r") as fin:
-        lines = fin.readlines()
-    for line in lines:
-        line = line.strip()
-        if not len(line): continue
-        name, dataset = line.split()
-        files = dasgowrapper.das_go_query(f"file dataset={dataset}")
+def short_name(dataset):
+    name, conditions, _ = dataset.split("/")
 
+    # Remove useless info
+    name = name.replace("_TuneCP5","")
+    name = name.replace("_TuneCUETP8M1","")
+    name = name.replace("_13TeV","")
+    name = name.replace("-pythia8","")
+    name = name.replace("madgraphMLM","MLM")
+    name = name.replace("amcnloFXFX","FXFX")
+    name = name.replace("powheg","pow")
+
+
+    # Detect extension
+    m=re.match(".*(ext\d+).*",conditions);
+    if m:
+        name = name + "_" + m.groups[0]
+
+    if "RunIIFall17" in conditions:
+        name = name + "_2017"
+    elif 'RunIIAutumn18' in conditions:
+        name = name + "_2018"
+    return name
+
+def load_lists():
+    files = [
+        bucoffea_path(f"data/datasets/datasets_2017.txt"),
+        bucoffea_path(f"data/datasets/datasets_2018.txt")
+    ]
+    lines = []
+    for f in files:
+        with open(f,"r"):
+            lines.extend(f.readlines())
+    return lines
+
+def get_datasets(regex):
+    datasets = {}
+
+    for line in load_lists():
+        # Skip empty lines
+        dataset = line.strip()
+        if not len(line):
+            continue
+        # Dataset 'nicknames'
+        name = short_name(dataset)
+        if not re.match(regex, name):
+            continue
+
+        # Get files from DAS
+        files = dasgowrapper.das_go_query(f"file dataset={dataset}")
         datasets[name] = files.split()
 
     for dataset, filelist in datasets.items():

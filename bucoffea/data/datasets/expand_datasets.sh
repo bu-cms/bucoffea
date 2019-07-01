@@ -10,5 +10,5 @@ expand(){
 }
 
 INFILE="datasetnames.txt"
-expand "${INFILE}" "RunIIFall17*1June*" | tee datasets_mc_2017.txt
-expand "${INFILE}" "RunIIAutumn18*1June*" | tee datasets_mc_2018.txt
+expand "${INFILE}" "RunIIFall17*1June*" | tee datasets_2017.txt
+expand "${INFILE}" "RunIIAutumn18*1June*" | tee datasets_2018.txt

@@ -16,8 +16,8 @@ pjoin = os.path.join
 def do_run(args):
     """Run the analysis locally."""
     # Run over all files associated to dataset
-    datasets = get_datasets()
-    fileset = { args.dataset : datasets[args.dataset]}
+    fileset = get_datasets(regex=args.dataset)
+
     if "2016" in args.dataset: year=2016
     elif "2017" in args.dataset: year=2017
     elif "2018" in args.dataset: year=2018
@@ -73,7 +73,7 @@ def do_submit(args):
     """Submit the analysis to HTCondor."""
     import htcondor
 
-    dataset_files = get_datasets()
+    dataset_files = get_datasets(regex=args.dataset)
 
     subdir = os.path.abspath(".")
     if not os.path.exists(subdir):
@@ -162,6 +162,7 @@ def main():
 
     # Arguments passed to the "submit" operation
     parser_submit = subparsers.add_parser('submit', help='Submission help')
+    parser_submit.add_argument('--dataset', type=str, help='Dataset regex to use.')
     parser_submit.add_argument('--filesperjob', type=int, default=10, help='Number of files to process per job')
     parser_submit.set_defaults(func=do_submit)
 
