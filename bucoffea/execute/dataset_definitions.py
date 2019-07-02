@@ -11,9 +11,9 @@ def short_name(dataset):
     name = name.replace("_13TeV","")
     name = name.replace("-pythia8","")
     name = name.replace("madgraphMLM","MLM")
+    name = name.replace("madgraph","mg")
     name = name.replace("amcnloFXFX","FXFX")
     name = name.replace("powheg","pow")
-
 
     # Detect extension
     m=re.match(".*(ext\d+).*",conditions);
