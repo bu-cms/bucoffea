@@ -6,7 +6,7 @@ from bucoffea.monojet import monojetProcessor
 import lz4.frame as lz4f
 import cloudpickle
 from pathlib import Path
-from dataset_definitions import get_datasets
+from bucoffea.execute.dataset_definitions import get_datasets
 from coffea.util import save
 from bucoffea.helpers import bucoffea_path, vo_proxy_path, xrootd_format
 from bucoffea.helpers.condor import  condor_submit
@@ -57,7 +57,7 @@ def do_worker(args):
                                  )
 
     # Save output
-    outpath = pjoin(args.outpath, f"monojet_{args.dataset}.coffea")
+    outpath = pjoin(args.outpath, f"monojet_{args.dataset}_{args.chunk}.coffea")
     save(output, outpath)
 
 
@@ -75,9 +75,13 @@ def do_submit(args):
 
     dataset_files = get_datasets(regex=args.dataset)
 
-    subdir = os.path.abspath(".")
+    subdir = os.path.abspath("./submission/")
     if not os.path.exists(subdir):
         os.makedirs(subdir)
+    filedir = 'files'
+
+    if not os.path.exists(pjoin(subdir, filedir)):
+        os.makedirs(pjoin(subdir, filedir))
 
     # Get proxy and copy to a safe location on AFS
     proxy = vo_proxy_path()
@@ -93,7 +97,7 @@ def do_submit(args):
         chunks = chunkify(files,int(len(files) / args.filesperjob + 1) )
         for ichunk, chunk in enumerate(chunks):
             # Save input files to a txt file and send to job
-            tmpfile = f"tmp_{dataset}_{ichunk}.txt"
+            tmpfile = pjoin(subdir, filedir, f"input_{dataset}_{ichunk}.txt")
             with open(tmpfile, "w") as f:
                 for file in chunk:
                     f.write(f"{file}\n")
@@ -106,7 +110,8 @@ def do_submit(args):
                 f'--jobs {args.jobs}',
                 'worker',
                 f'--dataset {dataset}',
-                f'--filelist {tmpfile}',
+                f'--filelist {os.path.basename(tmpfile)}',
+                f'--chunk {ichunk}'
             ]
             input_files = [
                 # bucoffea_path("config.yaml"),
@@ -122,30 +127,29 @@ def do_submit(args):
                 "transfer_input_files" : ", ".join(input_files),
                 "getenv" : "true",
                 "arguments": " ".join(arguments),
-                "Output" : f"out_{dataset}.txt",
-                "Error" : f"err_{dataset}.txt",
+                "Output" : f"{filedir}/out_{dataset}_{ichunk}.txt",
+                "Error" : f"{filedir}/err_{dataset}_{ichunk}.txt",
                 "log" :f"/dev/null",
                 "request_cpus" : str(args.jobs),
                 "+MaxRuntime" : f"{60*60*8}"
                 })
-            with open("job.jdl","w") as f:
+
+            jdl = pjoin(subdir,f'job_{dataset}_{ichunk}.jdl')
+            with open(jdl,"w") as f:
                 f.write(str(sub))
                 f.write("\nqueue 1")
             # with schedd.transaction() as txn:
                 # print(sub.queue(txn))
-            jobid = condor_submit("job.jdl")
+            jobid = condor_submit(jdl)
             print(f"Submitted job {jobid}")
             with open("submission_history.txt","a") as f:
                 f.write(f"{datetime.now()} {jobid}\n")
-            # Remove temporary file
-            # os.remove(tmpfile)
-            break
         break
 
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
     parser.add_argument('--outpath', type=str, help='Path to save output under.')
-    parser.add_argument('--jobs','-j', type=int, help='Number of cores to use / request.')
+    parser.add_argument('--jobs','-j', type=int, default=1, help='Number of cores to use / request.')
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
@@ -158,6 +162,7 @@ def main():
     parser_run = subparsers.add_parser('worker', help='Running help')
     parser_run.add_argument('--dataset', type=str, help='Dataset name to run over.')
     parser_run.add_argument('--filelist', type=str, help='Text file with file names to run over.')
+    parser_run.add_argument('--chunk', type=str, help='Number of this chunk for book keeping.')
     parser_run.set_defaults(func=do_worker)
 
     # Arguments passed to the "submit" operation
@@ -170,6 +175,7 @@ def main():
     args = parser.parse_args()
 
     # Create output directory
+    args.outpath = os.path.abspath(args.outpath)
     if not os.path.exists(args.outpath):
         os.makedirs(args.outpath)
 

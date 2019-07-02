@@ -9,7 +9,7 @@ def condor_submit(jobfile):
     stdout, stderr = proc.communicate()
     if proc.returncode != 0:
         raise RuntimeError(f"Condor submission failed. Stderr:\n {stderr}.")
-
-    return stdout
+    jobid = stdout.split()[-1].decode('utf-8').replace('.','')
+    return jobid
 
 

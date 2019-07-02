@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "Starting: $(date)"
 source /cvmfs/sft.cern.ch/lcg/views/LCG_95apython3/x86_64-centos7-gcc8-opt/setup.sh
 
 ARGS=("$@")
@@ -14,4 +15,6 @@ if [ ! -z "${VIRTUAL_ENV}" ]; then
 fi
 echo "Using python at: $(which python)"
 
-${ARGS[@]:1}
+time ${ARGS[@]:1}
+
+echo "Ending: $(date)"

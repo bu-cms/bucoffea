@@ -3,7 +3,7 @@ import re
 from bucoffea.helpers import dasgowrapper, bucoffea_path
 
 def short_name(dataset):
-    name, conditions, _ = dataset.split("/")
+    _, name, conditions, _ = dataset.split("/")
 
     # Remove useless info
     name = name.replace("_TuneCP5","")
@@ -18,7 +18,7 @@ def short_name(dataset):
     # Detect extension
     m=re.match(".*(ext\d+).*",conditions);
     if m:
-        name = name + "_" + m.groups[0]
+        name = name + "_" + m.groups()[0]
 
     if "RunIIFall17" in conditions:
         name = name + "_2017"
@@ -32,8 +32,8 @@ def load_lists():
         bucoffea_path(f"data/datasets/datasets_2018.txt")
     ]
     lines = []
-    for f in files:
-        with open(f,"r"):
+    for fpath in files:
+        with open(fpath,"r") as f:
             lines.extend(f.readlines())
     return lines
 
