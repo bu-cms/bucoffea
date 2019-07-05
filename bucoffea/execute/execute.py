@@ -87,6 +87,8 @@ def do_submit(args):
 
     if args.datasrc == 'das':
         dataset_files = files_from_das(regex=args.dataset)
+    elif args.datasrc == 'ac':
+        dataset_files = files_from_ac(regex=args.dataset)
     else:
         dataset_files = files_from_eos(regex=args.dataset)
 
@@ -168,7 +170,7 @@ def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
     parser.add_argument('--outpath', type=str, help='Path to save output under.')
     parser.add_argument('--jobs','-j', type=int, default=1, help='Number of cores to use / request.')
-    parser.add_argument('--datasrc', type=str, default='eos', help='Source of data files.', choices=['eos','das'])
+    parser.add_argument('--datasrc', type=str, default='eos', help='Source of data files.', choices=['eos','das','ac'])
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
