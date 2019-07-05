@@ -2,6 +2,7 @@ import numpy as np
 import re
 from bucoffea.helpers import dasgowrapper, bucoffea_path
 import os
+import yaml
 pjoin = os.path.join
 def short_name(dataset):
     _, name, conditions, _ = dataset.split("/")
@@ -73,6 +74,29 @@ def files_from_das(regex):
             datasets[dataset] = newlist
 
     return datasets
+
+def files_from_ac(regex):
+    """Generate file list per dataset from T2_DE_RWTH
+
+    :param regex: Regular expression to match datasets
+    :type regex: string
+    :return: Mapping of dataset : [files]
+    :rtype: dict
+    """
+    path = bucoffea_path('data/datasets/crabfiles.yml')
+
+    with open(path, 'r') as stream:
+        try:
+            fileset = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+    
+    for dataset, files in fileset.items():
+        for ifile in reversed(files):
+            if not len(ifile):
+                files.remove(ifile)
+        fileset[dataset] = files
+    return fileset
 
 def files_from_eos(regex):
     """Generate file list per dataset from EOS
