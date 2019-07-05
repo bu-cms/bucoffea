@@ -91,7 +91,7 @@ global:
 era2016:
   triggers:
     met:
-      HLT_PFMETNoMu120_PFMHTNoMu120_IDTight
+      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight
   btag:
     algo: csvv2
     wp: medium
@@ -121,7 +121,8 @@ era2016:
 era2017:
   triggers:
     met:
-      HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
+      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
+
   btag:
     algo: deepcsv
     wp: medium
@@ -177,7 +178,7 @@ era2017:
 era2018:
   triggers:
     met:
-      HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
+      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
   btag:
     algo: deepcsv
     wp: medium

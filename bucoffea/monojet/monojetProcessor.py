@@ -16,10 +16,25 @@ from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffe
 from bucoffea.helpers.gen import find_gen_dilepton
 
 def is_lo_z(dataset):
-    return bool(re.match('(DY|Z)(\d+)Jet.*(mg|MLM).*'), dataset)
+    return bool(re.match('(DY|Z)(\d+)Jet.*(mg|MLM).*', dataset))
 def is_lo_w(dataset):
-    return bool(re.match('W(\d+)Jet.*(mg|MLM).*'), dataset)
+    return bool(re.match('W(\d+)Jet.*(mg|MLM).*', dataset))
 
+def combine_masks(df, masks):
+    """Returns the OR of the masks in the list
+
+    :param df: Data frame
+    :type df: LazyDataFrame
+    :param masks: Mask names as saved in the df
+    :type masks: List
+    :return: OR of all masks for each event
+    :rtype: array
+    """
+    decision = np.zeros(df.size)==0
+
+    for t in masks:
+        decision = decision | df[t]
+    return decision
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, year="2017",blind=True):
         self._year=year
@@ -38,10 +53,12 @@ class monojetProcessor(processor.ProcessorABC):
         gen = setup_gen_candidates(df)
         if(is_lo_z(df['dataset'])):
             gen_v = find_gen_dilepton(gen, pdgsum=0)
+            gen_vpt = gen_v[gen_v.mass.argmax()].pt.flatten()
         elif(is_lo_w(df['dataset'])):
             gen_v = find_gen_dilepton(gen, pdgsum=1)
+            gen_vpt = gen_v[gen_v.mass.argmax()].pt.flatten()
         else:
-            gen_v = np.zeros(df.size)
+            gen_vpt = np.zeros(df.size)
 
         # Candidates
         # Already pre-filtered!
@@ -91,7 +108,7 @@ class monojetProcessor(processor.ProcessorABC):
         # Common selection
         selection.add('inclusive', np.ones(df.size)==1)
         selection.add('filt_met', df['Flag_METFilters'])
-        selection.add('trig_met', df[cfg.TRIGGERS.MET])
+        selection.add('trig_met', combine_masks(df, cfg.TRIGGERS.MET))
         selection.add('veto_ele', electrons.counts==0)
         selection.add('veto_muo', muons.counts==0)
         selection.add('veto_photon', photons.counts==0)
@@ -164,7 +181,8 @@ class monojetProcessor(processor.ProcessorABC):
         isdata = dataset.startswith("data_")
 
         # Gen
-        output['genvpt_check'].fill(vpt=gen_v[gen_v.mass.argmax()].pt.flatten(),type="BU", dataset=dataset)
+        output['genvpt_check'].fill(vpt=gen_vpt,type="BU", dataset=dataset)
+
         output['genvpt_check'].fill(vpt=df['LHE_Vpt'],type="Nano", dataset=dataset)
 
         all_weights = {}
@@ -182,9 +200,9 @@ class monojetProcessor(processor.ProcessorABC):
             all_weights["photon_id_tight"] = self._evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
             all_weights["pileup"] = self._evaluator['pileup'](df['Pileup_nTrueInt'])
 
-            if is_w_dataset(dataset, oder="lo"):
+            if is_lo_z(dataset):
                 all_weights["theory"] = self._evaluator["qcd_ew_nlo_w"](df['LHE_Vpt'])
-            elif is_z_dataset(dataset, oder="lo"):
+            elif is_lo_w(dataset):
                 all_weights["theory"] = self._evaluator["qcd_ew_nlo_z"](df['LHE_Vpt'])
             else:
                 all_weights["theory"] = np.ones(df.size)
