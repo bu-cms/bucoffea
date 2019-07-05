@@ -1,7 +1,8 @@
 import numpy as np
 import re
 from bucoffea.helpers import dasgowrapper, bucoffea_path
-
+import os
+pjoin = os.path.join
 def short_name(dataset):
     _, name, conditions, _ = dataset.split("/")
 
@@ -37,13 +38,20 @@ def load_lists():
             lines.extend(f.readlines())
     return lines
 
-def get_datasets(regex):
+def files_from_das(regex):
+    """Generate file list per dataset from DAS
+
+    :param regex: Regular expression to match datasets
+    :type regex: string
+    :return: Mapping of dataset : [files]
+    :rtype: dict
+    """
     datasets = {}
 
     for line in load_lists():
         # Skip empty lines
         dataset = line.strip()
-        if not len(line):
+        if not len(line) or line.startswith("#") or not "/" in line:
             continue
         # Dataset 'nicknames'
         name = short_name(dataset)
@@ -65,3 +73,27 @@ def get_datasets(regex):
             datasets[dataset] = newlist
 
     return datasets
+
+def files_from_eos(regex):
+    """Generate file list per dataset from EOS
+
+    :param regex: Regular expression to match datasets
+    :type regex: string
+    :return: Mapping of dataset : [files]
+    :rtype: dict
+    """
+    topdir = '/eos/user/a/aalbert/nanopost/'
+    tag = '2Jul19'
+
+    fileset = {}
+    for path, subdir, files in os.walk(pjoin(topdir, tag)):
+
+        files = list(filter(lambda x: x.endswith('.root'), files))
+        if not len(files):
+            continue
+        dataset = os.path.basename(path)
+        if not re.match(regex, dataset):
+            continue
+        files = [pjoin(path,x) for x in files]
+        fileset[dataset] = files
+    return fileset
