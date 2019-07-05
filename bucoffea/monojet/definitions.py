@@ -14,6 +14,9 @@ from bucoffea.helpers.gen import find_first_parent
 def monojet_accumulator():
     dataset_ax = Cat("dataset", "Primary dataset")
     region_ax = Cat("region", "Selection region")
+    type_ax = Cat("type", "Type")
+
+    vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 100, 0, 2000)
 
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 100, 0, 1000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 100, 0, 1000)
@@ -38,6 +41,7 @@ def monojet_accumulator():
 
     Hist = hist.Hist
     items = {}
+    items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
 

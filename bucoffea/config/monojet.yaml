@@ -71,10 +71,13 @@ default:
     branch:
       id: Electron_cutBased
 
-  files:
-    theory:
-      w: data/sf/theory/merged_kfactors_wjets.root
-      z: data/sf/theory/merged_kfactors_zjets.root
+  sf:
+    qcd_ew_nlo_w:
+      histogram: kfactor_monojet_qcd_ewk
+      file: data/sf/theory/merged_kfactors_wjets.root
+    qcd_ew_nlo_z:
+      histogram: kfactor_monojet_qcd_ewk
+      file: data/sf/theory/merged_kfactors_zjets.root
   run:
     saveevents: False
 

@@ -1,6 +1,6 @@
 import os
 import numpy as np
-
+import re
 from coffea import hist
 import coffea.processor as processor
 from coffea.analysis_objects import JaggedCandidateArray
@@ -15,12 +15,11 @@ from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator,
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path
 from bucoffea.helpers.gen import find_gen_dilepton
 
-def is_w_dataset(dataset):
-    """Dummy implementation"""
-    return "wjet" in dataset
-def is_z_dataset(dataset):
-    """Dummy implementation"""
-    return "zjet" in dataset
+def is_lo_z(dataset):
+    return bool(re.match('(DY|Z)(\d+)Jet.*(mg|MLM).*'), dataset)
+def is_lo_w(dataset):
+    return bool(re.match('W(\d+)Jet.*(mg|MLM).*'), dataset)
+
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, year="2017",blind=True):
         self._year=year
@@ -37,12 +36,13 @@ class monojetProcessor(processor.ProcessorABC):
     def process(self, df):
         # Gen info
         gen = setup_gen_candidates(df)
-        if(is_z_dataset(df['dataset'])):
+        if(is_lo_z(df['dataset'])):
             gen_v = find_gen_dilepton(gen, pdgsum=0)
-        elif(is_w_dataset(df['dataset'])):
+        elif(is_lo_w(df['dataset'])):
             gen_v = find_gen_dilepton(gen, pdgsum=1)
         else:
             gen_v = np.zeros(df.size)
+
         # Candidates
         # Already pre-filtered!
         # All leptons are at least loose
@@ -163,6 +163,10 @@ class monojetProcessor(processor.ProcessorABC):
         dataset = df['dataset']
         isdata = dataset.startswith("data_")
 
+        # Gen
+        output['genvpt_check'].fill(vpt=gen_v[gen_v.mass.argmax()].pt.flatten(),type="BU", dataset=dataset)
+        output['genvpt_check'].fill(vpt=df['LHE_Vpt'],type="Nano", dataset=dataset)
+
         all_weights = {}
         if isdata:
             weight = np.ones(df.size)
@@ -178,6 +182,12 @@ class monojetProcessor(processor.ProcessorABC):
             all_weights["photon_id_tight"] = self._evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
             all_weights["pileup"] = self._evaluator['pileup'](df['Pileup_nTrueInt'])
 
+            if is_w_dataset(dataset, oder="lo"):
+                all_weights["theory"] = self._evaluator["qcd_ew_nlo_w"](df['LHE_Vpt'])
+            elif is_z_dataset(dataset, oder="lo"):
+                all_weights["theory"] = self._evaluator["qcd_ew_nlo_z"](df['LHE_Vpt'])
+            else:
+                all_weights["theory"] = np.ones(df.size)
             for iw in all_weights.values():
                 weight = weight * iw
 
@@ -186,8 +196,8 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Sum of all weights to use for normalization
         # TODO: Deal with systematic variations
-        output['sumw'][dataset] += weight.sum()
-        output['sumw2'][dataset] += (weight**2).sum()
+        output['sumw'][dataset] += df['Generator_weight'].sum()
+        output['sumw2'][dataset] += (df['Generator_weight']**2).sum()
 
         regions = monojet_regions()
         for region, cuts in regions.items():
@@ -340,8 +350,11 @@ def main():
         # ],
         # "tt_amc_2017_v5" : ["./data/tt_amc_2017_v5.root"],
         # "tt_amc_2018_v5" : ["./data/tt_amc_2018_v5.root"],
-        "vector_monoj_mmed1500_mdm300_2017_v5" :[
-        "./data/vector_monoj_mmed1500_mdm300_2017_v5.root"
+        # "vector_monoj_mmed1500_mdm300_2017_v5" :[
+        # "./data/vector_monoj_mmed1500_mdm300_2017_v5.root"
+        # ]
+        "zjetsnunu_ht1200to2500_mg_2018_v5":[
+        "data/zjetsnunu_ht1200to2500_mg_2018_v5.root"
         ]
     }
 
