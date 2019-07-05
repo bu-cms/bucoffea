@@ -6,7 +6,7 @@ from bucoffea.monojet import monojetProcessor
 import lz4.frame as lz4f
 import cloudpickle
 from pathlib import Path
-from bucoffea.execute.dataset_definitions import files_from_das, files_from_eos
+from bucoffea.execute.dataset_definitions import files_from_das, files_from_eos, files_from_ac
 from coffea.util import save
 from bucoffea.helpers import bucoffea_path, vo_proxy_path, xrootd_format
 from bucoffea.helpers.condor import  condor_submit
