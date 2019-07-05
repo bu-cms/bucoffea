@@ -24,3 +24,7 @@ expand "${INFILE}" "RunIIAutumn18*1June*" | tee datasets_2018.txt
 INFILE="dataset_names_data.txt"
 expand "${INFILE}" "Run2017*1June*" | tee -a datasets_2017.txt
 expand "${INFILE}" "Run2018*1June*" | tee -a datasets_2018.txt
+
+sed -i '/BGen/d' datasets_201*.txt
+sed -i '/DYBBJet/d' datasets_201*.txt
+sed -i '/DoubleEMEnriched/d' datasets_201*.txt
