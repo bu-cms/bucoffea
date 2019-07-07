@@ -50,15 +50,17 @@ class monojetProcessor(processor.ProcessorABC):
 
     def process(self, df):
         # Gen info
-        gen = setup_gen_candidates(df)
-        if(is_lo_z(df['dataset'])):
-            gen_v = find_gen_dilepton(gen, pdgsum=0)
-            gen_vpt = gen_v[gen_v.mass.argmax()].pt.flatten()
-        elif(is_lo_w(df['dataset'])):
-            gen_v = find_gen_dilepton(gen, pdgsum=1)
-            gen_vpt = gen_v[gen_v.mass.argmax()].pt.flatten()
-        else:
-            gen_vpt = np.zeros(df.size)
+        # gen = setup_gen_candidates(df)
+        # if(is_lo_z(df['dataset'])):
+        #     gen_v = find_gen_dilepton(gen, pdgsum=0)
+        #     gen_vpt = gen_v[gen_v.mass.argmax()].pt.flatten()
+        # elif(is_lo_w(df['dataset'])):
+        #     gen_v = find_gen_dilepton(gen, pdgsum=1)
+        #     gen_vpt = gen_v[gen_v.mass.argmax()].pt.flatten()
+        # else:
+        #     gen_vpt = np.zeros(df.size)
+
+        gen_v_pt = df['LHE_Vpt']
 
         # Candidates
         # Already pre-filtered!
@@ -181,9 +183,7 @@ class monojetProcessor(processor.ProcessorABC):
         isdata = dataset.startswith("data_")
 
         # Gen
-        output['genvpt_check'].fill(vpt=gen_vpt,type="BU", dataset=dataset)
-
-        output['genvpt_check'].fill(vpt=df['LHE_Vpt'],type="Nano", dataset=dataset)
+        output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
 
         all_weights = {}
         if isdata:
