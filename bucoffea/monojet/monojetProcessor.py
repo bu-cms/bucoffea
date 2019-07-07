@@ -40,6 +40,8 @@ class monojetProcessor(processor.ProcessorABC):
         self._year=year
         self._blind=blind
         self._accumulator = monojet_accumulator()
+        cfg.DYNACONF_WORKS="merge_configs"
+        cfg.MERGE_ENABLED_FOR_DYNACONF=True
         cfg.SETTINGS_FILE_FOR_DYNACONF = bucoffea_path("config/monojet.yaml")
         cfg.ENV_FOR_DYNACONF = f"era{self._year}"
         cfg.reload()
