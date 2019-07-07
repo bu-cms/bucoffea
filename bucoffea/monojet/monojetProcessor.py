@@ -200,10 +200,10 @@ class monojetProcessor(processor.ProcessorABC):
             all_weights["photon_id_tight"] = self._evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
             all_weights["pileup"] = self._evaluator['pileup'](df['Pileup_nTrueInt'])
 
-            if is_lo_z(dataset):
-                all_weights["theory"] = self._evaluator["qcd_ew_nlo_w"](df['LHE_Vpt'])
-            elif is_lo_w(dataset):
-                all_weights["theory"] = self._evaluator["qcd_ew_nlo_z"](df['LHE_Vpt'])
+            if is_lo_w(dataset):
+                all_weights["theory"] = self._evaluator["qcd_ew_nlo_w"](gen_v_pt)
+            elif is_lo_z(dataset):
+                all_weights["theory"] = self._evaluator["qcd_ew_nlo_z"](gen_v_pt)
             else:
                 all_weights["theory"] = np.ones(df.size)
             for iw in all_weights.values():
