@@ -25,7 +25,7 @@ if $PREFETCH; then
         LOCAL=$(echo "${file}" | md5sum | awk '{print $1}').root
         xrdcp $file ./$LOCAL
         echo $LOCAL >> tmp.txt
-    done < FLIST
+    done < $FLIST
     mv tmp.txt $FLIST
 fi
 
