@@ -92,6 +92,8 @@ def files_from_ac(regex):
             print(exc)
     
     for dataset, files in fileset.items():
+        if not re.match(regex, dataset):
+            continue
         for ifile in reversed(files):
             if not len(ifile):
                 files.remove(ifile)
