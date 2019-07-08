@@ -95,7 +95,9 @@ def do_submit(args):
 
     # Time tagged submission directory
     timetag = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    subdir = os.path.abspath(pjoin("./submission/", timetag))
+
+    foldername = timetag + ("_{args.name}" if args.name else "")
+    subdir = os.path.abspath(pjoin("./submission/", foldername))
     if not os.path.exists(subdir):
         os.makedirs(subdir)
 
@@ -165,7 +167,6 @@ def do_submit(args):
             print(f"Submitted job {jobid}")
             with open("submission_history.txt","a") as f:
                 f.write(f"{datetime.now()} {jobid}\n")
-        break
 
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
@@ -191,6 +192,7 @@ def main():
     parser_submit = subparsers.add_parser('submit', help='Submission help')
     parser_submit.add_argument('--dataset', type=str, help='Dataset regex to use.')
     parser_submit.add_argument('--filesperjob', type=int, default=10, help='Number of files to process per job')
+    parser_submit.add_argument('--name', type=str, default=None, help='Name to identify this submission')
     parser_submit.set_defaults(func=do_submit)
 
 
