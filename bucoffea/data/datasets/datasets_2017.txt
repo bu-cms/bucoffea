@@ -45,6 +45,7 @@
 /EWKWMinus2Jets_WToLNu_M-50_TuneCP5_13TeV-madgraph-pythia8/RunIIFall17NanoAODv5-PU2017_12Apr2018_Nano1June2019_new_pmx_102X_mc2017_realistic_v7-v1/NANOAODSIM
 
 # Gamma
+/GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17NanoAODv5-PU2017_12Apr2018_Nano1June2019_102X_mc2017_realistic_v7-v1/NANOAODSIM
 /GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17NanoAODv5-PU2017_12Apr2018_Nano1June2019_new_pmx_102X_mc2017_realistic_v7-v1/NANOAODSIM
 /GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17NanoAODv5-PU2017_12Apr2018_Nano1June2019_102X_mc2017_realistic_v7-v1/NANOAODSIM
 /GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17NanoAODv5-PU2017_12Apr2018_Nano1June2019_102X_mc2017_realistic_v7-v1/NANOAODSIM
@@ -89,3 +90,8 @@
 /SingleElectron/Run2017D-Nano1June2019-v1/NANOAOD
 /SingleElectron/Run2017E-Nano1June2019-v1/NANOAOD
 /SingleElectron/Run2017F-Nano1June2019-v1/NANOAOD
+/SingleMuon/Run2017B-Nano1June2019-v1/NANOAOD
+/SingleMuon/Run2017C-Nano1June2019-v1/NANOAOD
+/SingleMuon/Run2017D-Nano1June2019-v1/NANOAOD
+/SingleMuon/Run2017E-Nano1June2019-v1/NANOAOD
+/SingleMuon/Run2017F-Nano1June2019-v1/NANOAOD
