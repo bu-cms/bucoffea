@@ -47,7 +47,7 @@ class monojetProcessor(processor.ProcessorABC):
         cfg.SETTINGS_FILE_FOR_DYNACONF = bucoffea_path("config/monojet.yaml")
         cfg.ENV_FOR_DYNACONF = f"era{self._year}"
         cfg.reload()
-        self._evaluator = monojet_evaluator(cfg)
+
     @property
     def accumulator(self):
         return self._accumulator
@@ -192,25 +192,27 @@ class monojetProcessor(processor.ProcessorABC):
         # Gen
         output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
 
+        # Weights
+        evaluator = monojet_evaluator(cfg)
         all_weights = {}
         if isdata:
             weight = np.ones(df.size)
         else:
             weight = df['Generator_weight']
 
-            all_weights["muon_id_tight"] = self._evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].eta).prod()
-            all_weights["muon_id_loose"] = self._evaluator['muon_id_loose']( muons[~is_tight_muon].pt, muons[~is_tight_muon].eta).prod()
+            all_weights["muon_id_tight"] = evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].eta).prod()
+            all_weights["muon_id_loose"] = evaluator['muon_id_loose']( muons[~is_tight_muon].pt, muons[~is_tight_muon].eta).prod()
 
-            all_weights["ele_id_tight"] = self._evaluator['ele_id_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod()
-            all_weights["ele_id_loose"] = self._evaluator['ele_id_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod()
+            all_weights["ele_id_tight"] = evaluator['ele_id_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod()
+            all_weights["ele_id_loose"] = evaluator['ele_id_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod()
 
-            all_weights["photon_id_tight"] = self._evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
-            all_weights["pileup"] = self._evaluator['pileup'](df['Pileup_nTrueInt'])
+            all_weights["photon_id_tight"] = evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
+            all_weights["pileup"] = evaluator['pileup'](df['Pileup_nTrueInt'])
 
             if is_lo_w(dataset):
-                all_weights["theory"] = self._evaluator["qcd_ew_nlo_w"](gen_v_pt)
+                all_weights["theory"] = evaluator["qcd_ew_nlo_w"](gen_v_pt)
             elif is_lo_z(dataset):
-                all_weights["theory"] = self._evaluator["qcd_ew_nlo_z"](gen_v_pt)
+                all_weights["theory"] = evaluator["qcd_ew_nlo_z"](gen_v_pt)
             else:
                 all_weights["theory"] = np.ones(df.size)
             for iw in all_weights.values():
