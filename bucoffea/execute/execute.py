@@ -61,6 +61,10 @@ def do_worker(args):
     elif "2018" in args.dataset: year=2018
     else: raise RuntimeError("Cannot deduce year from dataset name.")
 
+    ndatasets = len(fileset)
+    nfiles = sum([len(x) for x in fileset.values()])
+    print(f"Running over {ndatasets} datasets with a total of {nfiles} files.")
+
     output = run_uproot_job_nanoaod(fileset,
                                   treename='Events',
                                   processor_instance=monojetProcessor(year=year),
