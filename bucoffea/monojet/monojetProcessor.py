@@ -14,7 +14,7 @@ from dynaconf import settings as cfg
 from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, setup_gen_candidates,monojet_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path
 from bucoffea.helpers.gen import find_gen_dilepton
-
+from bucoffea.processor.executor import run_uproot_job_nanoaod
 def is_lo_z(dataset):
     return bool(re.match('(DY|Z)(\d+)Jet.*(mg|MLM).*', dataset))
 def is_lo_w(dataset):
@@ -256,8 +256,8 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Sum of all weights to use for normalization
         # TODO: Deal with systematic variations
-        output['sumw'][dataset] += df['Generator_weight'].sum()
-        output['sumw2'][dataset] += (df['Generator_weight']**2).sum()
+        output['sumw'][dataset] +=  df['genEventSumw']
+        output['sumw2'][dataset] +=  df['genEventSumw2']
 
         regions = monojet_regions()
         for region, cuts in regions.items():
@@ -430,7 +430,7 @@ def main():
             else: newlist.append(file)
         fileset[dataset] = newlist
 
-    output = processor.run_uproot_job(fileset,
+    output = run_uproot_job_nanoaod(fileset,
                                   treename='Events',
                                   processor_instance=monojetProcessor(years[0]),
                                   executor=processor.futures_executor,

@@ -2,6 +2,7 @@
 import os
 import argparse
 from coffea import processor
+from bucoffea.processor.executor import run_uproot_job_nanoaod
 from bucoffea.monojet import monojetProcessor
 import lz4.frame as lz4f
 import cloudpickle
@@ -27,7 +28,7 @@ def do_run(args):
     elif "2018" in args.dataset: year=2018
     else: raise RuntimeError("Cannot deduce year from dataset name.")
 
-    output = processor.run_uproot_job(fileset,
+    output = run_uproot_job_nanoaod(fileset,
                                   treename='Events',
                                   processor_instance=monojetProcessor(year=year),
                                   executor=processor.futures_executor,
@@ -60,7 +61,7 @@ def do_worker(args):
     elif "2018" in args.dataset: year=2018
     else: raise RuntimeError("Cannot deduce year from dataset name.")
 
-    output = processor.run_uproot_job(fileset,
+    output = run_uproot_job_nanoaod(fileset,
                                   treename='Events',
                                   processor_instance=monojetProcessor(year=year),
                                   executor=processor.futures_executor,
