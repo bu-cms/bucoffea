@@ -100,7 +100,7 @@ def do_submit(args):
     # Time tagged submission directory
     timetag = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
-    foldername = timetag + ("_{args.name}" if args.name else "")
+    foldername = timetag + (f"_{args.name}" if args.name else "")
     subdir = os.path.abspath(pjoin("./submission/", foldername))
     if not os.path.exists(subdir):
         os.makedirs(subdir)
