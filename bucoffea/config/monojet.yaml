@@ -122,6 +122,16 @@ era2017:
   triggers:
     met:
       - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
+    electron:
+      single:
+        - HLT_Photon200
+        - HLT_Ele35_WPTight_Gsf
+    muon:
+      single:
+        - HLT_IsoMu27
+    photon:
+      single:
+        - HLT_Photon200
 
   btag:
     algo: deepcsv
@@ -179,6 +189,16 @@ era2018:
   triggers:
     met:
       - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
+    electron:
+      single:
+        - HLT_Photon200
+        - HLT_Ele32_WPTight_Gsf
+    muon:
+      single:
+        - HLT_IsoMu24
+    photon:
+      single:
+        - HLT_Photon200
   btag:
     algo: deepcsv
     wp: medium

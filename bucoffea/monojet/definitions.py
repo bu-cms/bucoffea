@@ -234,8 +234,7 @@ def setup_candidates(df, cfg):
 
 def monojet_regions():
     common_cuts = [
-        # 'filt_met',
-        # 'trig_met',
+        'filt_met',
         'veto_ele',
         'veto_muo',
         'veto_photon',
@@ -260,36 +259,36 @@ def monojet_regions():
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_v'] = common_cuts + v_cuts
-    regions['sr_j'] = common_cuts + j_cuts
+    regions['sr_v'] = ['trig_met'] + common_cuts + v_cuts
+    regions['sr_j'] = ['trig_met'] + common_cuts + j_cuts
 
     # Dimuon CR
-    cr_2m_cuts = ['two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
+    cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
     cr_2m_cuts.remove('veto_muo')
 
     regions['cr_2m_j'] = cr_2m_cuts + j_cuts
     regions['cr_2m_v'] = cr_2m_cuts + v_cuts
 
     # Single muon CR
-    cr_1m_cuts = ['one_muon', 'at_least_one_tight_mu', 'mt_mu'] + common_cuts
+    cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu', 'mt_mu'] + common_cuts
     cr_1m_cuts.remove('veto_muo')
     regions['cr_1m_j'] = cr_1m_cuts + j_cuts
     regions['cr_1m_v'] = cr_1m_cuts + v_cuts
 
     # Dielectron CR
-    cr_2e_cuts = ['two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'dielectron_charge'] + common_cuts
+    cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'dielectron_charge'] + common_cuts
     cr_2e_cuts.remove('veto_ele')
     regions['cr_2e_j'] = cr_2e_cuts + j_cuts
     regions['cr_2e_v'] = cr_2e_cuts + v_cuts
 
     # Single electron CR
-    cr_1e_cuts = ['one_electron', 'at_least_one_tight_el', 'mt_el'] + common_cuts
+    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'mt_el'] + common_cuts
     cr_1e_cuts.remove('veto_ele')
     regions['cr_1e_j'] =  cr_1e_cuts + j_cuts
     regions['cr_1e_v'] =  cr_1e_cuts + v_cuts
 
     # Photon CR
-    cr_g_cuts = ['one_photon', 'at_least_one_tight_photon'] + common_cuts
+    cr_g_cuts = ['trig_photon', 'one_photon', 'at_least_one_tight_photon'] + common_cuts
     cr_g_cuts.remove('veto_photon')
 
     regions['cr_g_j'] = cr_g_cuts + j_cuts

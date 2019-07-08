@@ -159,6 +159,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
 
         # Diele CR
+        selection.add('trig_ele', combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
         selection.add('one_electron', electrons.counts==1)
         selection.add('two_electrons', electrons.counts==2)
         selection.add('at_least_one_tight_el', is_tight_electron.any())
@@ -172,6 +173,8 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
         # Photon CR
+        selection.add('trig_photon', combine_masks(df, cfg.TRIGGERS.PHOTON.SINGLE))
+
         is_tight_photon = photons.mediumId \
                          & (photons.pt > cfg.PHOTON.CUTS.TIGHT.PT) \
                          & (np.abs(photons.eta) < cfg.PHOTON.CUTS.TIGHT.ETA)
