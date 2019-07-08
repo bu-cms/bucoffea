@@ -30,8 +30,10 @@ def combine_masks(df, masks):
     :return: OR of all masks for each event
     :rtype: array
     """
-    decision = np.zeros(df.size)==0
+    # Start with array of False
+    decision = np.ones(df.size)==0
 
+    # Flip to true if any is passed
     for t in masks:
         decision = decision | df[t]
     return decision
