@@ -242,7 +242,7 @@ class monojetProcessor(processor.ProcessorABC):
 
 
             # Save the event numbers of events passing this selection
-            if cfg.RUN.SAVEEVENTS:
+            if cfg.RUN.SAVE.PASSING:
                 output['selected_events'][region] += list(df['event'][mask])
 
             # Multiplicities

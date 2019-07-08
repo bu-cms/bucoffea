@@ -79,7 +79,9 @@ default:
       histogram: kfactor_monojet_qcd_ewk
       file: data/sf/theory/merged_kfactors_zjets.root
   run:
-    saveevents: False
+    save:
+      passing: True
+
 
 env:
   test: false
