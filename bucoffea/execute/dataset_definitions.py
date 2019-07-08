@@ -109,7 +109,7 @@ def files_from_eos(regex):
     :rtype: dict
     """
     topdir = '/eos/user/a/aalbert/nanopost/'
-    tag = '2Jul19'
+    tag = '7Jul19'
 
     fileset = {}
     for path, subdir, files in os.walk(pjoin(topdir, tag)):
