@@ -99,7 +99,8 @@ class monojetProcessor(processor.ProcessorABC):
 
         # B tagged ak4
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
-        jet_btagged = getattr(ak4, cfg.BTAG.algo) > btag_cut
+        jet_btag_val = getattr(ak4, cfg.BTAG.algo)
+        jet_btagged = jet_btag_val > btag_cut
         bjets = ak4[ jet_acceptance \
                      & jet_btagged \
                      & (ak4.pt>20) ]
@@ -150,6 +151,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_tau21", "leadak8_mass"))
 
         # Dimuon CR
+        leadmuon_index=muons.pt.argmax()
         selection.add('at_least_one_tight_mu', is_tight_muon.any())
         selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
                                     & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
@@ -161,6 +163,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
 
         # Diele CR
+        leadelectron_index=electrons.pt.argmax()
         selection.add('trig_ele', combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
         selection.add('one_electron', electrons.counts==1)
         selection.add('two_electrons', electrons.counts==2)
@@ -176,6 +179,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Photon CR
         selection.add('trig_photon', combine_masks(df, cfg.TRIGGERS.PHOTON.SINGLE))
+        leadphoton_index=photons.pt.argmax()
 
         is_tight_photon = photons.mediumId \
                          & (photons.pt > cfg.PHOTON.CUTS.TIGHT.PT) \
@@ -218,7 +222,36 @@ class monojetProcessor(processor.ProcessorABC):
             for iw in all_weights.values():
                 weight = weight * iw
 
+        # Save per-event values for synchronization
+        if cfg.RUN.KINEMATICS.SAVE:
+            for event in cfg.RUN.KINEMATICS.EVENTS:
+                mask = df['event'] == event
+                if not mask.any():
+                    continue
+                output['kinematics']['event'] += [event]
+                output['kinematics']['met'] += [df['MET_pt'][mask]]
+                output['kinematics']['met_phi'] += [df['MET_phi'][mask]]
+                output['kinematics']['recoil'] += [df['recoil_pt'][mask]]
+                output['kinematics']['recoil_phi'] += [df['recoil_phi'][mask]]
 
+                output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt]
+                output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta]
+                output['kinematics']['leadbtag'] += [jet_btag_val[jet_acceptance & (ak4.pt>20)][mask].max()]
+
+                output['kinematics']['nLooseMu'] += [muons.counts[mask]]
+                output['kinematics']['nTightMu'] += [muons[is_tight_muon].counts[mask]]
+                output['kinematics']['mupt0'] += [muons[leadmuon_index][mask].pt]
+                output['kinematics']['mueta0'] += [muons[leadmuon_index][mask].eta]
+
+                output['kinematics']['nLooseEl'] += [electrons.counts[mask]]
+                output['kinematics']['nTightEl'] += [electrons[is_tight_electron].counts[mask]]
+                output['kinematics']['elpt0'] += [electrons[leadelectron_index][mask].pt]
+                output['kinematics']['eleta0'] += [electrons[leadelectron_index][mask].eta]
+
+                output['kinematics']['nLooseGam'] += [photons.counts[mask]]
+                output['kinematics']['nTightGam'] += [photons[is_tight_photon].counts[mask]]
+                output['kinematics']['gpt0'] += [photons[leadphoton_index][mask].pt]
+                output['kinematics']['geta0'] += [photons[leadphoton_index][mask].eta]
 
 
         # Sum of all weights to use for normalization
@@ -244,6 +277,7 @@ class monojetProcessor(processor.ProcessorABC):
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 output['selected_events'][region] += list(df['event'][mask])
+
 
             # Multiplicities
             def fill_mult(name, candidates):

@@ -90,6 +90,7 @@ def monojet_accumulator():
     items['sumw2'] = processor.defaultdict_accumulator(float)
 
     items['selected_events'] = processor.defaultdict_accumulator(list)
+    items['kinematics'] = processor.defaultdict_accumulator(list)
 
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
 

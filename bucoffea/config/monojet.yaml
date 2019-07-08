@@ -80,8 +80,16 @@ default:
       file: data/sf/theory/merged_kfactors_zjets.root
   run:
     save:
-      passing: True
-
+      passing: False
+    kinematics:
+      save: False
+      events:
+        - 36533896
+        - 35733274
+        - 35719982
+        - 30682767
+        - 79123963
+        - 51393664
 
 env:
   test: false
