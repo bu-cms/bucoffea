@@ -19,7 +19,11 @@ def is_lo_z(dataset):
     return bool(re.match('(DY|Z)(\d+)Jet.*(mg|MLM).*', dataset))
 def is_lo_w(dataset):
     return bool(re.match('W(\d+)Jet.*(mg|MLM).*', dataset))
-
+def is_data(dataset):
+    tags = ['EGamma','MET','SingleElectron','SingleMuon']
+    if any([dataset.startswith(itag) for itag in tags ]):
+        return True
+    return False
 def combine_masks(df, masks):
     """Returns the OR of the masks in the list
 
@@ -63,8 +67,8 @@ class monojetProcessor(processor.ProcessorABC):
         #     gen_vpt = gen_v[gen_v.mass.argmax()].pt.flatten()
         # else:
         #     gen_vpt = np.zeros(df.size)
-
-        gen_v_pt = df['LHE_Vpt']
+        if not is_data(df['dataset']):
+            gen_v_pt = df['LHE_Vpt']
 
         # Candidates
         # Already pre-filtered!
@@ -194,12 +198,13 @@ class monojetProcessor(processor.ProcessorABC):
         isdata = dataset.startswith("data_")
 
         # Gen
-        output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
+        if not is_data(df['dataset']):
+            output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
 
         # Weights
         evaluator = monojet_evaluator(cfg)
         all_weights = {}
-        if isdata:
+        if is_data(df['dataset']):
             weight = np.ones(df.size)
         else:
             weight = df['Generator_weight']
@@ -262,7 +267,7 @@ class monojetProcessor(processor.ProcessorABC):
         regions = monojet_regions()
         for region, cuts in regions.items():
             # Blinding
-            if(self._blind and df['dataset'].startswith('data') and region.startswith('sr')):
+            if(self._blind and is_data(df['dataset']) and region.startswith('sr')):
                 continue
 
             # Cutflow plot for signal and control regions
