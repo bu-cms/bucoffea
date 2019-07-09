@@ -192,6 +192,7 @@ def setup_candidates(df, cfg):
         mass=0*df['Photon_pt'],
         looseId=(df[cfg.PHOTON.BRANCH.ID]>=1) & df['Photon_electronVeto'],
         mediumId=(df[cfg.PHOTON.BRANCH.ID]>=2) & df['Photon_electronVeto'],
+        barrel=np.abs(df['Electron_eta'] < 1.479),
         clean=df['Photon_cleanmask'],
     )
     photons = photons[photons.looseId \

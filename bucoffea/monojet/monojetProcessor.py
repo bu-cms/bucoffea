@@ -214,13 +214,27 @@ class monojetProcessor(processor.ProcessorABC):
         else:
             weight = df['Generator_weight']
 
+            # Muon ID and Isolation for tight and loose WP
+            # Function of pT, eta (Order!)
             all_weights["muon_id_tight"] = evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].eta).prod()
-            all_weights["muon_id_loose"] = evaluator['muon_id_loose']( muons[~is_tight_muon].pt, muons[~is_tight_muon].eta).prod()
+            all_weights["muon_iso_tight"] = evaluator['muon_iso_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].eta).prod()
+            all_weights["muon_id_loose"] = evaluator['muon_id_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].eta).prod()
+            all_weights["muon_iso_loose"] = evaluator['muon_iso_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].eta).prod()
 
+            # Electron ID and reco
+            # Function of eta, pT (Other way round relative to muons!)
             all_weights["ele_id_tight"] = evaluator['ele_id_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod()
+            all_weights["ele_reco_tight"] = evaluator['ele_reco_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod()
             all_weights["ele_id_loose"] = evaluator['ele_id_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod()
+            all_weights["ele_reco_loose"] = evaluator['ele_reco_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod()
 
+            # Photon ID and electron veto
             all_weights["photon_id_tight"] = evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
+
+            # CSEV not split only by EE/EB for now
+            csev_sf_index = 0.5 * photons.barrel + 2.5 * ~photons.barrel
+            all_weights["photon_csev"] = evaluator['photon_csev'](csev_sf_index).prod()
+
             all_weights["pileup"] = evaluator['pileup'](df['Pileup_nTrueInt'])
 
             if is_lo_w(dataset):
