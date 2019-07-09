@@ -124,7 +124,7 @@ def do_submit(args):
         chunks = chunkify(files,int(len(files) / args.filesperjob + 1) )
         for ichunk, chunk in enumerate(chunks):
             # Save input files to a txt file and send to job
-            tmpfile = pjoin(subdir, filedir, f"input_{dataset}_{ichunk:03d}.txt")
+            tmpfile = pjoin(subdir, filedir, f"input_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt")
             with open(tmpfile, "w") as f:
                 for file in chunk:
                     f.write(f"{file}\n")
@@ -154,8 +154,8 @@ def do_submit(args):
                 "transfer_input_files" : ", ".join(input_files),
                 "getenv" : "true",
                 "arguments": " ".join(arguments),
-                "Output" : f"{filedir}/out_{dataset}_{ichunk:03d}.txt",
-                "Error" : f"{filedir}/err_{dataset}_{ichunk:03d}.txt",
+                "Output" : f"{filedir}/out_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt",
+                "Error" : f"{filedir}/err_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt",
                 "log" :f"/dev/null",
                 "request_cpus" : str(args.jobs),
                 "+MaxRuntime" : f"{60*60*8}"
