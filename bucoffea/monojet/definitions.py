@@ -149,7 +149,7 @@ def setup_candidates(df, cfg):
         tightId=(df[cfg.ELECTRON.BRANCH.ID]==4),
         dxy=np.abs(df['Electron_dxy']),
         dz=np.abs(df['Electron_dz']),
-        barrel=np.abs(df['Electron_eta'] < 1.479)
+        barrel=np.abs(df['Electron_eta'])< 1.479
     )
     # All electrons must be at least loose
     pass_dxy = (electrons.barrel & (electrons.dxy < cfg.ELECTRON.CUTS.LOOSE.DXY.BARREL)) \
@@ -183,7 +183,6 @@ def setup_candidates(df, cfg):
                 & (taus.pt > cfg.TAU.CUTS.PT)\
                 & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
                 & ((taus.iso&4)==4)]
-
     photons = JaggedCandidateArray.candidatesfromcounts(
         df['nPhoton'],
         pt=df['Photon_pt'],
@@ -192,7 +191,7 @@ def setup_candidates(df, cfg):
         mass=0*df['Photon_pt'],
         looseId=(df[cfg.PHOTON.BRANCH.ID]>=1) & df['Photon_electronVeto'],
         mediumId=(df[cfg.PHOTON.BRANCH.ID]>=2) & df['Photon_electronVeto'],
-        barrel=np.abs(df['Electron_eta'] < 1.479),
+        barrel=np.abs(df['Photon_eta']) < 1.479,
         clean=df['Photon_cleanmask'],
     )
     photons = photons[photons.looseId \
