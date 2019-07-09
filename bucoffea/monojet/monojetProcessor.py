@@ -261,8 +261,9 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Sum of all weights to use for normalization
         # TODO: Deal with systematic variations
-        output['sumw'][dataset] +=  df['genEventSumw']
-        output['sumw2'][dataset] +=  df['genEventSumw2']
+        if not is_data(df['dataset']):
+            output['sumw'][dataset] +=  df['genEventSumw']
+            output['sumw2'][dataset] +=  df['genEventSumw2']
 
         regions = monojet_regions()
         for region, cuts in regions.items():
