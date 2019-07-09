@@ -223,10 +223,9 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Electron ID and reco
             # Function of eta, pT (Other way round relative to muons!)
+            all_weights["ele_reco"] = evaluator['ele_reco'](electrons.eta, electrons.pt).prod()
             all_weights["ele_id_tight"] = evaluator['ele_id_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod()
-            all_weights["ele_reco_tight"] = evaluator['ele_reco_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod()
             all_weights["ele_id_loose"] = evaluator['ele_id_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod()
-            all_weights["ele_reco_loose"] = evaluator['ele_reco_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod()
 
             # Photon ID and electron veto
             all_weights["photon_id_tight"] = evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()

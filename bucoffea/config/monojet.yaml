@@ -158,7 +158,7 @@ era2017:
   sf:
     ele_reco:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root
+      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
     ele_id_loose:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2.root
@@ -170,27 +170,26 @@ era2017:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_PhotonsMedium.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
-      tightid:
-        histogram: Tight_ID
-        file: data/sf/egamma/CSEV_ScaleFactors_2017.root
+      histogram: Tight_ID
+      file: data/sf/egamma/CSEV_ScaleFactors_2017.root
 
     muon_id_loose:
       histogram: NUM_LooseID_DEN_genTracks_pt_abseta
       file: data/sf/muon/2017_RunBCDEF_SF_ID.root
     muon_id_loose_stat:
-      histogram: NUM_LooseID_DEN_genTracks_pt_abseta
+      histogram: NUM_LooseID_DEN_genTracks_pt_abseta_stat
       file: data/sf/muon/2017_RunBCDEF_SF_ID.root
     muon_id_loose_syst:
-      histogram: NUM_LooseID_DEN_genTracks_pt_abseta
+      histogram: NUM_LooseID_DEN_genTracks_pt_abseta_syst
       file: data/sf/muon/2017_RunBCDEF_SF_ID.root
     muon_id_tight:
       histogram: NUM_TightID_DEN_genTracks_pt_abseta
       file: data/sf/muon/2017_RunBCDEF_SF_ID.root
     muon_id_tight_stat:
-      histogram: NUM_TightID_DEN_genTracks_pt_abseta
+      histogram: NUM_TightID_DEN_genTracks_pt_abseta_stat
       file: data/sf/muon/2017_RunBCDEF_SF_ID.root
     muon_id_tight_syst:
-      histogram: NUM_TightID_DEN_genTracks_pt_abseta
+      histogram: NUM_TightID_DEN_genTracks_pt_abseta_syst
       file: data/sf/muon/2017_RunBCDEF_SF_ID.root
     muon_iso_tight:
       histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta
@@ -233,7 +232,7 @@ era2018:
   sf:
     ele_reco:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_egammaEffi.txt_EGM2D_updatedAll.root
+      file: data/sf/egamma/2018_egammaEffi_txt_EGM2D_updatedAll.root
     ele_id_loose:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_ElectronWPVeto_Fall17V2.root
@@ -245,9 +244,8 @@ era2018:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_PhotonsMedium.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
-      tightid:
-        histogram: Tight_ID
-        file: data/sf/egamma/CSEV_ScaleFactors_2017.root # TODO: Update to 2018 when available!
+      histogram: Tight_ID
+      file: data/sf/egamma/CSEV_ScaleFactors_2017.root # TODO: Update to 2018 when available!
 
     muon_id_loose:
       histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta
@@ -274,7 +272,7 @@ era2018:
       histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta_stat
       file: data/sf/muon/2018_RunABCD_SF_ISO.root
     muon_iso_tight_sys:
-      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta_sys
+      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta_syst
       file: data/sf/muon/2018_RunABCD_SF_ISO.root
     muon_iso_loose:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
@@ -283,7 +281,7 @@ era2018:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_stat
       file: data/sf/muon/2018_RunABCD_SF_ISO.root
     muon_iso_loose_sys:
-      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_sys
+      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_syst
       file: data/sf/muon/2018_RunABCD_SF_ISO.root
 
     pileup:
