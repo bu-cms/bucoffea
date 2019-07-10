@@ -18,7 +18,7 @@ def short_name(dataset):
     name = name.replace("powheg","pow")
 
     # Detect extension
-    m=re.match(".*(ext\d+).*",conditions);
+    m=re.match(r".*(ext\d+).*",conditions);
     if m:
         name = name + "_" + m.groups()[0]
 
@@ -26,6 +26,11 @@ def short_name(dataset):
         name = name + "_2017"
     elif 'RunIIAutumn18' in conditions:
         name = name + "_2018"
+
+    m = re.match(r"Run(\d+[A-Z]*)", conditions)
+    if m:
+        name = name + "_" + m.groups()[0]
+
     return name
 
 def load_lists():
@@ -37,6 +42,8 @@ def load_lists():
     for fpath in files:
         with open(fpath,"r") as f:
             lines.extend(f.readlines())
+
+    lines = filter(lambda x: "NANOAOD" in x and not x.startswith("#"), lines)
     return lines
 
 def files_from_das(regex):
@@ -90,7 +97,7 @@ def files_from_ac(regex):
             fileset = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
-    
+
     for dataset, files in fileset.items():
         if not re.match(regex, dataset):
             continue
