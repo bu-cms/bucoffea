@@ -17,18 +17,6 @@ from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_data
 from bucoffea.processor.executor import run_uproot_job_nanoaod
 
 
-def argmax_guard(array):
-    '''
-    This is a workaround for
-    https://github.com/scikit-hep/awkward-array/issues/158
-
-    Revisit if that issue is resolved.
-    '''
-    try:
-        return array.argmax()
-    except ValueError:
-        return array
-
 def combine_masks(df, masks):
     """Returns the OR of the masks in the list
 
@@ -135,7 +123,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
 
         # AK4 Jet
-        leadak4_index=argmax_guard(ak4.pt)
+        leadak4_index=ak4.pt.argmax()
         leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
                          & (np.abs(ak4.eta[leadak4_index]) < cfg.SELECTION.SIGNAL.leadak4.ETA).any()
         selection.add('leadak4_pt_eta', leadak4_pt_eta)
@@ -145,7 +133,7 @@ class monojetProcessor(processor.ProcessorABC):
                                                     & (ak4.nhf[leadak4_index]<cfg.SELECTION.SIGNAL.leadak4.NHF)).any())
 
         # AK8 Jet
-        leadak8_index=argmax_guard(ak8.pt)
+        leadak8_index=ak8.pt.argmax()
         leadak8_pt_eta = (ak8.pt.max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
                          & (np.abs(ak8.eta[leadak8_index]) < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
         selection.add('leadak8_pt_eta', leadak8_pt_eta)
@@ -160,7 +148,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_tau21", "leadak8_mass"))
 
         # Dimuon CR
-        leadmuon_index=argmax_guard(muons.pt)
+        leadmuon_index=muons.pt.argmax()
         selection.add('at_least_one_tight_mu', is_tight_muon.any())
         selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
                                     & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
@@ -172,7 +160,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
 
         # Diele CR
-        leadelectron_index=argmax_guard(electrons.pt)
+        leadelectron_index=electrons.pt.argmax()
         selection.add('trig_ele', combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
         selection.add('one_electron', electrons.counts==1)
         selection.add('two_electrons', electrons.counts==2)
@@ -188,7 +176,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Photon CR
         selection.add('trig_photon', combine_masks(df, cfg.TRIGGERS.PHOTON.SINGLE))
-        leadphoton_index=argmax_guard(photons.pt)
+        leadphoton_index=photons.pt.argmax()
 
         is_tight_photon = photons.mediumId \
                          & (photons.pt > cfg.PHOTON.CUTS.TIGHT.PT) \
@@ -343,7 +331,7 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
 
             # Leading ak4
-            leadak4_indices = argmax_guard(ak4.pt)
+            leadak4_indices = ak4.pt.argmax()
             w_leadak4 = weight_shape(ak4[leadak4_indices].eta[mask], weight[mask])
             ezfill('ak4eta0',   jeteta=ak4[leadak4_indices].eta[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4pt0',    jetpt=ak4[leadak4_indices].pt[mask].flatten(),      weight=w_leadak4)
@@ -356,7 +344,7 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak8mass',   mass=ak8[mask].mass.flatten(),  weight=w_allak8)
 
             # Leading ak8
-            leadak8_indices = argmax_guard(ak8.pt)
+            leadak8_indices = ak8.pt.argmax()
             w_leadak8 = weight_shape(ak8[leadak8_indices].eta[mask], weight[mask])
 
             ezfill('ak8eta0',   jeteta=ak8[leadak8_indices].eta[mask].flatten(),    weight=w_leadak8)
@@ -438,8 +426,11 @@ def main():
         # "vector_monoj_mmed1500_mdm300_2017_v5" :[
         # "./data/vector_monoj_mmed1500_mdm300_2017_v5.root"
         # ]
-        "zjetsnunu_ht1200to2500_mg_2018_v5":[
-        "data/zjetsnunu_ht1200to2500_mg_2018_v5.root"
+        # "zjetsnunu_ht1200to2500_mg_2018_v5":[
+        # "data/zjetsnunu_ht1200to2500_mg_2018_v5.root"
+        # ]
+        "SingleMuon_2018C" : [
+            "./data/SingleMuon_2018C.root"
         ]
     }
 
