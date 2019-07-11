@@ -131,7 +131,7 @@ era2016:
 era2017:
   triggers:
     met:
-      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
+      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight # 40.658837867 fb-1
     electron:
       single:
         - HLT_Photon200
@@ -210,7 +210,7 @@ era2017:
 era2018:
   triggers:
     met:
-      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
+      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight # 59.735969368 fb-1
     electron:
       single:
         - HLT_Photon200
