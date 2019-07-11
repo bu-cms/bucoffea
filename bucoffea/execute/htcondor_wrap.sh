@@ -43,5 +43,5 @@ echo "Run done: $(date)"
 
 echo "Cleaning up."
 rm -v *.root
-
+rm -v ${FLIST}
 echo "End: $(date)"
