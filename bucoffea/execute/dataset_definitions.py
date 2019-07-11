@@ -115,7 +115,7 @@ def files_from_eos(regex):
     :return: Mapping of dataset : [files]
     :rtype: dict
     """
-    topdir = '/eos/user/a/aalbert/nanopost/'
+    topdir = '/eos/cms/store/group/phys_exotica/monojet/aalbert/nopost/'
     tag = '7Jul19'
 
     fileset = {}
