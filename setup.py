@@ -8,5 +8,5 @@ setup(
     author_email = 'andreas.albert@cern.ch',
     description = 'Analysis using Coffea on NanoAOD',
     packages = find_packages(),    
-    install_requires = ['coffea'],
+    install_requires = ['coffea','dynaconf','tabulate'],
 )
