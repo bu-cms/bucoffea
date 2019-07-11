@@ -290,7 +290,7 @@ class monojetProcessor(processor.ProcessorABC):
                 continue
 
             # Cutflow plot for signal and control regions
-            if any(x in region for x in ["sr", "cr"]):
+            if any(x in region for x in ["sr", "cr", "tr"]):
                 output['cutflow_' + region]['all']+=df.size
                 for icut, cutname in enumerate(cuts):
                     output['cutflow_' + region][cutname] += selection.all(*cuts[:icut+1]).sum()

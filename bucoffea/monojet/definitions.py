@@ -1,4 +1,6 @@
+import copy
 from coffea import hist
+
 Hist = hist.Hist
 Bin = hist.Bin
 Cat = hist.Cat
@@ -294,6 +296,26 @@ def monojet_regions():
 
     regions['cr_g_j'] = cr_g_cuts + j_cuts
     regions['cr_g_v'] = cr_g_cuts + v_cuts
+
+    # Trigger studies
+    # num = numerator, den = denominator
+    # Single Mu region: Remove recoil cut, toggle MET trigger
+    tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts)
+    tr_1m_num_cuts.remove('recoil')
+    regions['tr_1m_num'] = tr_1m_num_cuts
+
+    tr_1m_den_cuts = copy.deepcopy(tr_1m_num_cuts)
+    tr_1m_den_cuts.remove('trig_met')
+    regions['tr_1m_den'] = tr_1m_den_cuts
+
+    # Double Mu region: Remove recoil cut, toggle MET trigger
+    tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts)
+    tr_2m_num_cuts.remove('recoil')
+    regions['tr_2m_num'] = tr_2m_num_cuts
+
+    tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)
+    tr_2m_den_cuts.remove('trig_met')
+    regions['tr_2m_den'] = tr_2m_den_cuts
 
     return regions
 
