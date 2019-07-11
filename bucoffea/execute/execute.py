@@ -37,6 +37,8 @@ def do_run(args):
                                  )
 
     # Save output
+    if not os.path.exists(args.outpath):
+        os.makedirs(args.outpath)
     outpath = pjoin(args.outpath, f"monojet_{args.dataset}.coffea")
     save(output, outpath)
 
@@ -74,6 +76,8 @@ def do_worker(args):
                                  )
 
     # Save output
+    if not os.path.exists(args.outpath):
+        os.makedirs(args.outpath)
     outpath = pjoin(args.outpath, f"monojet_{args.dataset}_{args.chunk}.coffea")
     save(output, outpath)
 
