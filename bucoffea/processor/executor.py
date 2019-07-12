@@ -99,7 +99,10 @@ def _work_function_nanoaod(item, flatten=False, savemetrics=False, mmap=False, *
     df = LazyDataFrame(tree, chunksize, index, flatten=flatten)
     for name in file['Runs'].keys():
         name = name.decode('utf-8')
-        df[name] = file['Runs'][name].array()
+        if index==0:
+            df[name] = file['Runs'][name].array()
+        else:
+            df[name] = 0 * file['Runs'][name].array()
     df['dataset'] = dataset
     tic = time.time()
     out = processor_instance.process(df)
