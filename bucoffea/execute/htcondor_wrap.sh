@@ -43,6 +43,7 @@ time python $(basename ${executable}) ${ARGS[@]:2}
 echo "Run done: $(date)"
 
 echo "Cleaning up."
-rm -v *.root
-rm -v ${FLIST}
+rm -vf *.root
+rm -vf ${FLIST}
+rm -vf $(basename $executable)
 echo "End: $(date)"
