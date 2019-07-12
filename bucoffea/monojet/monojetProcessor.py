@@ -8,7 +8,7 @@ from dynaconf import settings as cfg
 
 from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, setup_gen_candidates,monojet_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path
-from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_data
+from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_data, extract_year
 
 
 def combine_masks(df, masks):
@@ -29,32 +29,34 @@ def combine_masks(df, masks):
         decision = decision | df[t]
     return decision
 class monojetProcessor(processor.ProcessorABC):
-    def __init__(self, year="2017",blind=True):
-        self._year=year
+    def __init__(self, blind=True):
+        self._year=None
         self._blind=blind
         self._accumulator = monojet_accumulator()
+
+    @property
+    def accumulator(self):
+        return self._accumulator
+
+    def _configure(self,df):
+        dataset = df['dataset']
+        self._year = extract_year(dataset)
+
+        # Reload config based on year
         cfg.DYNACONF_WORKS="merge_configs"
         cfg.MERGE_ENABLED_FOR_DYNACONF=True
         cfg.SETTINGS_FILE_FOR_DYNACONF = bucoffea_path("config/monojet.yaml")
         cfg.ENV_FOR_DYNACONF = f"era{self._year}"
         cfg.reload()
 
-    @property
-    def accumulator(self):
-        return self._accumulator
-
     def process(self, df):
-        # Gen info
-        # gen = setup_gen_candidates(df)
-        # if(is_lo_z(df['dataset'])):
-        #     gen_v = find_gen_dilepton(gen, pdgsum=0)
-        #     gen_vpt = gen_v[gen_v.mass.argmax()].pt.flatten()
-        # elif(is_lo_w(df['dataset'])):
-        #     gen_v = find_gen_dilepton(gen, pdgsum=1)
-        #     gen_vpt = gen_v[gen_v.mass.argmax()].pt.flatten()
-        # else:
-        #     gen_vpt = np.zeros(df.size)
-        if not is_data(df['dataset']):
+        self._configure(df)
+        dataset = df['dataset']
+        df['is_lo_w'] = is_lo_w(dataset)
+        df['is_lo_z'] = is_lo_z(dataset)
+        df['is_data'] = is_data(dataset)
+
+        if not df['is_data']:
             gen_v_pt = df['LHE_Vpt']
 
         # Candidates
@@ -184,17 +186,15 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Fill histograms
         output = self.accumulator.identity()
-        dataset = df['dataset']
-        isdata = dataset.startswith("data_")
 
         # Gen
-        if not is_data(df['dataset']):
+        if not df['is_data']:
             output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
 
         # Weights
         evaluator = monojet_evaluator(cfg)
         all_weights = {}
-        if is_data(df['dataset']):
+        if df['is_data']:
             weight = np.ones(df.size)
         else:
             weight = df['Generator_weight']
@@ -221,9 +221,9 @@ class monojetProcessor(processor.ProcessorABC):
 
             all_weights["pileup"] = evaluator['pileup'](df['Pileup_nTrueInt'])
 
-            if is_lo_w(dataset):
+            if df['is_lo_w']:
                 all_weights["theory"] = evaluator["qcd_ew_nlo_w"](gen_v_pt)
-            elif is_lo_z(dataset):
+            elif df['is_lo_z']:
                 all_weights["theory"] = evaluator["qcd_ew_nlo_z"](gen_v_pt)
             else:
                 all_weights["theory"] = np.ones(df.size)
@@ -264,14 +264,14 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Sum of all weights to use for normalization
         # TODO: Deal with systematic variations
-        if not is_data(df['dataset']):
+        if not df['is_data']:
             output['sumw'][dataset] +=  df['genEventSumw']
             output['sumw2'][dataset] +=  df['genEventSumw2']
 
         regions = monojet_regions()
         for region, cuts in regions.items():
             # Blinding
-            if(self._blind and is_data(df['dataset']) and region.startswith('sr')):
+            if(self._blind and df['is_data'] and region.startswith('sr')):
                 continue
 
             # Cutflow plot for signal and control regions
