@@ -50,6 +50,8 @@ class monojetProcessor(processor.ProcessorABC):
         cfg.reload()
 
     def process(self, df):
+        if not df.size:
+            return self.accumulator.identity()
         self._configure(df)
         dataset = df['dataset']
         df['is_lo_w'] = is_lo_w(dataset)
