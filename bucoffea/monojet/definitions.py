@@ -20,8 +20,8 @@ def monojet_accumulator():
 
     vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 100, 0, 2000)
 
-    met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 100, 0, 1000)
-    recoil_ax = Bin("recoil", r"Recoil (GeV)", 100, 0, 1000)
+    met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 200, 0, 2000)
+    recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     jet_eta_ax = Bin("jeteta", r"$\eta$ (GeV)", 50, -5, 5)
