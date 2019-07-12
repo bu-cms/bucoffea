@@ -299,9 +299,10 @@ def monojet_regions():
 
     # Trigger studies
     # num = numerator, den = denominator
-    # Single Mu region: Remove recoil cut, toggle MET trigger
+    # Single Mu region: Remove recoil cut, add SingleMu trigger, toggle MET trigger
     tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts)
     tr_1m_num_cuts.remove('recoil')
+    tr_1m_num_cuts.append('trig_mu')
     regions['tr_1m_num'] = tr_1m_num_cuts
 
     tr_1m_den_cuts = copy.deepcopy(tr_1m_num_cuts)
@@ -316,6 +317,26 @@ def monojet_regions():
     tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)
     tr_2m_den_cuts.remove('trig_met')
     regions['tr_2m_den'] = tr_2m_den_cuts
+    
+    # Single Electron region: Remove recoil cut, toggle MET trigger
+    tr_1e_num_cuts = copy.deepcopy(cr_1e_cuts)
+    tr_1e_num_cuts.remove('recoil')
+    tr_1e_num_cuts.append('trig_met')
+    regions['tr_1e_num'] = tr_1e_num_cuts
+
+    tr_1e_den_cuts = copy.deepcopy(tr_1e_num_cuts)
+    tr_1e_den_cuts.remove('trig_met')
+    regions['tr_1e_den'] = tr_1e_den_cuts
+
+    # Double Electron region: Remove recoil cut, toggle MET trigger
+    tr_2e_num_cuts = copy.deepcopy(cr_2e_cuts)
+    tr_2e_num_cuts.remove('recoil')
+    tr_2e_num_cuts.append('trig_met')
+    regions['tr_2e_num'] = tr_2e_num_cuts
+
+    tr_2e_den_cuts = copy.deepcopy(tr_2e_num_cuts)
+    tr_2e_den_cuts.remove('trig_met')
+    regions['tr_2e_den'] = tr_2e_den_cuts
 
     return regions
 

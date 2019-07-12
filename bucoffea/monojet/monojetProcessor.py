@@ -159,6 +159,9 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('one_muon', muons.counts==1)
         selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
 
+        # Muon trigger study
+        selection.add('trig_mu', combine_masks(df, cfg.TRIGGERS.MUON.SINGLE))
+
         # Diele CR
         leadelectron_index=electrons.pt.argmax()
         selection.add('trig_ele', combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
