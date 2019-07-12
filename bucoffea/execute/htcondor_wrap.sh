@@ -1,5 +1,7 @@
 #!/bin/bash
-set -x
+if [ "$BUCOFFEADEBUG" = true ]; then
+    set -x
+fi
 echo "Starting: $(date)"
 source /cvmfs/sft.cern.ch/lcg/views/LCG_95apython3/x86_64-centos7-gcc8-opt/setup.sh
 
@@ -17,7 +19,7 @@ echo "Using python at: $(which python)"
 
 # Copy files to local disk before running
 PREFETCH=true
-if $PREFETCH; then
+if [ "$PREFETCH" = true ]; then
     echo "Prefetching."
     FLIST=$(readlink -e input*.txt)
     touch tmp.txt
