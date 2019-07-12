@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-from bucoffea.plot.util import acc_from_dir, merge_datasets
+from bucoffea.plot.util import acc_from_dir, merge_datasets, merge_extensions, scale_to_xs
 from bucoffea.plot.style import markers
 from coffea import hist
 from coffea.hist.plot import clopper_pearson_interval
@@ -36,7 +36,10 @@ def content_table(hnum, hden):
     return tabulate(table, headers=['Recoil', 'Numerator', 'Denominator',"Efficiency", "Uncertainty"])
 
 def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, lumi=59.7, tag="test", distribution="recoil"):
-    h = merge_datasets(acc[distribution])
+    h = merge_extensions(acc[distribution])
+    h = scale_to_xs(h, acc)
+    h = merge_datasets(h)
+
     newbin = hist.Bin(distribution,"{distribution} (GeV)",np.array(list(range(0,400,20)) + list(range(400,1100,100))))
     h = h.rebin(h.axis(distribution), newbin)
     ds = f'{dataset}_{year}'
@@ -97,15 +100,16 @@ def main():
     indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}"
     acc = acc_from_dir(indir)
 
-    # dataset="SingleMuon"
-    # for region in ['1m', '2m']:
-    #     plot_recoil(acc,region,dataset=dataset,year=2018, tag=tag)
-    #     plot_recoil(acc,region,dataset=dataset,year=2017, lumi=41, tag=tag)
+    for region in ['1m', '2m']:
+        dataset="DYNJetsToLL_M-50-MLM_2018"
+        plot_recoil(acc,region,dataset=dataset,year=2018, tag=tag)
+        dataset="DYNJetsToLL_M-50-MLM_2017"
+        plot_recoil(acc,region,dataset=dataset,year=2017, lumi=41, tag=tag)
     
     
-    for region in ['1e', '2e']:
-        plot_recoil(acc,region,distribution="met",dataset="EGamma",year=2018, tag=tag)
-        plot_recoil(acc,region,distribution="met",dataset="SingleElectron",year=2017, lumi=41, tag=tag)
+    # for region in ['1e', '2e']:
+    #     plot_recoil(acc,region,distribution="met",dataset="EGamma",year=2018, tag=tag)
+    #     plot_recoil(acc,region,distribution="met",dataset="SingleElectron",year=2017, lumi=41, tag=tag)
 
 
 
