@@ -23,14 +23,9 @@ def do_run(args):
     else:
         fileset = files_from_eos(regex=args.dataset)
 
-    if "2016" in args.dataset: year=2016
-    elif "2017" in args.dataset: year=2017
-    elif "2018" in args.dataset: year=2018
-    else: raise RuntimeError("Cannot deduce year from dataset name.")
-
     output = run_uproot_job_nanoaod(fileset,
                                   treename='Events',
-                                  processor_instance=monojetProcessor(year=year),
+                                  processor_instance=monojetProcessor(),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': args.jobs, 'flatten': True},
                                   chunksize=500000,
@@ -54,14 +49,6 @@ def do_worker(args):
     with open(args.filelist, "r") as f:
         files = [xrootd_format(x.strip()) for x in f.readlines()]
     fileset = {args.dataset : files}
-    # if args.datasrc == 'das':
-    #     fileset = files_from_das(regex=args.dataset)
-    # else:
-    #     fileset = files_from_eos(regex=args.dataset)
-    if "2016" in args.dataset: year=2016
-    elif "2017" in args.dataset: year=2017
-    elif "2018" in args.dataset: year=2018
-    else: raise RuntimeError("Cannot deduce year from dataset name.")
 
     ndatasets = len(fileset)
     nfiles = sum([len(x) for x in fileset.values()])
@@ -69,7 +56,7 @@ def do_worker(args):
 
     output = run_uproot_job_nanoaod(fileset,
                                   treename='Events',
-                                  processor_instance=monojetProcessor(year=year),
+                                  processor_instance=monojetProcessor(),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': args.jobs, 'flatten': True},
                                   chunksize=500000,
