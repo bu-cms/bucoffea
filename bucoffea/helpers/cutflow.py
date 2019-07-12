@@ -4,7 +4,7 @@ import tabulate
 
 def print_cutflow(output):
     """Pretty-print cutflow data to the terminal."""
-    for cutflow_name in [ x for x in output.keys() if x.startswith("cutflow") and x.endswith("j")]:
+    for cutflow_name in [ x for x in output.keys() if x.startswith("cutflow") ]:
         if not len(output[cutflow_name]):
             continue
         table = []
