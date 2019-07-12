@@ -88,6 +88,13 @@ def do_submit(args):
     else:
         dataset_files = files_from_eos(regex=args.dataset)
 
+    # Test mode: One file per data set
+    if args.test:
+        tmp = {}
+        for k, v in dataset_files.items():
+            tmp[k] = v[:1]
+        dataset_files = tmp
+
     # Time tagged submission directory
     timetag = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
@@ -108,7 +115,6 @@ def do_submit(args):
         os.makedirs(proxydir)
     shutil.copy2(proxy, proxydir)
 
-    # schedd = htcondor.Schedd()
     for dataset, files in dataset_files.items():
         print(f"Submitting dataset: {dataset}.")
 
@@ -132,10 +138,11 @@ def do_submit(args):
                 f'--chunk {ichunk}'
             ]
             input_files = [
-                # bucoffea_path("config.yaml"),
-                # os.path.join(proxydir, os.path.basename(proxy)),
                 os.path.abspath(tmpfile),
             ]
+            environment = {
+                "NOPREFETCH" : str(args.no_prefetch).lower()
+            }
             sub = htcondor.Submit({
                 "Proxy_path" : pjoin(proxydir,os.path.basename(proxy)),
                 "Initialdir" : subdir,
@@ -144,10 +151,12 @@ def do_submit(args):
                 "when_to_transfer_output" : "ON_EXIT",
                 "transfer_input_files" : ", ".join(input_files),
                 "getenv" : "true",
+                "environment" : '"' + ' '.join([f"{k}={v}" for k, v in environment.items()]) + '"',
                 "arguments": " ".join(arguments),
                 "Output" : f"{filedir}/out_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt",
                 "Error" : f"{filedir}/err_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt",
-                "log" :f"/dev/null",
+                "log" : f"{filedir}/log_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt",
+                # "log" :f"/dev/null",
                 "request_cpus" : str(args.jobs),
                 "+MaxRuntime" : f"{60*60*8}"
                 })
@@ -155,10 +164,11 @@ def do_submit(args):
             jdl = pjoin(subdir,filedir,f'job_{dataset}_{ichunk}.jdl')
             with open(jdl,"w") as f:
                 f.write(str(sub))
-                f.write("\nqueue 1")
-            # with schedd.transaction() as txn:
-                # print(sub.queue(txn))
-            jobid = condor_submit(jdl)
+                f.write("\nqueue 1\n")
+            if args.dry:
+                jobid = -1
+            else:
+                jobid = condor_submit(jdl)
             print(f"Submitted job {jobid}")
             with open("submission_history.txt","a") as f:
                 f.write(f"{datetime.now()} {jobid}\n")
@@ -188,6 +198,9 @@ def main():
     parser_submit.add_argument('--dataset', type=str, help='Dataset regex to use.')
     parser_submit.add_argument('--filesperjob', type=int, default=10, help='Number of files to process per job')
     parser_submit.add_argument('--name', type=str, default=None, help='Name to identify this submission')
+    parser_submit.add_argument('--no-prefetch', action="store_true", default=False, help='Do not prefetch input files on worker but run over xrootd.')
+    parser_submit.add_argument('--dry', action="store_true", default=False, help='Do not trigger submission, just dry run.')
+    parser_submit.add_argument('--test', action="store_true", default=False, help='Only run over one file per dataset for testing.')
     parser_submit.set_defaults(func=do_submit)
 
 

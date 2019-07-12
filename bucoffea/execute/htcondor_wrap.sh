@@ -18,8 +18,7 @@ fi
 echo "Using python at: $(which python)"
 
 # Copy files to local disk before running
-PREFETCH=true
-if [ "$PREFETCH" = true ]; then
+if [ ! "$NOPREFETCH" = true ]; then
     echo "Prefetching."
     FLIST=$(readlink -e input*.txt)
     touch tmp.txt
