@@ -3,7 +3,7 @@
 
 from tqdm import tqdm
 import uproot
-from coffea.processor.executor import _get_chunking
+from coffea.processor.executor import _get_chunking_lazy, _get_chunking
 from coffea.processor import LazyDataFrame, ProcessorABC
 from coffea.processor.accumulator import value_accumulator, set_accumulator, dict_accumulator
 
@@ -17,14 +17,6 @@ except ImportError:
         def null_wrapper(f):
             return f
         return null_wrapper
-
-def _get_chunking_lazy_noempty(filelist, treename, chunksize):
-    for fn in filelist:
-        nentries = uproot.numentries(fn, treename)
-        if not nentries:
-            continue
-        for index in range(nentries // chunksize + 1):
-            yield (fn, chunksize, index)
 
 def run_uproot_job_nanoaod(fileset, treename, processor_instance, executor, executor_args={}, chunksize=500000, maxchunks=None):
     '''
@@ -72,7 +64,7 @@ def run_uproot_job_nanoaod(fileset, treename, processor_instance, executor, exec
     items = []
     for dataset, filelist in tqdm(fileset.items(), desc='Preprocessing'):
         if maxchunks is not None:
-            chunks = _get_chunking_lazy_noempty(tuple(filelist), treename, chunksize)
+            chunks = _get_chunking_lazy(tuple(filelist), treename, chunksize)
         else:
             chunks = _get_chunking(tuple(filelist), treename, chunksize, executor_args['pre_workers'])
         for ichunk, chunk in enumerate(chunks):
