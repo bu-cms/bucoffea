@@ -42,9 +42,11 @@
 /ZJetsToNuNu_HT-600To800_13TeV-madgraph/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 /ZJetsToNuNu_HT-800To1200_13TeV-madgraph/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 
-# EWK
-/EWKWMinus2Jets_WToLNu_M-50_TuneCP5_13TeV-madgraph-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
-/EWKWPlus2Jets_WToLNu_M-50_TuneCP5_13TeV-madgraph-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
+# EWK V
+# EWKZ2Jets_ZToNuNu_TuneCP5_13TeV-madgraph-pythia8
+# EWKWMinus2Jets_WToLNu_M-50_TuneCP5_13TeV-madgraph-pythia8
+# EWKWPlus2Jets_WToLNu_M-50_TuneCP5_13TeV-madgraph-pythia8
+# EWKZ2Jets_ZToLL_M-50_TuneCP5_13TeV-madgraph-pythia8
 
 # Gamma
 /GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_4cores5k_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
@@ -67,14 +69,17 @@
 /WW_TuneCP5_13TeV-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 /WZ_TuneCP5_13TeV-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 /ZZ_TuneCP5_13TeV-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
-/LNuAJJ_EWK_MJJ-120_TuneCP5_13TeV-madgraph-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
-/WpWpJJ_EWK_TuneCP5_13TeV-madgraph-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
-/WpWpJJ_QCD_TuneCP5_13TeV-madgraph-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 /WZTo3LNu_0Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 /WZTo3LNu_1Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 /WZTo3LNu_2Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 /WZTo3LNu_3Jets_MLL-4to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 /ZZTo2Q2Nu_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
+
+# EWK Diboson
+# WpWpJJ_EWK_TuneCP5_13TeV-madgraph-pythia8
+# WpWpJJ_QCD_TuneCP5_13TeV-madgraph-pythia8
+# LLAJJ_EWK_MLL-50_MJJ-120_TuneCP5_13TeV-madgraph-pythia8
+# LNuAJJ_EWK_MJJ-120_TuneCP5_13TeV-madgraph-pythia8
 
 # QCD
 
@@ -90,3 +95,4 @@
 /SingleMuon/Run2018B-Nano1June2019-v1/NANOAOD
 /SingleMuon/Run2018C-Nano1June2019-v1/NANOAOD
 /SingleMuon/Run2018D-Nano1June2019-v1/NANOAOD
+

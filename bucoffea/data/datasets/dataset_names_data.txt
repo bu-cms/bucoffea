@@ -2,3 +2,5 @@ MET
 SingleElectron
 EGamma
 SingleMuon
+SinglePhoton
+
