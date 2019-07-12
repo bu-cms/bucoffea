@@ -160,7 +160,13 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Diele CR
         leadelectron_index=electrons.pt.argmax()
-        selection.add('trig_ele', combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
+
+        # Trigger overlap
+        if "SinglePhoton" in dataset:
+            trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.BACKUP) & (~combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
+        else:
+            trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+        selection.add('trig_ele', trig_ele)
         selection.add('one_electron', electrons.counts==1)
         selection.add('two_electrons', electrons.counts==2)
         selection.add('at_least_one_tight_el', is_tight_electron.any())
