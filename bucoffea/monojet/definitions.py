@@ -194,7 +194,6 @@ def setup_candidates(df, cfg):
         looseId=(df[cfg.PHOTON.BRANCH.ID]>=1) & df['Photon_electronVeto'],
         mediumId=(df[cfg.PHOTON.BRANCH.ID]>=2) & df['Photon_electronVeto'],
         barrel=np.abs(df['Photon_eta']) < 1.479,
-        clean=df['Photon_cleanmask'],
     )
     photons = photons[photons.looseId \
               & (photons.pt > cfg.PHOTON.CUTS.LOOSE.pt) \
