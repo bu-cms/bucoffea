@@ -205,8 +205,9 @@ era2018:
       - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
     electron:
       single:
-        - HLT_Photon200
         - HLT_Ele32_WPTight_Gsf
+      single_backup:
+        - HLT_Photon200
     muon:
       single:
         - HLT_IsoMu24
