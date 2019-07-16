@@ -26,7 +26,10 @@ def combine_masks(df, masks):
 
     # Flip to true if any is passed
     for t in masks:
-        decision = decision | df[t]
+        try:
+            decision = decision | df[t]
+        except KeyError:
+            continue
     return decision
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
@@ -124,11 +127,11 @@ class monojetProcessor(processor.ProcessorABC):
             # Trigger overlap
             if df['is_data']:
                 if "SinglePhoton" in dataset:
-                    trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.BACKUP) & (~combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
+                    trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & (~combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
                 else:
                     trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
             else:
-                trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.BACKUP) | combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+                trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
 
             selection.add('trig_ele', trig_ele)
             selection.add('trig_mu', combine_masks(df, cfg.TRIGGERS.MUON.SINGLE))
