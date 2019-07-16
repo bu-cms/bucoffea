@@ -7,23 +7,30 @@ get_xs(){
     if [[ "$DATASET"=*"NANOAODSIM" ]]; then 
         DATASET=$(dasgoclient --query="parent dataset=${INPUT}")
         echo "Input is NANO, so I will run on parent dataset ${DATASET}"
-    else
+    elif [[ "$DATASET"=*"SIM" ]]; then
         DATASET=${INPUT}
+    else
+        echo "Skipping non-MC dataset: ${DATASET}"
     fi
 
     # Source CMSSW
-    pushd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_6_1/
-    # popd /cvmfs/cms.cern.ch/slc7_amd64_gcc493/cms/cmssw/CMSSW_7_6_0/src;
-    eval `scramv1 runtime -sh`
-    popd;
-
+    # pushd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_6_1/
+    if [[ "$DATASET"=*"Autumn18"* ]]; then
+        pushd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_2_5/src
+        eval `scramv1 runtime -sh`
+        popd;
+    elif [[ "$DATASET"=*"Fall17"* ]]; then
+        popd /cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_9_4_9/src;
+        eval `scramv1 runtime -sh`
+        popd;
+    fi
     # Download GenXSecAnalyzer config
     if [ ! -e "./ana.py" ]; then
     curl "https://raw.githubusercontent.com/syuvivida/generator/master/cross_section/runJob/ana.py" -o "ana.py"
     fi
 
     # Get 10 files for dataset, sort by nevents, take file with largest nevents
-    FILE=$(das_client --query="file dataset=${DATASET} | grep file.name, file.nevents" | sort -k3 | head -1 |  grep -P -oe "/store.*?root")
+    FILES=$(das_client --query="file dataset=${DATASET} | grep file.name, file.nevents" | sort -rnk2 | head -5 |  grep -P -oe "/store.*?root" |  xargs -I {} echo -n root://cms-xrd-global.cern.ch//{}, | sed "s|,$||")
     OUTNAME=$(echo ${DATASET} | sed "s|/|_|g;s|RunII.*||g")
 
 
@@ -31,9 +38,9 @@ get_xs(){
     mkdir -p "./output"
 
     # Go!
-    cmsRun ana.py maxEvents=50000 inputFiles="root://cms-xrd-global.cern.ch//$FILE" 2>&1 | tee "output/${OUTNAME}.txt"
-
-    echo $INPUT $(grep  ^Total "output/${OUTNAME}.txt"  | awk '{print $11, $13}') >> xs.txt
+    cmsRun ana.py maxEvents=100000 inputFiles="$FILES" 2>&1 | tee "output/${OUTNAME}.txt"
+    echo 'DATASET=${INPUT}' >> "output/${OUTNAME}.txt" 
+    echo $INPUT $(grep 'final cross section' "output/${OUTNAME}.txt"  | sed 's|.*= ||;s|+-||;s|  | |') >> xs.txt
 }
 run_from_list() {
     LIST=${1}
