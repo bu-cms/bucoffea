@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from bucoffea.helpers.dataset import extract_year
 from bucoffea.processor.executor import run_uproot_job_nanoaod
 from bucoffea.monojet import monojetProcessor
@@ -53,17 +55,19 @@ def main():
             else: newlist.append(file)
         fileset[dataset] = newlist
 
-    output = run_uproot_job_nanoaod(fileset,
-                                  treename='Events',
-                                  processor_instance=monojetProcessor(years[0]),
-                                  executor=processor.futures_executor,
-                                  executor_args={'workers': 4, 'flatten': True},
-                                  chunksize=500000,
-                                 )
-    save(output, "monojet.coffea")
+    for dataset, filelist in fileset.items():
+        tmp = {dataset:filelist}
+        output = run_uproot_job_nanoaod(tmp,
+                                    treename='Events',
+                                    processor_instance=monojetProcessor(years[0]),
+                                    executor=processor.futures_executor,
+                                    executor_args={'workers': 10, 'flatten': True},
+                                    chunksize=500000,
+                                    )
+        save(output, f"monojet_{dataset}.coffea")
     # Debugging / testing output
     # debug_plot_output(output)
-    print_cutflow(output)
+        print_cutflow(output, outfile=f'monojet_cutflow_{dataset}.txt')
 
 if __name__ == "__main__":
     main()
