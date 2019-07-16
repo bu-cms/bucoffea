@@ -107,10 +107,33 @@ class monojetProcessor(processor.ProcessorABC):
         df["minDPhiJetMet"] = min_dphi_jet_met(ak4, df['MET_phi'], njet=4, ptmin=30)
         selection = processor.PackedSelection()
 
-        # Common selection
         selection.add('inclusive', np.ones(df.size)==1)
-        selection.add('filt_met', df['Flag_METFilters'])
-        selection.add('trig_met', combine_masks(df, cfg.TRIGGERS.MET))
+
+        # Triggers
+        if cfg.RUN.SYNC: # Synchronization mode
+            pass_all = np.ones(df.size)==1
+            selection.add('filt_met', pass_all)
+            selection.add('trig_met', pass_all)
+            selection.add('trig_ele', pass_all)
+            selection.add('trig_mu',  pass_all)
+
+        else:
+            selection.add('filt_met', df['Flag_METFilters'])
+            selection.add('trig_met', combine_masks(df, cfg.TRIGGERS.MET))
+
+            # Trigger overlap
+            if df['is_data']:
+                if "SinglePhoton" in dataset:
+                    trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.BACKUP) & (~combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
+                else:
+                    trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+            else:
+                trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.BACKUP) | combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+
+            selection.add('trig_ele', trig_ele)
+            selection.add('trig_mu', combine_masks(df, cfg.TRIGGERS.MUON.SINGLE))
+
+        # Common selection
         selection.add('veto_ele', electrons.counts==0)
         selection.add('veto_muo', muons.counts==0)
         selection.add('veto_photon', photons.counts==0)
@@ -157,18 +180,10 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('one_muon', muons.counts==1)
         selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
 
-        # Muon trigger study
-        selection.add('trig_mu', combine_masks(df, cfg.TRIGGERS.MUON.SINGLE))
-
         # Diele CR
         leadelectron_index=electrons.pt.argmax()
 
-        # Trigger overlap
-        if "SinglePhoton" in dataset:
-            trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.BACKUP) & (~combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
-        else:
-            trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
-        selection.add('trig_ele', trig_ele)
+
         selection.add('one_electron', electrons.counts==1)
         selection.add('two_electrons', electrons.counts==2)
         selection.add('at_least_one_tight_el', is_tight_electron.any())

@@ -79,6 +79,7 @@ default:
       histogram: kfactor_monojet_qcd_ewk
       file: data/sf/theory/merged_kfactors_zjets.root
   run:
+    sync: False
     save:
       passing: False
     kinematics:
