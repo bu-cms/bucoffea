@@ -58,7 +58,7 @@ run_from_list() {
                 echo ""
                 continue
         fi
-        if [[ $(grep -c "$DATASET" xs_mini.txt) -gt 0 ]]; then
+        if [[ $(grep -c "$DATASET" xs.txt) -gt 0 ]]; then
                 continue
         fi
 
