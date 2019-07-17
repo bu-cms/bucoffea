@@ -3,4 +3,5 @@ SingleElectron
 EGamma
 SingleMuon
 SinglePhoton
+JetHT
 
