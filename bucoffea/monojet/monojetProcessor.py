@@ -31,6 +31,7 @@ def combine_masks(df, masks):
         except KeyError:
             continue
     return decision
+
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
@@ -135,6 +136,7 @@ class monojetProcessor(processor.ProcessorABC):
 
             selection.add('trig_ele', trig_ele)
             selection.add('trig_mu', combine_masks(df, cfg.TRIGGERS.MUON.SINGLE))
+            selection.add('trig_ht_for_g_eff', combine_masks(df, cfg.TRIGGERS.HT.GAMMAEFF))
 
         # Common selection
         selection.add('veto_ele', electrons.counts==0)

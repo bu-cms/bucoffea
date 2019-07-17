@@ -145,6 +145,9 @@ era2017:
     photon:
       single:
         - HLT_Photon200
+    ht:
+      gammaeff:
+        - HLT_PFHT780
 
   btag:
     algo: deepcsv
@@ -214,6 +217,9 @@ era2018:
     photon:
       single:
         - HLT_Photon200
+    ht:
+      gammaeff:
+      - HLT_PFHT780
   btag:
     algo: deepcsv
     wp: medium
