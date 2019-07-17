@@ -4,13 +4,17 @@ get_xs(){
     INPUT=${1}
     echo "Input dataset: " $INPUT
 
-    if [[ "$DATASET"=*"NANOAODSIM" ]]; then 
+    if [[ "$INPUT" == *"JetsToLNu"*"FXFX"* ]]; then
+        echo "Skipping broken XS dataset: ${INPUT}"
+        return
+    elif [[ "$INPUT" == *"NANOAODSIM" ]]; then
         DATASET=$(dasgoclient --query="parent dataset=${INPUT}")
         echo "Input is NANO, so I will run on parent dataset ${DATASET}"
-    elif [[ "$DATASET"=*"SIM" ]]; then
+    elif [[ "$INPUT" == *"SIM" ]]; then
         DATASET=${INPUT}
     else
-        echo "Skipping non-MC dataset: ${DATASET}"
+        echo "Skipping non-MC dataset: ${INPUT}"
+        return
     fi
 
     # Source CMSSW
@@ -39,27 +43,25 @@ get_xs(){
 
     # Go!
     cmsRun ana.py maxEvents=100000 inputFiles="$FILES" 2>&1 | tee "output/${OUTNAME}.txt"
-    echo 'DATASET=${INPUT}' >> "output/${OUTNAME}.txt" 
+    echo 'DATASET=${INPUT}' >> "output/${OUTNAME}.txt"
     echo $INPUT $(grep 'final cross section' "output/${OUTNAME}.txt"  | sed 's|.*= ||;s|+-||;s|  | |') >> xs.txt
+    echo $DATASET $(grep 'final cross section' "output/${OUTNAME}.txt"  | sed 's|.*= ||;s|+-||;s|  | |') >> xs_mini.txt
 }
 run_from_list() {
     LIST=${1}
     touch xs.txt
     while read DATASET; do
-        if [[ $DATASET = \#* ]]; then
+        if [[ $DATASET == \#* ]]; then
                 echo $DATASET
                 continue
-        if [[ $DATASET = *Run201* ]]; then
-                continue
-        fi
         elif [ -z "${DATASET}" ]; then
                 echo ""
                 continue
         fi
-        if [[ $(grep -c "$DATASET" xs.txt) -gt 0 ]]; then 
+        if [[ $(grep -c "$DATASET" xs_mini.txt) -gt 0 ]]; then
                 continue
         fi
-        
+
         get_xs $DATASET
     done < ${LIST}
 }
