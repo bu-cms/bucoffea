@@ -231,7 +231,17 @@ def setup_candidates(df, cfg):
     tau1=df['FatJet_tau1'],
     tau2=df['FatJet_tau2']
     )
-    return ak4, ak8, muons, electrons, taus, photons
+
+    hlt = JaggedCandidateArray.candidatesfromcounts(
+        df['nTrigObj'],
+        pt=df['TrigObj_pt'],
+        eta=df['TrigObj_eta'],
+        phi=df['TrigObj_phi'],
+        mass=0*df['TrigObj_pt'],
+        id=df['TrigObj_id'],
+        filter=df['TrigObj_filterBits']
+    )
+    return ak4, ak8, muons, electrons, taus, photons, hlt
 
 
 def monojet_regions():
@@ -308,6 +318,10 @@ def monojet_regions():
     tr_1m_den_cuts.remove('trig_met')
     regions['tr_1m_den'] = tr_1m_den_cuts
 
+    # Add HLT muon requirement
+    regions['tr_1m_hlt_num'] = regions['tr_1m_num'] + ['one_hlt_muon']
+    regions['tr_1m_hlt_den'] = regions['tr_1m_den'] + ['one_hlt_muon']
+
     # Double Mu region: Remove recoil cut, toggle MET trigger
     tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts) + j_cuts
     tr_2m_num_cuts.remove('recoil')
@@ -317,7 +331,10 @@ def monojet_regions():
     tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)
     tr_2m_den_cuts.remove('trig_met')
     regions['tr_2m_den'] = tr_2m_den_cuts
-    
+
+    regions['tr_2m_hlt_den'] = regions['tr_2m_den'] + ['two_hlt_muons']
+    regions['tr_2m_hlt_num'] = regions['tr_2m_num'] + ['two_hlt_muons']
+
     # Single Electron region: Remove recoil cut, toggle MET trigger
     tr_1e_num_cuts = copy.deepcopy(cr_1e_cuts) + j_cuts
     tr_1e_num_cuts.remove('recoil')
@@ -341,7 +358,7 @@ def monojet_regions():
     # Photon region
     tr_g_num_cuts = copy.deepcopy(cr_g_cuts)
     tr_g_num_cuts.remove('recoil')
-    tr_g_num_cuts.add('trig_ht_for_g_eff')
+    tr_g_num_cuts.append('trig_ht_for_g_eff')
     regions['tr_g_num_cuts'] = tr_g_num_cuts
 
     tr_g_den_cuts = copy.deepcopy(tr_g_num_cuts)

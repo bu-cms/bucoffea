@@ -69,7 +69,7 @@ class monojetProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        ak4, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
+        ak4, ak8, muons, electrons, taus, photons, hlt = setup_candidates(df, cfg)
 
         # Muons
         is_tight_muon = muons.tightId \
@@ -113,6 +113,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         selection.add('inclusive', np.ones(df.size)==1)
 
+
         # Triggers
         if cfg.RUN.SYNC: # Synchronization mode
             pass_all = np.ones(df.size)==1
@@ -137,6 +138,11 @@ class monojetProcessor(processor.ProcessorABC):
             selection.add('trig_ele', trig_ele)
             selection.add('trig_mu', combine_masks(df, cfg.TRIGGERS.MUON.SINGLE))
             selection.add('trig_ht_for_g_eff', combine_masks(df, cfg.TRIGGERS.HT.GAMMAEFF))
+
+        # Trigger objects
+        hlt_muons = hlt[hlt.id==13]
+        selection.add('one_hlt_muon',hlt_muons.counts>0)
+        selection.add('two_hlt_muons',hlt_muons.counts>1)
 
         # Common selection
         selection.add('veto_ele', electrons.counts==0)
