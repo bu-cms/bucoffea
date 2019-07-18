@@ -9,8 +9,8 @@ It is generally a good idea to work in a python virtual environment. The virtual
 
 Instructions for how to setup a virtual environment are all over the internet, one example is [here](https://hepdata-lib.readthedocs.io/en/latest/setup.html#sec-setup-virtualenv). 
 
-### Setup at LPC
-If you want to run at LPC, use these instructions to create and activate a working environment:
+### Setup on LXPlus / LPC
+If you want to run at either LXPlus or the LPC infrastructure, use these instructions to create and activate a working environment:
 
 ```
 source /cvmfs/sft.cern.ch/lcg/views/LCG_95apython3/x86_64-centos7-gcc8-opt/setup.sh
@@ -51,6 +51,8 @@ To get the idea, you run a test job to process some of the SingleMuon data:
 ```
 
 This will submit an HTCondor job running on 4 CPUs per node (`-j4`), to run over pre-processed data from my EOS area (`--datasrc eos`). Files related to job submission, as well as the job output can be found in the `submission/*test_submission/` directory. Check it out!
+
+Note that the worker jobs rely on accessing all the executable code from the virtual environment you are using to submit the jobs. Therefore, make sure to have your virtual environment accessible on a shared file system like AFS.
 
 If you are running a larger number of jobs, it's easy to loose track of them. The `monitor.py` script will allow you to track all jobs belonging to a given submission. Usage is easy:
 
