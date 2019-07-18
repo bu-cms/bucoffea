@@ -38,8 +38,23 @@ python ./bucoffea/example/exampleProcessor.py
 ```
 
 This example will run over two files from two different datasets, produce MET and jet pt histograms, and plot them as PDF files.
-Have a look at the code to see how this works below the hood. Also check out the [examples in the Coffea repository](https://github.com/CoffeaTeam/coffea/tree/master/binder), which are much more detailed than this one.
+Have a look at the code to see how this works under the hood. Also check out the [examples in the Coffea repository](https://github.com/CoffeaTeam/coffea/tree/master/binder), which are much more detailed than this one.
 
+
+### Running over larger data sets
+
+Currently, HTCondor submission is used to run over large numbers of input files. The submission is implemented in the `execute.py` script.
+To get the idea, you run a test job to process some of the SingleMuon data:
+
+```bash
+./execute/execute.py -j4  --datasrc 'eos' submit --dataset 'SingleMuon_2017B' --filesperjob 10 --name 'test_submission'
+```
+
+This will submit an HTCondor job running on 4 CPUs per node (`-j4`), to run over pre-processed data from my EOS area (`--datasrc eos`). Files related to job submission, as well as the job output can be found in the `submission/*test_submission/` directory. Check it out!
+
+If you are running a larger number of jobs, it's easy to loose track of them. The `monitor.py` script will allow you to track all jobs belonging to a given submission. Usage is easy:
+
+`./execute/monitor.py submission/*test_submission/files`
 
 ### XROOTD
 Ignore for now.
