@@ -1,9 +1,15 @@
 # Monojet analysis
 
+This analysis is the first one implemented in this package. It serves as both a tool for the production of physics results, as well as a testing ground for analyzer architecture. 
+
+## Architecture
+
+The analysis logic is implemented in the `monojetProcessor` class, which inherits from the `coffea` processor class. To un-clutter the processor, setup functions, such as the initial creation of histograms, the conversion of the data frame into candidate objects, etc. is outsourced in the `definitions.py` file.
+
 
 ## Configuration
 
-The construction goal for this analyzer is to separate as far as possible the analysis logic from any specific parameter values. The `dynaconf` package is used to provide configuration handling. For now, configuration parameters are stored in a single config file `config.yaml`. The file has a `default` section, where general parameters can be configured for all years (e.g. if the same jet pt cut is applied for all years you want to look at. To accomodate year-dependent choice (e.g. b tag working points), there are additional configuration sections `era2016`, `era2017`, etc, which overwrite the parameter values in the `default` section. Each of the section defines an environment, and the active environment is defined by the `ENV_FOR_DYNACONF` environment variable. Currently, this is just set manually, and we should implement an automatization based on the input data set.
+The construction goal for this analyzer is to separate as far as possible the analysis logic from any specific parameter values. The `dynaconf` package is used to provide configuration handling. For now, configuration parameters are stored in a single config file `config.yaml`. The file has a `default` section, where general parameters can be configured for all years (e.g. if the same jet pt cut is applied for all years you want to look at). To accomodate year-dependent choices (e.g. b tag working points), there are additional configuration sections `era2016`, `era2017`, etc, which overwrite the parameter values in the `default` section. Each of the section defines an environment, and the active environment is defined by the `ENV_FOR_DYNACONF` environment variable. The `monojetProcessor` class decides which environment to select based on the data set name it is processing. Currently, the eras are based on the data-taking year, but this setup would also support a finer granularity, for example for time-dependent corrections.
 
 ### Parameter access
 
@@ -31,12 +37,3 @@ print(cfg.SELECTION.SIGNAL.RECOIL)
 ```
 
 The parameters are trivially accessed by using the configuration dictionary keys as attributed to the configuration object. They are given in all caps in order to visually separate them from "normal" python code.
-
-<!-- ## Speed benchmarking
-
-Running the monojet analysis without any systematic variations or external weight lookup on the a TTBar sample with 142M events over XRootD takes X minutes.
-
-`/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19_ext1-v1/NANOAODSIM`
- -->
-
-## 
