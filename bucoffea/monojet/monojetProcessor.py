@@ -141,8 +141,11 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Trigger objects
         hlt_muons = hlt[hlt.id==13]
-        selection.add('one_hlt_muon',hlt_muons.counts>0)
-        selection.add('two_hlt_muons',hlt_muons.counts>1)
+        hlt_single_muons = hlt_muons[hlt_muons.filter & 8 == 8]
+        hlt_double_muons = hlt_muons[hlt_muons.filter & 16 == 16]
+
+        selection.add('one_hlt_muon', hlt_single_muons.counts==1 and hlt_double_muons.counts==0)
+        selection.add('two_hlt_muons', (hlt_single_muons.counts + 2*hlt_double_muons.counts)==2)
 
         # Common selection
         selection.add('veto_ele', electrons.counts==0)
