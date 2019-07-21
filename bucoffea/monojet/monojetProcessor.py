@@ -144,8 +144,8 @@ class monojetProcessor(processor.ProcessorABC):
         hlt_single_muons = hlt_muons[hlt_muons.filter & 8 == 8]
         hlt_double_muons = hlt_muons[hlt_muons.filter & 16 == 16]
 
-        selection.add('one_hlt_muon', hlt_single_muons.counts==1 and hlt_double_muons.counts==0)
-        selection.add('two_hlt_muons', (hlt_single_muons.counts + 2*hlt_double_muons.counts)==2)
+        selection.add('one_hlt_muon', hlt_single_muons.counts>=1)
+        selection.add('two_hlt_muons', (hlt_single_muons.counts + 2*hlt_double_muons.counts)>=2)
 
         # Common selection
         selection.add('veto_ele', electrons.counts==0)
@@ -419,6 +419,13 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('dielectron_pt',     pt=dielectrons.pt[mask].flatten(),                  weight=w_diel)
             ezfill('dielectron_eta',    eta=dielectrons.eta[mask].flatten(),                weight=w_diel)
             ezfill('dielectron_mass',   dilepton_mass=dielectrons.mass[mask].flatten(),     weight=w_diel)
+
+            # Photon
+            w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],weight[mask]);
+            ezfill('photonpt0',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
+            ezfill('photoneta0',    eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
+            ezfill('photonphi0',    phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
+
         return output
 
     def postprocess(self, accumulator):

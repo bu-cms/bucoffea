@@ -24,18 +24,19 @@ def monojet_accumulator():
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
-    jet_eta_ax = Bin("jeteta", r"$\eta$ (GeV)", 50, -5, 5)
+    jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
 
     jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
 
-    dpfcalo_ax = Bin("dpfcalo", r"$1-Calo/PF$", 20, -1, 1)
+    dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
-    eta_ax = Bin("eta", r"$\eta$ (GeV)", 50, -5, 5)
+    eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
+    phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 100,50,150)
 
     weight_type_ax = Cat("weight_type", "Weight type")
@@ -80,6 +81,10 @@ def monojet_accumulator():
     items["dielectron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["dielectron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["dielectron_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
+
+    items['photonpt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    items['photoneta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items['photonphi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
     # One cutflow counter per region
     regions = monojet_regions().keys()
