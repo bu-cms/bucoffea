@@ -1,10 +1,36 @@
 # Monojet analysis
 
-This analysis is the first one implemented in this package. It serves as both a tool for the production of physics results, as well as a testing ground for analyzer architecture. 
+This analysis is the first one implemented in this package. It serves as both a tool for the production of physics results, as well as a testing ground for analyzer architecture.
 
 ## Architecture
 
-The analysis logic is implemented in the `monojetProcessor` class, which inherits from the `coffea` processor class. To un-clutter the processor, setup functions, such as the initial creation of histograms, the conversion of the data frame into candidate objects, etc. is outsourced in the `definitions.py` file.
+The analysis logic is implemented in the `monojetProcessor` class, which inherits from the `coffea` processor class. The processor is meant to handle a data frame at a time and perform operations based on the data frame. Data can be accessed straight from the data frame:
+
+```python
+muon_pt = df['Muon_pt']
+```
+
+Here, we run the processor directly on top of slimmed NanoAOD files. To ensure that we are flexible in the way we do the selection, most variables used for event selection are computed on-the-fly in the selector. If we wanted to do this based on the individual arrays, it would be a bit cumbersome. Therefore, everything related to particle candidates is accessed using the `JaggedCandidateArray` implemented in `coffea`. The idea is that we feed our initial arrays into the `JaggedCandidateArray` and profit from much easier handling of all properties related to the particles:
+
+```python
+muons = JaggedCandidateArray.candidatesfromcounts(
+        df['nMuon'],
+        pt=df['Muon_pt'],
+        eta=df['Muon_eta'],
+        phi=df['Muon_phi'],
+        mass=0 * df['Muon_pt'],
+        charge=df['Muon_charge'],
+        looseId=df['Muon_looseId'],
+        iso=df["Muon_pfRelIso04_all"],
+        tightId=df['Muon_tightId']
+    )
+
+good_muons = muons[(muon.pt>20) & muon.looseId]
+```
+
+For more details on `JaggedCandidateArray`, please refer to the Coffea documentation.
+
+To un-clutter the processor, the setup functions such as the initial creation of histograms, the conversion of the data frame into candidate objects, etc. is outsourced in the `definitions.py` file.
 
 
 ## Configuration
