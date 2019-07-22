@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-from bucoffea.plot.util import acc_from_dir, merge_datasets, merge_extensions, scale_to_xs, fig_ratio, lumi
+from bucoffea.plot.util import acc_from_dir, merge_datasets, merge_extensions, normalize_mc, fig_ratio, lumi
 from bucoffea.plot.style import markers
 from coffea import hist
 from coffea.hist.plot import clopper_pearson_interval
@@ -10,6 +10,7 @@ from matplotlib.ticker import MultipleLocator
 import numpy as np
 from tabulate import tabulate
 from pprint import pprint
+import copy
 pjoin = os.path.join
 
 def trgname(year, tag):
@@ -42,9 +43,9 @@ def content_table(hnum, hden):
     return tabulate(table, headers=['Recoil', 'Numerator', 'Denominator',"Efficiency", "Eff-sigma","Eff+sigma"])
 
 def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test", distribution="recoil"):
-    h = acc[distribution]
+    h = copy.deepcopy(acc[distribution])
     h = merge_extensions(h)
-    # h = scale_to_xs(h, acc)
+    normalize_mc(h, acc)
     h = merge_datasets(h)
 
     newbin = hist.Bin(distribution,f"{distribution} (GeV)",np.array(list(range(0,400,20)) + list(range(400,1100,100))))
