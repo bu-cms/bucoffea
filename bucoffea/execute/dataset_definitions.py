@@ -116,7 +116,7 @@ def files_from_eos(regex):
     :rtype: dict
     """
     topdir = '/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/'
-    tag = '7Jul19'
+    tag = '16Jul19'
 
     fileset = {}
     for path, subdir, files in os.walk(pjoin(topdir, tag)):
@@ -124,7 +124,7 @@ def files_from_eos(regex):
         files = list(filter(lambda x: x.endswith('.root'), files))
         if not len(files):
             continue
-        dataset = os.path.basename(path)
+        dataset = path.split('/')[-3]
         if not re.match(regex, dataset):
             continue
         files = [pjoin(path,x) for x in files]

@@ -13,7 +13,7 @@ from bucoffea.helpers import object_overlap
 from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.helpers.gen import find_first_parent
 
-def monojet_accumulator():
+def vbfhinv_accumulator():
     dataset_ax = Cat("dataset", "Primary dataset")
     region_ax = Cat("region", "Selection region")
     type_ax = Cat("type", "Type")
@@ -87,7 +87,7 @@ def monojet_accumulator():
     items['photonphi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
     # One cutflow counter per region
-    regions = monojet_regions().keys()
+    regions = vbfhinv_regions().keys()
     for region in regions:
         if region=="inclusive":
             continue
@@ -249,7 +249,7 @@ def setup_candidates(df, cfg):
     return ak4, ak8, muons, electrons, taus, photons, hlt
 
 
-def monojet_regions():
+def vbfhinv_regions():
     common_cuts = [
         'filt_met',
         'veto_ele',
@@ -376,7 +376,7 @@ def monojet_regions():
 
 from coffea.lookup_tools import extractor
 
-def monojet_evaluator(cfg):
+def vbfhinv_evaluator(cfg):
     """Initiates the SF evaluator and populates it with the right values
 
     :param cfg: Configuration

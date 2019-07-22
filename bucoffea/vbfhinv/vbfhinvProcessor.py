@@ -6,7 +6,7 @@ import coffea.processor as processor
 
 from dynaconf import settings as cfg
 
-from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, setup_gen_candidates,monojet_regions
+from bucoffea.vbfhinv.definitions import vbfhinv_accumulator, vbfhinv_evaluator, setup_candidates, setup_gen_candidates,vbfhinv_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path
 from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_data, extract_year
 
@@ -32,11 +32,11 @@ def combine_masks(df, masks):
             continue
     return decision
 
-class monojetProcessor(processor.ProcessorABC):
+class vbfhinvProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
         self._blind=blind
-        self._accumulator = monojet_accumulator()
+        self._accumulator = vbfhinv_accumulator()
 
     @property
     def accumulator(self):
@@ -49,7 +49,7 @@ class monojetProcessor(processor.ProcessorABC):
         # Reload config based on year
         cfg.DYNACONF_WORKS="merge_configs"
         cfg.MERGE_ENABLED_FOR_DYNACONF=True
-        cfg.SETTINGS_FILE_FOR_DYNACONF = bucoffea_path("config/monojet.yaml")
+        cfg.SETTINGS_FILE_FOR_DYNACONF = bucoffea_path("config/vbfhinv.yaml")
         cfg.ENV_FOR_DYNACONF = f"era{self._year}"
         cfg.reload()
 
@@ -229,7 +229,7 @@ class monojetProcessor(processor.ProcessorABC):
             output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
 
         # Weights
-        evaluator = monojet_evaluator(cfg)
+        evaluator = vbfhinv_evaluator(cfg)
         all_weights = {}
         if df['is_data']:
             weight = np.ones(df.size)
@@ -305,7 +305,7 @@ class monojetProcessor(processor.ProcessorABC):
             output['sumw'][dataset] +=  df['genEventSumw']
             output['sumw2'][dataset] +=  df['genEventSumw2']
 
-        regions = monojet_regions()
+        regions = vbfhinv_regions()
         for region, cuts in regions.items():
             # Blinding
             if(self._blind and df['is_data'] and region.startswith('sr')):
