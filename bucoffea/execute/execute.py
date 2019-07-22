@@ -18,7 +18,7 @@ def choose_processor(args):
     if args.processor == 'monojet':
         from bucoffea.monojet import monojetProcessor
         return monojetProcessor
-    elif args.processor == 'vbfhinf':
+    elif args.processor == 'vbfhinv':
         from bucoffea.vbfhinv import vbfhinvProcessor
         return vbfhinvProcessor
 
