@@ -1,0 +1,1 @@
+from .vbfhinvProcessor import vbfhinvProcessor

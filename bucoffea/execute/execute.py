@@ -3,7 +3,6 @@ import os
 import argparse
 from coffea import processor
 from bucoffea.processor.executor import run_uproot_job_nanoaod
-from bucoffea.monojet import monojetProcessor
 import lz4.frame as lz4f
 import cloudpickle
 from pathlib import Path
@@ -15,6 +14,14 @@ import shutil
 from datetime import datetime
 pjoin = os.path.join
 
+def choose_processor(args):
+    if args.processor == 'monojet':
+        from bucoffea.monojet import monojetProcessor
+        return monojetProcessor
+    elif args.processor == 'vbfhinf':
+        from bucoffea.vbfhinv import vbfhinvProcessor
+        return vbfhinvProcessor
+
 def do_run(args):
     """Run the analysis locally."""
     # Run over all files associated to dataset
@@ -25,7 +32,7 @@ def do_run(args):
 
     output = run_uproot_job_nanoaod(fileset,
                                   treename='Events',
-                                  processor_instance=monojetProcessor(),
+                                  processor_instance=choose_processor(args)(),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': args.jobs, 'flatten': True},
                                   chunksize=500000,
@@ -56,7 +63,7 @@ def do_worker(args):
 
     output = run_uproot_job_nanoaod(fileset,
                                   treename='Events',
-                                  processor_instance=monojetProcessor(),
+                                  processor_instance=choose_processor(args)(),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': args.jobs, 'flatten': True},
                                   chunksize=500000,
@@ -130,6 +137,7 @@ def do_submit(args):
                 # pjoin(proxydir, os.path.basename(proxy)),
                 "$(Proxy_path)",
                 str(Path(__file__).absolute()),
+                args.processor,
                 f'--outpath {pjoin(subdir, "output")}',
                 f'--jobs {args.jobs}',
                 'worker',
@@ -175,6 +183,7 @@ def do_submit(args):
 
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
+    parser.add_argument('processor', type=str, help='Processor to run.', choices=['monojet','vbfhinv'])
     parser.add_argument('--outpath', type=str, help='Path to save output under.')
     parser.add_argument('--jobs','-j', type=int, default=1, help='Number of cores to use / request.')
     parser.add_argument('--datasrc', type=str, default='eos', help='Source of data files.', choices=['eos','das','ac'])
