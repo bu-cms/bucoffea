@@ -215,11 +215,11 @@ class monojetProcessor(processor.ProcessorABC):
         leadphoton_index=photons.pt.argmax()
 
         is_tight_photon = photons.mediumId \
-                         & (photons.pt > cfg.PHOTON.CUTS.TIGHT.PT) \
                          & (np.abs(photons.eta) < cfg.PHOTON.CUTS.TIGHT.ETA)
 
         selection.add('one_photon', photons.counts==1)
         selection.add('at_least_one_tight_photon', is_tight_photon.any())
+        selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
 
         # Fill histograms
         output = self.accumulator.identity()

@@ -363,12 +363,13 @@ def monojet_regions():
     # Photon region
     tr_g_num_cuts = copy.deepcopy(cr_g_cuts)
     tr_g_num_cuts.remove('recoil')
+    tr_g_num_cuts.remove('photon_pt')
     tr_g_num_cuts.append('trig_ht_for_g_eff')
-    regions['tr_g_num_cuts'] = tr_g_num_cuts
+    regions['tr_g_num'] = tr_g_num_cuts
 
     tr_g_den_cuts = copy.deepcopy(tr_g_num_cuts)
     tr_g_den_cuts.remove('trig_photon')
-    regions['tr_g_den_cuts'] = tr_g_den_cuts
+    regions['tr_g_den'] = tr_g_den_cuts
 
     return regions
 
