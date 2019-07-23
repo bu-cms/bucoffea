@@ -37,6 +37,10 @@ def monojet_accumulator():
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
+
+    tau21_ax = Bin("tau21", r"Tagger", 50,-5,5)
+    tagger_ax = Bin("tagger", r"Tagger", 50,-5,5)
+
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 100,50,150)
 
     weight_type_ax = Cat("weight_type", "Weight type")
@@ -57,6 +61,12 @@ def monojet_accumulator():
     items["ak8pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak8eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak8mass0"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
+    items["ak8tau210"] = Hist("Counts", dataset_ax, region_ax, tau21_ax)
+    items["ak8wvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8wvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8zvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8zvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+
     items["ak8pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak8eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak8mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
@@ -224,17 +234,21 @@ def setup_candidates(df, cfg):
     ak4 = ak4[ak4.looseId & object_overlap(ak4, muons) & object_overlap(ak4, electrons)]
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
-    df['nFatJet'],
-    pt=df['FatJet_pt'],
-    eta=df['FatJet_eta'],
-    phi=df['FatJet_phi'],
-    mass=df['FatJet_msoftdrop'],
-
-    tightId=(df['FatJet_jetId']&2) == 2, # Tight
-    csvv2=df["FatJet_btagCSVV2"],
-    deepcsv=df['FatJet_btagDeepB'],
-    tau1=df['FatJet_tau1'],
-    tau2=df['FatJet_tau2']
+        df['nFatJet'],
+        pt=df['FatJet_pt'],
+        eta=df['FatJet_eta'],
+        phi=df['FatJet_phi'],
+        mass=df['FatJet_msoftdrop'],
+        tightId=(df['FatJet_jetId']&2) == 2, # Tight
+        csvv2=df["FatJet_btagCSVV2"],
+        deepcsv=df['FatJet_btagDeepB'],
+        tau1=df['FatJet_tau1'],
+        tau2=df['FatJet_tau2'],
+        tau21=df['FatJet_tau2']/df['FatJet_tau1'],
+        wvsqcd=df['FatJet_deepTag_WvsQCD'],
+        wvsqcdmd=df['FatJet_deepTagMD_WvsQCD'],
+        zvsqcd=df['FatJet_deepTag_ZvsQCD'],
+        zvsqcdmd=df['FatJet_deepTagMD_ZvsQCD']
     )
 
     hlt = JaggedCandidateArray.candidatesfromcounts(
@@ -266,17 +280,17 @@ def monojet_regions():
         'leadak4_id',
         # 'veto_vtag'
     ]
-    # v_cuts = [
-        # 'leadak8_pt_eta',
-        # 'leadak8_id',
-        # 'leadak8_mass',
-    # ]
+    v_cuts = [
+        'leadak8_pt_eta',
+        'leadak8_id',
+        'leadak8_mass',
+    ]
 
     regions = {}
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
-    # regions['sr_v'] = ['trig_met'] + common_cuts + v_cuts
+    regions['sr_v'] = ['trig_met'] + common_cuts + v_cuts
     regions['sr_j'] = ['trig_met'] + common_cuts + j_cuts
 
     # Dimuon CR
@@ -284,32 +298,32 @@ def monojet_regions():
     cr_2m_cuts.remove('veto_muo')
 
     regions['cr_2m_j'] = cr_2m_cuts + j_cuts
-    # regions['cr_2m_v'] = cr_2m_cuts + v_cuts
+    regions['cr_2m_v'] = cr_2m_cuts + v_cuts
 
     # Single muon CR
     cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu', 'mt_mu'] + common_cuts
     cr_1m_cuts.remove('veto_muo')
     regions['cr_1m_j'] = cr_1m_cuts + j_cuts
-    # regions['cr_1m_v'] = cr_1m_cuts + v_cuts
+    regions['cr_1m_v'] = cr_1m_cuts + v_cuts
 
     # Dielectron CR
     cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'dielectron_charge'] + common_cuts
     cr_2e_cuts.remove('veto_ele')
     regions['cr_2e_j'] = cr_2e_cuts + j_cuts
-    # regions['cr_2e_v'] = cr_2e_cuts + v_cuts
+    regions['cr_2e_v'] = cr_2e_cuts + v_cuts
 
     # Single electron CR
     cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'mt_el'] + common_cuts
     cr_1e_cuts.remove('veto_ele')
     regions['cr_1e_j'] =  cr_1e_cuts + j_cuts
-    # regions['cr_1e_v'] =  cr_1e_cuts + v_cuts
+    regions['cr_1e_v'] =  cr_1e_cuts + v_cuts
 
     # Photon CR
     cr_g_cuts = ['trig_photon', 'one_photon', 'at_least_one_tight_photon','photon_pt'] + common_cuts
     cr_g_cuts.remove('veto_photon')
 
     regions['cr_g_j'] = cr_g_cuts + j_cuts
-    # regions['cr_g_v'] = cr_g_cuts + v_cuts
+    regions['cr_g_v'] = cr_g_cuts + v_cuts
 
     # Trigger studies
     # num = numerator, den = denominator
