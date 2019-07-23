@@ -30,8 +30,8 @@ def acc_from_dir(indir):
 
 
 
-def merge_extensions(histogram):
-    """Merge extension datasets into one
+def merge_extensions(histogram, acc):
+    """Merge extension datasets into one and scale to 1/sumw
 
     :param histogram: The histogram to modify
     :type histogram: Coffea histogram
@@ -40,13 +40,19 @@ def merge_extensions(histogram):
     """
     all_datasets = map(str, histogram.identifiers('dataset'))
     mapping = defaultdict(list)
+    sumw = defaultdict(float)
     for d in all_datasets:
         m = re.match('.*(_ext\d+).*', d)
         base = d
         if m:
             base = d.replace(m.groups()[0],"")
         mapping[base].append(d)
+        if not is_data(d):
+            sumw[base] += acc['sumw'][d][0]
+
+    pprint(sumw)
     histogram = histogram.group(histogram.axis("dataset"), "dataset", mapping)
+    histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
     return histogram
 
 
@@ -67,10 +73,15 @@ def merge_datasets(histogram):
         'SingleMuon_2017' : [x for x in all_datasets if re.match('SingleMuon_2017[A-Z]+',x)],
         'EGamma_2017' : [x for x in all_datasets if re.match('SingleElectron_2017[A-Z]+',x) or re.match('SinglePhoton_2017[A-Z]+',x)],
         'MET_2017' : [x for x in all_datasets if re.match('MET_2017[A-Z]+',x)],
+        'JetHT_2017' : [x for x in all_datasets if re.match('JetHT_2017[A-Z]+',x)],
 
         'SingleMuon_2018' : [x for x in all_datasets if re.match('SingleMuon_2018[A-Z]+',x)],
         'EGamma_2018' : [x for x in all_datasets if re.match('EGamma_2018[A-Z]+',x)],
         'MET_2018' : [x for x in all_datasets if re.match('MET_2018[A-Z]+',x)],
+        'JetHT_2018' : [x for x in all_datasets if re.match('JetHT_2018[A-Z]+',x)],
+
+        'GJets_HT_MLM_2017' : [x for x in all_datasets if re.match('GJets_HT-(\d+)To(\d+)-MLM_2017',x)],
+        'GJets_HT_MLM_2018' : [x for x in all_datasets if re.match('GJets_HT-(\d+)To(\d+)-MLM_2018',x)],
 
         'DYNJetsToLL_M-50-MLM_2017' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50-MLM_2017',x)],
         'DYNJetsToLL_M-50-MLM_2018' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50-MLM_2018',x)],
@@ -79,8 +90,9 @@ def merge_datasets(histogram):
         # 'ZJetsToNuNu_HT_2017' : [x for x in all_datasets if re.match('ZJetsToNuNu_HT-(\d+)To(\d+)-mg_2017',x)],
         # 'ZJetsToNuNu_HT_2018' : [x for x in all_datasets if re.match('ZJetsToNuNu_HT-(\d+)To(\d+)-mg_2018',x)],
         'WNJetsToLNu-MLM_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2017',x)],
-        'WNJetsToLNu-MLM_2018' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2018',x)]
+        'WNJetsToLNu-MLM_2018' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2018',x)],
     }
+
 
     # Remove empty lists
     tmp = {}
@@ -112,6 +124,7 @@ def load_xs():
     xs = {}
     for full, val, _, _ in xsraw:
         xs[short_name(full)] = float(val)
+    pprint(xs)
     return xs
 
 def lumi(year):
@@ -127,13 +140,11 @@ def lumi(year):
     if year==2017:
         return 41.3
 
-def normalize_mc(histogram, acc):
+def scale_xs_lumi(histogram):
     """MC normalization so that it's ready to compare to data
 
     :param histogram: Histogram to normalize
     :type histogram: coffea Hist
-    :param acc: Accumulator that holds sum-of-weights information
-    :type acc: coffea.processor.accumulator
     """
     # Get the list of datasets and filter MC data sets
     datasets = list(map(str, histogram.axis('dataset').identifiers()))
@@ -141,10 +152,15 @@ def normalize_mc(histogram, acc):
     mcs = [x for x in datasets if not is_data(x)]
 
     # Normalize to XS * lumi/ sumw
-    sumw = acc['sumw']
     xs = load_xs()
-    norm_dict = {mc : 1e3 * xs[mc] / sumw[mc] * lumi(extract_year(mc)) for mc in mcs}
+    norm_dict = {mc : 1e3 * xs[mc] * lumi(extract_year(mc)) for mc in mcs}
     histogram.scale(norm_dict, axis='dataset')
+
+# def merge_and_norm(histogram, acc):
+#     histogram = merge_extensions(histogram, acc)
+#     scale_xs_lumi(histogram)
+#     histogram = merge_datasets(histogram)
+#     return histogram
 
 def fig_ratio():
     """Shortcut to create figure with ratio and main panels

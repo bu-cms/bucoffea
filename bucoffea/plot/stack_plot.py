@@ -3,6 +3,7 @@
 import os
 import re
 from collections import defaultdict
+from pprint import pprint
 
 import numpy as np
 from coffea import hist
@@ -13,7 +14,7 @@ from bucoffea.execute.dataset_definitions import short_name
 from bucoffea.helpers.dataset import is_data
 from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.plot.util import (acc_from_dir, lumi, merge_datasets,
-                                merge_extensions, normalize_mc)
+                                merge_extensions, scale_xs_lumi)
 
 pjoin = os.path.join
 
@@ -23,32 +24,29 @@ def make_plot(acc):
     :param acc: Accumulator (processor output)
     :type acc: coffea.processor.accumulator
     """
-    year = 2018
+    year = 2017
 
     # Rebin
     h=acc['dimuon_mass']
-    # h=h.rebin(h.axis('recoil'),hist.Bin('recoil','recoil',25,0,1000))
+    h=h.rebin(h.axis('dilepton_mass'),hist.Bin('dilepton_mass','dilepton_mass',30,60,120))
 
-    # The histograms are binned in the dataset name
-    # Step 1: Only keep datasets that correspond to the right year
-    mapping ={str(k):str(k) for k in h.axis('dataset').identifiers() if str(year) in str(k)}
-    h=h.group(h.axis('dataset'), 'dataset', mapping)
-
-    # Step 2: Merge extension samples together
+    # Step 1: Merge extension samples together
     # Extension samples are separate MC samples for identical physics processes
     # (E.g. when people realize that they need more events for an existing sample,
     # they produce an 'extension')
-    h = merge_extensions(h)
+    h = merge_extensions(h, acc)
 
-    # Step 3: Scale each dataset according to its cross section
+    # Step 2: Scale each dataset according to its cross section
     # and the luminosity for the corresponding year
-    normalize_mc(h, acc)
+    # TODO: We may need this to be more flexible for control regions
+    # If a CR has a prescaled trigger, lumi will not be total year lumi
+    scale_xs_lumi(h)
 
-    # Step 4: Merge datasets together
+    # Step 3: Merge datasets together
     # E.g. merge all ZToNuNu HT binned samples into just one sample
     h = merge_datasets(h)
 
-    # Step 5: Pick the region we want to look at
+    # Step 4: Pick the region we want to look at
     # E.g. cr_2m_j = Di-Muon control region with monojet selection
     h = h.project(h.axis('region'),'cr_2m_j')
 
@@ -66,15 +64,18 @@ def make_plot(acc):
     }
 
     # Plot single muon data
+    # Note the syntax we use to pick the data set
     fig, ax, _ = hist.plot1d(
-        h['SingleMuon_2018'],
+        h[f'SingleMuon_{year}'],
         overlay='dataset',
         error_opts=data_err_opts,
         ax=ax,
         overflow='over')
 
     # Plot MC background samples
-    mc=re.compile("DYNJets.*")
+    # Here we use a regular expression to match
+    # data sets we want
+    mc=re.compile(f"DYNJets.*{year}")
     hist.plot1d(
         h[mc],
         overlay='dataset',
@@ -96,7 +97,7 @@ def make_plot(acc):
         'emarker': '_'
     }
 
-    hist.plotratio(h['SingleMuon_2018'].project('dataset'), h[mc].project('dataset'),
+    hist.plotratio(h[f'SingleMuon_{year}'].project('dataset'), h[mc].project('dataset'),
                 ax=rax,
                 denom_fill_opts={},
                 guide_opts={},
