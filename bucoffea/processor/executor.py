@@ -120,7 +120,6 @@ def _work_function_nanoaod(item, flatten=False, savemetrics=False, mmap=False, *
                 for j in range(len(arr[i])):
                     tmp[j] += arr[i][j]
             df[name] = int(index==0) * tmp
-        print(name, df[name])
     df['dataset'] = dataset
     tic = time.time()
     out = processor_instance.process(df)
