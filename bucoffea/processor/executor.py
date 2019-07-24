@@ -97,12 +97,30 @@ def _work_function_nanoaod(item, flatten=False, savemetrics=False, mmap=False, *
 
     tree = file[treename]
     df = LazyDataFrame(tree, chunksize, index, flatten=flatten)
-    for name in file['Runs'].keys():
-        name = name.decode('utf-8')
-        if index==0:
-            df[name] = file['Runs'][name].array()
-        else:
-            df[name] = 0 * file['Runs'][name].array()
+
+    # For NanoAOD, we have to look at the "Runs" TTree for info such as weight sums
+    # The different cases in the loop represent the different formats and accordingly
+    # different ways of dealing with the provided values.
+    for name in map(lambda x: x.decode('utf-8'), file['Runs'].keys()):
+        arr = file['Runs'][name].array()
+        if name.startswith('n'):
+            # Check that all instances are the same, then save that value
+            tmp = set([])
+            for entry in arr:
+                tmp.add(entry)
+            assert(len(tmp)==1)
+            df[name] = list(tmp)[0]
+        elif name in ['genEventCount','genEventSumw','genEventSumw2']:
+            # One entry per run -> just sum
+            df[name] = int(index==0) * arr.sum()
+        elif name in ['LHEScaleSumw','LHEPdfSumw']:
+            # Sum per variation, conserve number of variations
+            tmp = 0 * arr[0]
+            for i in range(len(arr)):
+                for j in range(len(arr[i])):
+                    tmp[j] += arr[i][j]
+            df[name] = int(index==0) * tmp
+        print(name, df[name])
     df['dataset'] = dataset
     tic = time.time()
     out = processor_instance.process(df)
