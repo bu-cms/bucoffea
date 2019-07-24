@@ -52,12 +52,8 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
 
     # Pick dataset and regions
     h = h.project(h.axis('dataset'), ds)
-    if region_tag == 'g':
-        hnum = h.project(h.axis('region'),f'tr_{region_tag}_num_cuts')
-        hden = h.project(h.axis('region'),f'tr_{region_tag}_den_cuts')
-    else:
-        hnum = h.project(h.axis('region'),f'tr_{region_tag}_num')
-        hden = h.project(h.axis('region'),f'tr_{region_tag}_den')
+    hnum = h.project(h.axis('region'),f'tr_{region_tag}_num')
+    hden = h.project(h.axis('region'),f'tr_{region_tag}_den')
 
     # Recoil plot
     try:
@@ -297,7 +293,7 @@ def met_triggers():
 
 def photon_triggers():
     tag = 'gamma'
-    indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}"
+    indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}/sel"
     acc = acc_from_dir(indir)
 
     for year in [2017, 2018]:
