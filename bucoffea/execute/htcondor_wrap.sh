@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 if [ "$BUCOFFEADEBUG" = true ]; then
     set -x
 fi
