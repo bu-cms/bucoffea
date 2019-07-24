@@ -50,7 +50,7 @@ def merge_extensions(histogram, acc):
         if not is_data(d):
             sumw[base] += acc['sumw'][d][0]
 
-    pprint(sumw)
+    # pprint(sumw)
     histogram = histogram.group(histogram.axis("dataset"), "dataset", mapping)
     histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
     return histogram
@@ -124,7 +124,7 @@ def load_xs():
     xs = {}
     for full, val, _, _ in xsraw:
         xs[short_name(full)] = float(val)
-    pprint(xs)
+    # pprint(xs)
     return xs
 
 def lumi(year):
