@@ -436,6 +436,9 @@ class monojetProcessor(processor.ProcessorABC):
             # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], weight[mask])
             ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask].flatten(),  weight=weight[mask])
 
+            # PV
+            ezfill('npv', nvtx=df['PV_npvs'][mask], weight=weight[mask])
+            ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=weight[mask])
         return output
 
     def postprocess(self, accumulator):

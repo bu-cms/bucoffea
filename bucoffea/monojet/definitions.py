@@ -47,6 +47,8 @@ def monojet_accumulator():
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",100,0.5,1.5)
 
+    nvtx_ax = Bin('nvtx','Number of vertices',100,-0.5,99.5)
+
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
@@ -113,7 +115,8 @@ def monojet_accumulator():
     items['kinematics'] = processor.defaultdict_accumulator(list)
 
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
-
+    items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
+    items['npvgood'] = Hist('Number of goodprimary vertices', dataset_ax, region_ax, nvtx_ax)
     return  processor.dict_accumulator(items)
 
 def setup_gen_candidates(df):
