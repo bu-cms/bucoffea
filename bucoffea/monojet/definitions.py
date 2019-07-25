@@ -32,6 +32,7 @@ def monojet_accumulator():
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
+    dr_ax = Bin("dr", r"$\Delta R$", 20, 0, 2)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
@@ -95,6 +96,8 @@ def monojet_accumulator():
     items['photonpt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items['photoneta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photonphi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    
+    items['drphotonjet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
     # One cutflow counter per region
     regions = monojet_regions().keys()
