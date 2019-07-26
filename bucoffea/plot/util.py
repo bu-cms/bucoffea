@@ -4,14 +4,26 @@ from collections import defaultdict
 from pprint import pprint
 
 import numpy as np
-from coffea.util import load
+from coffea.util import load, save
 from matplotlib import pyplot as plt
 
 from bucoffea.execute.dataset_definitions import short_name
 from bucoffea.helpers.dataset import extract_year, is_data
 from bucoffea.helpers.paths import bucoffea_path
 
+import hashlib
+
 pjoin = os.path.join
+
+def sha256sum(filelist):
+    h  = hashlib.sha256()
+    b  = bytearray(128*1024)
+    mv = memoryview(b)
+    for filename in filelist:
+        with open(filename, 'rb', buffering=0) as f:
+            for n in iter(lambda : f.readinto(mv), 0):
+                h.update(mv[:n])
+    return h.hexdigest()
 
 def acc_from_dir(indir):
     """Load Coffea accumulator from directory with *.coffea files
@@ -21,12 +33,18 @@ def acc_from_dir(indir):
     :return: Sum of all found accumulators
     :rtype: dict
     """
-    acc = {}
-    for file in os.listdir(indir):
-        if not file.endswith(".coffea"):
-            continue
-        acc = acc + load(pjoin(indir, file))
-    return acc
+    files = filter(lambda x: x.endswith(".coffea") and not ('cache' in x), os.listdir(indir))
+    files = list(map(lambda x: os.path.abspath(pjoin(indir, x)), files))
+    listhash = sha256sum(files)
+    cache = pjoin(indir, f'merged_cache_{listhash}.coffea')
+    if os.path.exists(cache):
+        return load(cache)
+    else:
+        acc = {}
+        for file in files:
+            acc = acc + load(file)
+        save(acc, cache)
+        return acc
 
 
 
@@ -85,10 +103,10 @@ def merge_datasets(histogram):
 
         'DYNJetsToLL_M-50-MLM_2017' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50-MLM_2017',x)],
         'DYNJetsToLL_M-50-MLM_2018' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50-MLM_2018',x)],
-        'DYJetsToLL_M-50_HT_MLM_2017' : [x for x in all_datasets if re.match('DYJetsToLL_M-50_HT-(\d+)to(\d+)-MLM_2017',x)],
-        'DYJetsToLL_M-50_HT_MLM_2018' : [x for x in all_datasets if re.match('DYJetsToLL_M-50_HT-(\d+)to(\d+)-MLM_2018',x)],
-        'WJetsToLNu_HT_MLM_2017' : [x for x in all_datasets if re.match('WJetsToLNu_HT-(\d+)To(\d+)-MLM_2017',x)],
-        'WJetsToLNu_HT_MLM_2018' : [x for x in all_datasets if re.match('WJetsToLNu_HT-(\d+)To(\d+)-MLM_2018',x)],
+        'DYJetsToLL_M-50_HT_MLM_2017' : [x for x in all_datasets if re.match('DYJetsToLL_M-50_HT-(\d+)to.*-MLM_2017',x)],
+        'DYJetsToLL_M-50_HT_MLM_2018' : [x for x in all_datasets if re.match('DYJetsToLL_M-50_HT-(\d+)to.*-MLM_2018',x)],
+        'WJetsToLNu_HT_MLM_2017' : [x for x in all_datasets if re.match('WJetsToLNu_HT-(\d+)To.*-MLM_2017',x)],
+        'WJetsToLNu_HT_MLM_2018' : [x for x in all_datasets if re.match('WJetsToLNu_HT-(\d+)To.*-MLM_2018',x)],
         # 'ZJetsToNuNu_HT_2017' : [x for x in all_datasets if re.match('ZJetsToNuNu_HT-(\d+)To(\d+)-mg_2017',x)],
         # 'ZJetsToNuNu_HT_2018' : [x for x in all_datasets if re.match('ZJetsToNuNu_HT-(\d+)To(\d+)-mg_2018',x)],
         'WNJetsToLNu-MLM_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2017',x)],

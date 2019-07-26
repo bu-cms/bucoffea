@@ -12,9 +12,9 @@ import numpy as np
 from bucoffea.helpers import object_overlap
 from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.helpers.gen import find_first_parent
-from dynaconf import settings as cfg
+from pprint import pprint
 
-def monojet_accumulator():
+def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
     region_ax = Cat("region", "Selection region")
     type_ax = Cat("type", "Type")
@@ -103,7 +103,7 @@ def monojet_accumulator():
     items['drphotonjet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
     # One cutflow counter per region
-    regions = monojet_regions().keys()
+    regions = monojet_regions(cfg).keys()
     for region in regions:
         if region=="inclusive":
             continue
@@ -270,7 +270,7 @@ def setup_candidates(df, cfg):
     return ak4, ak8, muons, electrons, taus, photons, hlt
 
 
-def monojet_regions():
+def monojet_regions(cfg):
     common_cuts = [
         'filt_met',
         'veto_ele',
@@ -386,7 +386,6 @@ def monojet_regions():
         tr_g_num_cuts = copy.deepcopy(cr_g_cuts) + j_cuts
         tr_g_num_cuts.remove('recoil')
         tr_g_num_cuts.remove('photon_pt')
-        tr_g_num_cuts.append('trig_ht_for_g_eff')
 
         tr_g_den_cuts = copy.deepcopy(tr_g_num_cuts)
         tr_g_den_cuts.remove('trig_photon')

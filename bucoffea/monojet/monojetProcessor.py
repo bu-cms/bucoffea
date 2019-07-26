@@ -36,8 +36,8 @@ class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
         self._blind=blind
-        self._accumulator = monojet_accumulator()
         self._configure()
+        self._accumulator = monojet_accumulator(cfg)
 
     @property
     def accumulator(self):
@@ -314,7 +314,7 @@ class monojetProcessor(processor.ProcessorABC):
             output['sumw'][dataset] +=  df['genEventSumw']
             output['sumw2'][dataset] +=  df['genEventSumw2']
 
-        regions = monojet_regions()
+        regions = monojet_regions(cfg)
         for region, cuts in regions.items():
             # Blinding
             if(self._blind and df['is_data'] and region.startswith('sr')):
