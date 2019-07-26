@@ -5,19 +5,18 @@ import htcondor
 from htcondor import JobEventType
 import os
 from collections import defaultdict
+
 from tabulate import tabulate
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    WHITE = '\033[97m'
-    GRAY = '\033[90m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-def main():
+import curses
+
+import time
+
+def main(stdscr):
+    curses.start_color()
+    curses.use_default_colors()
+    curses.init_pair(1, curses.COLOR_GREEN, -1)
+    curses.init_pair(2, curses.COLOR_RED, -1)
+    curses.init_pair(3, curses.COLOR_WHITE, -1)
     directories = sys.argv[1:]
 
     logs = []
@@ -31,6 +30,8 @@ def main():
         jels[name] = htcondor.JobEventLog(log)
 
     while True:
+        stdscr.clear()
+        colors = [3,3]
         try:
             table = []
             for log, j in jels.items():
@@ -40,19 +41,21 @@ def main():
                     ret = latest["ReturnValue"]
                 except KeyError:
                     ret = "-"
-                col = ""
-
                 if ret == 0:
-                    log = bcolors.OKGREEN + log
-                    ret = f"{ret}" + bcolors.ENDC
+                    colors.append(1)
                 elif ret != "-":
-                    log = bcolors.FAIL + log
-                    ret = f"{ret}" + bcolors.ENDC
-
+                    colors.append(2)
+                else:
+                    colors.append(3)
                 table.append([log, latest.cluster, str(JobEventType.values[latest.type]), ret ])
-            print(tabulate(table, headers=["Name", "Cluster", "Status", "Return"]))
+            tab = tabulate(table, headers=["Name", "Cluster", "Status", "Return"])
+            for i,l in enumerate(tab.split('\n')):
+                stdscr.addstr(i,0,l, curses.color_pair(colors[i]))
+            stdscr.refresh()
+            stdscr.nodelay(True)
         except KeyboardInterrupt:
             break
-        break
+        time.sleep(5)
+
 if __name__ == "__main__":
-    main()
+    curses.wrapper(main)
