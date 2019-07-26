@@ -12,6 +12,7 @@ from bucoffea.helpers import bucoffea_path, vo_proxy_path, xrootd_format
 from bucoffea.helpers.condor import  condor_submit
 import shutil
 from datetime import datetime
+from multiprocessing.pool import Pool
 pjoin = os.path.join
 
 def choose_processor(args):
@@ -116,7 +117,8 @@ def do_submit(args):
             raise RuntimeError(f"Will not overwrite existing task directory unless '--force' is specified: {subdir}")
     else:
         subdir = os.path.abspath(pjoin("./submission/", timetag))
-    os.makedirs(subdir)
+    if not os.path.exists(subdir):
+        os.makedirs(subdir)
 
     # Sub-directory to store submission files
     filedir = 'files'
@@ -130,6 +132,9 @@ def do_submit(args):
         os.makedirs(proxydir)
     shutil.copy2(proxy, proxydir)
 
+    if args.async:
+        jdl_to_submit = []
+
     for dataset, files in dataset_files.items():
         print(f"Submitting dataset: {dataset}.")
 
@@ -141,6 +146,7 @@ def do_submit(args):
                 for file in chunk:
                     f.write(f"{file}\n")
 
+            # Job file creation
             arguments = [
                 # pjoin(proxydir, os.path.basename(proxy)),
                 "$(Proxy_path)",
@@ -181,13 +187,26 @@ def do_submit(args):
             with open(jdl,"w") as f:
                 f.write(str(sub))
                 f.write("\nqueue 1\n")
+
+            # Submission
             if args.dry:
                 jobid = -1
+                print(f"Submitted job {jobid}")
             else:
-                jobid = condor_submit(jdl)
-            print(f"Submitted job {jobid}")
-            with open("submission_history.txt","a") as f:
-                f.write(f"{datetime.now()} {jobid}\n")
+                if args.async:
+                    jdl_to_submit.append(jdl)
+                else:
+                    jobid = condor_submit(jdl)
+                    print(f"Submitted job {jobid}")
+    if args.async:
+        p = Pool(processes=8)
+        res = p.map_async(condor_submit, jdl_to_submit)
+        res.wait()
+        if res.successful():
+            print(f"Asynchronous submission successful for {len(jdl_to_submit)} jobs.")
+        else:
+            print("Asynchronous submission failed.")
+
 
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
@@ -219,6 +238,7 @@ def main():
     parser_submit.add_argument('--dry', action="store_true", default=False, help='Do not trigger submission, just dry run.')
     parser_submit.add_argument('--test', action="store_true", default=False, help='Only run over one file per dataset for testing.')
     parser_submit.add_argument('--force', action="store_true", default=False, help='Overwrite existing submission folder with same tag.')
+    parser_submit.add_argument('--async', action="store_true", default=False, help='Submit asynchronously.')
     parser_submit.set_defaults(func=do_submit)
 
 
