@@ -14,6 +14,7 @@ DY*JetsToLL_M-50_LHEZpT_*_TuneCP5_13TeV-amcnloFXFX-pythia8
 DY*JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8
 ZJetsToNuNu_HT-*_13TeV-madgraph
 DYJetsToLL_M-50_HT-*_TuneCP5_13TeV-madgraphMLM-pythia8
+DYJetsToLL_M-50_HT-*_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8
 
 # EWK V
 # EWKZ2Jets_ZToNuNu_TuneCP5_13TeV-madgraph-pythia8
