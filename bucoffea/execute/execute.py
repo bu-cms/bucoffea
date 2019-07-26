@@ -106,13 +106,17 @@ def do_submit(args):
             tmp[k] = v[:1]
         dataset_files = tmp
 
-    # Time tagged submission directory
+    # Submission directory:
+    # Uses tag from commandline if specified
+    # Or just time tag
     timetag = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-
-    foldername = timetag + (f"_{args.name}" if args.name else "")
-    subdir = os.path.abspath(pjoin("./submission/", foldername))
-    if not os.path.exists(subdir):
-        os.makedirs(subdir)
+    if args.name:
+        subdir = os.path.abspath(pjoin("./submission/", args.name))
+        if os.path.exists(subdir) and not args.force:
+            raise RuntimeError(f"Will not overwrite existing task directory unless '--force' is specified: {subdir}")
+    else:
+        subdir = os.path.abspath(pjoin("./submission/", timetag))
+    os.makedirs(subdir)
 
     # Sub-directory to store submission files
     filedir = 'files'
@@ -214,6 +218,7 @@ def main():
     parser_submit.add_argument('--no-prefetch', action="store_true", default=False, help='Do not prefetch input files on worker but run over xrootd.')
     parser_submit.add_argument('--dry', action="store_true", default=False, help='Do not trigger submission, just dry run.')
     parser_submit.add_argument('--test', action="store_true", default=False, help='Only run over one file per dataset for testing.')
+    parser_submit.add_argument('--force', action="store_true", default=False, help='Overwrite existing submission folder with same tag.')
     parser_submit.set_defaults(func=do_submit)
 
 
