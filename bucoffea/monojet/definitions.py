@@ -12,6 +12,7 @@ import numpy as np
 from bucoffea.helpers import object_overlap
 from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.helpers.gen import find_first_parent
+from dynaconf import settings as cfg
 
 def monojet_accumulator():
     dataset_ax = Cat("dataset", "Primary dataset")
@@ -98,7 +99,7 @@ def monojet_accumulator():
     items['photonpt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items['photoneta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photonphi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    
+
     items['drphotonjet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
     # One cutflow counter per region
@@ -331,65 +332,68 @@ def monojet_regions():
     regions['cr_g_j'] = cr_g_cuts + j_cuts
     regions['cr_g_v'] = cr_g_cuts + v_cuts
 
-    # Trigger studies
-    # num = numerator, den = denominator
-    # Single Mu region: Remove recoil cut, add SingleMu trigger, toggle MET trigger
-    tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts) + j_cuts
-    tr_1m_num_cuts.remove('recoil')
-    tr_1m_num_cuts.append('trig_mu')
-    regions['tr_1m_num'] = tr_1m_num_cuts
+    if cfg.RUN.TRIGGER_STUDY:
+        # Trigger studies
+        # num = numerator, den = denominator
+        # Single Mu region: Remove recoil cut, add SingleMu trigger, toggle MET trigger
+        tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts) + j_cuts
+        tr_1m_num_cuts.remove('recoil')
+        tr_1m_num_cuts.append('trig_mu')
+        regions['tr_1m_num'] = tr_1m_num_cuts
 
-    tr_1m_den_cuts = copy.deepcopy(tr_1m_num_cuts)
-    tr_1m_den_cuts.remove('trig_met')
-    regions['tr_1m_den'] = tr_1m_den_cuts
+        tr_1m_den_cuts = copy.deepcopy(tr_1m_num_cuts)
+        tr_1m_den_cuts.remove('trig_met')
+        regions['tr_1m_den'] = tr_1m_den_cuts
 
-    # Add HLT muon requirement
-    regions['tr_1m_hlt_num'] = regions['tr_1m_num'] + ['one_hlt_muon']
-    regions['tr_1m_hlt_den'] = regions['tr_1m_den'] + ['one_hlt_muon']
+        # Add HLT muon requirement
+        regions['tr_1m_hlt_num'] = regions['tr_1m_num'] + ['one_hlt_muon']
+        regions['tr_1m_hlt_den'] = regions['tr_1m_den'] + ['one_hlt_muon']
 
-    # Double Mu region: Remove recoil cut, toggle MET trigger
-    tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts) + j_cuts
-    tr_2m_num_cuts.remove('recoil')
-    tr_2m_num_cuts.append('trig_mu')
-    regions['tr_2m_num'] = tr_2m_num_cuts
+        # Double Mu region: Remove recoil cut, toggle MET trigger
+        tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts) + j_cuts
+        tr_2m_num_cuts.remove('recoil')
+        tr_2m_num_cuts.append('trig_mu')
+        regions['tr_2m_num'] = tr_2m_num_cuts
 
-    tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)
-    tr_2m_den_cuts.remove('trig_met')
-    regions['tr_2m_den'] = tr_2m_den_cuts
+        tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)
+        tr_2m_den_cuts.remove('trig_met')
+        regions['tr_2m_den'] = tr_2m_den_cuts
 
-    regions['tr_2m_hlt_den'] = regions['tr_2m_den'] + ['two_hlt_muons']
-    regions['tr_2m_hlt_num'] = regions['tr_2m_num'] + ['two_hlt_muons']
+        regions['tr_2m_hlt_den'] = regions['tr_2m_den'] + ['two_hlt_muons']
+        regions['tr_2m_hlt_num'] = regions['tr_2m_num'] + ['two_hlt_muons']
 
-    # Single Electron region: Remove recoil cut, toggle MET trigger
-    tr_1e_num_cuts = copy.deepcopy(cr_1e_cuts) + j_cuts
-    tr_1e_num_cuts.remove('recoil')
-    tr_1e_num_cuts.append('trig_met')
-    regions['tr_1e_num'] = tr_1e_num_cuts
+        # Single Electron region: Remove recoil cut, toggle MET trigger
+        tr_1e_num_cuts = copy.deepcopy(cr_1e_cuts) + j_cuts
+        tr_1e_num_cuts.remove('recoil')
+        tr_1e_num_cuts.append('trig_met')
+        regions['tr_1e_num'] = tr_1e_num_cuts
 
-    tr_1e_den_cuts = copy.deepcopy(tr_1e_num_cuts)
-    tr_1e_den_cuts.remove('trig_met')
-    regions['tr_1e_den'] = tr_1e_den_cuts
+        tr_1e_den_cuts = copy.deepcopy(tr_1e_num_cuts)
+        tr_1e_den_cuts.remove('trig_met')
+        regions['tr_1e_den'] = tr_1e_den_cuts
 
-    # Double Electron region: Remove recoil cut, toggle MET trigger
-    tr_2e_num_cuts = copy.deepcopy(cr_2e_cuts) + j_cuts
-    tr_2e_num_cuts.remove('recoil')
-    tr_2e_num_cuts.append('trig_met')
-    regions['tr_2e_num'] = tr_2e_num_cuts
+        # Double Electron region: Remove recoil cut, toggle MET trigger
+        tr_2e_num_cuts = copy.deepcopy(cr_2e_cuts) + j_cuts
+        tr_2e_num_cuts.remove('recoil')
+        tr_2e_num_cuts.append('trig_met')
+        regions['tr_2e_num'] = tr_2e_num_cuts
 
-    tr_2e_den_cuts = copy.deepcopy(tr_2e_num_cuts)
-    tr_2e_den_cuts.remove('trig_met')
-    regions['tr_2e_den'] = tr_2e_den_cuts
+        tr_2e_den_cuts = copy.deepcopy(tr_2e_num_cuts)
+        tr_2e_den_cuts.remove('trig_met')
+        regions['tr_2e_den'] = tr_2e_den_cuts
 
-    # Photon region
-    tr_g_num_cuts = copy.deepcopy(cr_g_cuts) + j_cuts
-    tr_g_num_cuts.remove('recoil')
-    tr_g_num_cuts.remove('photon_pt')
-    tr_g_num_cuts.append('trig_ht_for_g_eff')
-    regions['tr_g_num'] = tr_g_num_cuts
+        # Photon region
+        tr_g_num_cuts = copy.deepcopy(cr_g_cuts) + j_cuts
+        tr_g_num_cuts.remove('recoil')
+        tr_g_num_cuts.remove('photon_pt')
+        tr_g_num_cuts.append('trig_ht_for_g_eff')
 
-    tr_g_den_cuts = copy.deepcopy(tr_g_num_cuts)
-    tr_g_den_cuts.remove('trig_photon')
-    regions['tr_g_den'] = tr_g_den_cuts
+        tr_g_den_cuts = copy.deepcopy(tr_g_num_cuts)
+        tr_g_den_cuts.remove('trig_photon')
+
+        for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
+            regions[f'tr_g_{trgname}_num'] = tr_g_num_cuts + [trgname]
+            regions[f'tr_g_{trgname}_den'] = tr_g_den_cuts + [trgname]
 
     return regions
 

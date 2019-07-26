@@ -37,20 +37,24 @@ class monojetProcessor(processor.ProcessorABC):
         self._year=None
         self._blind=blind
         self._accumulator = monojet_accumulator()
+        self._configure()
 
     @property
     def accumulator(self):
         return self._accumulator
 
-    def _configure(self,df):
-        dataset = df['dataset']
-        self._year = extract_year(dataset)
-
-        # Reload config based on year
+    def _configure(self, df=None):
         cfg.DYNACONF_WORKS="merge_configs"
         cfg.MERGE_ENABLED_FOR_DYNACONF=True
         cfg.SETTINGS_FILE_FOR_DYNACONF = bucoffea_path("config/monojet.yaml")
-        cfg.ENV_FOR_DYNACONF = f"era{self._year}"
+
+        # Reload config based on year
+        if df:
+            dataset = df['dataset']
+            self._year = extract_year(dataset)
+            cfg.ENV_FOR_DYNACONF = f"era{self._year}"
+        else:
+            cfg.ENV_FOR_DYNACONF = f"default"
         cfg.reload()
 
     def process(self, df):
@@ -142,7 +146,8 @@ class monojetProcessor(processor.ProcessorABC):
 
             selection.add('trig_ele', trig_ele)
             selection.add('trig_mu', combine_masks(df, cfg.TRIGGERS.MUON.SINGLE))
-            selection.add('trig_ht_for_g_eff', combine_masks(df, cfg.TRIGGERS.HT.GAMMAEFF))
+            for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
+                selection.add(trgname, df[trgname])
 
         # Trigger objects
         hlt_muons = hlt[hlt.id==13]
@@ -432,7 +437,7 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('photonpt0',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
             ezfill('photoneta0',    eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
             ezfill('photonphi0',    phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
-            
+
             # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], weight[mask])
             ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask].flatten(),  weight=weight[mask])
 
