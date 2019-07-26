@@ -78,7 +78,7 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
                 unc='clopper-pearson',
                 error_opts=markers('data')
                 )
-    ax.set_ylim(0,1.1)
+    ax.set_ylim(0.8,1.1)
     ax.set_xlim(0,xmax)
     ax.set_ylabel("Efficiency")
 
@@ -122,7 +122,7 @@ colors = {
             '2e' : 'magenta'
         }
 region_marker = {
-            '1m' : '.',
+            '1m' : 'o',
             '1m_hlt' : 'o',
             '2m' : 's',
             '2m_hlt' : '^',
@@ -135,7 +135,7 @@ def region_comparison_plot(tag):
     for year in [2017,2018]:
         regions = ['1m', '2m', '1e','1m_hlt','2m_hlt']
         opts = markers('data')
-        opts['markersize'] = 5.
+        opts['markersize'] = 1.
         opts['fillstyle'] = 'none'
         emarker = opts.pop('emarker', '')
 
@@ -194,10 +194,10 @@ def ratio_unc(num, den, numunc, denunc):
 
 def sf_comparison_plot(tag):
     for year in [2017,2018]:
-        regions = ['1m', '2m', '1m_hlt', '2m_hlt']
+        regions = ['1m', '2m', '2m_hlt']
         opts = markers('data')
         opts['markersize'] = 5
-        opts['fillstyle'] = 'none'
+        # opts['fillstyle'] = 'none'
         emarker = opts.pop('emarker', '')
 
         fig, ax, rax = fig_ratio()
@@ -206,13 +206,13 @@ def sf_comparison_plot(tag):
         for region in regions:
             if '1e' in region:
                 fnum = f'output/{tag}/table_{region}_EGamma_{year}.txt'
-                fden = f'output/{tag}/table_{region}_WJetsToLNu-MLM_{year}.txt'
+                fden = f'output/{tag}/table_{region}_WJetsToLNu_HT_MLM_{year}.txt'
             elif '1m' in region:
                 fnum = f'output/{tag}/table_{region}_SingleMuon_{year}.txt'
-                fden = f'output/{tag}/table_{region}_WJetsToLNu-MLM_{year}.txt'
+                fden = f'output/{tag}/table_{region}_WJetsToLNu_HT_MLM_{year}.txt'
             elif '2m' in region:
                 fnum = f'output/{tag}/table_{region}_SingleMuon_{year}.txt'
-                fden = f'output/{tag}/table_{region}_DYNJetsToLL_M-50-MLM_{year}.txt'
+                fden = f'output/{tag}/table_{region}_DYJetsToLL_M-50_HT_MLM_{year}.txt'
 
 
             xnum, ynum, yerrnum = get_xy(fnum)
@@ -247,6 +247,10 @@ def sf_comparison_plot(tag):
         rax.grid(1)
         rax.set_xlabel("Recoil or $p_{T}^{miss}$ (GeV)")
         rax.set_ylabel(r"Ratio to single-$\mu$")
+        rax.plot([0,1000],[0.99,0.99],color='blue')
+        rax.plot([0,1000],[1.01,1.01],color='blue')
+        rax.plot([250,250],[0.95,0.95],color='blue')
+        ax.plot([250,250],[0.9,1.1],color='blue')
         plt.text(1., 1., r"$\approx$ %.1f fb$^{-1}$ (13 TeV)" % lumi(year),
                 fontsize=16,
                 horizontalalignment='right',
@@ -262,6 +266,85 @@ def sf_comparison_plot(tag):
         fig.savefig(pjoin(outdir, f'sf_comparison_{year}.pdf'))
         fig.clear()
         plt.close(fig)
+
+def data_mc_comparison_plot(tag):
+    regions = ['1m', '2m', '1e', '2m_hlt']
+    opts = markers('data')
+    # opts['markersize'] = 5
+    # opts['fillstyle'] = 'none'
+    emarker = opts.pop('emarker', '')
+    
+    for year in [2017,2018]:
+        for region in regions:
+            fig, ax, rax = fig_ratio()
+            if '1e' in region:
+                fnum = f'output/{tag}/table_{region}_EGamma_{year}.txt'
+                fden = f'output/{tag}/table_{region}_WJetsToLNu_HT_MLM_{year}.txt'
+            elif '1m' in region:
+                fnum = f'output/{tag}/table_{region}_SingleMuon_{year}.txt'
+                fden = f'output/{tag}/table_{region}_WJetsToLNu_HT_MLM_{year}.txt'
+            elif '2m' in region:
+                fnum = f'output/{tag}/table_{region}_SingleMuon_{year}.txt'
+                fden = f'output/{tag}/table_{region}_DYJetsToLL_M-50_HT_MLM_{year}.txt'
+
+            if not os.path.exists(fnum):
+                print(f"File not found {fnum}")
+                continue
+            if not os.path.exists(fden):
+                print(f"File not found {fden}")
+                continue
+
+            xnum, ynum, yerrnum = get_xy(fnum)
+            xden, yden, yerrden = get_xy(fden)
+
+            xsf = xnum
+            ysf = ynum / yden
+            ysferr = ratio_unc(ynum, yden, yerrnum, yerrden)
+
+            opts['color'] = 'k'
+            ax.errorbar(xnum, ynum, yerr=yerrnum,label=f'Data, {region} region', **opts)
+            opts['color'] = 'r'
+            ax.errorbar(xden, yden, yerr=yerrden,label=f'MC, {region} region', **opts)
+            rax.plot([0,1000],[0.98,0.98],color='blue')
+            rax.plot([0,1000],[0.99,0.99],color='blue',linestyle='--')
+            ax.plot([250,250],[0.9,1.1],color='blue')
+            rax.plot([250,250],[0.95,1.05],color='blue')
+            opts['color'] = 'k'
+            rax.errorbar(xsf, ysf, ysferr, **opts)
+
+
+
+            outdir = f"./output/{tag}"
+        # ax.set_ylim(0.9,1)
+            ax.legend()
+            ax.set_ylabel("Efficiency")
+            rax.set_ylabel("Data / MC SF")
+            ax.xaxis.set_major_locator(MultipleLocator(200))
+            ax.xaxis.set_minor_locator(MultipleLocator(50))
+            ax.yaxis.set_major_locator(MultipleLocator(0.05))
+            ax.yaxis.set_minor_locator(MultipleLocator(0.01))
+            ax.set_ylim(0.9,1.1)
+            ax.grid(1)
+            rax.set_ylim(0.95,1.05)
+            rax.yaxis.set_major_locator(MultipleLocator(0.05))
+            rax.yaxis.set_minor_locator(MultipleLocator(0.01))
+            rax.grid(1)
+            rax.set_xlabel("Recoil or $p_{T}^{miss}$ (GeV)")
+            plt.text(1., 1., r"$\approx$ %.1f fb$^{-1}$ (13 TeV)" % lumi(year),
+                    fontsize=16,
+                    horizontalalignment='right',
+                    verticalalignment='bottom',
+                    transform=ax.transAxes
+                )
+            plt.text(0., 1., f'{year}',
+                    fontsize=16,
+                    horizontalalignment='left',
+                    verticalalignment='bottom',
+                    transform=ax.transAxes
+                )
+            fig.savefig(pjoin(outdir, f'data_mc_comparison_{region}_{year}.pdf'))
+            fig.clear()
+            plt.close(fig)
 
 def met_triggers():
         tag = '120pfht_hltmu'
@@ -291,6 +374,34 @@ def met_triggers():
         region_comparison_plot(tag)
         sf_comparison_plot(tag)
 
+def met_triggers_ht():
+        tag = 'gamma'
+        indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}"
+        # acc = acc_from_dir(indir)
+
+        # for year in [2017, 2018]:
+        #     region = '1m'
+        #     for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
+        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
+        #     region = '2m'
+        #     for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
+        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
+        #     region = '1m_hlt'
+        #     for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
+        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
+        #     region = '2m_hlt'
+        #     for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
+        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
+        #     region = '1e'
+        #     for dataset in ["WJetsToLNu_HT_MLM", "EGamma"]:
+        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
+        #     region = '2e'
+        #     for dataset in ["DYJetsToLL_M-50_HT_MLM", "EGamma"]:
+        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
+
+        region_comparison_plot(tag)
+        sf_comparison_plot(tag)
+
 def photon_triggers():
     tag = 'gamma'
     indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}/sel"
@@ -300,8 +411,11 @@ def photon_triggers():
             region = 'g'
             for dataset in ["GJets_HT_MLM", "JetHT"]:
                 plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='photonpt0',axis_name='pt')
+                # plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='recoil',axis_name='recoil')
 def main():
     # indir = "/home/albert/repos/bucoffea/bucoffea/plot/input/eff/test"
+    # met_triggers_ht()
+    # data_mc_comparison_plot('gamma')
     photon_triggers()
 
 
