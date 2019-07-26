@@ -48,7 +48,7 @@ def merge_extensions(histogram, acc):
             base = d.replace(m.groups()[0],"")
         mapping[base].append(d)
         if not is_data(d):
-            sumw[base] += acc['sumw'][d][0]
+            sumw[base] += acc['sumw'][d]
 
     # pprint(sumw)
     histogram = histogram.group(histogram.axis("dataset"), "dataset", mapping)
@@ -85,14 +85,15 @@ def merge_datasets(histogram):
 
         'DYNJetsToLL_M-50-MLM_2017' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50-MLM_2017',x)],
         'DYNJetsToLL_M-50-MLM_2018' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50-MLM_2018',x)],
-        # 'DYJetsToLL_M-50_HT_MLM_2017' : [x for x in all_datasets if re.match('DYJetsToLL_M-50_HT-(\d+)to(\d+)-MLM_2017',x)],
-        # 'DYJetsToLL_M-50_HT_MLM_2018' : [x for x in all_datasets if re.match('DYJetsToLL_M-50_HT-(\d+)to(\d+)-MLM_2018',x)],
+        'DYJetsToLL_M-50_HT_MLM_2017' : [x for x in all_datasets if re.match('DYJetsToLL_M-50_HT-(\d+)to(\d+)-MLM_2017',x)],
+        'DYJetsToLL_M-50_HT_MLM_2018' : [x for x in all_datasets if re.match('DYJetsToLL_M-50_HT-(\d+)to(\d+)-MLM_2018',x)],
+        'WJetsToLNu_HT_MLM_2017' : [x for x in all_datasets if re.match('WJetsToLNu_HT-(\d+)To(\d+)-MLM_2017',x)],
+        'WJetsToLNu_HT_MLM_2018' : [x for x in all_datasets if re.match('WJetsToLNu_HT-(\d+)To(\d+)-MLM_2018',x)],
         # 'ZJetsToNuNu_HT_2017' : [x for x in all_datasets if re.match('ZJetsToNuNu_HT-(\d+)To(\d+)-mg_2017',x)],
         # 'ZJetsToNuNu_HT_2018' : [x for x in all_datasets if re.match('ZJetsToNuNu_HT-(\d+)To(\d+)-mg_2018',x)],
         'WNJetsToLNu-MLM_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2017',x)],
         'WNJetsToLNu-MLM_2018' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2018',x)],
     }
-
 
     # Remove empty lists
     tmp = {}
