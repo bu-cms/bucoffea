@@ -8,7 +8,7 @@ from dynaconf import settings as cfg
 
 from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, setup_gen_candidates,monojet_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi
-from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_data, extract_year
+from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_nlo_z, is_nlo_w, is_data, extract_year
 
 
 def combine_masks(df, masks):
@@ -64,9 +64,12 @@ class monojetProcessor(processor.ProcessorABC):
         dataset = df['dataset']
         df['is_lo_w'] = is_lo_w(dataset)
         df['is_lo_z'] = is_lo_z(dataset)
+        df['is_nlo_z'] = is_nlo_z(dataset)
+        df['is_nlo_w'] = is_nlo_w(dataset)
+        df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w']
         df['is_data'] = is_data(dataset)
 
-        if not df['is_data']:
+        if df['has_lhe_v_pt']:
             gen_v_pt = df['LHE_Vpt']
 
         # Candidates
@@ -235,7 +238,7 @@ class monojetProcessor(processor.ProcessorABC):
         output = self.accumulator.identity()
 
         # Gen
-        if not df['is_data']:
+        if df['has_lhe_v_pt']:
             output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
 
         # Weights
