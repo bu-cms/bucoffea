@@ -50,12 +50,6 @@ def do_run(args):
 def do_worker(args):
     """Run the analysis on a worker node."""
     # Run over all files associated to dataset
-
-    # Create output directory
-    args.outpath = os.path.abspath(args.outpath)
-    if not os.path.exists(args.outpath):
-        os.makedirs(args.outpath)
-
     with open(args.filelist, "r") as f:
         files = [xrootd_format(x.strip()) for x in f.readlines()]
     fileset = {args.dataset : files}
