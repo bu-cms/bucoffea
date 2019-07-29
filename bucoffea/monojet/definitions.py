@@ -35,7 +35,7 @@ def monojet_accumulator(cfg):
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
     dr_ax = Bin("dr", r"$\Delta R$", 20, 0, 2)
 
-    pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
+    pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 200, 0, 1000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
@@ -395,6 +395,15 @@ def monojet_regions(cfg):
         for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
             regions[f'tr_g_{trgname}_num'] = tr_g_num_cuts + [trgname]
             regions[f'tr_g_{trgname}_den'] = tr_g_den_cuts + [trgname]
+
+            regions[f'tr_g_{trgname}_recoil_cut_num'] = tr_g_num_cuts + [trgname, 'recoil']
+            regions[f'tr_g_{trgname}_recoil_cut_den'] = tr_g_den_cuts + [trgname, 'recoil']
+
+            regions[f'tr_g_{trgname}_photon_pt_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt']
+            regions[f'tr_g_{trgname}_photon_pt_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt']
+
+            regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
+            regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
 
     return regions
 

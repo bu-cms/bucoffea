@@ -41,6 +41,7 @@ default:
         eta: 2.5
       tight:
         pt: 175
+        pttrig: 215
         eta: 1.4442
     branch:
       id: Photon_cutBasedBitmap

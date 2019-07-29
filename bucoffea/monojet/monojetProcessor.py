@@ -229,6 +229,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('one_photon', photons.counts==1)
         selection.add('at_least_one_tight_photon', is_tight_photon.any())
         selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
+        selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
         # Fill histograms
         output = self.accumulator.identity()
