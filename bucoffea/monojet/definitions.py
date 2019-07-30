@@ -392,15 +392,12 @@ def monojet_regions(cfg):
         tr_g_den_cuts = copy.deepcopy(tr_g_num_cuts)
         tr_g_den_cuts.remove('trig_photon')
 
+        regions[f'tr_g_notrig_num'] = copy.deepcopy(tr_g_num_cuts)
+        regions[f'tr_g_notrig_den'] = copy.deepcopy(tr_g_den_cuts)
+
         for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
             regions[f'tr_g_{trgname}_num'] = tr_g_num_cuts + [trgname]
             regions[f'tr_g_{trgname}_den'] = tr_g_den_cuts + [trgname]
-
-            regions[f'tr_g_{trgname}_recoil_cut_num'] = tr_g_num_cuts + [trgname, 'recoil']
-            regions[f'tr_g_{trgname}_recoil_cut_den'] = tr_g_den_cuts + [trgname, 'recoil']
-
-            regions[f'tr_g_{trgname}_photon_pt_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt']
-            regions[f'tr_g_{trgname}_photon_pt_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt']
 
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
