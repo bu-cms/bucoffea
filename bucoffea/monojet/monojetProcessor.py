@@ -158,7 +158,7 @@ class monojetProcessor(processor.ProcessorABC):
         hlt_double_muons = hlt_muons[hlt_muons.filter & 16 == 16]
 
         selection.add('one_hlt_muon', hlt_single_muons.counts>=1)
-        selection.add('two_hlt_muons', (hlt_single_muons.counts + 2*hlt_double_muons.counts)>=2)
+        selection.add('two_hlt_muons', hlt_single_muons.counts==2)
 
         # Common selection
         selection.add('veto_ele', electrons.counts==0)
