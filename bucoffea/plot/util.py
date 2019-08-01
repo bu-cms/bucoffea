@@ -1,17 +1,19 @@
+import hashlib
 import os
 import re
 from collections import defaultdict
 from pprint import pprint
 
 import numpy as np
+from coffea import hist
+from coffea.processor.accumulator import dict_accumulator
 from coffea.util import load, save
 from matplotlib import pyplot as plt
+from tqdm import tqdm
 
 from bucoffea.execute.dataset_definitions import short_name
 from bucoffea.helpers.dataset import extract_year, is_data
 from bucoffea.helpers.paths import bucoffea_path
-
-import hashlib
 
 pjoin = os.path.join
 
@@ -40,10 +42,10 @@ def acc_from_dir(indir):
     if os.path.exists(cache):
         return load(cache)
     else:
-        acc = {}
-        for file in files:
-            acc = acc + load(file)
-        save(acc, cache)
+        acc = dict_accumulator()
+        for file in tqdm(files):
+            a = load(file)
+            acc = a + acc
         return acc
 
 
@@ -69,7 +71,7 @@ def merge_extensions(histogram, acc):
             sumw[base] += acc['sumw'][d]
 
     # pprint(sumw)
-    histogram = histogram.group(histogram.axis("dataset"), "dataset", mapping)
+    histogram = histogram.group(hist.Cat("dataset", "Primary dataset"), "dataset", mapping)
     histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
     return histogram
 
@@ -144,7 +146,7 @@ def merge_datasets(histogram):
             mapping[ds] = [ds]
 
     # Apply the mapping
-    histogram = histogram.group(histogram.axis("dataset"), "dataset", mapping)
+    histogram = histogram.group(hist.Cat("dataset", "Primary dataset"), "dataset", mapping)
 
     return histogram
 

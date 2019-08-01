@@ -28,3 +28,7 @@ expand "${INFILE}" "Run2018*1June*" | tee -a datasets_2018.txt
 sed -i '/BGen/d' datasets_201*.txt
 sed -i '/DYBBJet/d' datasets_201*.txt
 sed -i '/DoubleEMEnriched/d' datasets_201*.txt
+
+sed -i '/WJetsToLNu_.*J_.*2017.*/d' datasets_2017.txt
+sed -i '/.*LHEWpT_0-50.*/d' datasets_201*.txt
+sed -i '/.*LHEWpT_50-150.*/d' datasets_201*.txt
