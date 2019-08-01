@@ -166,12 +166,28 @@ def merge_datasets(histogram):
 
 
 def load_xs():
+    """Function to read per-sample cross sections from fileself.
 
+    :return: Mapping dataset -> cross-section
+    :rtype: dict
+    """
     xsraw = np.loadtxt(bucoffea_path('data/datasets/xs/xs.txt'),dtype=str)
     xs = {}
+
+    # Convert from CMS-style dataset names to short names
     for full, val, _, _ in xsraw:
         xs[short_name(full)] = float(val)
-    # pprint(xs)
+
+    # Data sets that only exist as extensions
+    # cause problems later on, so we duplicate the XS
+    # for the base process.
+    tmp = {}
+    for k in xs.keys():
+        base = re.sub('_ext(\d+)','',k)
+        if base not in xs.keys():
+            tmp[base] = xs[k]
+
+    xs.update(tmp)
     return xs
 
 def lumi(year):
