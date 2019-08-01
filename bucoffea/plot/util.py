@@ -5,6 +5,7 @@ from pprint import pprint
 
 import numpy as np
 from coffea.util import load, save
+from coffea.processor.accumulator import dict_accumulator
 from matplotlib import pyplot as plt
 
 from bucoffea.execute.dataset_definitions import short_name
@@ -12,6 +13,7 @@ from bucoffea.helpers.dataset import extract_year, is_data
 from bucoffea.helpers.paths import bucoffea_path
 
 import hashlib
+from tqdm import tqdm
 
 pjoin = os.path.join
 
@@ -40,10 +42,10 @@ def acc_from_dir(indir):
     if os.path.exists(cache):
         return load(cache)
     else:
-        acc = {}
-        for file in files:
-            acc = acc + load(file)
-        save(acc, cache)
+        acc = dict_accumulator()
+        for file in tqdm(files):
+            a = load(file)
+            acc = a + acc
         return acc
 
 
