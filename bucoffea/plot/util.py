@@ -155,6 +155,12 @@ def load_xs():
     xs = {}
     for full, val, _, _ in xsraw:
         xs[short_name(full)] = float(val)
+    keys = list(xs.keys())
+    for key in keys:
+        base = re.sub(r'_ext(\d+)',"",key)
+        if base in keys:
+            continue
+        xs[base] = xs[key]
     # pprint(xs)
     return xs
 

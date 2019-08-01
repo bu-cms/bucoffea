@@ -128,7 +128,7 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
 def main():
     # The input is saved in individual *.coffea files
     # in the directory given here.
-    indir = "./input/eff/gamma"
+    indir = "./input/"
 
     # 'acc' is short for 'accumulator', which is the output
     # produced by a coffea processor. It behaves like a python dict,
@@ -141,20 +141,21 @@ def main():
     # TODO:
     #   * Make more flexible: More regions, more plots, etc
     #   * Selection of input processes is currently just hardcoded -> handle better!
-    for year in [2017]:
-        data = re.compile(f'SingleMuon_{year}')
-        mc = re.compile(f'DY.*HT.*{year}')
-        region='cr_2m_j'
-        for distribution in ['recoil', 'dimuon_mass']:
-            make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc)
 
+    # Make some NLO plots
     for year in [2017, 2018]:
         data = re.compile(f'SingleMuon_{year}')
-        mc = re.compile(f'W.*HT.*{year}')
-        region='cr_1m_j'
-        for distribution in ['recoil']:
-            make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc)
-
+        mc = re.compile(f'DY.*FXFX.*{year}')
+        for region in ['cr_1m_j','cr_2m_j','cr_2e_j','cr_1e_j']:
+            for distribution in ['recoil','met','ak4_pt0','ak4_eta0']:
+                make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc)
+    # Make some LO plots
+    for year in [2017, 2018]:
+        data = re.compile(f'SingleMuon_{year}')
+        mc = re.compile(f'DY.*MLM.*{year}')
+        for region in ['cr_1m_j','cr_2m_j','cr_2e_j','cr_1e_j']:
+            for distribution in ['recoil','met','ak4_pt0','ak4_eta0']:
+                make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc)
 
 
 if __name__ == "__main__":
