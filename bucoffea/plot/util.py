@@ -42,10 +42,24 @@ def acc_from_dir(indir):
     if os.path.exists(cache):
         return load(cache)
     else:
-        acc = dict_accumulator()
-        for file in tqdm(files):
-            a = load(file)
-            acc = a + acc
+        # Progress bar
+        t = tqdm(total=len(files), desc='Merging input files')
+
+        # Recursive merging
+        to_merge = list(map(load,files))
+
+        # Remove first two items from list,
+        # merge them and insert in the back
+        while len(to_merge) > 1:
+            t.update()
+            x = to_merge.pop(0)
+            y = to_merge.pop(0)
+            to_merge.append(x+y)
+        t.update()
+        assert(len(to_merge)==1)
+
+        acc = to_merge[0]
+        save(acc, cache)
         return acc
 
 
