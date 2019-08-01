@@ -42,10 +42,24 @@ def acc_from_dir(indir):
     if os.path.exists(cache):
         return load(cache)
     else:
-        acc = dict_accumulator()
-        for file in tqdm(files):
-            a = load(file)
-            acc = a + acc
+        # Progress bar
+        t = tqdm(total=len(files), desc='Merging input files')
+
+        # Recursive merging
+        to_merge = list(map(load,files))
+
+        # Remove first two items from list,
+        # merge them and insert in the back
+        while len(to_merge) > 1:
+            t.update()
+            x = to_merge.pop(0)
+            y = to_merge.pop(0)
+            to_merge.append(x+y)
+        t.update()
+        assert(len(to_merge)==1)
+
+        acc = to_merge[0]
+        save(acc, cache)
         return acc
 
 
@@ -152,12 +166,28 @@ def merge_datasets(histogram):
 
 
 def load_xs():
+    """Function to read per-sample cross sections from fileself.
 
+    :return: Mapping dataset -> cross-section
+    :rtype: dict
+    """
     xsraw = np.loadtxt(bucoffea_path('data/datasets/xs/xs.txt'),dtype=str)
     xs = {}
+
+    # Convert from CMS-style dataset names to short names
     for full, val, _, _ in xsraw:
         xs[short_name(full)] = float(val)
-    # pprint(xs)
+
+    # Data sets that only exist as extensions
+    # cause problems later on, so we duplicate the XS
+    # for the base process.
+    tmp = {}
+    for k in xs.keys():
+        base = re.sub('_ext(\d+)','',k)
+        if base not in xs.keys():
+            tmp[base] = xs[k]
+
+    xs.update(tmp)
     return xs
 
 def lumi(year):
