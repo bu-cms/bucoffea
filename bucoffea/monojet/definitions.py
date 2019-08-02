@@ -55,7 +55,9 @@ def monojet_accumulator(cfg):
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["met_noweight"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_noweight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
 
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -100,6 +102,7 @@ def monojet_accumulator(cfg):
     items["dielectron_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
 
     items['photon_pt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    items['photon_pt0_noweight'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 

@@ -409,10 +409,12 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
             # MET
-            ezfill('dpfcalo',   dpfcalo=df["dPFCalo"][mask],    weight=weight[mask] )
-            ezfill('met',       met=df["MET_pt"][mask],         weight=weight[mask] )
-            ezfill('recoil',    recoil=df["recoil_pt"][mask],   weight=weight[mask] )
-            ezfill('dphijm',    dphi=df["minDPhiJetMet"][mask], weight=weight[mask] )
+            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=weight[mask] )
+            ezfill('met',                met=df["MET_pt"][mask],            weight=weight[mask] )
+            ezfill('met_noweight',       met=df["MET_pt"][mask],            weight=np.ones(weight[mask].size) )
+            ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=weight[mask] )
+            ezfill('recoil_noweight',    recoil=df["recoil_pt"][mask],      weight=np.ones(weight[mask].size) )
+            ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weight[mask] )
 
             # Muons
             if '_1m_' in region or '_2m_' in region:
@@ -451,10 +453,11 @@ class monojetProcessor(processor.ProcessorABC):
             # Photon
             if '_g_' in region:
                 w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],weight[mask]);
-                ezfill('photon_pt0',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
-                ezfill('photon_eta0',    eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
-                ezfill('photon_phi0',    phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
-                ezfill('photon_pt0_recoil',    pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&leadphoton_index.counts>0],  weight=w_leading_photon)
+                ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
+                ezfill('photon_pt0_noweight',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=np.ones(w_leading_photon.size))
+                ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
+                ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
+                ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&leadphoton_index.counts>0],  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], weight[mask])
                 ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask].flatten(),  weight=weight[mask])
