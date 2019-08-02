@@ -1,16 +1,22 @@
 #!/usr/bin/env python
 
+import copy
 import os
-from bucoffea.plot.util import acc_from_dir, merge_datasets, merge_extensions, scale_xs_lumi, fig_ratio, lumi
-from bucoffea.plot.style import markers
+import re
+from collections import defaultdict
+from pprint import pprint
+
+import numpy as np
 from coffea import hist
 from coffea.hist.plot import clopper_pearson_interval
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
-import numpy as np
 from tabulate import tabulate
-from pprint import pprint
-import copy
+
+from bucoffea.plot.style import markers
+from bucoffea.plot.util import (acc_from_dir, fig_ratio, lumi, merge_datasets,
+                                merge_extensions, scale_xs_lumi)
+
 pjoin = os.path.join
 
 def trgname(year, tag):
@@ -19,12 +25,15 @@ def trgname(year, tag):
             return 'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight(_PFHT60)'
         elif tag=='120only':
             return 'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight'
+        elif tag=='gamma':
+            return 'HLT_Photon200'
     if year==2017:
         if '120pfht' in tag:
             return 'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight(_PFHT60)'
         elif tag=='120only':
             return 'HLT_PFMETNoMu120_PFMHTNoMu120_IDTight'
-
+        elif tag=='gamma':
+            return 'HLT_Photon200'
 
 xmax = 1e3
 
@@ -59,6 +68,7 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
     try:
         fig, ax,_ = hist.plot1d(hnum, binwnorm=True)
     except KeyError:
+        pprint(h.axis('region').identifiers())
         print(f'ERROR: {region_tag}, {dataset}, {year}')
         return
     hist.plot1d(hden, ax=ax, clear=False, binwnorm=True)
@@ -67,8 +77,8 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
     outdir = f"./output/{tag}"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    fig.savefig(pjoin(outdir, f'{distribution}_{region_tag}_{dataset}_{year}.pdf'))
-    with open(pjoin(outdir,f'table_{region_tag}_{dataset}_{year}.txt'),"w") as f:
+    fig.savefig(pjoin(outdir, f'{region_tag}_{distribution}_{dataset}_{year}.pdf'))
+    with open(pjoin(outdir,f'table_{region_tag}_{distribution}_{dataset}_{year}.txt'),"w") as f:
         f.write(content_table(hnum, hden, axis_name) + "\n")
     plt.close(fig)
 
@@ -102,7 +112,7 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
                )
 
     plt.plot([0,xmax],[0.95,0.95],'r-')
-    fig.savefig(pjoin(outdir, f'eff_{region_tag}_{dataset}_{year}.pdf'))
+    fig.savefig(pjoin(outdir, f'eff_{region_tag}_{distribution}_{dataset}_{year}.pdf'))
     plt.close(fig)
 
 def get_xy(file):
@@ -273,7 +283,7 @@ def data_mc_comparison_plot(tag):
     # opts['markersize'] = 5
     # opts['fillstyle'] = 'none'
     emarker = opts.pop('emarker', '')
-    
+
     for year in [2017,2018]:
         for region in regions:
             fig, ax, rax = fig_ratio()
@@ -376,25 +386,25 @@ def met_triggers():
 
 def met_triggers_ht():
         tag = 'gamma'
-        indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}"
-        # acc = acc_from_dir(indir)
+        indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}/"
+        acc = acc_from_dir(indir)
 
-        # for year in [2017, 2018]:
-        #     region = '1m'
-        #     for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
-        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
-        #     region = '2m'
-        #     for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
-        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
+        for year in [2017, 2018]:
+            region = '1m'
+            for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
+                plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
+            region = '2m'
+            for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
+                plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
         #     region = '1m_hlt'
         #     for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
         #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
         #     region = '2m_hlt'
         #     for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
         #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
-        #     region = '1e'
-        #     for dataset in ["WJetsToLNu_HT_MLM", "EGamma"]:
-        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
+            region = '1e'
+            for dataset in ["WJetsToLNu_HT_MLM", "EGamma"]:
+                plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
         #     region = '2e'
         #     for dataset in ["DYJetsToLL_M-50_HT_MLM", "EGamma"]:
         #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
@@ -402,21 +412,132 @@ def met_triggers_ht():
         region_comparison_plot(tag)
         sf_comparison_plot(tag)
 
+def photon_triggers_merged():
+    tag = 'gamma'
+    indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}/sel"
+    acc = acc_from_dir(indir)
+
+    # All regions
+    regions = []
+    for k in acc['photon_pt0'].axis('region').identifiers():
+        k = str(k)
+        if not k.startswith('tr_g'):
+            continue
+        regions.append(k)
+
+    lumi_by_trig = {
+        2017: {
+        "HLT_PFHT1050" : 41.527192272,
+        "HLT_PFHT590" : 0.444896852,
+        "HLT_PFHT680" : 0.785538800,
+        "HLT_PFHT780" : 1.461679046,
+        "HLT_PFHT890" : 2.802018098,
+        },
+        2018: {
+        "HLT_PFHT1050" : 59.735969368,
+        "HLT_PFHT590" :  0.467058719,
+        "HLT_PFHT680" :  0.924441113,
+        "HLT_PFHT780" :  1.837625206,
+        "HLT_PFHT890" :  3.661338636,
+        }
+    }
+    overall_lumi = {
+        2017 : 41.527192272,
+        2018 : 59.735969368
+    }
+    for year in [2017, 2018]:
+        acc_cp = copy.deepcopy(acc)
+
+        # Region combination mapping
+        # 1. Scale each region according to effective lumi
+        # 2. Combine regions with different triggers
+        mapping = defaultdict(set)
+        lumi_mapping = {}
+        for rname in regions:
+            base = re.sub(r'_HLT_PFHT(\d+)','', rname)
+            mapping[base].add(rname)
+
+            for hlt, lumi in lumi_by_trig[year].items():
+                if hlt in rname:
+                    lumi_mapping[rname] = lumi / overall_lumi[year]
+
+        pprint(lumi_mapping)
+
+
+        pprint(mapping)
+        region_ax = hist.Cat("region", "Selection region")
+        year_regex = re.compile(f'.*{year}')
+
+
+
+
+        for distribution in ['photon_pt0', 'recoil']:
+            h = copy.deepcopy(acc[distribution])
+            h = h[year_regex]
+            h.scale(lumi_mapping, 'region')
+            acc_cp[distribution] = h.group(region_ax, "region", {k:list(v) for k, v in mapping.items()})
+
+
+            for region in mapping.keys():
+                print(f"Region {region}")
+                region = region.replace("tr_","").replace("_num", "").replace("_den","")
+                for dataset in ["GJets_HT_MLM", "JetHT"]:
+                    if 'photon_pt_' in region:
+                        distribution = 'recoil'
+                        axis_name = 'recoil'
+                    else:
+                        distribution = 'photon_pt0'
+                        axis_name = 'pt'
+                    plot_recoil(
+                                acc_cp,
+                                region,
+                                dataset=dataset,
+                                year=year,
+                                tag=tag,
+                                distribution=distribution,
+                                axis_name=axis_name
+                                )
+                    # plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='recoil',axis_name='recoil')
+
 def photon_triggers():
     tag = 'gamma'
     indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}/sel"
     acc = acc_from_dir(indir)
 
+    # All regions
+    regions = []
+    for k in acc['photon_pt0'].axis('region').identifiers():
+        k = str(k)
+        if not k.startswith('tr_g'):
+            continue
+        regions.append(k.replace("tr_","").replace("_num", "").replace("_den",""))
+
     for year in [2017, 2018]:
-            region = 'g'
+        # for distribution in ['photon_pt0', 'recoil']:
+        for region in set(regions):
             for dataset in ["GJets_HT_MLM", "JetHT"]:
-                plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='photonpt0',axis_name='pt')
-                # plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='recoil',axis_name='recoil')
+                if 'photon_pt_' in region:
+                    distribution = 'recoil'
+                    axis_name = 'recoil'
+                else:
+                    distribution = 'photon_pt0'
+                    axis_name = 'pt'
+                acc_cp = copy.deepcopy(acc)
+                plot_recoil(
+                            acc_cp,
+                            region,
+                            dataset=dataset,
+                            year=year,
+                            tag=tag,
+                            distribution=distribution,
+                            axis_name=axis_name
+                            )
+                    # plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='recoil',axis_name='recoil')
 def main():
     # indir = "/home/albert/repos/bucoffea/bucoffea/plot/input/eff/test"
-    # met_triggers_ht()
+    met_triggers_ht()
     # data_mc_comparison_plot('gamma')
-    photon_triggers()
+    # photon_triggers()
 
 
 if __name__ == "__main__":
