@@ -47,6 +47,7 @@ def monojet_accumulator(cfg):
 
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",100,0.5,1.5)
+    weight_wide_ax = Bin("weight_value", "Weight",100,-10,10)
 
     nvtx_ax = Bin('nvtx','Number of vertices',100,-0.5,99.5)
 
@@ -120,6 +121,7 @@ def monojet_accumulator(cfg):
     items['kinematics'] = processor.defaultdict_accumulator(list)
 
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
+    items['weights_wide'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_wide_ax)
     items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
     items['npvgood'] = Hist('Number of goodprimary vertices', dataset_ax, region_ax, nvtx_ax)
     return  processor.dict_accumulator(items)

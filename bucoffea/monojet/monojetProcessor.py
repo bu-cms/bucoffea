@@ -367,6 +367,7 @@ class monojetProcessor(processor.ProcessorABC):
             # Monitor weights
             for wname, wvalue in all_weights.items():
                 ezfill("weights", weight_type=wname, weight_value=wvalue[mask])
+                ezfill("weights_wide", weight_type=wname, weight_value=wvalue[mask])
 
             # All ak4
             # This is a workaround to create a weight array of the right dimension
