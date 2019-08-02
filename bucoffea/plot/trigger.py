@@ -154,9 +154,9 @@ def region_comparison_plot(tag):
         x, y, yerr = {}, {}, {}
         for region in regions:
             if region.endswith('e'):
-                file = f'output/{tag}/table_{region}_EGamma_{year}.txt'
+                file = f'output/{tag}/table_{region}_met_EGamma_{year}.txt'
             else:
-                file = f'output/{tag}/table_{region}_SingleMuon_{year}.txt'
+                file = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}.txt'
             x[region], y[region], yerr[region] = get_xy(file)
             opts['color'] = colors[region]
             ax.errorbar(x[region], y[region], yerr=yerr[region],label=f'{region} region', **opts)
@@ -215,14 +215,14 @@ def sf_comparison_plot(tag):
         x, y, yerr = {}, {}, {}
         for region in regions:
             if '1e' in region:
-                fnum = f'output/{tag}/table_{region}_EGamma_{year}.txt'
-                fden = f'output/{tag}/table_{region}_WJetsToLNu_HT_MLM_{year}.txt'
+                fnum = f'output/{tag}/table_{region}_met_EGamma_{year}.txt'
+                fden = f'output/{tag}/table_{region}_met_WJetsToLNu_HT_MLM_{year}.txt'
             elif '1m' in region:
-                fnum = f'output/{tag}/table_{region}_SingleMuon_{year}.txt'
-                fden = f'output/{tag}/table_{region}_WJetsToLNu_HT_MLM_{year}.txt'
+                fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}.txt'
+                fden = f'output/{tag}/table_{region}_recoil_WJetsToLNu_HT_MLM_{year}.txt'
             elif '2m' in region:
-                fnum = f'output/{tag}/table_{region}_SingleMuon_{year}.txt'
-                fden = f'output/{tag}/table_{region}_DYJetsToLL_M-50_HT_MLM_{year}.txt'
+                fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}.txt'
+                fden = f'output/{tag}/table_{region}_recoil_DYJetsToLL_M-50_HT_MLM_{year}.txt'
 
 
             xnum, ynum, yerrnum = get_xy(fnum)
@@ -288,14 +288,14 @@ def data_mc_comparison_plot(tag):
         for region in regions:
             fig, ax, rax = fig_ratio()
             if '1e' in region:
-                fnum = f'output/{tag}/table_{region}_EGamma_{year}.txt'
-                fden = f'output/{tag}/table_{region}_WJetsToLNu_HT_MLM_{year}.txt'
+                fnum = f'output/{tag}/table_{region}_met_EGamma_{year}.txt'
+                fden = f'output/{tag}/table_{region}_met_WJetsToLNu_HT_MLM_{year}.txt'
             elif '1m' in region:
-                fnum = f'output/{tag}/table_{region}_SingleMuon_{year}.txt'
-                fden = f'output/{tag}/table_{region}_WJetsToLNu_HT_MLM_{year}.txt'
+                fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}.txt'
+                fden = f'output/{tag}/table_{region}_recoil_WJetsToLNu_HT_MLM_{year}.txt'
             elif '2m' in region:
-                fnum = f'output/{tag}/table_{region}_SingleMuon_{year}.txt'
-                fden = f'output/{tag}/table_{region}_DYJetsToLL_M-50_HT_MLM_{year}.txt'
+                fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}.txt'
+                fden = f'output/{tag}/table_{region}_recoil_DYJetsToLL_M-50_HT_MLM_{year}.txt'
 
             if not os.path.exists(fnum):
                 print(f"File not found {fnum}")
@@ -385,8 +385,8 @@ def met_triggers():
         sf_comparison_plot(tag)
 
 def met_triggers_ht():
-        tag = 'gamma'
-        indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}/"
+        tag = '120pfht_hltmu'
+        indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/gamma"
         acc = acc_from_dir(indir)
 
         for year in [2017, 2018]:
@@ -396,18 +396,18 @@ def met_triggers_ht():
             region = '2m'
             for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
                 plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
-        #     region = '1m_hlt'
-        #     for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
-        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
-        #     region = '2m_hlt'
-        #     for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
-        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
+            region = '1m_hlt'
+            for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
+                plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
+            region = '2m_hlt'
+            for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
+                plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
             region = '1e'
             for dataset in ["WJetsToLNu_HT_MLM", "EGamma"]:
                 plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
-        #     region = '2e'
-        #     for dataset in ["DYJetsToLL_M-50_HT_MLM", "EGamma"]:
-        #         plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
+            region = '2e'
+            for dataset in ["DYJetsToLL_M-50_HT_MLM", "EGamma"]:
+                plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
 
         region_comparison_plot(tag)
         sf_comparison_plot(tag)

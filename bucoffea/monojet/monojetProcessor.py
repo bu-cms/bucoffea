@@ -153,12 +153,10 @@ class monojetProcessor(processor.ProcessorABC):
                 selection.add(trgname, df[trgname])
 
         # Trigger objects
-        hlt_muons = hlt[hlt.id==13]
-        hlt_single_muons = hlt_muons[hlt_muons.filter & 8 == 8]
-        hlt_double_muons = hlt_muons[hlt_muons.filter & 16 == 16]
-
-        selection.add('one_hlt_muon', hlt_single_muons.counts>=1)
-        selection.add('two_hlt_muons', hlt_single_muons.counts==2)
+        hlt_single_muons = hlt[(hlt.id==13) & (hlt.filter & 8 == 8)]
+        muons_hltmatch = muons[muons.match(hlt_single_muons,deltaRCut=0.4)]
+        selection.add('one_hlt_muon', muons_hltmatch.counts>=1)
+        selection.add('two_hlt_muons', muons_hltmatch.counts==2)
 
         # Common selection
         selection.add('veto_ele', electrons.counts==0)
@@ -356,7 +354,8 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('tight_muo_mult',muons[is_tight_muon])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
-
+            fill_mult('hlt_single_muon_mult',hlt_single_muons)
+            fill_mult('muons_hltmatch_mult',muons_hltmatch)
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
@@ -420,6 +419,11 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
                 ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=weight[mask])
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
+
+                # HLT Matched muons
+                w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], weight[mask])
+                ezfill('muons_hltmatch_eta',  eta=muons_hltmatch.eta[mask].flatten(),  weight=w_muons_hltmatch)
+                ezfill('muons_hltmatch_pt',  pt=muons_hltmatch.pt[mask].flatten(),  weight=w_muons_hltmatch)
 
             # Dimuon
             if '_2m_' in region:
