@@ -148,14 +148,14 @@ def main():
         mc = re.compile(f'DY.*FXFX.*{year}')
         for region in ['cr_1m_j','cr_2m_j','cr_2e_j','cr_1e_j']:
             for distribution in ['recoil','met','ak4_pt0','ak4_eta0']:
-                make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc)
+                make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc, outdir="./output/NLO")
     # Make some LO plots
     for year in [2017, 2018]:
         data = re.compile(f'SingleMuon_{year}')
         mc = re.compile(f'DY.*MLM.*{year}')
         for region in ['cr_1m_j','cr_2m_j','cr_2e_j','cr_1e_j']:
             for distribution in ['recoil','met','ak4_pt0','ak4_eta0']:
-                make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc)
+                make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc, outdir="./output/LO")
 
 
 if __name__ == "__main__":
