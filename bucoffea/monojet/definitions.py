@@ -351,6 +351,7 @@ def monojet_regions(cfg):
         tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts) + j_cuts
         tr_1m_num_cuts.remove('recoil')
         tr_1m_num_cuts.append('trig_mu')
+        tr_1m_num_cuts.append('mu_pt_trig_safe')
         regions['tr_1m_num'] = tr_1m_num_cuts
 
         tr_1m_den_cuts = copy.deepcopy(tr_1m_num_cuts)
@@ -365,6 +366,7 @@ def monojet_regions(cfg):
         tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts) + j_cuts
         tr_2m_num_cuts.remove('recoil')
         tr_2m_num_cuts.append('trig_mu')
+        tr_2m_num_cuts.append('mu_pt_trig_safe')
         regions['tr_2m_num'] = tr_2m_num_cuts
 
         tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)

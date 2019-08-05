@@ -157,6 +157,7 @@ class monojetProcessor(processor.ProcessorABC):
         muons_hltmatch = muons[muons.match(hlt_single_muons,deltaRCut=0.2,deltaPtCut=0.25)]
         selection.add('one_hlt_muon', muons_hltmatch.counts>=1)
         selection.add('two_hlt_muons', muons_hltmatch.counts==2)
+        selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
 
         # Common selection
         selection.add('veto_ele', electrons.counts==0)
