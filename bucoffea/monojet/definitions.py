@@ -126,7 +126,10 @@ def monojet_accumulator(cfg):
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
     items['weights_wide'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_wide_ax)
     items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
-    items['npvgood'] = Hist('Number of goodprimary vertices', dataset_ax, region_ax, nvtx_ax)
+    items['npvgood'] = Hist('Number of good primary vertices', dataset_ax, region_ax, nvtx_ax)
+    items['npv_nopu'] = Hist('Number of primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
+    items['npvgood_nopu'] = Hist('Number of good primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
+
     return  processor.dict_accumulator(items)
 
 def setup_gen_candidates(df):

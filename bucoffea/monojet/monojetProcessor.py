@@ -241,11 +241,13 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Weights
         evaluator = monojet_evaluator(cfg)
+
+
+        weight = np.ones(df.size)
+        weight_nopu = np.ones(df.size)
         all_weights = {}
-        if df['is_data']:
-            weight = np.ones(df.size)
-        else:
-            weight = df['Generator_weight']
+        if not df['is_data']:
+            all_weights['gen'] = df['Generator_weight']
 
             # Muon ID and Isolation for tight and loose WP
             # Function of pT, eta (Order!)
@@ -275,8 +277,11 @@ class monojetProcessor(processor.ProcessorABC):
                 all_weights["theory"] = evaluator["qcd_ew_nlo_z"](gen_v_pt)
             else:
                 all_weights["theory"] = np.ones(df.size)
-            for iw in all_weights.values():
+
+            for name, iw in all_weights.items():
                 weight = weight * iw
+                if name != 'pileup':
+                    weight_nopu = weight_nopu * iw
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
@@ -465,6 +470,9 @@ class monojetProcessor(processor.ProcessorABC):
             # PV
             ezfill('npv', nvtx=df['PV_npvs'][mask], weight=weight[mask])
             ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=weight[mask])
+
+            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=weight_nopu[mask])
+            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=weight_nopu[mask])
         return output
 
     def postprocess(self, accumulator):
