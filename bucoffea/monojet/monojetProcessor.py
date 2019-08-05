@@ -154,7 +154,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Trigger objects
         hlt_single_muons = hlt[(hlt.id==13) & (hlt.filter & 8 == 8)]
-        muons_hltmatch = muons[muons.match(hlt_single_muons,deltaRCut=0.4)]
+        muons_hltmatch = muons[muons.match(hlt_single_muons,deltaRCut=0.2,deltaPtCut=0.25)]
         selection.add('one_hlt_muon', muons_hltmatch.counts>=1)
         selection.add('two_hlt_muons', muons_hltmatch.counts==2)
 
