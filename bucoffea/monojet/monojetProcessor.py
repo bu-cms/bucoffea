@@ -321,6 +321,7 @@ class monojetProcessor(processor.ProcessorABC):
         if not df['is_data']:
             output['sumw'][dataset] +=  df['genEventSumw']
             output['sumw2'][dataset] +=  df['genEventSumw2']
+            output['sumw_pileup'][dataset] +=  all_weights['pileup'].sum()
 
         regions = monojet_regions(cfg)
         for region, cuts in regions.items():

@@ -119,6 +119,7 @@ def monojet_accumulator(cfg):
 
     items['sumw'] = processor.defaultdict_accumulator(float)
     items['sumw2'] = processor.defaultdict_accumulator(float)
+    items['sumw_pileup'] = processor.defaultdict_accumulator(float)
 
     items['selected_events'] = processor.defaultdict_accumulator(list)
     items['kinematics'] = processor.defaultdict_accumulator(list)
