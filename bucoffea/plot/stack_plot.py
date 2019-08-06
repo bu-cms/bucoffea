@@ -19,6 +19,9 @@ from bucoffea.plot.util import (acc_from_dir, lumi, merge_datasets,
 
 pjoin = os.path.join
 
+#ignore true_divide warnings
+np.seterr(divide='ignore', invalid='ignore')
+
 class Style():
     def __init__(self):
         self.region_names = {
@@ -124,6 +127,8 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     fig.savefig(pjoin(outdir,f"{region}_{distribution}_{year}.pdf"))
+    print("saved plot file in "+str(pjoin(outdir,f"{region}_{distribution}_{year}.pdf")))
+    plt.close('all')
 
 def main():
     # The input is saved in individual *.coffea files
@@ -144,16 +149,18 @@ def main():
 
     # Make some NLO plots
     for year in [2017, 2018]:
-        data = re.compile(f'SingleMuon_{year}')
-        mc = re.compile(f'DY.*FXFX.*{year}')
+        mc = re.compile(f'(DY.*FXFX|W.*FXFX|ST|TT).*{year}')
         for region in ['cr_1m_j','cr_2m_j','cr_2e_j','cr_1e_j']:
+            if "m" in region: data = re.compile(f'MET_{year}')
+            if "e" in region: data = re.compile(f'EGamma_{year}')
             for distribution in ['recoil','met','ak4_pt0','ak4_eta0']:
                 make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc, outdir="./output/NLO")
     # Make some LO plots
     for year in [2017, 2018]:
-        data = re.compile(f'SingleMuon_{year}')
-        mc = re.compile(f'DY.*MLM.*{year}')
+        mc = re.compile(f'(DY.*HT.*MLM|W.*HT.*MLM|ST|TT).*{year}')
         for region in ['cr_1m_j','cr_2m_j','cr_2e_j','cr_1e_j']:
+            if "m" in region: data = re.compile(f'MET_{year}')
+            if "e" in region: data = re.compile(f'EGamma_{year}')
             for distribution in ['recoil','met','ak4_pt0','ak4_eta0']:
                 make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc, outdir="./output/LO")
 
