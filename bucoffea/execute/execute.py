@@ -22,6 +22,9 @@ def choose_processor(args):
     elif args.processor == 'vbfhinv':
         from bucoffea.vbfhinv import vbfhinvProcessor
         return vbfhinvProcessor
+    elif args.processor == 'pdfweight':
+        from bucoffea.gen import pdfWeightProcessor
+        return pdfWeightProcessor
 
 def do_run(args):
     """Run the analysis locally."""
@@ -31,21 +34,22 @@ def do_run(args):
     else:
         fileset = files_from_eos(regex=args.dataset)
 
-    output = run_uproot_job_nanoaod(fileset,
-                                  treename='Events',
-                                  processor_instance=choose_processor(args)(),
-                                  executor=processor.futures_executor,
-                                  executor_args={'workers': args.jobs, 'flatten': True},
-                                  chunksize=500000,
-                                 )
+    for dataset, files in fileset.items():
+        output = run_uproot_job_nanoaod({dataset:files},
+                                    treename='Events',
+                                    processor_instance=choose_processor(args)(),
+                                    executor=processor.futures_executor,
+                                    executor_args={'workers': args.jobs, 'flatten': True},
+                                    chunksize=500000,
+                                    )
 
-    # Save output
-    try:
-        os.makedirs(args.outpath)
-    except FileExistsError:
-        pass
-    outpath = pjoin(args.outpath, f"monojet_{args.dataset}.coffea")
-    save(output, outpath)
+        # Save output
+        try:
+            os.makedirs(args.outpath)
+        except FileExistsError:
+            pass
+        outpath = pjoin(args.outpath, f"monojet_{dataset}.coffea")
+        save(output, outpath)
 
 def do_worker(args):
     """Run the analysis on a worker node."""
@@ -204,7 +208,7 @@ def do_submit(args):
 
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
-    parser.add_argument('processor', type=str, help='Processor to run.', choices=['monojet','vbfhinv'])
+    parser.add_argument('processor', type=str, help='Processor to run.', choices=['monojet','vbfhinv','pdfweight'])
     parser.add_argument('--outpath', type=str, help='Path to save output under.')
     parser.add_argument('--jobs','-j', type=int, default=1, help='Number of cores to use / request.')
     parser.add_argument('--datasrc', type=str, default='eos', help='Source of data files.', choices=['eos','das','ac'])

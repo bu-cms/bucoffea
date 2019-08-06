@@ -153,12 +153,10 @@ class monojetProcessor(processor.ProcessorABC):
                 selection.add(trgname, df[trgname])
 
         # Trigger objects
-        hlt_muons = hlt[hlt.id==13]
-        hlt_single_muons = hlt_muons[hlt_muons.filter & 8 == 8]
-        hlt_double_muons = hlt_muons[hlt_muons.filter & 16 == 16]
-
-        selection.add('one_hlt_muon', hlt_single_muons.counts>=1)
-        selection.add('two_hlt_muons', hlt_single_muons.counts==2)
+        hlt_single_muons = hlt[(hlt.id==13) & (hlt.filter & 8 == 8)]
+        muons_hltmatch = muons[muons.match(hlt_single_muons,deltaRCut=0.2,deltaPtCut=0.25)]
+        selection.add('one_hlt_muon', muons_hltmatch.counts>=1)
+        selection.add('two_hlt_muons', muons_hltmatch.counts==2)
 
         # Common selection
         selection.add('veto_ele', electrons.counts==0)
@@ -243,11 +241,13 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Weights
         evaluator = monojet_evaluator(cfg)
+
+
+        weight = np.ones(df.size)
+        weight_nopu = np.ones(df.size)
         all_weights = {}
-        if df['is_data']:
-            weight = np.ones(df.size)
-        else:
-            weight = df['Generator_weight']
+        if not df['is_data']:
+            all_weights['gen'] = df['Generator_weight']
 
             # Muon ID and Isolation for tight and loose WP
             # Function of pT, eta (Order!)
@@ -277,8 +277,11 @@ class monojetProcessor(processor.ProcessorABC):
                 all_weights["theory"] = evaluator["qcd_ew_nlo_z"](gen_v_pt)
             else:
                 all_weights["theory"] = np.ones(df.size)
-            for iw in all_weights.values():
+
+            for name, iw in all_weights.items():
                 weight = weight * iw
+                if name != 'pileup':
+                    weight_nopu = weight_nopu * iw
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
@@ -356,7 +359,8 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('tight_muo_mult',muons[is_tight_muon])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
-
+            fill_mult('hlt_single_muon_mult',hlt_single_muons)
+            fill_mult('muons_hltmatch_mult',muons_hltmatch)
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
@@ -368,6 +372,7 @@ class monojetProcessor(processor.ProcessorABC):
             # Monitor weights
             for wname, wvalue in all_weights.items():
                 ezfill("weights", weight_type=wname, weight_value=wvalue[mask])
+                ezfill("weights_wide", weight_type=wname, weight_value=wvalue[mask])
 
             # All ak4
             # This is a workaround to create a weight array of the right dimension
@@ -409,10 +414,12 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
             # MET
-            ezfill('dpfcalo',   dpfcalo=df["dPFCalo"][mask],    weight=weight[mask] )
-            ezfill('met',       met=df["MET_pt"][mask],         weight=weight[mask] )
-            ezfill('recoil',    recoil=df["recoil_pt"][mask],   weight=weight[mask] )
-            ezfill('dphijm',    dphi=df["minDPhiJetMet"][mask], weight=weight[mask] )
+            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=weight[mask] )
+            ezfill('met',                met=df["MET_pt"][mask],            weight=weight[mask] )
+            ezfill('met_noweight',       met=df["MET_pt"][mask],            weight=np.ones(weight[mask].size) )
+            ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=weight[mask] )
+            ezfill('recoil_noweight',    recoil=df["recoil_pt"][mask],      weight=np.ones(weight[mask].size) )
+            ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weight[mask] )
 
             # Muons
             if '_1m_' in region or '_2m_' in region:
@@ -420,6 +427,11 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
                 ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=weight[mask])
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
+
+                # HLT Matched muons
+                w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], weight[mask])
+                ezfill('muons_hltmatch_eta',  eta=muons_hltmatch.eta[mask].flatten(),  weight=w_muons_hltmatch)
+                ezfill('muons_hltmatch_pt',  pt=muons_hltmatch.pt[mask].flatten(),  weight=w_muons_hltmatch)
 
             # Dimuon
             if '_2m_' in region:
@@ -446,10 +458,11 @@ class monojetProcessor(processor.ProcessorABC):
             # Photon
             if '_g_' in region:
                 w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],weight[mask]);
-                ezfill('photon_pt0',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
-                ezfill('photon_eta0',    eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
-                ezfill('photon_phi0',    phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
-                ezfill('photon_pt0_recoil',    pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&leadphoton_index.counts>0],  weight=w_leading_photon)
+                ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
+                ezfill('photon_pt0_noweight',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=np.ones(w_leading_photon.size))
+                ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
+                ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
+                ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&leadphoton_index.counts>0],  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], weight[mask])
                 ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask].flatten(),  weight=weight[mask])
@@ -457,6 +470,9 @@ class monojetProcessor(processor.ProcessorABC):
             # PV
             ezfill('npv', nvtx=df['PV_npvs'][mask], weight=weight[mask])
             ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=weight[mask])
+
+            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=weight_nopu[mask])
+            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=weight_nopu[mask])
         return output
 
     def postprocess(self, accumulator):

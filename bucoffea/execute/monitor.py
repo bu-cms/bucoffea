@@ -10,6 +10,12 @@ from tabulate import tabulate
 import curses
 
 import time
+import logging
+
+logger = logging.getLogger( 'monitor' )
+format = '%(levelname)s (%(name)s) [%(asctime)s]: %(message)s'
+date = '%F %H:%M:%S'
+logging.basicConfig( level='DEBUG', format=format, datefmt=date, filename='monitor_log.txt')
 
 INTERVAL=5
 
@@ -34,12 +40,17 @@ def main(stdscr):
             try:
                 jels[name] = htcondor.JobEventLog(log)
             except:
-                continue
+                print(log)
+                raise
         return jels
 
     # Initiate new pad
     jels = read_logs()
-    pad = curses.newpad(len(jels)+5,curses.COLS)
+    logger.info(f'Found {len(jels)} logs.')
+    padlen = len(jels)+5
+    pad = curses.newpad(padlen,curses.COLS)
+    stdscr.nodelay(True)
+    stdscr.timeout(0)
     pad.nodelay(True)
     pad_pos = 0
 
@@ -75,23 +86,38 @@ def main(stdscr):
             for i,l in enumerate(tab.split('\n')):
                 pad.addstr(i,0,l, curses.color_pair(colors[i]))
 
-            pad.refresh( pad_pos, 0, 1, 1, curses.LINES-1, curses.COLS-1)
-            stdscr.refresh()
+
+            # stdscr.refresh()
             # Scrolling
             start = time.time()
             stop = start
             while stop-start < INTERVAL:
                 stop = time.time()
+
+                pad.refresh( pad_pos, 0, 1, 1, curses.LINES-1, curses.COLS-1)
                 cmd = stdscr.getch()
-                if  cmd == curses.KEY_DOWN:
+                if cmd == 'q':
+                    sys.exit(0)
+                elif  cmd == curses.KEY_HOME:
+                    pad_pos = 0
+                elif  cmd == curses.KEY_END:
+                    pad_pos = len(jels) - curses.LINES + 1
+                elif  cmd == curses.KEY_NPAGE:
+                    pad_pos += 25
+                elif  cmd == curses.KEY_PPAGE:
+                    pad_pos -= 25
+                elif  cmd == curses.KEY_DOWN:
                     pad_pos += 1
-                    pad.refresh( pad_pos, 0, 1, 1, curses.LINES-1, curses.COLS-1)
                 elif cmd == curses.KEY_UP:
                     pad_pos -= 1
-                    if pad_pos < 0:
-                        pad_pos = 0
-                    pad.refresh( pad_pos, 0, 1, 1, curses.LINES-1, curses.COLS-1)
 
+                # Post process
+                if pad_pos < 0:
+                    pad_pos = 0
+                if pad_pos >= padlen:
+                    pad_pos = padlen-1
+
+                time.sleep(0.01)
         except KeyboardInterrupt:
             break
 

@@ -47,6 +47,7 @@ def monojet_accumulator(cfg):
 
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",100,0.5,1.5)
+    weight_wide_ax = Bin("weight_value", "Weight",100,-10,10)
 
     nvtx_ax = Bin('nvtx','Number of vertices',100,-0.5,99.5)
 
@@ -54,7 +55,9 @@ def monojet_accumulator(cfg):
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["met_noweight"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_noweight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
 
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -79,11 +82,13 @@ def monojet_accumulator(cfg):
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
 
     # Multiplicity histograms
-    for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon']:
+    for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
         items[f"{cand}_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
 
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["muons_hltmatch_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    items["muons_hltmatch_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["muon_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
     items["dimuon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["dimuon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
@@ -97,6 +102,7 @@ def monojet_accumulator(cfg):
     items["dielectron_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
 
     items['photon_pt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    items['photon_pt0_noweight'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
@@ -118,8 +124,12 @@ def monojet_accumulator(cfg):
     items['kinematics'] = processor.defaultdict_accumulator(list)
 
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
+    items['weights_wide'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_wide_ax)
     items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
-    items['npvgood'] = Hist('Number of goodprimary vertices', dataset_ax, region_ax, nvtx_ax)
+    items['npvgood'] = Hist('Number of good primary vertices', dataset_ax, region_ax, nvtx_ax)
+    items['npv_nopu'] = Hist('Number of primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
+    items['npvgood_nopu'] = Hist('Number of good primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
+
     return  processor.dict_accumulator(items)
 
 def setup_gen_candidates(df):
