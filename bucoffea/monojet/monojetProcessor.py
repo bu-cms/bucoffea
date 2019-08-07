@@ -268,7 +268,7 @@ class monojetProcessor(processor.ProcessorABC):
             all_weights["photon_id_tight"] = evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
 
             # CSEV not split only by EE/EB for now
-            csev_sf_index = 0.5 * photons.barrel + 2.5 * ~photons.barrel
+            csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
             all_weights["photon_csev"] = evaluator['photon_csev'](csev_sf_index).prod()
 
             all_weights["pileup"] = evaluator['pileup'](df['Pileup_nTrueInt'])
