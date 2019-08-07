@@ -1,18 +1,24 @@
 #!/usr/bin/env python
-import os
 import argparse
-from coffea import processor
-from bucoffea.processor.executor import run_uproot_job_nanoaod
-import lz4.frame as lz4f
-import cloudpickle
-from pathlib import Path
-from bucoffea.execute.dataset_definitions import files_from_das, files_from_eos, files_from_ac
-from coffea.util import save
-from bucoffea.helpers import bucoffea_path, vo_proxy_path, xrootd_format
-from bucoffea.helpers.condor import  condor_submit
+import os
 import shutil
 from datetime import datetime
 from multiprocessing.pool import Pool
+from pathlib import Path
+
+import cloudpickle
+import lz4.frame as lz4f
+from coffea import processor
+from coffea.util import save
+
+from bucoffea.execute.dataset_definitions import (files_from_ac,
+                                                  files_from_das,
+                                                  files_from_eos)
+from bucoffea.helpers import bucoffea_path, vo_proxy_path, xrootd_format
+from bucoffea.helpers.condor import condor_submit
+from bucoffea.helpers.git import git_rev_parse, git_diff
+from bucoffea.processor.executor import run_uproot_job_nanoaod
+
 pjoin = os.path.join
 
 def choose_processor(args):
@@ -117,6 +123,11 @@ def do_submit(args):
         subdir = os.path.abspath(pjoin("./submission/", timetag))
     if not os.path.exists(subdir):
         os.makedirs(subdir)
+
+    # Repo version information
+    with open(pjoin(subdir, 'version.txt'),'w') as f:
+        f.write(git_rev_parse()+'\n')
+        f.write(git_diff()+'\n')
 
     # Sub-directory to store submission files
     filedir = 'files'
