@@ -40,8 +40,9 @@ def main(stdscr):
             try:
                 jels[name] = htcondor.JobEventLog(log)
             except:
-                print(log)
-                raise
+                logger.warn(f'Could not build JobEventLog for log: {log}')
+                # raise
+                continue
         return jels
 
     # Initiate new pad
