@@ -6,7 +6,7 @@ import coffea.processor as processor
 
 
 #  export LHAPDF_DATA_PATH=/cvmfs/sft.cern.ch/lcg/releases/MCGenerators/lhapdf/6.2.1-7149a/x86_64-centos7-gcc8-opt/share/LHAPDF/
-def setup_pdf_objs(all_pdfs):
+def setup_pdf_objs(all_pdfs, cache={}):
     import lhapdf
     lhapdf.setVerbosity(1)
     os.environ['LHAPDF_DATA_PATH'] = '/cvmfs/sft.cern.ch/lcg/releases/MCGenerators/lhapdf/6.2.1-7149a/x86_64-centos7-gcc8-opt/share/LHAPDF/'
@@ -18,7 +18,11 @@ def setup_pdf_objs(all_pdfs):
 
     pdf_objs = {}
     for p in all_pdfs:
-        pdf_objs[p] = lhapdf.mkPDF(p)
+        if p in cache:
+            pdf_objs[p] = cache[p]
+        else:
+            pdf_objs[p] = lhapdf.mkPDF(p)
+            cache[p] = pdf_objs[p]
     return pdf_objs
 
 Hist = hist.Hist
@@ -30,16 +34,21 @@ Cat = hist.Cat
 
 class pdfWeightProcessor(processor.ProcessorABC):
     def __init__(self):
-        dataset_ax = Cat("dataset", "Primary dataset")
 
         # Histogram setup
+        dataset_ax = Cat("dataset", "Primary dataset")
         pdf_ax = Cat("pdf", "pdf")
         vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 100, 0, 2000)
+        sign_ax = Bin("sign",r"Sign", 2, -2, 2)
+
         items = {}
-        items["gen_vpt"] = Hist("Counts", dataset_ax, vpt_ax, vpt_ax)
+        items["gen_vpt"] = Hist("Counts", dataset_ax, pdf_ax, vpt_ax)
+        items["gen_weight_sign"] = Hist("Counts", dataset_ax, sign_ax)
         items['sumw'] = processor.defaultdict_accumulator(float)
         items['sumw2'] = processor.defaultdict_accumulator(float)
         self._accumulator = processor.dict_accumulator(items)
+
+        self._all_pdfs = [303600,263000,262000]
 
     @property
     def accumulator(self):
@@ -50,13 +59,15 @@ class pdfWeightProcessor(processor.ProcessorABC):
         output = self.accumulator.identity()
         dataset = df['dataset']
 
-        all_pdfs = [303600,263000]
-        pdf_objs = setup_pdf_objs(all_pdfs)
+
         base_pdf = 303600
 
-        pdf_weights = {}
+        pdf_weights = {
+            'none' : np.ones(df.size)
+        }
 
-        for ipdf in all_pdfs:
+        pdf_objs = setup_pdf_objs(self._all_pdfs)
+        for ipdf in self._all_pdfs:
             w = np.ones(df.size)
             for i in range(df.size):
                 id1 = df['Generator_id1'][i]
@@ -66,15 +77,27 @@ class pdfWeightProcessor(processor.ProcessorABC):
                 q2 = df['Generator_scalePDF'][i]
 
                 w[i] = pdf_objs[ipdf].xfxQ2(id1, x1, q2) * pdf_objs[ipdf].xfxQ2(id2, x2, q2)
+                # print(id1, id2, x1, x2, q, w[i])
             pdf_weights[ipdf] = w
 
 
+        output["gen_weight_sign"].fill(
+            sign=np.sign(df['Generator_weight']),
+            dataset=dataset
+        )
         for ipdf in pdf_weights.keys():
+            if ipdf=='none':
+                weight = df['Generator_weight']
+            else:
+                weight = df['Generator_weight']*pdf_weights[ipdf]/(df['Generator_xpdf1']*df['Generator_xpdf2'])
+
+            weight[abs(weight)>10] = 1
+            # weight[weight<0] = 0
             output['gen_vpt'].fill(
                                 vpt = df['LHE_Vpt'],
                                 dataset=dataset,
                                 pdf=str(ipdf),
-                                weight=pdf_weights[ipdf]/pdf_weights[base_pdf]
+                                weight=weight
                                 )
         output['sumw'][dataset] +=  df['genEventSumw']
         output['sumw2'][dataset] +=  df['genEventSumw2']
