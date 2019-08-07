@@ -318,6 +318,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Sum of all weights to use for normalization
         # TODO: Deal with systematic variations
+        output['nevents'][dataset] += df.size
         if not df['is_data']:
             output['sumw'][dataset] +=  df['genEventSumw']
             output['sumw2'][dataset] +=  df['genEventSumw2']
