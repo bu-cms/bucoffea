@@ -219,6 +219,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('two_electrons', electrons.counts==2)
 
         # Single Ele CR
+        selection.add('met_el', df['MET_pt'] > cfg.SELECTION.CONTROL.SINGLEEL.MET)
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
         # Photon CR
