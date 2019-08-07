@@ -475,6 +475,11 @@ class monojetProcessor(processor.ProcessorABC):
 
             ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=weight_nopu[mask])
             ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=weight_nopu[mask])
+
+            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=weight[mask])
+            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weight[mask])
+            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=weight_nopu[mask])
+            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weight_nopu[mask])
         return output
 
     def postprocess(self, accumulator):

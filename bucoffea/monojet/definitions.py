@@ -50,6 +50,7 @@ def monojet_accumulator(cfg):
     weight_wide_ax = Bin("weight_value", "Weight",100,-10,10)
 
     nvtx_ax = Bin('nvtx','Number of vertices',100,-0.5,99.5)
+    rho_ax = Bin('rho','Energy density',100, 0, 100)
 
     Hist = hist.Hist
     items = {}
@@ -130,6 +131,11 @@ def monojet_accumulator(cfg):
     items['npvgood'] = Hist('Number of good primary vertices', dataset_ax, region_ax, nvtx_ax)
     items['npv_nopu'] = Hist('Number of primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
     items['npvgood_nopu'] = Hist('Number of good primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
+
+    items['rho_all'] = Hist(r'$\rho$ for all PF candidates', dataset_ax, region_ax, rho_ax)
+    items['rho_central'] = Hist(r'$\rho$ for central PF candidates', dataset_ax, region_ax, rho_ax)
+    items['rho_all_nopu'] = Hist(r'$\rho$ for all PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax)
+    items['rho_central_nopu'] = Hist(r'$\rho$ for central PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax)
 
     return  processor.dict_accumulator(items)
 
