@@ -29,7 +29,7 @@ class Style():
         }
         self.rebin_axes = {
             'dimuon_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
-            'recoil' : hist.Bin('recoil','recoil',38, 250,2000)
+            'recoil' : hist.Bin('recoil','recoil',list(range(250,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250)))
         }
 
 
@@ -89,7 +89,8 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
         overlay='dataset',
         error_opts=data_err_opts,
         ax=ax,
-        overflow='all')
+        overflow='all',
+        binwnorm=True)
 
     # Plot MC background samples
     # Here we use a regular expression to match
@@ -100,7 +101,8 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
         stack=True,
         clear=False,
         overflow='over',
-        ax=ax)
+        ax=ax,
+        binwnorm=True)
 
     # Legend
     ax.legend(title=s.region_names[region],ncol=1)
@@ -115,12 +117,18 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
                 error_opts=data_err_opts
                 )
 
+    ax.text(1., 0., distribution,
+                fontsize=10,
+                horizontalalignment='right',
+                verticalalignment='bottom',
+                transform=ax.transAxes
+               )
     # Aesthetics
     # ax.set_xlim(60,120)
     ax.set_yscale("log")
     ax.set_ylim(1e-1,1e6)
     rax.set_ylim(0.5,1.5)
-
+    ax.set_ylabel('Events / Bin width')
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     fig.savefig(pjoin(outdir,f"{region}_{distribution}_{year}.pdf"))
