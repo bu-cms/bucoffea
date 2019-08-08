@@ -29,25 +29,20 @@ def main(stdscr):
     directories = sys.argv[1:]
 
     def read_logs():
-        logs = []
+        log_list = []
         for directory in directories:
             for path, _, files in os.walk(directory):
-                logs.extend([os.path.join(path, x) for x in files if x.startswith("log_")])
-
-        jels = {}
-        for log in logs:
+                log_list.extend([os.path.join(path, x) for x in files if x.startswith("log_")])
+        log_dict = {}
+        for log in log_list:
             name = os.path.basename(log).replace("log_","").replace(".txt","")
-            try:
-                jels[name] = htcondor.JobEventLog(log)
-            except:
-                print(log)
-                raise
-        return jels
+            log_dict[name] = log
+        return log_dict
 
     # Initiate new pad
-    jels = read_logs()
-    logger.info(f'Found {len(jels)} logs.')
-    padlen = len(jels)+5
+    log_dict = read_logs()
+    logger.info(f'Found {len(log_dict)} logs.')
+    padlen = len(log_dict)+5
     pad = curses.newpad(padlen,curses.COLS)
     stdscr.nodelay(True)
     stdscr.timeout(0)
@@ -57,15 +52,15 @@ def main(stdscr):
 
     while True:
         pad.refresh( pad_pos, 0, 1, 1, curses.LINES-1, curses.COLS-1)
-        jels = read_logs()
 
         colors = [3,3]
         try:
             table = []
             counter = 1
-            for log, j in sorted(jels.items()):
+            for name, log in sorted(log_dict.items()):
+                jel = htcondor.JobEventLog(log)
                 first = None
-                for event in j.events(stop_after=0):
+                for event in jel.events(stop_after=0):
                     if not first:
                         first = event
                     latest = event
@@ -79,8 +74,8 @@ def main(stdscr):
                     colors.append(2)
                 else:
                     colors.append(3)
-                table.append([counter, log, latest.cluster, str(JobEventType.values[latest.type])])
-                j.close()
+                table.append([counter, name, latest.cluster, str(JobEventType.values[latest.type])])
+                jel.close()
                 counter += 1
             tab = tabulate(sorted(table), headers=["","Name", "Cluster", "Status", "Return"])
             for i,l in enumerate(tab.split('\n')):
@@ -101,7 +96,7 @@ def main(stdscr):
                 elif  cmd == curses.KEY_HOME:
                     pad_pos = 0
                 elif  cmd == curses.KEY_END:
-                    pad_pos = len(jels) - curses.LINES + 1
+                    pad_pos = len(log_dict) - curses.LINES + 1
                 elif  cmd == curses.KEY_NPAGE:
                     pad_pos += 25
                 elif  cmd == curses.KEY_PPAGE:

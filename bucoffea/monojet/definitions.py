@@ -50,6 +50,7 @@ def monojet_accumulator(cfg):
     weight_wide_ax = Bin("weight_value", "Weight",100,-10,10)
 
     nvtx_ax = Bin('nvtx','Number of vertices',100,-0.5,99.5)
+    rho_ax = Bin('rho','Energy density',100, 0, 100)
 
     Hist = hist.Hist
     items = {}
@@ -117,8 +118,10 @@ def monojet_accumulator(cfg):
             continue
         items[f'cutflow_{region}']  = processor.defaultdict_accumulator(int)
 
+    items['nevents'] = processor.defaultdict_accumulator(float)
     items['sumw'] = processor.defaultdict_accumulator(float)
     items['sumw2'] = processor.defaultdict_accumulator(float)
+    items['sumw_pileup'] = processor.defaultdict_accumulator(float)
 
     items['selected_events'] = processor.defaultdict_accumulator(list)
     items['kinematics'] = processor.defaultdict_accumulator(list)
@@ -129,6 +132,11 @@ def monojet_accumulator(cfg):
     items['npvgood'] = Hist('Number of good primary vertices', dataset_ax, region_ax, nvtx_ax)
     items['npv_nopu'] = Hist('Number of primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
     items['npvgood_nopu'] = Hist('Number of good primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
+
+    items['rho_all'] = Hist(r'$\rho$ for all PF candidates', dataset_ax, region_ax, rho_ax)
+    items['rho_central'] = Hist(r'$\rho$ for central PF candidates', dataset_ax, region_ax, rho_ax)
+    items['rho_all_nopu'] = Hist(r'$\rho$ for all PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax)
+    items['rho_central_nopu'] = Hist(r'$\rho$ for central PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax)
 
     return  processor.dict_accumulator(items)
 
@@ -227,6 +235,7 @@ def setup_candidates(df, cfg):
         mass=0*df['Photon_pt'],
         looseId=(df[cfg.PHOTON.BRANCH.ID]>=1) & df['Photon_electronVeto'],
         mediumId=(df[cfg.PHOTON.BRANCH.ID]>=2) & df['Photon_electronVeto'],
+        r9=df['Photon_r9'],
         barrel=np.abs(df['Photon_eta']) < 1.479,
     )
     photons = photons[photons.looseId \
@@ -332,7 +341,7 @@ def monojet_regions(cfg):
     regions['cr_2e_v'] = cr_2e_cuts + v_cuts
 
     # Single electron CR
-    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'mt_el'] + common_cuts
+    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'met_el','mt_el'] + common_cuts
     cr_1e_cuts.remove('veto_ele')
     regions['cr_1e_j'] =  cr_1e_cuts + j_cuts
     regions['cr_1e_v'] =  cr_1e_cuts + v_cuts
@@ -351,6 +360,7 @@ def monojet_regions(cfg):
         tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts) + j_cuts
         tr_1m_num_cuts.remove('recoil')
         tr_1m_num_cuts.append('trig_mu')
+        tr_1m_num_cuts.append('mu_pt_trig_safe')
         regions['tr_1m_num'] = tr_1m_num_cuts
 
         tr_1m_den_cuts = copy.deepcopy(tr_1m_num_cuts)
@@ -365,6 +375,7 @@ def monojet_regions(cfg):
         tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts) + j_cuts
         tr_2m_num_cuts.remove('recoil')
         tr_2m_num_cuts.append('trig_mu')
+        tr_2m_num_cuts.append('mu_pt_trig_safe')
         regions['tr_2m_num'] = tr_2m_num_cuts
 
         tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)

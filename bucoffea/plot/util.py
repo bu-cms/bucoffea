@@ -64,17 +64,24 @@ def acc_from_dir(indir):
 
 
 
-def merge_extensions(histogram, acc):
+def merge_extensions(histogram, acc, reweight_pu=True):
     """Merge extension datasets into one and scale to 1/sumw
 
     :param histogram: The histogram to modify
     :type histogram: Coffea histogram
+    :param acc: The accumulator dictionary holding sumw etc
+    :type acc: dict_accumulator
+    :param reweight_pu: Whether to renormalize to account for the sum of PU weights
+    :type reweight_pu: bool (default: True)
     :return: Modified histogram
     :rtype: Coffea histogram
     """
     all_datasets = map(str, histogram.identifiers('dataset'))
     mapping = defaultdict(list)
     sumw = defaultdict(float)
+    sumw_pileup = defaultdict(float)
+    nevents = defaultdict(float)
+
     for d in all_datasets:
         m = re.match('.*(_ext\d+).*', d)
         base = d
@@ -83,10 +90,18 @@ def merge_extensions(histogram, acc):
         mapping[base].append(d)
         if not is_data(d):
             sumw[base] += acc['sumw'][d]
+            sumw_pileup[base] += acc['sumw_pileup'][d]
+            nevents[base] += acc['nevents'][d]
 
     #pprint(mapping)
     histogram = histogram.group(hist.Cat("dataset", "Primary dataset"), "dataset", mapping)
     histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
+
+    pu_renorm = { k : nevents[k] / sumw_pileup[k] for k in sumw_pileup.keys()}
+
+    if reweight_pu:
+        histogram.scale(pu_renorm, axis='dataset')
+
     return histogram
 
 

@@ -157,6 +157,7 @@ class monojetProcessor(processor.ProcessorABC):
         muons_hltmatch = muons[muons.match(hlt_single_muons,deltaRCut=0.2,deltaPtCut=0.25)]
         selection.add('one_hlt_muon', muons_hltmatch.counts>=1)
         selection.add('two_hlt_muons', muons_hltmatch.counts==2)
+        selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
 
         # Common selection
         selection.add('veto_ele', electrons.counts==0)
@@ -218,6 +219,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('two_electrons', electrons.counts==2)
 
         # Single Ele CR
+        selection.add('met_el', df['MET_pt'] > cfg.SELECTION.CONTROL.SINGLEEL.MET)
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
         # Photon CR
@@ -266,7 +268,7 @@ class monojetProcessor(processor.ProcessorABC):
             all_weights["photon_id_tight"] = evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
 
             # CSEV not split only by EE/EB for now
-            csev_sf_index = 0.5 * photons.barrel + 2.5 * ~photons.barrel
+            csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
             all_weights["photon_csev"] = evaluator['photon_csev'](csev_sf_index).prod()
 
             all_weights["pileup"] = evaluator['pileup'](df['Pileup_nTrueInt'])
@@ -317,9 +319,11 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Sum of all weights to use for normalization
         # TODO: Deal with systematic variations
+        output['nevents'][dataset] += df.size
         if not df['is_data']:
             output['sumw'][dataset] +=  df['genEventSumw']
             output['sumw2'][dataset] +=  df['genEventSumw2']
+            output['sumw_pileup'][dataset] +=  all_weights['pileup'].sum()
 
         regions = monojet_regions(cfg)
         for region, cuts in regions.items():
@@ -473,6 +477,11 @@ class monojetProcessor(processor.ProcessorABC):
 
             ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=weight_nopu[mask])
             ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=weight_nopu[mask])
+
+            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=weight[mask])
+            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weight[mask])
+            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=weight_nopu[mask])
+            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weight_nopu[mask])
         return output
 
     def postprocess(self, accumulator):
