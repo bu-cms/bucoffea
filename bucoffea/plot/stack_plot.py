@@ -41,7 +41,7 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
     """
     # Rebin
     s = Style()
-    h=acc[distribution]
+    h=copy.deepcopy(acc[distribution])
     try:
         newax = s.rebin_axes[distribution]
         h = h.rebin(h.axis(newax.name), newax)
