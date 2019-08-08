@@ -49,13 +49,16 @@ def content_table(hnum, hden, axis_name):
 def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test", distribution="recoil",axis_name=None):
     # Select and prepare histogram
     h = copy.deepcopy(acc[distribution])
-    h = merge_extensions(h, acc)
+    h = merge_extensions(h, acc,reweight_pu=('nopu' in distribution)))
     scale_xs_lumi(h)
     h = merge_datasets(h)
 
     # Rebinning
     axis_name = distribution if not axis_name else axis_name
-    newbin = hist.Bin(axis_name,f"{axis_name} (GeV)",np.array(list(range(0,400,20)) + list(range(400,1100,100))))
+    if 'photon' in distribution:
+        newbin = hist.Bin(axis_name,f"{axis_name} (GeV)",np.array(list(range(0,400,10)) + list(range(400,1100,100))))
+    else:
+        newbin = hist.Bin(axis_name,f"{axis_name} (GeV)",np.array(list(range(0,400,20)) + list(range(400,1100,100))))
     h = h.rebin(h.axis(axis_name), newbin)
     ds = f'{dataset}_{year}'
 
@@ -126,8 +129,8 @@ def get_xy(file):
 colors = {
             '1m' : 'darkslategrey',
             '1m_hlt' : 'blue',
-            '2m' : 'darkorange',
-            '2m_hlt' : 'red',
+            '2m' : 'skyblue',
+            '2m_hlt' : 'darkorange',
             '1e' : 'skyblue',
             '2e' : 'magenta'
         }
@@ -143,10 +146,10 @@ region_marker = {
 
 def region_comparison_plot(tag):
     for year in [2017,2018]:
-        regions = ['1m', '2m', '1e','1m_hlt','2m_hlt']
+        regions = ['1m', '2m','2m_hlt']
         opts = markers('data')
-        opts['markersize'] = 1.
-        opts['fillstyle'] = 'none'
+        # opts['markersize'] = 1.
+        # opts['fillstyle'] = 'none'
         emarker = opts.pop('emarker', '')
 
         fig, ax, rax = fig_ratio()
@@ -386,7 +389,7 @@ def met_triggers():
 
 def met_triggers_ht():
         tag = '120pfht_hltmu'
-        indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/gamma"
+        indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/16Jul19_incomplete_v7"
         acc = acc_from_dir(indir)
 
         for year in [2017, 2018]:
@@ -411,6 +414,7 @@ def met_triggers_ht():
 
         region_comparison_plot(tag)
         sf_comparison_plot(tag)
+        data_mc_comparison_plot(tag)
 
 def photon_triggers_merged():
     tag = 'gamma'
@@ -501,7 +505,7 @@ def photon_triggers_merged():
 
 def photon_triggers():
     tag = 'gamma'
-    indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/eff/{tag}/sel"
+    indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/16Jul19_incomplete_v7"
     acc = acc_from_dir(indir)
 
     # All regions
@@ -517,7 +521,7 @@ def photon_triggers():
         for region in set(regions):
             for dataset in ["GJets_HT_MLM", "JetHT"]:
                 if 'photon_pt_' in region:
-                    distribution = 'recoil'
+                    distribution = 'recoil_noweight'
                     axis_name = 'recoil'
                 else:
                     distribution = 'photon_pt0'
@@ -536,7 +540,7 @@ def photon_triggers():
 def main():
     # indir = "/home/albert/repos/bucoffea/bucoffea/plot/input/eff/test"
     met_triggers_ht()
-    # data_mc_comparison_plot('gamma')
+    photon_triggers()
     # photon_triggers()
 
 
