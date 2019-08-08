@@ -84,7 +84,7 @@ def merge_extensions(histogram, acc):
         if not is_data(d):
             sumw[base] += acc['sumw'][d]
 
-    # pprint(sumw)
+    #pprint(mapping)
     histogram = histogram.group(hist.Cat("dataset", "Primary dataset"), "dataset", mapping)
     histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
     return histogram
@@ -159,6 +159,7 @@ def merge_datasets(histogram):
         else:
             mapping[ds] = [ds]
 
+    #pprint(mapping)
     # Apply the mapping
     histogram = histogram.group(hist.Cat("dataset", "Primary dataset"), "dataset", mapping)
 

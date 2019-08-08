@@ -150,17 +150,17 @@ def main():
     # Make some NLO plots
     for year in [2017, 2018]:
         mc = re.compile(f'(DY.*FXFX|W.*FXFX|ST|TT).*{year}')
-        for region in ['cr_1m_j','cr_2m_j','cr_2e_j','cr_1e_j']:
+        for region in ['cr_1m_j','cr_2m_j','cr_2e_j','cr_1e_j','cr_g_j']:
             if "m" in region: data = re.compile(f'MET_{year}')
-            if "e" in region: data = re.compile(f'EGamma_{year}')
+            if ("e" in region) or ("g" in region): data = re.compile(f'EGamma_{year}')
             for distribution in ['recoil','met','ak4_pt0','ak4_eta0']:
                 make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc, outdir="./output/NLO")
     # Make some LO plots
     for year in [2017, 2018]:
         mc = re.compile(f'(DY.*HT.*MLM|W.*HT.*MLM|ST|TT).*{year}')
-        for region in ['cr_1m_j','cr_2m_j','cr_2e_j','cr_1e_j']:
+        for region in ['cr_1m_j','cr_2m_j','cr_2e_j','cr_1e_j','cr_g_j']:
             if "m" in region: data = re.compile(f'MET_{year}')
-            if "e" in region: data = re.compile(f'EGamma_{year}')
+            if ("e" in region) or ("g" in region): data = re.compile(f'EGamma_{year}')
             for distribution in ['recoil','met','ak4_pt0','ak4_eta0']:
                 make_plot(copy.deepcopy(acc), region=region,distribution=distribution, year=year, data=data, mc=mc, outdir="./output/LO")
 
