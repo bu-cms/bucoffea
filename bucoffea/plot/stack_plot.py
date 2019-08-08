@@ -52,7 +52,7 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
     # Extension samples are separate MC samples for identical physics processes
     # (E.g. when people realize that they need more events for an existing sample,
     # they produce an 'extension')
-    h = merge_extensions(h, acc)
+    h = merge_extensions(h, acc, reweight_pu=('nopu' in distribution))
 
     # Step 2: Scale each dataset according to its cross section
     # and the luminosity for the corresponding year
