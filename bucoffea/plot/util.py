@@ -64,11 +64,15 @@ def acc_from_dir(indir):
 
 
 
-def merge_extensions(histogram, acc):
+def merge_extensions(histogram, acc, reweight_pu=True):
     """Merge extension datasets into one and scale to 1/sumw
 
     :param histogram: The histogram to modify
     :type histogram: Coffea histogram
+    :param acc: The accumulator dictionary holding sumw etc
+    :type acc: dict_accumulator
+    :param reweight_pu: Whether to renormalize to account for the sum of PU weights
+    :type reweight_pu: bool (default: True)
     :return: Modified histogram
     :rtype: Coffea histogram
     """
@@ -93,7 +97,8 @@ def merge_extensions(histogram, acc):
     histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
 
     pu_renorm = { k : nevents[k] / sumw_pileup[k] for k in sumw_pileup.keys()}
-    if not ('nopu' in histogram.label):
+
+    if reweight_pu:
         histogram.scale(pu_renorm, axis='dataset')
 
     return histogram
