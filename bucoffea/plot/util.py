@@ -75,6 +75,9 @@ def merge_extensions(histogram, acc):
     all_datasets = map(str, histogram.identifiers('dataset'))
     mapping = defaultdict(list)
     sumw = defaultdict(float)
+    sumw_pileup = defaultdict(float)
+    nevents = defaultdict(float)
+
     for d in all_datasets:
         m = re.match('.*(_ext\d+).*', d)
         base = d
@@ -83,10 +86,16 @@ def merge_extensions(histogram, acc):
         mapping[base].append(d)
         if not is_data(d):
             sumw[base] += acc['sumw'][d]
+            sumw_pileup[base] += acc['sumw_pileup'][d]
+            nevents[base] += acc['nevents'][d]
 
-    # pprint(sumw)
     histogram = histogram.group(hist.Cat("dataset", "Primary dataset"), "dataset", mapping)
     histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
+
+    pu_renorm = { k : nevents[k] / sumw_pileup[k] for k in sumw_pileup.keys()}
+    if not ('nopu' in histogram.label):
+        histogram.scale(pu_renorm, axis='dataset')
+
     return histogram
 
 
