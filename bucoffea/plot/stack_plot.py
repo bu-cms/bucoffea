@@ -26,6 +26,7 @@ class Style():
             'cr_2m_j' : 'Di-$\mu$ CR, monojet',
             'cr_1e_j' : 'Single-e CR, monojet',
             'cr_2e_j' : 'Di-e CR, monojet',
+            'cr_g_j' : 'Single-Photon CR, monojet',
         }
         self.rebin_axes = {
             'dimuon_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
@@ -132,6 +133,8 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     fig.savefig(pjoin(outdir,f"{region}_{distribution}_{year}.pdf"))
+    print("saved plot file in "+str(pjoin(outdir,f"{region}_{distribution}_{year}.pdf")))
+    plt.close('all')
 
 def main():
     # The input is saved in individual *.coffea files
