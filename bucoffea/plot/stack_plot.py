@@ -18,6 +18,8 @@ from bucoffea.plot.util import (acc_from_dir, lumi, merge_datasets,
                                 merge_extensions, scale_xs_lumi)
 
 pjoin = os.path.join
+#suppress true_divide warnings
+np.seterr(divide='ignore', invalid='ignore')
 
 class Style():
     def __init__(self):
