@@ -157,24 +157,24 @@ era2017:
     photon:
       single:
         - HLT_Photon200
-    filters:
-      data:
-        - Flag_goodVertices
-        - Flag_globalSuperTightHalo2016Filter
-        - Flag_HBHENoiseFilter
-        - Flag_HBHENoiseIsoFilter
-        - Flag_EcalDeadCellTriggerPrimitiveFilter
-        - Flag_BadPFMuonFilter
-        - Flag_eeBadScFilter
-        - Flag_ecalBadCalibFilterV2
-      mc:
-        - Flag_goodVertices
-        - Flag_globalSuperTightHalo2016Filter
-        - Flag_HBHENoiseFilter
-        - Flag_HBHENoiseIsoFilter
-        - Flag_EcalDeadCellTriggerPrimitiveFilter
-        - Flag_BadPFMuonFilter
-        - Flag_ecalBadCalibFilterV2
+  filters:
+    data:
+      - Flag_goodVertices
+      - Flag_globalSuperTightHalo2016Filter
+      - Flag_HBHENoiseFilter
+      - Flag_HBHENoiseIsoFilter
+      - Flag_EcalDeadCellTriggerPrimitiveFilter
+      - Flag_BadPFMuonFilter
+      - Flag_eeBadScFilter
+      - Flag_ecalBadCalibFilterV2
+    mc:
+      - Flag_goodVertices
+      - Flag_globalSuperTightHalo2016Filter
+      - Flag_HBHENoiseFilter
+      - Flag_HBHENoiseIsoFilter
+      - Flag_EcalDeadCellTriggerPrimitiveFilter
+      - Flag_BadPFMuonFilter
+      - Flag_ecalBadCalibFilterV2
 
   btag:
     algo: deepcsv
@@ -244,24 +244,24 @@ era2018:
     photon:
       single:
         - HLT_Photon200
-    filters:
-      data:
-        - Flag_goodVertices
-        - Flag_globalSuperTightHalo2016Filter
-        - Flag_HBHENoiseFilter
-        - Flag_HBHENoiseIsoFilter
-        - Flag_EcalDeadCellTriggerPrimitiveFilter
-        - Flag_BadPFMuonFilter
-        - Flag_eeBadScFilter
-        - Flag_ecalBadCalibFilterV2
-      mc:
-        - Flag_goodVertices
-        - Flag_globalSuperTightHalo2016Filter
-        - Flag_HBHENoiseFilter
-        - Flag_HBHENoiseIsoFilter
-        - Flag_EcalDeadCellTriggerPrimitiveFilter
-        - Flag_BadPFMuonFilter
-        - Flag_ecalBadCalibFilterV2
+  filters:
+    data:
+      - Flag_goodVertices
+      - Flag_globalSuperTightHalo2016Filter
+      - Flag_HBHENoiseFilter
+      - Flag_HBHENoiseIsoFilter
+      - Flag_EcalDeadCellTriggerPrimitiveFilter
+      - Flag_BadPFMuonFilter
+      - Flag_eeBadScFilter
+      - Flag_ecalBadCalibFilterV2
+    mc:
+      - Flag_goodVertices
+      - Flag_globalSuperTightHalo2016Filter
+      - Flag_HBHENoiseFilter
+      - Flag_HBHENoiseIsoFilter
+      - Flag_EcalDeadCellTriggerPrimitiveFilter
+      - Flag_BadPFMuonFilter
+      - Flag_ecalBadCalibFilterV2
 
   btag:
     algo: deepcsv
