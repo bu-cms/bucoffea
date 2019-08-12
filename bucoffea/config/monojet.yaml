@@ -41,7 +41,7 @@ default:
         pt: 15
         eta: 2.5
       tight:
-        pt: 175
+        pt: 215
         pttrig: 215
         eta: 1.4442
     branch:
@@ -99,10 +99,10 @@ default:
     ht:
       gammaeff:
       - HLT_PFHT1050
-      # - HLT_PFHT590
-      # - HLT_PFHT680
-      # - HLT_PFHT780
-      # - HLT_PFHT890
+      - HLT_PFHT590
+      - HLT_PFHT680
+      - HLT_PFHT780
+      - HLT_PFHT890
 
 env:
   test: false
@@ -157,6 +157,24 @@ era2017:
     photon:
       single:
         - HLT_Photon200
+  filters:
+    data:
+      - Flag_goodVertices
+      - Flag_globalSuperTightHalo2016Filter
+      - Flag_HBHENoiseFilter
+      - Flag_HBHENoiseIsoFilter
+      - Flag_EcalDeadCellTriggerPrimitiveFilter
+      - Flag_BadPFMuonFilter
+      - Flag_eeBadScFilter
+      - Flag_ecalBadCalibFilterV2
+    mc:
+      - Flag_goodVertices
+      - Flag_globalSuperTightHalo2016Filter
+      - Flag_HBHENoiseFilter
+      - Flag_HBHENoiseIsoFilter
+      - Flag_EcalDeadCellTriggerPrimitiveFilter
+      - Flag_BadPFMuonFilter
+      - Flag_ecalBadCalibFilterV2
 
   btag:
     algo: deepcsv
@@ -226,6 +244,24 @@ era2018:
     photon:
       single:
         - HLT_Photon200
+  filters:
+    data:
+      - Flag_goodVertices
+      - Flag_globalSuperTightHalo2016Filter
+      - Flag_HBHENoiseFilter
+      - Flag_HBHENoiseIsoFilter
+      - Flag_EcalDeadCellTriggerPrimitiveFilter
+      - Flag_BadPFMuonFilter
+      - Flag_eeBadScFilter
+      - Flag_ecalBadCalibFilterV2
+    mc:
+      - Flag_goodVertices
+      - Flag_globalSuperTightHalo2016Filter
+      - Flag_HBHENoiseFilter
+      - Flag_HBHENoiseIsoFilter
+      - Flag_EcalDeadCellTriggerPrimitiveFilter
+      - Flag_BadPFMuonFilter
+      - Flag_ecalBadCalibFilterV2
 
   btag:
     algo: deepcsv

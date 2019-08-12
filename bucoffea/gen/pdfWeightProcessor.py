@@ -48,7 +48,7 @@ class pdfWeightProcessor(processor.ProcessorABC):
         items['sumw2'] = processor.defaultdict_accumulator(float)
         self._accumulator = processor.dict_accumulator(items)
 
-        self._all_pdfs = [303600,263000,262000]
+        self._all_pdfs = [303600,263000,262000,306000]
 
     @property
     def accumulator(self):
@@ -60,7 +60,7 @@ class pdfWeightProcessor(processor.ProcessorABC):
         dataset = df['dataset']
 
 
-        base_pdf = 303600
+        base_pdf = 306000
 
         pdf_weights = {
             'none' : np.ones(df.size)
@@ -86,13 +86,11 @@ class pdfWeightProcessor(processor.ProcessorABC):
             dataset=dataset
         )
         for ipdf in pdf_weights.keys():
-            if ipdf=='none':
-                weight = df['Generator_weight']
-            else:
-                weight = df['Generator_weight']*pdf_weights[ipdf]/(df['Generator_xpdf1']*df['Generator_xpdf2'])
-
-            weight[abs(weight)>10] = 1
-            # weight[weight<0] = 0
+            weight = df['Generator_weight']
+            if ipdf !='none':
+                reweight = pdf_weights[ipdf]/pdf_weights[base_pdf]
+                reweight[abs(reweight)>10] = 1
+                weight = weight * reweight
             output['gen_vpt'].fill(
                                 vpt = df['LHE_Vpt'],
                                 dataset=dataset,
