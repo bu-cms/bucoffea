@@ -387,11 +387,13 @@ class monojetProcessor(processor.ProcessorABC):
 
 
             ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
+            ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
 
             # Leading ak4
             w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], weight[mask])
             ezfill('ak4_eta0',   jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
+            ezfill('ak4_phi0',   jetphi=ak4[leadak4_index].phi[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_pt0',    jetpt=ak4[leadak4_index].pt[mask].flatten(),      weight=w_leadak4)
 
             # AK8 jets
@@ -400,6 +402,7 @@ class monojetProcessor(processor.ProcessorABC):
                 w_allak8 = weight_shape(ak8.eta[mask], weight[mask])
 
                 ezfill('ak8_eta',    jeteta=ak8[mask].eta.flatten(), weight=w_allak8)
+                ezfill('ak8_phi',    jetphi=ak8[mask].phi.flatten(), weight=w_allak8)
                 ezfill('ak8_pt',     jetpt=ak8[mask].pt.flatten(),   weight=w_allak8)
                 ezfill('ak8_mass',   mass=ak8[mask].mass.flatten(),  weight=w_allak8)
 
@@ -407,6 +410,7 @@ class monojetProcessor(processor.ProcessorABC):
                 w_leadak8 = weight_shape(ak8[leadak8_index].eta[mask], weight[mask])
 
                 ezfill('ak8_eta0',       jeteta=ak8[leadak8_index].eta[mask].flatten(),    weight=w_leadak8)
+                ezfill('ak8_phi0',       jetphi=ak8[leadak8_index].phi[mask].flatten(),    weight=w_leadak8)
                 ezfill('ak8_pt0',        jetpt=ak8[leadak8_index].pt[mask].flatten(),      weight=w_leadak8 )
                 ezfill('ak8_mass0',      mass=ak8[leadak8_index].mass[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_tau210',     tau21=ak8[leadak8_index].tau21[mask].flatten(),     weight=w_leadak8)
@@ -423,8 +427,10 @@ class monojetProcessor(processor.ProcessorABC):
             # MET
             ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=weight[mask] )
             ezfill('met',                met=df["MET_pt"][mask],            weight=weight[mask] )
+            ezfill('met_phi',            phi=df["MET_phi"][mask],            weight=weight[mask] )
             ezfill('met_noweight',       met=df["MET_pt"][mask],            weight=np.ones(weight[mask].size) )
             ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=weight[mask] )
+            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],      weight=weight[mask] )
             ezfill('recoil_noweight',    recoil=df["recoil_pt"][mask],      weight=np.ones(weight[mask].size) )
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weight[mask] )
 
@@ -434,6 +440,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
                 ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=weight[mask])
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
+                ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
 
                 # HLT Matched muons
                 w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], weight[mask])
@@ -454,6 +461,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
                 ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=weight[mask])
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
+                ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
 
             # Dielectron
             if '_2e_' in region:
@@ -469,7 +477,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('photon_pt0_noweight',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=np.ones(w_leading_photon.size))
                 ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
-                ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&leadphoton_index.counts>0],  weight=w_leading_photon)
+                ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], weight[mask])
                 ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask].flatten(),  weight=weight[mask])

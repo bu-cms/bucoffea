@@ -26,6 +26,7 @@ def monojet_accumulator(cfg):
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
+    jet_phi_ax = Bin("jetphi", r"$\phi$", 50,-np.pi, np.pi)
 
     jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
 
@@ -56,18 +57,23 @@ def monojet_accumulator(cfg):
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["met_noweight"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil_noweight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
 
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
     items["ak8_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak8_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak8_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak8_mass0"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
     items["ak8_tau210"] = Hist("Counts", dataset_ax, region_ax, tau21_ax)
     items["ak8_wvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
@@ -77,6 +83,7 @@ def monojet_accumulator(cfg):
 
     items["ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak8_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak8_mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
 
     items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
@@ -88,6 +95,7 @@ def monojet_accumulator(cfg):
 
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["muon_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["muons_hltmatch_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muons_hltmatch_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["muon_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
@@ -97,6 +105,7 @@ def monojet_accumulator(cfg):
 
     items["electron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["electron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["electron_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["electron_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
     items["dielectron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["dielectron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
