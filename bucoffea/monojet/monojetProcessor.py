@@ -136,9 +136,9 @@ class monojetProcessor(processor.ProcessorABC):
 
         else:
             if df['is_data']:
-                selection.add('filt_met', combine_masks(cfg.FILTERS.DATA))
+                selection.add('filt_met', combine_masks(df, cfg.FILTERS.DATA))
             else:
-                selection.add('filt_met', combine_masks(cfg.FILTERS.MC))
+                selection.add('filt_met', combine_masks(df, cfg.FILTERS.MC))
             selection.add('trig_met', combine_masks(df, cfg.TRIGGERS.MET))
 
             # Trigger overlap
