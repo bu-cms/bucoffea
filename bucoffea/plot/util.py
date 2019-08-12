@@ -232,7 +232,7 @@ def scale_xs_lumi(histogram):
 
     # Normalize to XS * lumi/ sumw
     xs = load_xs()
-    norm_dict = {mc : 1e3 * xs[mc] * lumi(extract_year(mc)) for mc in mcs}
+    norm_dict = {mc : 1e3 * xs[re.sub('_newpmx','',mc)] * lumi(extract_year(mc)) for mc in mcs}
     histogram.scale(norm_dict, axis='dataset')
 
 # def merge_and_norm(histogram, acc):
