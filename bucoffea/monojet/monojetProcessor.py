@@ -11,7 +11,7 @@ from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffe
 from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_nlo_z, is_nlo_w, is_data, extract_year
 
 
-def combine_masks(df, masks):
+def mask_or(df, masks):
     """Returns the OR of the masks in the list
 
     :param df: Data frame
@@ -30,6 +30,28 @@ def combine_masks(df, masks):
             decision = decision | df[t]
         except KeyError:
             continue
+    return decision
+
+def mask_and(df, masks):
+    """Returns the AND of the masks in the list
+
+    :param df: Data frame
+    :type df: LazyDataFrame
+    :param masks: Mask names as saved in the df
+    :type masks: List
+    :return: OR of all masks for each event
+    :rtype: array
+    """
+    # Start with array of False
+    decision = np.ones(df.size)==1
+
+    # Flip to true if any is passed
+    for t in masks:
+        try:
+            decision = decision & df[t]
+        except KeyError:
+            continue
+    print(masks)
     return decision
 
 class monojetProcessor(processor.ProcessorABC):
@@ -136,22 +158,22 @@ class monojetProcessor(processor.ProcessorABC):
 
         else:
             if df['is_data']:
-                selection.add('filt_met', combine_masks(df, cfg.FILTERS.DATA))
+                selection.add('filt_met', mask_and(df, cfg.FILTERS.DATA))
             else:
-                selection.add('filt_met', combine_masks(df, cfg.FILTERS.MC))
-            selection.add('trig_met', combine_masks(df, cfg.TRIGGERS.MET))
+                selection.add('filt_met', mask_and(df, cfg.FILTERS.MC))
+            selection.add('trig_met', mask_or(df, cfg.TRIGGERS.MET))
 
             # Trigger overlap
             if df['is_data']:
                 if "SinglePhoton" in dataset:
-                    trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & (~combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
+                    trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & (~mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE))
                 else:
-                    trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+                    trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
             else:
-                trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+                trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
 
             selection.add('trig_ele', trig_ele)
-            selection.add('trig_mu', combine_masks(df, cfg.TRIGGERS.MUON.SINGLE))
+            selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
             for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
                 selection.add(trgname, df[trgname])
 
@@ -226,7 +248,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
         # Photon CR
-        selection.add('trig_photon', combine_masks(df, cfg.TRIGGERS.PHOTON.SINGLE))
+        selection.add('trig_photon', mask_or(df, cfg.TRIGGERS.PHOTON.SINGLE))
         leadphoton_index=photons.pt.argmax()
 
         is_tight_photon = photons.mediumId \
