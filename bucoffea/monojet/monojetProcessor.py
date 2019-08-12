@@ -51,7 +51,6 @@ def mask_and(df, masks):
             decision = decision & df[t]
         except KeyError:
             continue
-    print(masks)
     return decision
 
 class monojetProcessor(processor.ProcessorABC):
@@ -163,19 +162,38 @@ class monojetProcessor(processor.ProcessorABC):
                 selection.add('filt_met', mask_and(df, cfg.FILTERS.MC))
             selection.add('trig_met', mask_or(df, cfg.TRIGGERS.MET))
 
-            # Trigger overlap
+            # Electron trigger overlap
             if df['is_data']:
                 if "SinglePhoton" in dataset:
+                    # Backup photon trigger, but not main electron trigger
                     trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & (~mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE))
-                else:
+                elif "SingleElectron" in dataset:
+                    # Main electron trigger, no check for backup
                     trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+                elif "EGamma" in dataset:
+                    # 2018 has everything in one stream, so simple OR
+                    trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
             else:
                 trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
 
             selection.add('trig_ele', trig_ele)
-            selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
+
+            # Photon trigger:
+            if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
+                trig_photon = mask_or(df, cfg.TRIGGERS.PHOTON.SINGLE)
+
+            else:
+                trig_photon = np.zeros(df.size)==0
+            selection.add('trig_photon', trig_photon)
+
             for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
-                selection.add(trgname, df[trgname])
+                if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
+                    selection.add(trgname, df[trgname])
+                else:
+                    selection.add(trgname, np.ones(df.size)==1)
+
+            # Muon trigger
+            selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
 
         # Trigger objects
         hlt_single_muons = hlt[(hlt.id==13) & (hlt.filter & 8 == 8)]
@@ -248,7 +266,6 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
         # Photon CR
-        selection.add('trig_photon', mask_or(df, cfg.TRIGGERS.PHOTON.SINGLE))
         leadphoton_index=photons.pt.argmax()
 
         is_tight_photon = photons.mediumId \
