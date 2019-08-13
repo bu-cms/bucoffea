@@ -49,7 +49,7 @@ default:
   muon:
     cuts:
       tight:
-        pt : 40
+        pt : 20
         eta : 2.4
         iso : 0.15
       loose:
