@@ -153,6 +153,8 @@ def merge_datasets(histogram):
         # 'ZJetsToNuNu_HT_2018' : [x for x in all_datasets if re.match('ZJetsToNuNu_HT-(\d+)To(\d+)-mg_2018',x)],
         'WNJetsToLNu-MLM_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2017',x)],
         'WNJetsToLNu-MLM_2018' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2018',x)],
+        'QCD_HT-MLM_2018' : [x for x in all_datasets if re.match('QCD_HT.*-MLM_2018',x)],
+        'QCD_HT-mg_2017' : [x for x in all_datasets if re.match('QCD_HT.*-mg_2017',x)],
     }
 
     # Remove empty lists
@@ -230,7 +232,7 @@ def scale_xs_lumi(histogram):
 
     # Normalize to XS * lumi/ sumw
     xs = load_xs()
-    norm_dict = {mc : 1e3 * xs[mc] * lumi(extract_year(mc)) for mc in mcs}
+    norm_dict = {mc : 1e3 * xs[re.sub('_newpmx','',mc)] * lumi(extract_year(mc)) for mc in mcs}
     histogram.scale(norm_dict, axis='dataset')
 
 # def merge_and_norm(histogram, acc):
