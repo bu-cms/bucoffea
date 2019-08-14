@@ -32,11 +32,13 @@ class Style():
         }
         self.rebin_axes = {
             'dimuon_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
-            'recoil' : hist.Bin('recoil','recoil',list(range(250,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250)))
+            'recoil' : hist.Bin('recoil','recoil',list(range(250,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
+            'met' : hist.Bin('met','met',list(range(250,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
+            'jet_pt' : hist.Bin('jet_pt','jet_pt',list(range(100,600,10)) + list(range(600,1000,25)) )
         }
 
 
-def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack/'):
+def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack/',ylim=None):
     """Creates a data vs MC comparison plot
 
     :param acc: Accumulator (processor output)
@@ -103,7 +105,7 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
         overlay='dataset',
         stack=True,
         clear=False,
-        overflow='over',
+        overflow='all',
         ax=ax,
         binwnorm=True)
 
@@ -127,9 +129,11 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
                 transform=ax.transAxes
                )
     # Aesthetics
-    # ax.set_xlim(60,120)
     ax.set_yscale("log")
-    ax.set_ylim(1e-1,1e6)
+    if ylim:
+        ax.set_ylim(ylim[0],ylim[1])
+    else:
+        ax.set_ylim(1e-1,1e6)
     rax.set_ylim(0.5,1.5)
     ax.set_ylabel('Events / Bin width')
     if not os.path.exists(outdir):
