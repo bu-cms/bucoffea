@@ -173,6 +173,8 @@ class monojetProcessor(processor.ProcessorABC):
                 elif "EGamma" in dataset:
                     # 2018 has everything in one stream, so simple OR
                     trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+                else:
+                    trig_ele = np.zeros(df.size) == 1
             else:
                 trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
 
