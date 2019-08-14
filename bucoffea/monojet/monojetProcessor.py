@@ -291,9 +291,15 @@ class monojetProcessor(processor.ProcessorABC):
 
         weight = np.ones(df.size)
         weight_nopu = np.ones(df.size)
+        weight_nopref = np.ones(df.size)
         all_weights = {}
         if not df['is_data']:
             all_weights['gen'] = df['Generator_weight']
+
+            try:
+                all_weights['prefire'] = df['PrefireWeight']
+            except KeyError:
+                all_weights['prefire'] = np.ones(df.size)
 
             # Muon ID and Isolation for tight and loose WP
             # Function of pT, eta (Order!)
@@ -328,6 +334,8 @@ class monojetProcessor(processor.ProcessorABC):
                 weight = weight * iw
                 if name != 'pileup':
                     weight_nopu = weight_nopu * iw
+                if name != 'prefire':
+                    weight_nopref = weight_nopref * iw
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
@@ -425,11 +433,16 @@ class monojetProcessor(processor.ProcessorABC):
             # All ak4
             # This is a workaround to create a weight array of the right dimension
             w_alljets = weight_shape(ak4[mask].eta, weight[mask])
+            w_alljets_nopref = weight_shape(ak4[mask].eta, weight_nopref[mask])
 
 
             ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
+
+            ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
+            ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
+            ezfill('ak4_pt_nopref',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets_nopref)
 
             # Leading ak4
             w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], weight[mask])
