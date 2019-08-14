@@ -107,6 +107,20 @@ def files_from_ac(regex):
         fileset[dataset] = files
     return fileset
 
+def find_files(directory, regex):
+    fileset = {}
+    for path, _, files in os.walk(directory):
+
+        files = list(filter(lambda x: x.endswith('.root'), files))
+        if not len(files):
+            continue
+        dataset = path.split('/')[-3]
+        if not re.match(regex, dataset):
+            continue
+        files = [pjoin(path,x) for x in files]
+        fileset[dataset] = files
+    return fileset
+
 def files_from_eos(regex):
     """Generate file list per dataset from EOS
 
@@ -118,15 +132,20 @@ def files_from_eos(regex):
     topdir = '/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/'
     tag = '16Jul19'
 
-    fileset = {}
-    for path, subdir, files in os.walk(pjoin(topdir, tag)):
 
-        files = list(filter(lambda x: x.endswith('.root'), files))
-        if not len(files):
-            continue
-        dataset = path.split('/')[-3]
-        if not re.match(regex, dataset):
-            continue
-        files = [pjoin(path,x) for x in files]
-        fileset[dataset] = files
+    fileset_16jul = find_files(pjoin(topdir, tag), regex)
+
+    topdir = '/eos/user/a/aalbert/nanopost/'
+    tag = '10Aug19'
+
+    fileset_10aug = find_files(pjoin(topdir, tag), regex)
+
+    fileset = {}
+    keys = set(list(fileset_16jul.keys()) + list(fileset_10aug.keys()))
+    for key in keys:
+        if key in fileset_10aug:
+            fileset[key] = fileset_10aug[key]
+        else:
+            fileset[key] = fileset_16jul[key]
+
     return fileset
