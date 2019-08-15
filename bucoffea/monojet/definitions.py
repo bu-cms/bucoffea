@@ -57,9 +57,9 @@ def monojet_accumulator(cfg):
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
-    items["lhe_njets"] = Hist("Counts", dataset_ax, type_ax, multiplicity_ax)
-    items["lhe_ht"] = Hist("Counts", dataset_ax, type_ax, ht_ax)
-    items["lhe_htinc"] = Hist("Counts", dataset_ax, type_ax, ht_ax)
+    items["lhe_njets"] = Hist("Counts", dataset_ax, multiplicity_ax)
+    items["lhe_ht"] = Hist("Counts", dataset_ax, ht_ax)
+    items["lhe_htinc"] = Hist("Counts", dataset_ax, ht_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["met_noweight"] = Hist("Counts", dataset_ax, region_ax, met_ax)
@@ -72,6 +72,7 @@ def monojet_accumulator(cfg):
     items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax)
 
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)

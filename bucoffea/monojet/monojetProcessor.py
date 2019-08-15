@@ -454,8 +454,9 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_eta0',   jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_phi0',   jetphi=ak4[leadak4_index].phi[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_pt0',    jetpt=ak4[leadak4_index].pt[mask].flatten(),      weight=w_leadak4)
-            ezfill('ak4_chf',    frac=ak4[leadak4_index].chf[mask].flatten(),      weight=w_leadak4)
-            ezfill('ak4_nhf',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_chf0',    frac=ak4[leadak4_index].chf[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_nhf0',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_pt0_eta0', jetpt=ak4[leadak4_index].pt[mask].flatten(), jeteta=ak4[leadak4_index].eta[mask].flatten(), weight=w_leadak4)
 
             # AK8 jets
             if region=='inclusive' or region.endswith('v'):
