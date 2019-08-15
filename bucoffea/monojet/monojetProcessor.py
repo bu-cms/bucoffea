@@ -285,6 +285,11 @@ class monojetProcessor(processor.ProcessorABC):
         if df['has_lhe_v_pt']:
             output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
 
+
+        output['lhe_njets'].fill(dataset=dataset, multiplicity=df['LHE_Njets'])
+        output['lhe_ht'].fill(dataset=dataset, ht=df['LHE_HT'])
+        output['lhe_htinc'].fill(dataset=dataset, ht=df['LHE_HTIncoming'])
+
         # Weights
         evaluator = monojet_evaluator(cfg)
 
@@ -449,6 +454,8 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_eta0',   jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_phi0',   jetphi=ak4[leadak4_index].phi[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_pt0',    jetpt=ak4[leadak4_index].pt[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_chf',    frac=ak4[leadak4_index].chf[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_nhf',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
 
             # AK8 jets
             if region=='inclusive' or region.endswith('v'):

@@ -37,6 +37,7 @@ def monojet_accumulator(cfg):
     dr_ax = Bin("dr", r"$\Delta R$", 20, 0, 2)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 200, 0, 1000)
+    ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 200, 0, 4000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
@@ -52,10 +53,13 @@ def monojet_accumulator(cfg):
 
     nvtx_ax = Bin('nvtx','Number of vertices',100,-0.5,99.5)
     rho_ax = Bin('rho','Energy density',100, 0, 100)
-
+    frac_ax = Bin('frac','Fraction', 50, 0, 1)
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
+    items["lhe_njets"] = Hist("Counts", dataset_ax, type_ax, multiplicity_ax)
+    items["lhe_ht"] = Hist("Counts", dataset_ax, type_ax, ht_ax)
+    items["lhe_htinc"] = Hist("Counts", dataset_ax, type_ax, ht_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["met_noweight"] = Hist("Counts", dataset_ax, region_ax, met_ax)
@@ -66,6 +70,9 @@ def monojet_accumulator(cfg):
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
