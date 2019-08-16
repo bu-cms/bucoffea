@@ -1,5 +1,7 @@
 *.lz4
 external
-data
 __pycache__
 *.egg-info
+*.coffea
+*.pdf
+*.png
