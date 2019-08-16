@@ -285,10 +285,12 @@ class monojetProcessor(processor.ProcessorABC):
         if df['has_lhe_v_pt']:
             output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
 
-
-        output['lhe_njets'].fill(dataset=dataset, multiplicity=df['LHE_Njets'])
-        output['lhe_ht'].fill(dataset=dataset, ht=df['LHE_HT'])
-        output['lhe_htinc'].fill(dataset=dataset, ht=df['LHE_HTIncoming'])
+        if 'LHE_Njets' in df:
+            output['lhe_njets'].fill(dataset=dataset, multiplicity=df['LHE_Njets'])
+        if 'LHE_HT' in df:
+            output['lhe_ht'].fill(dataset=dataset, ht=df['LHE_HT'])
+        if 'LHE_HTIncoming' in df:
+            output['lhe_htinc'].fill(dataset=dataset, ht=df['LHE_HTIncoming'])
 
         # Weights
         evaluator = monojet_evaluator(cfg)
