@@ -192,7 +192,7 @@ def do_submit(args):
                 "+MaxRuntime" : f"{60*60*8}"
                 })
 
-            jdl = pjoin(subdir,filedir,f'job_{dataset}_{ichunk}.jdl')
+            jdl = pjoin(subdir,filedir,f'job_{dataset}_{ichunk:03d}of{len(chunks):03d}.jdl')
             with open(jdl,"w") as f:
                 f.write(str(sub))
                 f.write("\nqueue 1\n")
