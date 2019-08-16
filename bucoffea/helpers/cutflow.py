@@ -15,5 +15,5 @@ def print_cutflow(output, outfile=None):
         print(text)
         if outfile:
             with open(outfile, "w" if not i else "a") as f:
-                f.write(rf'----\n{cutflow_name}\n----')
-                f.write(text + r"\n")
+                f.write(f'----\n{cutflow_name}\n----')
+                f.write(text + "\n")
