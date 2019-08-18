@@ -157,8 +157,6 @@ def do_submit(args):
 
             # Job file creation
             arguments = [
-                # pjoin(proxydir, os.path.basename(proxy)),
-                "$(Proxy_path)",
                 str(Path(__file__).absolute()),
                 args.processor,
                 f'--outpath {pjoin(subdir, "output")}',
@@ -172,6 +170,7 @@ def do_submit(args):
                 os.path.abspath(tmpfile),
             ]
             environment = {
+                "X509_USER_PROXY" : "$(Proxy_path)",
                 "NOPREFETCH" : str(args.no_prefetch).lower()
             }
             sub = htcondor.Submit({

@@ -7,10 +7,11 @@ echo "Starting: $(date)"
 source /cvmfs/sft.cern.ch/lcg/views/LCG_95apython3/x86_64-centos7-gcc8-opt/setup.sh
 
 ARGS=("$@")
-echo "Arguments: " ${ARGS[@]}
-echo "Initiating VOMS proxy."
-export X509_USER_PROXY=${1}
-voms-proxy-info -all -file ${1}
+
+if [ ! -z "${X509_USER_PROXY}" ]; then
+    echo "Initiating VOMS proxy."
+    voms-proxy-info -all -file ${X509_USER_PROXY}
+fi
 
 if [ ! -z "${VIRTUAL_ENV}" ]; then
     echo "Found VIRTUAL_ENV variable."
@@ -31,7 +32,7 @@ if [ ! "$NOPREFETCH" = true ]; then
     mv tmp.txt $FLIST
 fi
 
-executable=${2}
+executable=${1}
 cp -v ${executable} .
 
 echo "Directory content---"
@@ -40,7 +41,7 @@ echo "===================="
 
 
 echo "Setup done: $(date)"
-time python $(basename ${executable}) ${ARGS[@]:2}
+time python $(basename ${executable}) ${ARGS[@]:1}
 echo "Run done: $(date)"
 
 echo "Cleaning up."
