@@ -514,6 +514,7 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('recoil_phi',         phi=df["recoil_phi"][mask],      weight=weight[mask] )
             ezfill('recoil_noweight',    recoil=df["recoil_pt"][mask],      weight=np.ones(weight[mask].size) )
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weight[mask] )
+            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=weight[mask] )
 
             # Muons
             if '_1m_' in region or '_2m_' in region:
