@@ -148,8 +148,9 @@ class monojetProcessor(processor.ProcessorABC):
 
 
         # Triggers
+        pass_all = np.ones(df.size)==1
+        pass_none = np.ones(df.size)==1
         if cfg.RUN.SYNC: # Synchronization mode
-            pass_all = np.ones(df.size)==1
             selection.add('filt_met', pass_all)
             selection.add('trig_met', pass_all)
             selection.add('trig_ele', pass_all)
@@ -172,9 +173,9 @@ class monojetProcessor(processor.ProcessorABC):
                     trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
                 elif "EGamma" in dataset:
                     # 2018 has everything in one stream, so simple OR
-                    trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+                    trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
                 else:
-                    trig_ele = np.zeros(df.size) == 1
+                    trig_ele = pass_none
             else:
                 trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
 
@@ -183,13 +184,12 @@ class monojetProcessor(processor.ProcessorABC):
             # Photon trigger:
             if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
                 trig_photon = mask_or(df, cfg.TRIGGERS.PHOTON.SINGLE)
-
             else:
-                trig_photon = np.zeros(df.size)==0
+                trig_photon = pass_none
             selection.add('trig_photon', trig_photon)
 
             for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
-                if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
+                if (not df['is_data']) or ('JetHT' in dataset):
                     selection.add(trgname, df[trgname])
                 else:
                     selection.add(trgname, np.ones(df.size)==1)
