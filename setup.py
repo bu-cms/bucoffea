@@ -12,4 +12,5 @@ setup(
     description = 'Analysis using Coffea on NanoAOD',
     packages = find_packages(),    
     install_requires = requirements,
+    scripts=['bucoffea/execute/buexec'],
 )

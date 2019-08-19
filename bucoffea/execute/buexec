@@ -19,6 +19,9 @@ from bucoffea.helpers.condor import condor_submit
 from bucoffea.helpers.git import git_rev_parse, git_diff
 from bucoffea.processor.executor import run_uproot_job_nanoaod
 
+
+import socket
+
 pjoin = os.path.join
 
 def choose_processor(args):
@@ -93,6 +96,17 @@ def chunkify(items, nchunk):
         chunks[i % nchunk].append(items[i])
     return chunks
 
+import tarfile
+def pack_and_copy_repo():
+    tar = tarfile.open('gp.tgz','w')
+    tar.add(
+        name=os.path.dirname(bucoffea_path('')),
+        arcname='bucoffea',
+        exclude=lambda x: ('tgz' in x or 'sf' in x)
+        )
+    tar.close()
+    return
+
 def do_submit(args):
     """Submit the analysis to HTCondor."""
     import htcondor
@@ -144,6 +158,9 @@ def do_submit(args):
     if args.async:
         jdl_to_submit = []
 
+    if args.send_pack:
+        gridpack_path = pack_and_copy_repo()
+    
     for dataset, files in dataset_files.items():
         print(f"Submitting dataset: {dataset}.")
 
@@ -157,7 +174,6 @@ def do_submit(args):
 
             # Job file creation
             arguments = [
-                str(Path(__file__).absolute()),
                 args.processor,
                 f'--outpath {pjoin(subdir, "output")}',
                 f'--jobs {args.jobs}',
@@ -170,9 +186,15 @@ def do_submit(args):
                 os.path.abspath(tmpfile),
             ]
             environment = {
-                "X509_USER_PROXY" : "$(Proxy_path)",
                 "NOPREFETCH" : str(args.no_prefetch).lower()
             }
+            if args.send_proxy:
+                environment["X509_USER_PROXY"] = "$(Proxy_path)"
+            if args.send_pack:
+                environment["BUCOFFEAGRIDPACK"] = gridpack_path
+            else:
+                environment["VIRTUAL_ENV"] = os.environ["VIRTUAL_ENV"]
+                environment["BUCOFFEAEXECUTABLE"] = str(Path(__file__).absolute())
             sub = htcondor.Submit({
                 "Proxy_path" : pjoin(proxydir,os.path.basename(proxy)),
                 "Initialdir" : subdir,
@@ -180,7 +202,6 @@ def do_submit(args):
                 "should_transfer_files" : "YES",
                 "when_to_transfer_output" : "ON_EXIT",
                 "transfer_input_files" : ", ".join(input_files),
-                "getenv" : "true",
                 "environment" : '"' + ' '.join([f"{k}={v}" for k, v in environment.items()]) + '"',
                 "arguments": " ".join(arguments),
                 "Output" : f"{filedir}/out_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt",
@@ -252,6 +273,13 @@ def main():
 
     args = parser.parse_args()
 
+    host = socket.gethostname()
+    if 'lpc' in host:
+        args.send_pack = True
+        args.send_proxy = False
+    elif 'lxplus' in host:
+        args.send_pack = False
+        args.send_proxy = True
     args.func(args)
 
 
