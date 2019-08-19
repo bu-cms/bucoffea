@@ -65,7 +65,7 @@ def acc_from_dir(indir):
 
 
 
-def merge_extensions(histogram, acc, reweight_pu=True):
+def merge_extensions(histogram, acc, reweight_pu=True, noscale=False):
     """Merge extension datasets into one and scale to 1/sumw
 
     :param histogram: The histogram to modify
@@ -95,12 +95,13 @@ def merge_extensions(histogram, acc, reweight_pu=True):
             nevents[base] += acc['nevents'][d]
 
     histogram = histogram.group("dataset", hist.Cat("dataset", "Primary dataset"), mapping)
-    histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
 
-    pu_renorm = { k : nevents[k] / sumw_pileup[k] for k in sumw_pileup.keys()}
+    if not noscale:
+        histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
 
-    if reweight_pu:
-        histogram.scale(pu_renorm, axis='dataset')
+        if reweight_pu:
+            pu_renorm = { k : nevents[k] / sumw_pileup[k] for k in sumw_pileup.keys()}
+            histogram.scale(pu_renorm, axis='dataset')
 
     return histogram
 
