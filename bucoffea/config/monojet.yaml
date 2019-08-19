@@ -80,6 +80,12 @@ default:
     qcd_ew_nlo_z:
       histogram: kfactor_monojet_qcd_ewk
       file: data/sf/theory/merged_kfactors_zjets.root
+    ewk_nlo_g:
+      histogram: kfactor_monojet_ewk
+      file: data/sf/theory/merged_kfactors_gjets.root
+    qcd_nlo_g:
+      histogram: kfactor_monojet_qcd
+      file: data/sf/theory/merged_kfactors_gjets.root
   run:
     sync: False
     save:

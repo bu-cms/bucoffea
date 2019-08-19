@@ -8,7 +8,7 @@ from dynaconf import settings as cfg
 
 from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, setup_gen_candidates,monojet_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi
-from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_nlo_z, is_nlo_w, is_data, extract_year
+from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_lo_g, is_nlo_z, is_nlo_w, is_data, extract_year
 
 
 def mask_or(df, masks):
@@ -339,6 +339,8 @@ class monojetProcessor(processor.ProcessorABC):
                 all_weights["theory"] = evaluator["qcd_ew_nlo_w"](gen_v_pt)
             elif df['is_lo_z']:
                 all_weights["theory"] = evaluator["qcd_ew_nlo_z"](gen_v_pt)
+            elif df['is_lo_g']:
+                all_weights["theory"] = evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt)
             else:
                 all_weights["theory"] = np.ones(df.size)
 
