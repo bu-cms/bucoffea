@@ -3,6 +3,9 @@ import re
 from bucoffea.helpers import dasgowrapper, bucoffea_path
 import os
 import yaml
+import socket
+import subprocess
+from collections import defaultdict
 pjoin = os.path.join
 def short_name(dataset):
     _, name, conditions, _ = dataset.split("/")
@@ -121,6 +124,32 @@ def find_files(directory, regex):
         fileset[dataset] = files
     return fileset
 
+def eosls(path):
+    return subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov','ls','-l',path]).decode('utf-8')
+
+
+def find_files_eos(directory, regex):
+    directories = [directory]
+    fileset = defaultdict(list)
+    while len(directories):
+        current = directories.pop()
+        output = eosls(current)
+
+        for line in output.splitlines():
+            parts = line.split()
+
+            abspath = os.path.join(current, parts[-1])
+            if parts[0].startswith('d'):
+                directories.append(abspath)
+            else:
+                if not abspath.endswith('.root'):
+                    continue
+                dataset = abspath.split('/')[9]
+                if not re.match(regex, dataset):
+                    continue
+                fileset[dataset].append(re.sub('.*/store','root://cmsxrootd.fnal.gov//store', abspath))
+    return fileset
+
 def files_from_eos(regex):
     """Generate file list per dataset from EOS
 
@@ -129,23 +158,29 @@ def files_from_eos(regex):
     :return: Mapping of dataset : [files]
     :rtype: dict
     """
-    topdir = '/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/'
-    tag = '16Jul19'
 
+    host = socket.gethostname()
+    if 'lxplus' in host:
+        topdir = '/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/'
+        tag = '16Jul19'
 
-    fileset_16jul = find_files(pjoin(topdir, tag), regex)
+        fileset_16jul = find_files(pjoin(topdir, tag), regex)
 
-    topdir = '/eos/user/a/aalbert/nanopost/'
-    tag = '10Aug19'
+        topdir = '/eos/user/a/aalbert/nanopost/'
+        tag = '10Aug19'
 
-    fileset_10aug = find_files(pjoin(topdir, tag), regex)
+        fileset_10aug = find_files(pjoin(topdir, tag), regex)
 
-    fileset = {}
-    keys = set(list(fileset_16jul.keys()) + list(fileset_10aug.keys()))
-    for key in keys:
-        if key in fileset_10aug:
-            fileset[key] = fileset_10aug[key]
-        else:
-            fileset[key] = fileset_16jul[key]
+        fileset = {}
+        keys = set(list(fileset_16jul.keys()) + list(fileset_10aug.keys()))
+        for key in keys:
+            if key in fileset_10aug:
+                fileset[key] = fileset_10aug[key]
+            else:
+                fileset[key] = fileset_16jul[key]
+    elif 'lpc' in host:
+        topdir = '/eos/uscms/store/user/aandreas/nanopost/'
+        tag = '17Aug19'
+        fileset = find_files_eos(pjoin(topdir, tag), regex)
 
     return fileset

@@ -2,3 +2,5 @@ coffea==0.6.8
 htcondor
 dynaconf
 pyyaml
+gitpython
+tabulate
