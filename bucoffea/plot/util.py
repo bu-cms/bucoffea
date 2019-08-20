@@ -94,7 +94,7 @@ def merge_extensions(histogram, acc, reweight_pu=True):
             sumw_pileup[base] += acc['sumw_pileup'][d]
             nevents[base] += acc['nevents'][d]
 
-    histogram = histogram.group(hist.Cat("dataset", "Primary dataset"), "dataset", mapping)
+    histogram = histogram.group("dataset", hist.Cat("dataset", "Primary dataset"), mapping)
     histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
 
     pu_renorm = { k : nevents[k] / sumw_pileup[k] for k in sumw_pileup.keys()}
@@ -177,7 +177,7 @@ def merge_datasets(histogram):
             mapping[ds] = [ds]
 
     # Apply the mapping
-    histogram = histogram.group(hist.Cat("dataset", "Primary dataset"), "dataset", mapping)
+    histogram = histogram.group("dataset",hist.Cat("dataset", "Primary dataset"),  mapping)
 
     return histogram
 
