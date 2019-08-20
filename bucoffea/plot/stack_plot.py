@@ -38,7 +38,7 @@ class Style():
         }
 
 
-def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack/',ylim=None):
+def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack/', integrate=None, ylim=None):
     """Creates a data vs MC comparison plot
 
     :param acc: Accumulator (processor output)
@@ -52,6 +52,14 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
         h = h.rebin(h.axis(newax.name), newax)
     except KeyError:
         pass
+
+    # Integrate over an extra axis
+    inte_tag=""
+    if integrate:
+        (inte_axis, inte_low, inte_high) = integrate
+        h = h.integrate(inte_axis,slice(inte_low,inte_high)) #can add an overflow option here
+        inte_tag+="_"+inte_axis+"_"+str(inte_low)+"_"+str(inte_high)
+
 
     # Step 1: Merge extension samples together
     # Extension samples are separate MC samples for identical physics processes
@@ -71,7 +79,7 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
 
     # Step 4: Pick the region we want to look at
     # E.g. cr_2m_j = Di-Muon control region with monojet selection
-    h = h.project(h.axis('region'),region)
+    h = h.integrate(h.axis('region'),region)
 
 
     # Plotting
@@ -113,7 +121,7 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
     ax.legend(title=s.region_names[region],ncol=1)
 
     # Ratio plot
-    hist.plotratio(h[data].project('dataset'), h[mc].project('dataset'),
+    hist.plotratio(h[data].integrate('dataset'), h[mc].integrate('dataset'),
                 ax=rax,
                 denom_fill_opts={},
                 guide_opts={},
@@ -138,8 +146,8 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
     ax.set_ylabel('Events / Bin width')
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    fig.savefig(pjoin(outdir,f"{region}_{distribution}_{year}.pdf"))
-    print("saved plot file in "+str(pjoin(outdir,f"{region}_{distribution}_{year}.pdf")))
+    fig.savefig(pjoin(outdir,f"{region}_{distribution}{inte_tag}_{year}.pdf"))
+    print("saved plot file in "+str(pjoin(outdir,f"{region}_{distribution}{inte_tag}_{year}.pdf")))
     plt.close('all')
 
 def main():

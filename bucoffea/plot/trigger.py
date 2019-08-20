@@ -63,9 +63,9 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
     ds = f'{dataset}_{year}'
 
     # Pick dataset and regions
-    h = h.project(h.axis('dataset'), ds)
-    hnum = h.project(h.axis('region'),f'tr_{region_tag}_num')
-    hden = h.project(h.axis('region'),f'tr_{region_tag}_den')
+    h = h.integrate(h.axis('dataset'), ds)
+    hnum = h.integrate(h.axis('region'),f'tr_{region_tag}_num')
+    hden = h.integrate(h.axis('region'),f'tr_{region_tag}_den')
 
     # Recoil plot
     try:
