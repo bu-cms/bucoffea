@@ -390,6 +390,11 @@ def monojet_regions(cfg):
     regions['cr_g_j'] = cr_g_cuts + j_cuts
     regions['cr_g_v'] = cr_g_cuts + v_cuts
 
+    if not cfg.RUN.MONOV:
+        keys_to_remove = [ x for x in regions.keys() if x.endswith('_v')]
+        for key in keys_to_remove:
+            regions.pop(key)
+
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
         # num = numerator, den = denominator

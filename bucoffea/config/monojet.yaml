@@ -99,8 +99,8 @@ default:
         - 30682767
         - 79123963
         - 51393664
-    trigger_study: True
-
+    trigger_study: False
+    monov: False
   triggers:
     ht:
       gammaeff:
