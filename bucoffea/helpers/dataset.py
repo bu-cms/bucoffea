@@ -3,8 +3,12 @@ import re
 def is_lo_z(dataset):
     return bool(re.match('(DY|Z)(\d*)Jet.*(mg|MLM).*', dataset))
 
+
 def is_lo_w(dataset):
     return bool(re.match('W(\d*)Jet.*(mg|MLM).*', dataset))
+
+def is_lo_g(dataset):
+    return bool(re.match('GJets.*', dataset))
 
 def is_nlo_z(dataset):
     return bool(re.match('(DY|Z)(\d*)Jet.*FXFX.*', dataset))

@@ -5,6 +5,7 @@ from collections import defaultdict
 from pprint import pprint
 
 import numpy as np
+import yaml
 from coffea import hist
 from coffea.processor.accumulator import dict_accumulator
 from coffea.util import load, save
@@ -182,17 +183,28 @@ def merge_datasets(histogram):
 
 
 def load_xs():
-    """Function to read per-sample cross sections from fileself.
+    """Function to read per-sample cross sections from file.
 
     :return: Mapping dataset -> cross-section
     :rtype: dict
     """
-    xsraw = np.loadtxt(bucoffea_path('data/datasets/xs/xs.txt'),dtype=str)
-    xs = {}
+    xsfile = bucoffea_path('data/datasets/xs/xs.yml')
+    with open(xsfile,'r') as f:
+        xs_yml = yaml.load(f, Loader=yaml.FullLoader)
 
-    # Convert from CMS-style dataset names to short names
-    for full, val, _, _ in xsraw:
-        xs[short_name(full)] = float(val)
+    # See the documentation in data/datasets/xs/README.md
+    # for more information on how the XS is chosen.
+    xs = {}
+    loading_priority = ['nnlo','nlo','gen']
+    for dataset, xs_dict in xs_yml.items():
+        if 'use' in xs_dict:
+            key_to_use = xs_dict['use']
+        else:
+            for key in loading_priority:
+                if key in xs_dict:
+                    key_to_use = key
+                    break
+        xs[dataset] = xs_dict[key_to_use]
 
     # Data sets that only exist as extensions
     # cause problems later on, so we duplicate the XS

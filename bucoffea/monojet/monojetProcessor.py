@@ -8,7 +8,7 @@ from dynaconf import settings as cfg
 
 from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, setup_gen_candidates,monojet_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi
-from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_nlo_z, is_nlo_w, is_data, extract_year
+from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_lo_g, is_nlo_z, is_nlo_w, is_data, extract_year
 
 
 def mask_or(df, masks):
@@ -124,6 +124,11 @@ class monojetProcessor(processor.ProcessorABC):
         jet_acceptance = np.abs(ak4.eta)<2.4
         leadak4_index=ak4.pt.argmax()
 
+        elejet_pairs = ak4[:,:1].cross(electrons)
+        df['dREleJet'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
+        muonjet_pairs = ak4[:,:1].cross(muons)
+        df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
+
         # B tagged ak4
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
         jet_btag_val = getattr(ak4, cfg.BTAG.algo)
@@ -148,8 +153,9 @@ class monojetProcessor(processor.ProcessorABC):
 
 
         # Triggers
+        pass_all = np.ones(df.size)==1
+        pass_none = np.ones(df.size)==1
         if cfg.RUN.SYNC: # Synchronization mode
-            pass_all = np.ones(df.size)==1
             selection.add('filt_met', pass_all)
             selection.add('trig_met', pass_all)
             selection.add('trig_ele', pass_all)
@@ -172,7 +178,9 @@ class monojetProcessor(processor.ProcessorABC):
                     trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
                 elif "EGamma" in dataset:
                     # 2018 has everything in one stream, so simple OR
-                    trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+                    trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+                else:
+                    trig_ele = pass_none
             else:
                 trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
 
@@ -181,13 +189,12 @@ class monojetProcessor(processor.ProcessorABC):
             # Photon trigger:
             if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
                 trig_photon = mask_or(df, cfg.TRIGGERS.PHOTON.SINGLE)
-
             else:
-                trig_photon = np.zeros(df.size)==0
+                trig_photon = pass_none
             selection.add('trig_photon', trig_photon)
 
             for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
-                if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
+                if (not df['is_data']) or ('JetHT' in dataset):
                     selection.add(trgname, df[trgname])
                 else:
                     selection.add(trgname, np.ones(df.size)==1)
@@ -283,15 +290,28 @@ class monojetProcessor(processor.ProcessorABC):
         if df['has_lhe_v_pt']:
             output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
 
+        if 'LHE_Njets' in df:
+            output['lhe_njets'].fill(dataset=dataset, multiplicity=df['LHE_Njets'])
+        if 'LHE_HT' in df:
+            output['lhe_ht'].fill(dataset=dataset, ht=df['LHE_HT'])
+        if 'LHE_HTIncoming' in df:
+            output['lhe_htinc'].fill(dataset=dataset, ht=df['LHE_HTIncoming'])
+
         # Weights
         evaluator = monojet_evaluator(cfg)
 
 
         weight = np.ones(df.size)
         weight_nopu = np.ones(df.size)
+        weight_nopref = np.ones(df.size)
         all_weights = {}
         if not df['is_data']:
             all_weights['gen'] = df['Generator_weight']
+
+            try:
+                all_weights['prefire'] = df['PrefireWeight']
+            except KeyError:
+                all_weights['prefire'] = np.ones(df.size)
 
             # Muon ID and Isolation for tight and loose WP
             # Function of pT, eta (Order!)
@@ -319,6 +339,8 @@ class monojetProcessor(processor.ProcessorABC):
                 all_weights["theory"] = evaluator["qcd_ew_nlo_w"](gen_v_pt)
             elif df['is_lo_z']:
                 all_weights["theory"] = evaluator["qcd_ew_nlo_z"](gen_v_pt)
+            elif df['is_lo_g']:
+                all_weights["theory"] = evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt)
             else:
                 all_weights["theory"] = np.ones(df.size)
 
@@ -326,6 +348,8 @@ class monojetProcessor(processor.ProcessorABC):
                 weight = weight * iw
                 if name != 'pileup':
                     weight_nopu = weight_nopu * iw
+                if name != 'prefire':
+                    weight_nopref = weight_nopref * iw
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
@@ -423,17 +447,35 @@ class monojetProcessor(processor.ProcessorABC):
             # All ak4
             # This is a workaround to create a weight array of the right dimension
             w_alljets = weight_shape(ak4[mask].eta, weight[mask])
-
+            w_alljets_nopref = weight_shape(ak4[mask].eta, weight_nopref[mask])
 
             ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
+
+            ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
+            ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
+            ezfill('ak4_pt_nopref',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets_nopref)
 
             # Leading ak4
             w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], weight[mask])
             ezfill('ak4_eta0',   jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_phi0',   jetphi=ak4[leadak4_index].phi[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_pt0',    jetpt=ak4[leadak4_index].pt[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_ptraw0',    jetpt=ak4[leadak4_index].ptraw[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_chf0',    frac=ak4[leadak4_index].chf[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_nhf0',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_nconst0',    nconst=ak4[leadak4_index].nconst[mask].flatten(),      weight=w_leadak4)
+
+            ezfill('drelejet',    dr=df['dREleJet'][mask],      weight=weight[mask])
+            ezfill('drmuonjet',    dr=df['dRMuonJet'][mask],      weight=weight[mask])
+            ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask],  weight=weight[mask])
+
+            # Two-dimensional
+            ezfill('ak4_pt0_eta0', jetpt=ak4[leadak4_index].pt[mask].flatten(), jeteta=ak4[leadak4_index].eta[mask].flatten(), weight=w_leadak4)
+            ezfill('ak4_pt0_chf0', jetpt=ak4[leadak4_index].pt[mask].flatten(), frac=ak4[leadak4_index].chf[mask].flatten(), weight=w_leadak4)
+            ezfill('ak4_pt0_nhf0', jetpt=ak4[leadak4_index].pt[mask].flatten(), frac=ak4[leadak4_index].nhf[mask].flatten(), weight=w_leadak4)
+            ezfill('ak4_pt0_nconst0', jetpt=ak4[leadak4_index].pt[mask].flatten(), nconst=ak4[leadak4_index].nconst[mask].flatten(), weight=w_leadak4)
 
             # AK8 jets
             if region=='inclusive' or region.endswith('v'):
@@ -472,6 +514,7 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('recoil_phi',         phi=df["recoil_phi"][mask],      weight=weight[mask] )
             ezfill('recoil_noweight',    recoil=df["recoil_pt"][mask],      weight=np.ones(weight[mask].size) )
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weight[mask] )
+            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=weight[mask] )
 
             # Muons
             if '_1m_' in region or '_2m_' in region:
@@ -519,7 +562,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], weight[mask])
-                ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask].flatten(),  weight=weight[mask])
+
 
             # PV
             ezfill('npv', nvtx=df['PV_npvs'][mask], weight=weight[mask])

@@ -33,10 +33,12 @@ def monojet_accumulator(cfg):
     dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
+    nconst_ax = Bin("nconst", r"Number of constituents", 100, -0.5, 99.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
-    dr_ax = Bin("dr", r"$\Delta R$", 20, 0, 2)
+    dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 200, 0, 1000)
+    ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 200, 0, 4000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
@@ -52,10 +54,13 @@ def monojet_accumulator(cfg):
 
     nvtx_ax = Bin('nvtx','Number of vertices',100,-0.5,99.5)
     rho_ax = Bin('rho','Energy density',100, 0, 100)
-
+    frac_ax = Bin('frac','Fraction', 50, 0, 1)
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
+    items["lhe_njets"] = Hist("Counts", dataset_ax, multiplicity_ax)
+    items["lhe_ht"] = Hist("Counts", dataset_ax, ht_ax)
+    items["lhe_htinc"] = Hist("Counts", dataset_ax, ht_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["met_noweight"] = Hist("Counts", dataset_ax, region_ax, met_ax)
@@ -64,11 +69,23 @@ def monojet_accumulator(cfg):
     items["recoil_noweight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
 
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak4_ptraw0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
+    items["ak4_pt0_chf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, frac_ax)
+    items["ak4_pt0_nhf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, frac_ax)
+    items["ak4_pt0_nconst0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, nconst_ax)
+    items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax)
+
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["ak4_pt_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak4_eta_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
     items["ak8_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -88,6 +105,7 @@ def monojet_accumulator(cfg):
 
     items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
+    items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
 
     # Multiplicity histograms
     for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
@@ -119,6 +137,8 @@ def monojet_accumulator(cfg):
     items['photon_pt0_recoil'] = Hist("Counts", dataset_ax, region_ax, pt_ax, recoil_ax)
 
     items['drphotonjet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
+    items['drelejet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
+    items['drmuonjet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
     # One cutflow counter per region
     regions = monojet_regions(cfg).keys()
@@ -264,6 +284,8 @@ def setup_candidates(df, cfg):
         # nef=df['Jet_neEmEF'],
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
+        ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
+        nconst=df['Jet_nConstituents']
         # clean=df['Jet_cleanmask']
         # cef=df['Jet_chEmEF'],
     )
@@ -329,6 +351,9 @@ def monojet_regions(cfg):
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_v'] = ['trig_met'] + common_cuts + v_cuts
     regions['sr_j'] = ['trig_met'] + common_cuts + j_cuts
+
+    regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
+    regions['cr_nofilt_j'].remove('filt_met')
 
     # Dimuon CR
     cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
