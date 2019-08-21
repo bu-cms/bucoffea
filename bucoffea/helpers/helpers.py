@@ -83,3 +83,68 @@ def object_overlap(toclean, cleanagainst, dr=0.4):
 
     return delta_r.min() > dr
 
+
+
+def mask_or(df, masks):
+    """Returns the OR of the masks in the list
+
+    :param df: Data frame
+    :type df: LazyDataFrame
+    :param masks: Mask names as saved in the df
+    :type masks: List
+    :return: OR of all masks for each event
+    :rtype: array
+    """
+    # Start with array of False
+    decision = np.ones(df.size)==0
+
+    # Flip to true if any is passed
+    for t in masks:
+        try:
+            decision = decision | df[t]
+        except KeyError:
+            continue
+    return decision
+
+def mask_and(df, masks):
+    """Returns the AND of the masks in the list
+
+    :param df: Data frame
+    :type df: LazyDataFrame
+    :param masks: Mask names as saved in the df
+    :type masks: List
+    :return: OR of all masks for each event
+    :rtype: array
+    """
+    # Start with array of False
+    decision = np.ones(df.size)==1
+
+    # Flip to true if any is passed
+    for t in masks:
+        try:
+            decision = decision & df[t]
+        except KeyError:
+            continue
+    return decision
+
+
+from coffea.lookup_tools import extractor
+
+def evaluator_from_config(cfg):
+    """Initiates the SF evaluator and populates it with the right values
+
+    :param cfg: Configuration
+    :type cfg: DynaConf object
+    :return: Ready-to-use SF evaluator
+    :rtype: coffea.lookup_tools.evaluator
+    """
+    ext = extractor()
+
+    for sfname, definition in cfg.SF.items():
+        fpath = bucoffea_path(definition['file'])
+        ext.add_weight_sets([f"{sfname} {definition['histogram']} {fpath}"])
+
+    ext.finalize()
+
+    evaluator = ext.make_evaluator()
+    return evaluator

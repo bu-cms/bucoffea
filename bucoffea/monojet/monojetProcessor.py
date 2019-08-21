@@ -6,52 +6,9 @@ import coffea.processor as processor
 
 from dynaconf import settings as cfg
 
-from bucoffea.monojet.definitions import monojet_accumulator, monojet_evaluator, setup_candidates, setup_gen_candidates,monojet_regions
-from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi
+from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, setup_gen_candidates, monojet_regions
+from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi,mask_and, mask_or, evaluator_from_config
 from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_lo_g, is_nlo_z, is_nlo_w, is_data, extract_year
-
-
-def mask_or(df, masks):
-    """Returns the OR of the masks in the list
-
-    :param df: Data frame
-    :type df: LazyDataFrame
-    :param masks: Mask names as saved in the df
-    :type masks: List
-    :return: OR of all masks for each event
-    :rtype: array
-    """
-    # Start with array of False
-    decision = np.ones(df.size)==0
-
-    # Flip to true if any is passed
-    for t in masks:
-        try:
-            decision = decision | df[t]
-        except KeyError:
-            continue
-    return decision
-
-def mask_and(df, masks):
-    """Returns the AND of the masks in the list
-
-    :param df: Data frame
-    :type df: LazyDataFrame
-    :param masks: Mask names as saved in the df
-    :type masks: List
-    :return: OR of all masks for each event
-    :rtype: array
-    """
-    # Start with array of False
-    decision = np.ones(df.size)==1
-
-    # Flip to true if any is passed
-    for t in masks:
-        try:
-            decision = decision & df[t]
-        except KeyError:
-            continue
-    return decision
 
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
@@ -299,7 +256,7 @@ class monojetProcessor(processor.ProcessorABC):
             output['lhe_htinc'].fill(dataset=dataset, ht=df['LHE_HTIncoming'])
 
         # Weights
-        evaluator = monojet_evaluator(cfg)
+        evaluator = evaluator_from_config(cfg)
 
 
         weight = np.ones(df.size)
