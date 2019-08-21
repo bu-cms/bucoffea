@@ -1,6 +1,8 @@
 import hashlib
 import os
+import random
 import re
+import string
 from collections import defaultdict
 from pprint import pprint
 
@@ -47,19 +49,46 @@ def acc_from_dir(indir):
         t = tqdm(total=len(files), desc='Merging input files')
 
         # Recursive merging
-        to_merge = list(map(load,files))
+        to_merge = files
 
-        # Remove first two items from list,
-        # merge them and insert in the back
-        while len(to_merge) > 1:
-            t.update()
+        # Use temporary files to store intermediate
+        # merger results
+        tmp_files = []
+        def load_and_remove(path):
+            data = load(path)
+            os.remove(path)
+            return data
+
+
+        def next():
+            '''Get next item to merge'''
             x = to_merge.pop(0)
-            y = to_merge.pop(0)
-            to_merge.append(x+y)
+            if isinstance(x, str):
+                if x in tmp_files:
+                    tmp_files.remove(x)
+                    x = load_and_remove(x)
+                else:
+                    x = load(x)
+            return x
+
+        while len(to_merge) > 1:
+            # Remove first two items from list,
+            # merge them and insert in the back
+            t.update()
+
+            x = next()
+            y = next()
+
+            tmp = "/tmp/tmp_bucoffea_merge_" + "".join(random.sample(string.ascii_uppercase+string.digits,24))
+            merged = x+y
+            save(merged, tmp)
+            to_merge.append(tmp)
+            tmp_files.append(tmp)
+
         t.update()
         assert(len(to_merge)==1)
 
-        acc = to_merge[0]
+        acc = next()
         save(acc, cache)
         return acc
 
