@@ -38,7 +38,7 @@ def vbfhinv_accumulator(cfg):
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
-    deta_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 10)
+    deta_ax = Bin("deta", r"$\Delta\phi$", 50, 0, 10)
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
@@ -81,6 +81,14 @@ def vbfhinv_accumulator(cfg):
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
+    
+    items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak4_ptraw1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak4_eta1"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak4_phi1"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["ak4_chf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nhf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nconst1"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
 
     items["ak4_pt0_chf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
     items["ak4_pt0_nhf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)

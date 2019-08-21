@@ -126,8 +126,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # AK4 dijet
         diak4 = ak4[:,:2].distincts()
-        leadak4_pt_eta = (diak4.i0.pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (diak4.i0.eta > cfg.SELECTION.SIGNAL.LEADAK4.ETA)
-        trailak4_pt_eta = (diak4.i1.pt > cfg.SELECTION.SIGNAL.TRAILAK4.PT) & (diak4.i1.eta > cfg.SELECTION.SIGNAL.TRAILAK4.ETA)
+        leadak4_pt_eta = (diak4.i0.pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (diak4.i0.eta < cfg.SELECTION.SIGNAL.LEADAK4.ETA)
+        trailak4_pt_eta = (diak4.i1.pt > cfg.SELECTION.SIGNAL.TRAILAK4.PT) & (diak4.i1.eta < cfg.SELECTION.SIGNAL.TRAILAK4.ETA)
         
         leadak4_id = diak4.i0.tightId & (diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) &  (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)
         trailak4_id = diak4.i1.tightId & (diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) &  (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)
@@ -391,7 +391,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             ezfill('dphijj',             dphi=df["dphijj"][mask],   weight=weight[mask] )
             ezfill('detajj',             deta=df["detajj"][mask],   weight=weight[mask] )
-            ezfill('mjj',                mass=df["mjj"][mask],      weight=weight[mask] )
+            ezfill('mjj',                mjj=df["mjj"][mask],      weight=weight[mask] )
 
             # Muons
             if '_1m_' in region or '_2m_' in region:
@@ -428,7 +428,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             if '_g_' in region:
                 w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],weight[mask]);
                 ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
-                ezfill('photon_pt0_noweight',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=np.ones(w_leading_photon.size))
                 ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
