@@ -357,20 +357,23 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_pt_nopref',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets_nopref)
 
             # Leading ak4
-            w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], weight[mask])
-            ezfill('ak4_eta0',   jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
-            ezfill('ak4_phi0',   jetphi=ak4[leadak4_index].phi[mask].flatten(),    weight=w_leadak4)
-            ezfill('ak4_pt0',    jetpt=ak4[leadak4_index].pt[mask].flatten(),      weight=w_leadak4)
-            ezfill('ak4_ptraw0',    jetpt=ak4[leadak4_index].ptraw[mask].flatten(),      weight=w_leadak4)
-            ezfill('ak4_chf0',    frac=ak4[leadak4_index].chf[mask].flatten(),      weight=w_leadak4)
-            ezfill('ak4_nhf0',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
-            ezfill('ak4_nconst0',    nconst=ak4[leadak4_index].nconst[mask].flatten(),      weight=w_leadak4)
+            w_diak4 = weight_shape(diak4.pt[mask], weight[mask])
+            ezfill('ak4_eta0',      jeteta=diak4.i0.eta[mask].flatten(),    weight=w_diak4)
+            ezfill('ak4_phi0',      jetphi=diak4.i0.phi[mask].flatten(),    weight=w_diak4)
+            ezfill('ak4_pt0',       jetpt=diak4.i0.pt[mask].flatten(),      weight=w_diak4)
+            ezfill('ak4_ptraw0',    jetpt=diak4.i0.ptraw[mask].flatten(),   weight=w_diak4)
+            ezfill('ak4_chf0',      frac=diak4.i0.chf[mask].flatten(),      weight=w_diak4)
+            ezfill('ak4_nhf0',      frac=diak4.i0.nhf[mask].flatten(),      weight=w_diak4)
+            ezfill('ak4_nconst0',   nconst=diak4.i0.nconst[mask].flatten(), weight=w_diak4)
 
-            # Two-dimensional
-            ezfill('ak4_pt0_eta0', jetpt=ak4[leadak4_index].pt[mask].flatten(), jeteta=ak4[leadak4_index].eta[mask].flatten(), weight=w_leadak4)
-            ezfill('ak4_pt0_chf0', jetpt=ak4[leadak4_index].pt[mask].flatten(), frac=ak4[leadak4_index].chf[mask].flatten(), weight=w_leadak4)
-            ezfill('ak4_pt0_nhf0', jetpt=ak4[leadak4_index].pt[mask].flatten(), frac=ak4[leadak4_index].nhf[mask].flatten(), weight=w_leadak4)
-            ezfill('ak4_pt0_nconst0', jetpt=ak4[leadak4_index].pt[mask].flatten(), nconst=ak4[leadak4_index].nconst[mask].flatten(), weight=w_leadak4)
+            # Trailing ak4
+            ezfill('ak4_eta1',      jeteta=diak4.i1.eta[mask].flatten(),    weight=w_diak4)
+            ezfill('ak4_phi1',      jetphi=diak4.i1.phi[mask].flatten(),    weight=w_diak4)
+            ezfill('ak4_pt1',       jetpt=diak4.i1.pt[mask].flatten(),      weight=w_diak4)
+            ezfill('ak4_ptraw1',    jetpt=diak4.i1.ptraw[mask].flatten(),   weight=w_diak4)
+            ezfill('ak4_chf1',      frac=diak4.i1.chf[mask].flatten(),      weight=w_diak4)
+            ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
+            ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
@@ -380,13 +383,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # MET
             ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=weight[mask] )
             ezfill('met',                met=df["MET_pt"][mask],            weight=weight[mask] )
-            ezfill('met_phi',            phi=df["MET_phi"][mask],            weight=weight[mask] )
-            ezfill('met_noweight',       met=df["MET_pt"][mask],            weight=np.ones(weight[mask].size) )
+            ezfill('met_phi',            phi=df["MET_phi"][mask],           weight=weight[mask] )
             ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=weight[mask] )
-            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],      weight=weight[mask] )
-            ezfill('recoil_noweight',    recoil=df["recoil_pt"][mask],      weight=np.ones(weight[mask].size) )
+            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],        weight=weight[mask] )
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weight[mask] )
-            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=weight[mask] )
+            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask], weight=weight[mask] )
+
+            ezfill('dphijj',             dphi=df["dphijj"][mask],   weight=weight[mask] )
+            ezfill('detajj',             deta=df["detajj"][mask],   weight=weight[mask] )
+            ezfill('mjj',                mass=df["mjj"][mask],      weight=weight[mask] )
 
             # Muons
             if '_1m_' in region or '_2m_' in region:

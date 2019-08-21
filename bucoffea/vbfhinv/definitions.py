@@ -24,6 +24,7 @@ def vbfhinv_accumulator(cfg):
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 200, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
 
+    mjj_ax = Bin("mjj", r"$M_{jj}$ (GeV)", 100, 0, 5000)
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     jet_pt_ax_coarse = Bin("jetpt", r"$p_{T}$ (GeV)", 5, 0, 500)
     jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
@@ -37,6 +38,7 @@ def vbfhinv_accumulator(cfg):
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
+    deta_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 10)
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
@@ -65,10 +67,12 @@ def vbfhinv_accumulator(cfg):
     items["lhe_htinc"] = Hist("Counts", dataset_ax, ht_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["met_noweight"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["recoil_noweight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+
+    items["mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
+    items["dphijj"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
+    items["detajj"] = Hist("Counts", dataset_ax, region_ax, deta_ax)
 
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_ptraw0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -91,21 +95,6 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
-    items["ak8_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["ak8_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["ak8_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-    items["ak8_mass0"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
-    items["ak8_tau210"] = Hist("Counts", dataset_ax, region_ax, tau21_ax)
-    items["ak8_wvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
-    items["ak8_wvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
-    items["ak8_zvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
-    items["ak8_zvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
-
-    items["ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["ak8_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-    items["ak8_mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
-
     items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
@@ -117,8 +106,6 @@ def vbfhinv_accumulator(cfg):
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["muon_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["muons_hltmatch_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["muons_hltmatch_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["muon_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
     items["dimuon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["dimuon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
@@ -133,15 +120,10 @@ def vbfhinv_accumulator(cfg):
     items["dielectron_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
 
     items['photon_pt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items['photon_pt0_noweight'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
     items['photon_pt0_recoil'] = Hist("Counts", dataset_ax, region_ax, pt_ax, recoil_ax)
-
-    items['drphotonjet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
-    items['drelejet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
-    items['drmuonjet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
     # One cutflow counter per region
     regions = vbfhinv_regions(cfg).keys()
