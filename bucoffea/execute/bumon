@@ -27,6 +27,9 @@ def main(stdscr):
     curses.init_pair(3, curses.COLOR_WHITE, -1)
 
     directories = sys.argv[1:]
+    for directory in directories:
+        if not os.path.exists(directory):
+            raise RuntimeError(f"Directory does not exist: {directory}. Please check your arguments.")
 
     def read_logs():
         log_list = []
