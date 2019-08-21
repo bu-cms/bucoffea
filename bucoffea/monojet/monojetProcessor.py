@@ -107,12 +107,12 @@ class monojetProcessor(processor.ProcessorABC):
         df["minDPhiJetMet"] = min_dphi_jet_met(ak4, df['MET_phi'], njet=4, ptmin=30)
         selection = processor.PackedSelection()
 
-        selection.add('inclusive', np.ones(df.size)==1)
 
 
         # Triggers
         pass_all = np.ones(df.size)==1
-        pass_none = np.ones(df.size)==1
+        pass_none = ~pass_all
+        selection.add('inclusive', pass_all)
         if cfg.RUN.SYNC: # Synchronization mode
             selection.add('filt_met', pass_all)
             selection.add('trig_met', pass_all)
