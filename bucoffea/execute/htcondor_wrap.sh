@@ -18,8 +18,6 @@ fi
 if [ ! -z "${VIRTUAL_ENV}" ]; then
     echo "Found VIRTUAL_ENV variable."
     source ${VIRTUAL_ENV}/bin/activate
-    cp "${BUCOFFEAEXECUTABLE}" .
-    executable=$(basename "${BUCOFFEAEXECUTABLE}")
 else
     tar xf *tgz
     rm -rvf *tgz
