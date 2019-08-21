@@ -7,9 +7,9 @@ import coffea.processor as processor
 from dynaconf import settings as cfg
 
 from bucoffea.vbfhinv.definitions import vbfhinv_accumulator, vbfhinv_regions
-from bucoffea.monojet.definitions import monojet_evaluator, setup_candidates, setup_gen_candidates
+from bucoffea.monojet.definitions import setup_candidates, setup_gen_candidates
 from bucoffea.monojet.monojetProcessor import trigger_selection
-from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi, mask_and, mask_or
+from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi, mask_and, mask_or, evaluator_from_config
 from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_lo_g, is_nlo_z, is_nlo_w, is_data, extract_year
 
 
@@ -95,7 +95,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
         jet_btag_val = getattr(ak4, cfg.BTAG.algo)
         jet_btagged = jet_btag_val > btag_cut
-        bjets = ak4[ np.abs(ak4.eta)<2.4 \
+        bjets = ak4[ (np.abs(ak4.eta)<2.4) \
                      & jet_btagged \
                      & (ak4.pt>20) ]
 
@@ -136,6 +136,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['dphijj'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
         df['detajj'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
 
+        selection.add('two_jets', diak4.counts>0)
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
         selection.add('trailak4_pt_eta', trailak4_pt_eta.any())
         selection.add('leadak4_id',leadak4_id.any())
@@ -199,7 +200,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             output['lhe_htinc'].fill(dataset=dataset, ht=df['LHE_HTIncoming'])
 
         # Weights
-        evaluator = monojet_evaluator(cfg)
+        evaluator = evaluator_from_config(cfg)
 
 
         weight = np.ones(df.size)
@@ -329,8 +330,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             fill_mult('tight_muo_mult',muons[is_tight_muon])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
-            fill_mult('hlt_single_muon_mult',hlt_single_muons)
-            fill_mult('muons_hltmatch_mult',muons_hltmatch)
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
@@ -367,10 +366,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_nhf0',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_nconst0',    nconst=ak4[leadak4_index].nconst[mask].flatten(),      weight=w_leadak4)
 
-            ezfill('drelejet',    dr=df['dREleJet'][mask],      weight=weight[mask])
-            ezfill('drmuonjet',    dr=df['dRMuonJet'][mask],      weight=weight[mask])
-            ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask],  weight=weight[mask])
-
             # Two-dimensional
             ezfill('ak4_pt0_eta0', jetpt=ak4[leadak4_index].pt[mask].flatten(), jeteta=ak4[leadak4_index].eta[mask].flatten(), weight=w_leadak4)
             ezfill('ak4_pt0_chf0', jetpt=ak4[leadak4_index].pt[mask].flatten(), frac=ak4[leadak4_index].chf[mask].flatten(), weight=w_leadak4)
@@ -400,11 +395,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=weight[mask])
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
-
-                # HLT Matched muons
-                w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], weight[mask])
-                ezfill('muons_hltmatch_eta',  eta=muons_hltmatch.eta[mask].flatten(),  weight=w_muons_hltmatch)
-                ezfill('muons_hltmatch_pt',  pt=muons_hltmatch.pt[mask].flatten(),  weight=w_muons_hltmatch)
 
             # Dimuon
             if '_2m_' in region:
