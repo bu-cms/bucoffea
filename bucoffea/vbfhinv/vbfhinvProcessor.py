@@ -6,51 +6,36 @@ import coffea.processor as processor
 
 from dynaconf import settings as cfg
 
-from bucoffea.vbfhinv.definitions import vbfhinv_accumulator, vbfhinv_evaluator, setup_candidates, setup_gen_candidates,vbfhinv_regions
-from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path
-from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_data, extract_year
+from bucoffea.vbfhinv.definitions import vbfhinv_accumulator, vbfhinv_regions
+from bucoffea.monojet.definitions import monojet_evaluator, setup_candidates, setup_gen_candidates
+from bucoffea.monojet.monojetProcessor import trigger_selection
+from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi, mask_and, mask_or
+from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_lo_g, is_nlo_z, is_nlo_w, is_data, extract_year
 
-
-def combine_masks(df, masks):
-    """Returns the OR of the masks in the list
-
-    :param df: Data frame
-    :type df: LazyDataFrame
-    :param masks: Mask names as saved in the df
-    :type masks: List
-    :return: OR of all masks for each event
-    :rtype: array
-    """
-    # Start with array of False
-    decision = np.ones(df.size)==0
-
-    # Flip to true if any is passed
-    for t in masks:
-        try:
-            decision = decision | df[t]
-        except KeyError:
-            continue
-    return decision
 
 class vbfhinvProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
         self._blind=blind
-        self._accumulator = vbfhinv_accumulator()
+        self._configure()
+        self._accumulator = vbfhinv_accumulator(cfg)
 
     @property
     def accumulator(self):
         return self._accumulator
 
-    def _configure(self,df):
-        dataset = df['dataset']
-        self._year = extract_year(dataset)
-
-        # Reload config based on year
+    def _configure(self, df=None):
         cfg.DYNACONF_WORKS="merge_configs"
         cfg.MERGE_ENABLED_FOR_DYNACONF=True
         cfg.SETTINGS_FILE_FOR_DYNACONF = bucoffea_path("config/vbfhinv.yaml")
-        cfg.ENV_FOR_DYNACONF = f"era{self._year}"
+
+        # Reload config based on year
+        if df:
+            dataset = df['dataset']
+            self._year = extract_year(dataset)
+            cfg.ENV_FOR_DYNACONF = f"era{self._year}"
+        else:
+            cfg.ENV_FOR_DYNACONF = f"default"
         cfg.reload()
 
     def process(self, df):
@@ -60,16 +45,20 @@ class vbfhinvProcessor(processor.ProcessorABC):
         dataset = df['dataset']
         df['is_lo_w'] = is_lo_w(dataset)
         df['is_lo_z'] = is_lo_z(dataset)
+        df['is_lo_g'] = is_lo_g(dataset)
+        df['is_nlo_z'] = is_nlo_z(dataset)
+        df['is_nlo_w'] = is_nlo_w(dataset)
+        df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g']
         df['is_data'] = is_data(dataset)
 
-        if not df['is_data']:
+        if df['has_lhe_v_pt']:
             gen_v_pt = df['LHE_Vpt']
 
         # Candidates
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        ak4, ak8, muons, electrons, taus, photons, hlt = setup_candidates(df, cfg)
+        ak4, _, muons, electrons, taus, photons, hlt = setup_candidates(df, cfg)
 
         # Muons
         is_tight_muon = muons.tightId \
@@ -92,15 +81,21 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, df['MET_pt'], df['MET_phi'])).max()
 
-
         # ak4
-        jet_acceptance = np.abs(ak4.eta)<2.4
+        leadak4_index=ak4.pt.argmax()
+
+        elejet_pairs = ak4[:,:1].cross(electrons)
+        df['dREleJet'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
+        muonjet_pairs = ak4[:,:1].cross(muons)
+        df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
+
+
 
         # B tagged ak4
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
         jet_btag_val = getattr(ak4, cfg.BTAG.algo)
         jet_btagged = jet_btag_val > btag_cut
-        bjets = ak4[ jet_acceptance \
+        bjets = ak4[ np.abs(ak4.eta)<2.4 \
                      & jet_btagged \
                      & (ak4.pt>20) ]
 
@@ -111,41 +106,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df["minDPhiJetMet"] = min_dphi_jet_met(ak4, df['MET_phi'], njet=4, ptmin=30)
         selection = processor.PackedSelection()
 
-        selection.add('inclusive', np.ones(df.size)==1)
-
-
         # Triggers
-        if cfg.RUN.SYNC: # Synchronization mode
-            pass_all = np.ones(df.size)==1
-            selection.add('filt_met', pass_all)
-            selection.add('trig_met', pass_all)
-            selection.add('trig_ele', pass_all)
-            selection.add('trig_mu',  pass_all)
+        pass_all = np.ones(df.size)==1
+        pass_none = ~pass_all
+        selection.add('inclusive', pass_all)
+        selection = trigger_selection(selection, df, cfg)
 
-        else:
-            selection.add('filt_met', df['Flag_METFilters'])
-            selection.add('trig_met', combine_masks(df, cfg.TRIGGERS.MET))
-
-            # Trigger overlap
-            if df['is_data']:
-                if "SinglePhoton" in dataset:
-                    trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & (~combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE))
-                else:
-                    trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
-            else:
-                trig_ele = combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | combine_masks(df, cfg.TRIGGERS.ELECTRON.SINGLE)
-
-            selection.add('trig_ele', trig_ele)
-            selection.add('trig_mu', combine_masks(df, cfg.TRIGGERS.MUON.SINGLE))
-            selection.add('trig_ht_for_g_eff', combine_masks(df, cfg.TRIGGERS.HT.GAMMAEFF))
-
-        # Trigger objects
-        hlt_muons = hlt[hlt.id==13]
-        hlt_single_muons = hlt_muons[hlt_muons.filter & 8 == 8]
-        hlt_double_muons = hlt_muons[hlt_muons.filter & 16 == 16]
-
-        selection.add('one_hlt_muon', hlt_single_muons.counts>=1)
-        selection.add('two_hlt_muons', (hlt_single_muons.counts + 2*hlt_double_muons.counts)>=2)
+        selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
 
         # Common selection
         selection.add('veto_ele', electrons.counts==0)
@@ -157,30 +124,25 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
 
-        # AK4 Jet
-        leadak4_index=ak4.pt.argmax()
-        leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
-                         & (np.abs(ak4.eta[leadak4_index]) < cfg.SELECTION.SIGNAL.leadak4.ETA).any()
-        selection.add('leadak4_pt_eta', leadak4_pt_eta)
+        # AK4 dijet
+        diak4 = ak4[:,:2].distincts()
+        leadak4_pt_eta = (diak4.i0.pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (diak4.i0.eta > cfg.SELECTION.SIGNAL.LEADAK4.ETA)
+        trailak4_pt_eta = (diak4.i1.pt > cfg.SELECTION.SIGNAL.TRAILAK4.PT) & (diak4.i1.eta > cfg.SELECTION.SIGNAL.TRAILAK4.ETA)
+        
+        leadak4_id = diak4.i0.tightId & (diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) &  (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)
+        trailak4_id = diak4.i1.tightId & (diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) &  (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)
 
-        selection.add('leadak4_id',(ak4.tightId[leadak4_index] \
-                                                    & (ak4.chf[leadak4_index] >cfg.SELECTION.SIGNAL.leadak4.CHF) \
-                                                    & (ak4.nhf[leadak4_index]<cfg.SELECTION.SIGNAL.leadak4.NHF)).any())
+        df['mjj'] = diak4.mass.max()
+        df['dphijj'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
+        df['detajj'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
 
-        # AK8 Jet
-        leadak8_index=ak8.pt.argmax()
-        leadak8_pt_eta = (ak8.pt.max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
-                         & (np.abs(ak8.eta[leadak8_index]) < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
-        selection.add('leadak8_pt_eta', leadak8_pt_eta)
-
-        selection.add('leadak8_id',(ak8.tightId[leadak8_index]).any())
-
-        # Mono-V selection
-        selection.add('leadak8_tau21', ((ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]) < cfg.SELECTION.SIGNAL.LEADAK8.TAU21).any())
-        selection.add('leadak8_mass', ((ak8.mass[leadak8_index] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
-                                    & (ak8.mass[leadak8_index] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
-
-        selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_tau21", "leadak8_mass"))
+        selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
+        selection.add('trailak4_pt_eta', trailak4_pt_eta.any())
+        selection.add('leadak4_id',leadak4_id.any())
+        selection.add('trailak4_id',trailak4_id.any())
+        selection.add('mjj', df['mjj'] > cfg.SELECTION.SIGNAL.DIJET.MASS)
+        selection.add('dphijj', df['dphijj'] < cfg.SELECTION.SIGNAL.DIJET.DPHI)
+        selection.add('detajj', df['detajj'] > cfg.SELECTION.SIGNAL.DIJET.DETA)
 
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()
@@ -208,33 +170,49 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('two_electrons', electrons.counts==2)
 
         # Single Ele CR
+        selection.add('met_el', df['MET_pt'] > cfg.SELECTION.CONTROL.SINGLEEL.MET)
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
         # Photon CR
-        selection.add('trig_photon', combine_masks(df, cfg.TRIGGERS.PHOTON.SINGLE))
         leadphoton_index=photons.pt.argmax()
 
         is_tight_photon = photons.mediumId \
-                         & (photons.pt > cfg.PHOTON.CUTS.TIGHT.PT) \
                          & (np.abs(photons.eta) < cfg.PHOTON.CUTS.TIGHT.ETA)
 
         selection.add('one_photon', photons.counts==1)
         selection.add('at_least_one_tight_photon', is_tight_photon.any())
+        selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
+        selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
         # Fill histograms
         output = self.accumulator.identity()
 
         # Gen
-        if not df['is_data']:
+        if df['has_lhe_v_pt']:
             output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
 
+        if 'LHE_Njets' in df:
+            output['lhe_njets'].fill(dataset=dataset, multiplicity=df['LHE_Njets'])
+        if 'LHE_HT' in df:
+            output['lhe_ht'].fill(dataset=dataset, ht=df['LHE_HT'])
+        if 'LHE_HTIncoming' in df:
+            output['lhe_htinc'].fill(dataset=dataset, ht=df['LHE_HTIncoming'])
+
         # Weights
-        evaluator = vbfhinv_evaluator(cfg)
+        evaluator = monojet_evaluator(cfg)
+
+
+        weight = np.ones(df.size)
+        weight_nopu = np.ones(df.size)
+        weight_nopref = np.ones(df.size)
         all_weights = {}
-        if df['is_data']:
-            weight = np.ones(df.size)
-        else:
-            weight = df['Generator_weight']
+        if not df['is_data']:
+            all_weights['gen'] = df['Generator_weight']
+
+            try:
+                all_weights['prefire'] = df['PrefireWeight']
+            except KeyError:
+                all_weights['prefire'] = np.ones(df.size)
 
             # Muon ID and Isolation for tight and loose WP
             # Function of pT, eta (Order!)
@@ -253,7 +231,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             all_weights["photon_id_tight"] = evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
 
             # CSEV not split only by EE/EB for now
-            csev_sf_index = 0.5 * photons.barrel + 2.5 * ~photons.barrel
+            csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
             all_weights["photon_csev"] = evaluator['photon_csev'](csev_sf_index).prod()
 
             all_weights["pileup"] = evaluator['pileup'](df['Pileup_nTrueInt'])
@@ -262,10 +240,17 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 all_weights["theory"] = evaluator["qcd_ew_nlo_w"](gen_v_pt)
             elif df['is_lo_z']:
                 all_weights["theory"] = evaluator["qcd_ew_nlo_z"](gen_v_pt)
+            elif df['is_lo_g']:
+                all_weights["theory"] = evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt)
             else:
                 all_weights["theory"] = np.ones(df.size)
-            for iw in all_weights.values():
+
+            for name, iw in all_weights.items():
                 weight = weight * iw
+                if name != 'pileup':
+                    weight_nopu = weight_nopu * iw
+                if name != 'prefire':
+                    weight_nopref = weight_nopref * iw
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
@@ -301,11 +286,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Sum of all weights to use for normalization
         # TODO: Deal with systematic variations
+        output['nevents'][dataset] += df.size
         if not df['is_data']:
             output['sumw'][dataset] +=  df['genEventSumw']
             output['sumw2'][dataset] +=  df['genEventSumw2']
+            output['sumw_pileup'][dataset] +=  all_weights['pileup'].sum()
 
-        regions = vbfhinv_regions()
+        regions = vbfhinv_regions(cfg)
         for region, cuts in regions.items():
             # Blinding
             if(self._blind and df['is_data'] and region.startswith('sr')):
@@ -334,7 +321,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                                   weight=weight[mask]
                                   )
 
-            fill_mult('ak8_mult', ak8)
             fill_mult('ak4_mult', ak4)
             fill_mult('bjet_mult',bjets)
             fill_mult('loose_ele_mult',electrons)
@@ -343,7 +329,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             fill_mult('tight_muo_mult',muons[is_tight_muon])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
-
+            fill_mult('hlt_single_muon_mult',hlt_single_muons)
+            fill_mult('muons_hltmatch_mult',muons_hltmatch)
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
@@ -355,77 +342,116 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # Monitor weights
             for wname, wvalue in all_weights.items():
                 ezfill("weights", weight_type=wname, weight_value=wvalue[mask])
+                ezfill("weights_wide", weight_type=wname, weight_value=wvalue[mask])
 
             # All ak4
             # This is a workaround to create a weight array of the right dimension
             w_alljets = weight_shape(ak4[mask].eta, weight[mask])
+            w_alljets_nopref = weight_shape(ak4[mask].eta, weight_nopref[mask])
 
+            ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
+            ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
+            ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
 
-            ezfill('ak4eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
-            ezfill('ak4pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
+            ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
+            ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
+            ezfill('ak4_pt_nopref',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets_nopref)
 
             # Leading ak4
-            leadak4_indices = ak4.pt.argmax()
-            w_leadak4 = weight_shape(ak4[leadak4_indices].eta[mask], weight[mask])
-            ezfill('ak4eta0',   jeteta=ak4[leadak4_indices].eta[mask].flatten(),    weight=w_leadak4)
-            ezfill('ak4pt0',    jetpt=ak4[leadak4_indices].pt[mask].flatten(),      weight=w_leadak4)
+            w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], weight[mask])
+            ezfill('ak4_eta0',   jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
+            ezfill('ak4_phi0',   jetphi=ak4[leadak4_index].phi[mask].flatten(),    weight=w_leadak4)
+            ezfill('ak4_pt0',    jetpt=ak4[leadak4_index].pt[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_ptraw0',    jetpt=ak4[leadak4_index].ptraw[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_chf0',    frac=ak4[leadak4_index].chf[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_nhf0',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_nconst0',    nconst=ak4[leadak4_index].nconst[mask].flatten(),      weight=w_leadak4)
 
-            # All ak8
-            w_allak8 = weight_shape(ak8.eta[mask], weight[mask])
+            ezfill('drelejet',    dr=df['dREleJet'][mask],      weight=weight[mask])
+            ezfill('drmuonjet',    dr=df['dRMuonJet'][mask],      weight=weight[mask])
+            ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask],  weight=weight[mask])
 
-            ezfill('ak8eta',    jeteta=ak8[mask].eta.flatten(), weight=w_allak8)
-            ezfill('ak8pt',     jetpt=ak8[mask].pt.flatten(),   weight=w_allak8)
-            ezfill('ak8mass',   mass=ak8[mask].mass.flatten(),  weight=w_allak8)
-
-            # Leading ak8
-            leadak8_indices = ak8.pt.argmax()
-            w_leadak8 = weight_shape(ak8[leadak8_indices].eta[mask], weight[mask])
-
-            ezfill('ak8eta0',   jeteta=ak8[leadak8_indices].eta[mask].flatten(),    weight=w_leadak8)
-            ezfill('ak8pt0',    jetpt=ak8[leadak8_indices].pt[mask].flatten(),      weight=w_leadak8 )
-            ezfill('ak8mass0',  mass=ak8[leadak8_indices].mass[mask].flatten(),     weight=w_leadak8)
+            # Two-dimensional
+            ezfill('ak4_pt0_eta0', jetpt=ak4[leadak4_index].pt[mask].flatten(), jeteta=ak4[leadak4_index].eta[mask].flatten(), weight=w_leadak4)
+            ezfill('ak4_pt0_chf0', jetpt=ak4[leadak4_index].pt[mask].flatten(), frac=ak4[leadak4_index].chf[mask].flatten(), weight=w_leadak4)
+            ezfill('ak4_pt0_nhf0', jetpt=ak4[leadak4_index].pt[mask].flatten(), frac=ak4[leadak4_index].nhf[mask].flatten(), weight=w_leadak4)
+            ezfill('ak4_pt0_nconst0', jetpt=ak4[leadak4_index].pt[mask].flatten(), nconst=ak4[leadak4_index].nconst[mask].flatten(), weight=w_leadak4)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
             w_btag = weight_shape(btag[mask], weight[mask])
-            ezfill('ak4btag', btag=btag[mask].flatten(), weight=w_btag )
+            ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
             # MET
-            ezfill('dpfcalo',   dpfcalo=df["dPFCalo"][mask],    weight=weight[mask] )
-            ezfill('met',       met=df["MET_pt"][mask],         weight=weight[mask] )
-            ezfill('recoil',    recoil=df["recoil_pt"][mask],   weight=weight[mask] )
-            ezfill('dphijm',    dphi=df["minDPhiJetMet"][mask], weight=weight[mask] )
+            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=weight[mask] )
+            ezfill('met',                met=df["MET_pt"][mask],            weight=weight[mask] )
+            ezfill('met_phi',            phi=df["MET_phi"][mask],            weight=weight[mask] )
+            ezfill('met_noweight',       met=df["MET_pt"][mask],            weight=np.ones(weight[mask].size) )
+            ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=weight[mask] )
+            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],      weight=weight[mask] )
+            ezfill('recoil_noweight',    recoil=df["recoil_pt"][mask],      weight=np.ones(weight[mask].size) )
+            ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weight[mask] )
+            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=weight[mask] )
 
             # Muons
-            w_allmu = weight_shape(muons.pt[mask], weight[mask])
-            ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
-            ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=weight[mask])
-            ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
-            # Dimuon
-            w_dimu = weight_shape(dimuons.pt[mask], weight[mask])
+            if '_1m_' in region or '_2m_' in region:
+                w_allmu = weight_shape(muons.pt[mask], weight[mask])
+                ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
+                ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=weight[mask])
+                ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
+                ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
 
-            ezfill('dimuon_pt',     pt=dimuons.pt[mask].flatten(),              weight=w_dimu)
-            ezfill('dimuon_eta',    eta=dimuons.eta[mask].flatten(),            weight=w_dimu)
-            ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
+                # HLT Matched muons
+                w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], weight[mask])
+                ezfill('muons_hltmatch_eta',  eta=muons_hltmatch.eta[mask].flatten(),  weight=w_muons_hltmatch)
+                ezfill('muons_hltmatch_pt',  pt=muons_hltmatch.pt[mask].flatten(),  weight=w_muons_hltmatch)
+
+            # Dimuon
+            if '_2m_' in region:
+                w_dimu = weight_shape(dimuons.pt[mask], weight[mask])
+
+                ezfill('dimuon_pt',     pt=dimuons.pt[mask].flatten(),              weight=w_dimu)
+                ezfill('dimuon_eta',    eta=dimuons.eta[mask].flatten(),            weight=w_dimu)
+                ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
 
             # Electrons
-            w_allel = weight_shape(electrons.pt[mask], weight[mask])
-            ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
-            ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=weight[mask])
-            ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
+            if '_1e_' in region or '_2e_' in region:
+                w_allel = weight_shape(electrons.pt[mask], weight[mask])
+                ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
+                ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=weight[mask])
+                ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
+                ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
 
             # Dielectron
-            w_diel = weight_shape(dielectrons.pt[mask], weight[mask])
-            ezfill('dielectron_pt',     pt=dielectrons.pt[mask].flatten(),                  weight=w_diel)
-            ezfill('dielectron_eta',    eta=dielectrons.eta[mask].flatten(),                weight=w_diel)
-            ezfill('dielectron_mass',   dilepton_mass=dielectrons.mass[mask].flatten(),     weight=w_diel)
+            if '_2e_' in region:
+                w_diel = weight_shape(dielectrons.pt[mask], weight[mask])
+                ezfill('dielectron_pt',     pt=dielectrons.pt[mask].flatten(),                  weight=w_diel)
+                ezfill('dielectron_eta',    eta=dielectrons.eta[mask].flatten(),                weight=w_diel)
+                ezfill('dielectron_mass',   dilepton_mass=dielectrons.mass[mask].flatten(),     weight=w_diel)
 
             # Photon
-            w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],weight[mask]);
-            ezfill('photonpt0',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
-            ezfill('photoneta0',    eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
-            ezfill('photonphi0',    phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
+            if '_g_' in region:
+                w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],weight[mask]);
+                ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
+                ezfill('photon_pt0_noweight',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=np.ones(w_leading_photon.size))
+                ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
+                ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
+                ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
 
+                # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], weight[mask])
+
+
+            # PV
+            ezfill('npv', nvtx=df['PV_npvs'][mask], weight=weight[mask])
+            ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=weight[mask])
+
+            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=weight_nopu[mask])
+            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=weight_nopu[mask])
+
+            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=weight[mask])
+            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weight[mask])
+            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=weight_nopu[mask])
+            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weight_nopu[mask])
         return output
 
     def postprocess(self, accumulator):

@@ -1,20 +1,24 @@
 default:
+  dynaconf_include:
+    - monojet.yaml
   test: false
   selection:
     signal:
       recoil: 250    # min
+      dijet:
+        mass: 650
+        dphi: 1.3
+        deta: 1
       leadak4:
-        pt: 100   # min
-        eta: 2.4  # max
+        pt: 80   # min
+        eta: 4.7  # max
         nhf: 0.8  # max
         chf: 0.1  # min
-      leadak8:
-        pt: 250   # min
-        eta: 2.4  # max
-        mass:
-          min: 65
-          max: 105
-        tau21: 0.5 # min
+      trailak4:
+        pt: 40   # min
+        eta: 4.7  # max
+        nhf: 999  # max
+        chf: -999  # min
       mindphijr : 0.5 # min
       dpfcalo : 0.5 # max
     control:
@@ -30,54 +34,7 @@ default:
         mt : 160
       singleel:
         mt: 160
-  tau:
-    cuts:
-      pt: 18
-      eta: 2.3
-  photon:
-    cuts:
-      loose:
-        pt: 15
-        eta: 2.5
-      tight:
-        pt: 175
-        eta: 1.4442
-    branch:
-      id: Photon_cutBasedBitmap
-  muon:
-    cuts:
-      tight:
-        pt : 20
-        eta : 2.4
-        iso : 0.15
-      loose:
-        pt : 10
-        eta : 2.4
-        iso : 0.25
-  electron:
-    cuts:
-      tight:
-        pt : 40
-        eta : 2.5
-      loose:
-        pt : 10
-        eta : 2.5
-        dxy: # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
-          barrel: 0.05
-          endcap: 0.10
-        dz: # https://twiki.cern.ch/twiki/bin/view/CMS/CutBasedElectronIdentificationRun2
-          barrel: 0.10
-          endcap: 0.20
-    branch:
-      id: Electron_cutBased
-
-  sf:
-    qcd_ew_nlo_w:
-      histogram: kfactor_monojet_qcd_ewk
-      file: data/sf/theory/merged_kfactors_wjets.root
-    qcd_ew_nlo_z:
-      histogram: kfactor_monojet_qcd_ewk
-      file: data/sf/theory/merged_kfactors_zjets.root
+  
   run:
     sync: False
     save:
@@ -91,204 +48,3 @@ default:
         - 30682767
         - 79123963
         - 51393664
-
-env:
-  test: false
-
-global:
-  test: false
-
-
-era2016:
-  triggers:
-    met:
-      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight
-  btag:
-    algo: csvv2
-    wp: medium
-    cuts:
-      deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
-        loose : 0.2217
-        medium: 0.6321
-        tight: 0.8953
-      csvv2:
-        loose:  0.5426
-        medium: 0.8484
-        tight: 0.9535
-  electron:
-    branch:
-      id: Electron_cutBased_Sum16
-  sf:
-    pileup:
-      histogram: "sf2017_nominal"
-      file: "data/sf/pileup/pileup.root"
-    pileup_up:
-      histogram: "sf2017_up"
-      file: "data/sf/pileup/pileup.root"
-    pileup_down:
-      histogram: "sf2017_down"
-      file: "data/sf/pileup/pileup.root"
-
-era2017:
-  triggers:
-    met:
-      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight # 40.658837867 fb-1
-      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
-    electron:
-      single:
-        - HLT_Ele35_WPTight_Gsf
-      single_backup:
-        - HLT_Photon200
-    muon:
-      single:
-        - HLT_IsoMu27
-    photon:
-      single:
-        - HLT_Photon200
-    ht:
-      gammaeff:
-        - HLT_PFHT780
-
-  btag:
-    algo: deepcsv
-    wp: medium
-    cuts:
-      csvv2: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-        loose : 0.5803
-        medium : 0.8838
-        tight : 0.9693
-      deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-        loose : 0.1522
-        medium: 0.4941
-        tight: 0.8001
-  sf:
-    ele_reco:
-      histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
-    ele_id_loose:
-      histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2.root
-    ele_id_tight:
-      histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronTight.root
-
-    photon_id_tight:
-      histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_PhotonsMedium.root
-    photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
-      histogram: Tight_ID
-      file: data/sf/egamma/CSEV_ScaleFactors_2017.root
-
-    muon_id_loose:
-      histogram: NUM_LooseID_DEN_genTracks_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ID.root
-    muon_id_tight:
-      histogram: NUM_TightID_DEN_genTracks_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ID.root
-    muon_iso_tight:
-      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
-    muon_iso_loose:
-      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
-    pileup:
-      histogram: "sf2017_nominal"
-      file: "data/sf/pileup/pileup.root"
-    pileup_up:
-      histogram: "sf2017_up"
-      file: "data/sf/pileup/pileup.root"
-    pileup_down:
-      histogram: "sf2017_down"
-      file: "data/sf/pileup/pileup.root"
-
-era2018:
-  triggers:
-    met:
-      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight # 59.735969368 fb-1
-      - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60
-    electron:
-      single:
-        - HLT_Ele32_WPTight_Gsf
-      single_backup:
-        - HLT_Photon200
-    muon:
-      single:
-        - HLT_IsoMu24
-    photon:
-      single:
-        - HLT_Photon200
-    ht:
-      gammaeff:
-      - HLT_PFHT780
-  btag:
-    algo: deepcsv
-    wp: medium
-    cuts:
-      deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
-        loose : 0.1241
-        medium: 0.4184
-        tight: 0.7527
-  sf:
-    ele_reco:
-      histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_egammaEffi_txt_EGM2D_updatedAll.root
-    ele_id_loose:
-      histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_ElectronWPVeto_Fall17V2.root
-    ele_id_tight:
-      histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_ElectronTight.root
-
-    photon_id_tight:
-      histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_PhotonsMedium.root
-    photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
-      histogram: Tight_ID
-      file: data/sf/egamma/CSEV_ScaleFactors_2017.root # TODO: Update to 2018 when available!
-
-    muon_id_loose:
-      histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
-    muon_id_loose_stat:
-      histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta_stat
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
-    muon_id_loose_syst:
-      histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta_syst
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
-    muon_id_tight:
-      histogram: NUM_TightID_DEN_TrackerMuons_pt_abseta
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
-    muon_id_tight_stat:
-      histogram: NUM_TightID_DEN_TrackerMuons_pt_abseta_stat
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
-    muon_id_tight_syst:
-      histogram: NUM_TightID_DEN_TrackerMuons_pt_abseta_syst
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
-    muon_iso_tight:
-      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
-    muon_iso_tight_stat:
-      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta_stat
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
-    muon_iso_tight_sys:
-      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta_syst
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
-    muon_iso_loose:
-      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
-    muon_iso_loose_stat:
-      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_stat
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
-    muon_iso_loose_sys:
-      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_syst
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
-
-    pileup:
-      histogram: "sf2018_nominal"
-      file: "data/sf/pileup/pileup.root"
-    pileup_up:
-      histogram: "sf2018_up"
-      file: "data/sf/pileup/pileup.root"
-    pileup_down:
-      histogram: "sf2018_down"
-      file: "data/sf/pileup/pileup.root"
