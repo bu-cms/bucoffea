@@ -156,7 +156,7 @@ def do_submit(args):
         input_files.append(gridpack_path)
 
     for dataset, files in dataset_files.items():
-        print(f"Submitting dataset: {dataset}.")
+        print(f"Writing submission files for dataset: {dataset}.")
 
         chunks = chunkify(files,int(len(files) / args.filesperjob + 1) )
         for ichunk, chunk in enumerate(chunks):
@@ -224,6 +224,7 @@ def do_submit(args):
                     jobid = condor_submit(jdl)
                     print(f"Submitted job {jobid}")
     if args.async:
+        print('Starting asynchronous submission.')
         p = Pool(processes=8)
         res = p.map_async(condor_submit, jdl_to_submit)
         res.wait()

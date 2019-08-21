@@ -47,16 +47,15 @@ Currently, HTCondor submission is used to run over large numbers of input files.
 To get the idea, you run a test job to process some of the SingleMuon data:
 
 ```bash
-./execute//execute.py -j4 monojet --datasrc 'eos' submit --dataset 'SingleMuon_2017B' --filesperjob 30 --name "test_submission" --no-prefetch --async
+buexec -j4  --datasrc 'eos' monojet submit --dataset 'SingleMuon_2017B'--async --filesperjob 30 --name "test_submission"
 ```
 
 This will submit an HTCondor job running on 4 CPUs per node (`-j4`), to run over pre-processed data from my EOS area (`--datasrc eos`). Files related to job submission, as well as the job output can be found in the `submission/test_submission/` directory. Check it out!
+The submission script will automatically detect whether you are running on lxplus or at FNAL and will adapt accordingly.
 
-Note that the worker jobs rely on accessing all the executable code from the virtual environment you are using to submit the jobs. Therefore, make sure to have your virtual environment accessible on a shared file system like AFS.
+If you are running a larger number of jobs, it's easy to loose track of them. The `bumon` tool will allow you to track all jobs belonging to a given submission. Usage is easy:
 
-If you are running a larger number of jobs, it's easy to loose track of them. The `monitor.py` script will allow you to track all jobs belonging to a given submission. Usage is easy:
-
-`./execute/monitor.py submission/*test_submission/files`
+`bumon submission/test_submission/`
 
 ### XROOTD
 Ignore for now.
