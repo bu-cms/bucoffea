@@ -41,7 +41,20 @@ This example will run over two files from two different datasets, produce MET an
 Have a look at the code to see how this works under the hood. Also check out the [examples in the Coffea repository](https://github.com/CoffeaTeam/coffea/tree/master/binder), which are much more detailed than this one.
 
 
-### Running over larger data sets
+### Running the analysis
+
+#### Just over a few files
+
+Check out the `./scripts/run_quick_monojet.py` script to see how to quickly run over a few handpicked files, which may be useful for testing. The output will be saved in a file named `monojet_${dataset}.coffea` depending on the name of the dataset you ran over. If you want to look at a few simple histogram plots, you can run a simple plotter with your output:
+
+```
+./scripts/print_plots.py monojet_${dataset}.coffea
+```
+
+You can check out the code in the script to see how it's done.
+
+
+#### Using large data sets
 
 Currently, HTCondor submission is used to run over large numbers of input files. The submission is implemented in the `execute.py` script.
 To get the idea, you run a test job to process some of the SingleMuon data:
