@@ -10,6 +10,59 @@ from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, 
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi,mask_and, mask_or, evaluator_from_config
 from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_lo_g, is_nlo_z, is_nlo_w, is_data, extract_year
 
+def trigger_selection(selection, df, cfg):
+    pass_all = np.zeros(df.size) == 0
+    pass_none = ~pass_all
+    dataset = df['dataset']
+    if cfg.RUN.SYNC: # Synchronization mode
+        selection.add('filt_met', pass_all)
+        selection.add('trig_met', pass_all)
+        selection.add('trig_ele', pass_all)
+        selection.add('trig_mu',  pass_all)
+
+    else:
+        if df['is_data']:
+            selection.add('filt_met', mask_and(df, cfg.FILTERS.DATA))
+        else:
+            selection.add('filt_met', mask_and(df, cfg.FILTERS.MC))
+        selection.add('trig_met', mask_or(df, cfg.TRIGGERS.MET))
+
+        # Electron trigger overlap
+        if df['is_data']:
+            if "SinglePhoton" in dataset:
+                # Backup photon trigger, but not main electron trigger
+                trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & (~mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE))
+            elif "SingleElectron" in dataset:
+                # Main electron trigger, no check for backup
+                trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+            elif "EGamma" in dataset:
+                # 2018 has everything in one stream, so simple OR
+                trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+            else:
+                trig_ele = pass_none
+        else:
+            trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+
+        selection.add('trig_ele', trig_ele)
+
+        # Photon trigger:
+        if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
+            trig_photon = mask_or(df, cfg.TRIGGERS.PHOTON.SINGLE)
+        else:
+            trig_photon = pass_none
+        selection.add('trig_photon', trig_photon)
+
+        for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
+            if (not df['is_data']) or ('JetHT' in dataset):
+                selection.add(trgname, df[trgname])
+            else:
+                selection.add(trgname, np.ones(df.size)==1)
+
+        # Muon trigger
+        selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
+
+    return selection
+
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
@@ -113,52 +166,7 @@ class monojetProcessor(processor.ProcessorABC):
         pass_all = np.ones(df.size)==1
         pass_none = ~pass_all
         selection.add('inclusive', pass_all)
-        if cfg.RUN.SYNC: # Synchronization mode
-            selection.add('filt_met', pass_all)
-            selection.add('trig_met', pass_all)
-            selection.add('trig_ele', pass_all)
-            selection.add('trig_mu',  pass_all)
-
-        else:
-            if df['is_data']:
-                selection.add('filt_met', mask_and(df, cfg.FILTERS.DATA))
-            else:
-                selection.add('filt_met', mask_and(df, cfg.FILTERS.MC))
-            selection.add('trig_met', mask_or(df, cfg.TRIGGERS.MET))
-
-            # Electron trigger overlap
-            if df['is_data']:
-                if "SinglePhoton" in dataset:
-                    # Backup photon trigger, but not main electron trigger
-                    trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & (~mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE))
-                elif "SingleElectron" in dataset:
-                    # Main electron trigger, no check for backup
-                    trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
-                elif "EGamma" in dataset:
-                    # 2018 has everything in one stream, so simple OR
-                    trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
-                else:
-                    trig_ele = pass_none
-            else:
-                trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
-
-            selection.add('trig_ele', trig_ele)
-
-            # Photon trigger:
-            if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
-                trig_photon = mask_or(df, cfg.TRIGGERS.PHOTON.SINGLE)
-            else:
-                trig_photon = pass_none
-            selection.add('trig_photon', trig_photon)
-
-            for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
-                if (not df['is_data']) or ('JetHT' in dataset):
-                    selection.add(trgname, df[trgname])
-                else:
-                    selection.add(trgname, np.ones(df.size)==1)
-
-            # Muon trigger
-            selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
+        selection = trigger_selection(selection, df, cfg)
 
         # Trigger objects
         hlt_single_muons = hlt[(hlt.id==13) & (hlt.filter & 8 == 8)]
