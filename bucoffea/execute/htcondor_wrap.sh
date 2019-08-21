@@ -28,7 +28,7 @@ else
 fi
 
 # Copy files to local disk before running
-if [ ! "$NOPREFETCH" = true ]; then
+if [ "$BUCOFFEAPREFETCH" = true ]; then
     echo "Prefetching."
     FLIST=$(readlink -e input*.txt)
     touch tmp.txt
