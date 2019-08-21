@@ -194,6 +194,7 @@ def setup_gen_candidates(df):
     return gen
 
 def setup_candidates(df, cfg):
+    jes_suffix = 'nom'
     muons = JaggedCandidateArray.candidatesfromcounts(
         df['nMuon'],
         pt=df['Muon_pt'],
@@ -276,10 +277,10 @@ def setup_candidates(df, cfg):
 
     ak4 = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'],
-        pt=df['Jet_pt'],
+        pt=df[f'Jet_pt{jes_suffix}'],
         eta=df['Jet_eta'],
         phi=df['Jet_phi'],
-        mass=df['Jet_mass'],
+        mass=df[f'Jet_mass{jes_suffix}'],
         looseId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight
         tightId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight
         csvv2=df["Jet_btagCSVV2"],
@@ -297,10 +298,10 @@ def setup_candidates(df, cfg):
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
         df['nFatJet'],
-        pt=df['FatJet_pt'],
+        pt=df[f'FatJet_pt{jes_suffix}'],
         eta=df['FatJet_eta'],
         phi=df['FatJet_phi'],
-        mass=df['FatJet_msoftdrop'],
+        mass=df[f'FatJet_msoftdrop{jes_suffix}'],
         tightId=(df['FatJet_jetId']&2) == 2, # Tight
         csvv2=df["FatJet_btagCSVV2"],
         deepcsv=df['FatJet_btagDeepB'],
@@ -322,7 +323,11 @@ def setup_candidates(df, cfg):
         id=df['TrigObj_id'],
         filter=df['TrigObj_filterBits']
     )
-    return ak4, ak8, muons, electrons, taus, photons, hlt
+
+    met_pt = df[f'MET_pt{jes_suffix}']
+    met_phi = df['MET_phi']
+
+    return met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons, hlt
 
 
 def monojet_regions(cfg):

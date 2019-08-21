@@ -58,7 +58,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        ak4, _, muons, electrons, taus, photons, hlt = setup_candidates(df, cfg)
+        met_pt, met_phi, ak4, _, muons, electrons, taus, photons, hlt = setup_candidates(df, cfg)
 
         # Muons
         is_tight_muon = muons.tightId \
@@ -69,7 +69,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         dimuons = muons.distincts()
         dimuon_charge = dimuons.i0['charge'] + dimuons.i1['charge']
 
-        df['MT_mu'] = ((muons.counts==1) * mt(muons.pt, muons.phi, df['MET_pt'], df['MET_phi'])).max()
+        df['MT_mu'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
 
         # Electrons
         is_tight_electron = electrons.tightId \
@@ -79,7 +79,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
 
-        df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, df['MET_pt'], df['MET_phi'])).max()
+        df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, met_pt, met_phi)).max()
 
         # ak4
         leadak4_index=ak4.pt.argmax()
@@ -100,10 +100,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                      & (ak4.pt>20) ]
 
         # Recoil
-        df['recoil_pt'], df['recoil_phi'] = recoil(df['MET_pt'],df['MET_phi'], electrons, muons, photons)
-        df["dPFCalo"] = (df['MET_pt'] - df["CaloMET_pt"]) / df["recoil_pt"]
+        df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
+        df["dPFCalo"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
         df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30)
-        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, df['MET_phi'], njet=4, ptmin=30)
+        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30)
         selection = processor.PackedSelection()
 
         # Triggers
@@ -171,7 +171,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('two_electrons', electrons.counts==2)
 
         # Single Ele CR
-        selection.add('met_el', df['MET_pt'] > cfg.SELECTION.CONTROL.SINGLEEL.MET)
+        selection.add('met_el', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
         selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
         # Photon CR
@@ -260,8 +260,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 if not mask.any():
                     continue
                 output['kinematics']['event'] += [event]
-                output['kinematics']['met'] += [df['MET_pt'][mask]]
-                output['kinematics']['met_phi'] += [df['MET_phi'][mask]]
+                output['kinematics']['met'] += [met_pt[mask]]
+                output['kinematics']['met_phi'] += [met_phi[mask]]
                 output['kinematics']['recoil'] += [df['recoil_pt'][mask]]
                 output['kinematics']['recoil_phi'] += [df['recoil_phi'][mask]]
 
@@ -382,8 +382,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # MET
             ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=weight[mask] )
-            ezfill('met',                met=df["MET_pt"][mask],            weight=weight[mask] )
-            ezfill('met_phi',            phi=df["MET_phi"][mask],           weight=weight[mask] )
+            ezfill('met',                met=met_pt[mask],            weight=weight[mask] )
+            ezfill('met_phi',            phi=met_phi[mask],           weight=weight[mask] )
             ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=weight[mask] )
             ezfill('recoil_phi',         phi=df["recoil_phi"][mask],        weight=weight[mask] )
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weight[mask] )
