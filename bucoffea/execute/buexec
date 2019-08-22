@@ -195,6 +195,8 @@ def do_submit(args):
                 environment["VIRTUAL_ENV"] = os.environ["VIRTUAL_ENV"]
             if args.debug:
                 environment['BUCOFFEADEBUG'] = 'true'
+
+            chunkname = f'{dataset}_{ichunk:03d}of{len(chunks):03d}'
             sub = htcondor.Submit({
                 "Proxy_path" : pjoin(proxydir,os.path.basename(proxy)),
                 "Initialdir" : subdir,
@@ -204,15 +206,15 @@ def do_submit(args):
                 "transfer_input_files" : ", ".join(job_input_files),
                 "environment" : '"' + ' '.join([f"{k}={v}" for k, v in environment.items()]) + '"',
                 "arguments": " ".join(arguments),
-                "Output" : f"{filedir}/out_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt",
-                "Error" : f"{filedir}/err_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt",
-                "log" : f"{filedir}/log_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt",
+                "Output" : f"{filedir}/out_{chunkname}.txt",
+                "Error" : f"{filedir}/err_{chunkname}.txt",
+                "log" : f"{filedir}/log_{chunkname}.txt",
                 # "log" :f"/dev/null",
                 "request_cpus" : str(args.jobs),
                 "+MaxRuntime" : f"{60*60*8}"
                 })
 
-            jdl = pjoin(subdir,filedir,f'job_{dataset}_{ichunk}.jdl')
+            jdl = pjoin(subdir,filedir,f'job_{chunkname}.jdl')
             with open(jdl,"w") as f:
                 f.write(str(sub))
                 f.write("\nqueue 1\n")
