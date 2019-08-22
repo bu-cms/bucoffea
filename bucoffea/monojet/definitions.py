@@ -194,7 +194,11 @@ def setup_gen_candidates(df):
     return gen
 
 def setup_candidates(df, cfg):
-    jes_suffix = 'nom'
+    if df['is_data']:
+        jes_suffix = ''
+    else:
+        jes_suffix = '_nom'
+
     muons = JaggedCandidateArray.candidatesfromcounts(
         df['nMuon'],
         pt=df['Muon_pt'],
