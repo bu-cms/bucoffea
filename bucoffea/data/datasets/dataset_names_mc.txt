@@ -54,3 +54,10 @@ ZZTo2Q2Nu_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8
 
 # QCD
 QCD_HT*
+
+
+
+#### SIGNALS
+# Hinv
+VBF_HToInvisible_M*
+GluGlu_HToInvisible_M*
