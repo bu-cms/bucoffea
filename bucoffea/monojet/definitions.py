@@ -470,4 +470,16 @@ def monojet_regions(cfg):
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
 
+
+    # Dphi check
+    for region in ['cr_2m_j','cr_1m_j']:
+        tmp = copy.deepcopy(regions[region])
+        tmp.remove('mindphijr')
+        regions[f'{region}_nopdhi'] = tmp
+
+        tmp = copy.deepcopy(regions[region])
+        tmp.remove('mindphijr')
+        tmp.append('mindphijm')
+        regions[f'{region}_dphijm'] = tmp
+
     return regions
