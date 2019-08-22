@@ -102,6 +102,10 @@ def do_submit(args):
     """Submit the analysis to HTCondor."""
     import htcondor
 
+
+    if args.no_prefetch:
+        print("WARNING: --no-prefetch is deprecated. Prefetching is disabled by default. Use --prefetch  if you want to turn it back on")
+
     if args.datasrc == 'das':
         dataset_files = files_from_das(regex=args.dataset)
     elif args.datasrc == 'ac':
@@ -268,9 +272,6 @@ def main():
     parser_submit.add_argument('--async', action="store_true", default=False, help='Submit asynchronously.')
     parser_submit.add_argument('--debug', action="store_true", default=False, help='Print debugging info.')
     parser_submit.set_defaults(func=do_submit)
-
-    if args.no_prefetch:
-        print("WARNING: --no-prefetch is deprecated. Prefetching is disabled by default. Use --prefetch  if you want to turn it back on")
 
     args = parser.parse_args()
 
