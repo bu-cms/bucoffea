@@ -299,7 +299,7 @@ def setup_candidates(df, cfg):
         # cef=df['Jet_chEmEF'],
     )
 
-    ak4 = ak4[(ak4.puid==0) & ak4.looseId & object_overlap(ak4, muons) & object_overlap(ak4, electrons)]
+    ak4 = ak4[ak4.looseId & object_overlap(ak4, muons) & object_overlap(ak4, electrons)]
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
         df['nFatJet'],
