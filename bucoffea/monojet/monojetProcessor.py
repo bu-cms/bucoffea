@@ -468,7 +468,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_zvsqcdmd0',  tagger=ak8[leadak8_index].zvsqcd[mask].flatten(),     weight=w_leadak8)
 
             # B tag discriminator
-            btag = getattr(ak4, cfg.BTAG.ALGO)
+            btag = getattr(ak4[jet_acceptance], cfg.BTAG.ALGO)
             w_btag = weight_shape(btag[mask], weight[mask])
             ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
