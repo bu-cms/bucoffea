@@ -326,29 +326,29 @@ class monojetProcessor(processor.ProcessorABC):
                 if not mask.any():
                     continue
                 output['kinematics']['event'] += [event]
-                output['kinematics']['met'] += [met_pt[mask]]
-                output['kinematics']['met_phi'] += [met_phi[mask]]
-                output['kinematics']['recoil'] += [df['recoil_pt'][mask]]
-                output['kinematics']['recoil_phi'] += [df['recoil_phi'][mask]]
+                output['kinematics']['met'] += [met_pt[mask].flatten()]
+                output['kinematics']['met_phi'] += [met_phi[mask].flatten()]
+                output['kinematics']['recoil'] += [df['recoil_pt'][mask].flatten()]
+                output['kinematics']['recoil_phi'] += [df['recoil_phi'][mask].flatten()]
 
-                output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt]
-                output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta]
+                output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt.flatten()]
+                output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta.flatten()]
                 output['kinematics']['leadbtag'] += [jet_btag_val[jet_acceptance & (ak4.pt>20)][mask].max()]
 
                 output['kinematics']['nLooseMu'] += [muons.counts[mask]]
-                output['kinematics']['nTightMu'] += [muons[is_tight_muon].counts[mask]]
-                output['kinematics']['mupt0'] += [muons[leadmuon_index][mask].pt]
-                output['kinematics']['mueta0'] += [muons[leadmuon_index][mask].eta]
+                output['kinematics']['nTightMu'] += [muons[is_tight_muon].counts[mask].flatten()]
+                output['kinematics']['mupt0'] += [muons[leadmuon_index][mask].pt.flatten()]
+                output['kinematics']['mueta0'] += [muons[leadmuon_index][mask].eta.flatten()]
 
                 output['kinematics']['nLooseEl'] += [electrons.counts[mask]]
-                output['kinematics']['nTightEl'] += [electrons[is_tight_electron].counts[mask]]
-                output['kinematics']['elpt0'] += [electrons[leadelectron_index][mask].pt]
-                output['kinematics']['eleta0'] += [electrons[leadelectron_index][mask].eta]
+                output['kinematics']['nTightEl'] += [electrons[is_tight_electron].counts[mask].flatten()]
+                output['kinematics']['elpt0'] += [electrons[leadelectron_index][mask].pt.flatten()]
+                output['kinematics']['eleta0'] += [electrons[leadelectron_index][mask].eta.flatten()]
 
                 output['kinematics']['nLooseGam'] += [photons.counts[mask]]
-                output['kinematics']['nTightGam'] += [photons[is_tight_photon].counts[mask]]
-                output['kinematics']['gpt0'] += [photons[leadphoton_index][mask].pt]
-                output['kinematics']['geta0'] += [photons[leadphoton_index][mask].eta]
+                output['kinematics']['nTightGam'] += [photons[is_tight_photon].counts[mask].flatten()]
+                output['kinematics']['gpt0'] += [photons[leadphoton_index][mask].pt.flatten()]
+                output['kinematics']['geta0'] += [photons[leadphoton_index][mask].eta.flatten()]
 
 
         # Sum of all weights to use for normalization
