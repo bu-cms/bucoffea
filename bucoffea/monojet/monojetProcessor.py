@@ -19,6 +19,7 @@ def trigger_selection(selection, df, cfg):
         selection.add('trig_met', pass_all)
         selection.add('trig_ele', pass_all)
         selection.add('trig_mu',  pass_all)
+        selection.add('trig_photon',  pass_all)
 
     else:
         if df['is_data']:
