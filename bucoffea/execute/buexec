@@ -211,6 +211,7 @@ def do_submit(args):
                 "log" : f"{filedir}/log_{chunkname}.txt",
                 # "log" :f"/dev/null",
                 "request_cpus" : str(args.jobs),
+                "request_memory" : str(args.jobs*2100),
                 "+MaxRuntime" : f"{60*60*8}"
                 })
 
