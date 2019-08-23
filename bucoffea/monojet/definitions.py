@@ -329,7 +329,7 @@ def setup_candidates(df, cfg):
     )
 
     met_pt = df[f'MET_pt{jes_suffix}']
-    met_phi = df['MET_phi']
+    met_phi = df[f'MET_phi{jes_suffix}']
 
     return met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons, hlt
 
