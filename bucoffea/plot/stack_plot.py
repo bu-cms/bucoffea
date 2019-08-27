@@ -34,7 +34,8 @@ class Style():
             'dimuon_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
             'recoil' : hist.Bin('recoil','recoil',list(range(250,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
             'met' : hist.Bin('met','met',list(range(250,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
-            'jet_pt' : hist.Bin('jet_pt','jet_pt',list(range(100,600,10)) + list(range(600,1000,25)) )
+            'ak4_pt0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
+            'ak4_ptraw0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) )
         }
 
 
@@ -118,7 +119,11 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
         binwnorm=True)
 
     # Legend
-    ax.legend(title=s.region_names[region],ncol=1)
+    try:
+        region_name = s.region_names[region]
+    except KeyError:
+        region_name = region
+    ax.legend(title=region_name,ncol=1)
 
     # Ratio plot
     hist.plotratio(h[data].integrate('dataset'), h[mc].integrate('dataset'),
