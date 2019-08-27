@@ -86,6 +86,8 @@ default:
     qcd_nlo_g:
       histogram: kfactor_monojet_qcd
       file: data/sf/theory/merged_kfactors_gjets.root
+    pileup:
+      mode: nano
   run:
     sync: False
     save:

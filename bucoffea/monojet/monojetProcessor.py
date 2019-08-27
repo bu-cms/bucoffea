@@ -301,7 +301,12 @@ class monojetProcessor(processor.ProcessorABC):
             csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
             all_weights["photon_csev"] = evaluator['photon_csev'](csev_sf_index).prod()
 
-            all_weights["pileup"] = evaluator['pileup'](df['Pileup_nTrueInt'])
+            if cfg.SF.PILEUP.MODE == 'nano':
+                all_weights["pileup"] = df['puWeight']
+            elif cfg.SF.PILEUP.MODE == 'manual':
+                all_weights["pileup"] = evaluator['pileup'](df['Pileup_nTrueInt'])
+            else:
+                raise RuntimeError(f"Unknown value for cfg.PILEUP.MODE: {cfg.PILEUP.MODE}.")
 
             if df['is_lo_w']:
                 all_weights["theory"] = evaluator["qcd_ew_nlo_w"](gen_v_pt)
