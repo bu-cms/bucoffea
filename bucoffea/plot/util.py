@@ -84,10 +84,15 @@ def merge_extensions(histogram, acc, reweight_pu=True, noscale=False):
     nevents = defaultdict(float)
 
     for d in all_datasets:
-        m = re.match('.*(_ext\d+).*', d)
         base = d
+        m = re.match('.*(_ext\d+).*', d)
         if m:
             base = d.replace(m.groups()[0],"")
+
+        m = re.match('.*(_new_+pmx).*', d)
+        if m:
+            base = base.replace(m.groups()[0],"")
+
         mapping[base].append(d)
         if not is_data(d):
             sumw[base] += acc['sumw'][d]
@@ -157,6 +162,9 @@ def merge_datasets(histogram):
         'WNJetsToLNu-MLM_2018' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2018',x)],
         'QCD_HT-MLM_2018' : [x for x in all_datasets if re.match('QCD_HT.*-MLM_2018',x)],
         'QCD_HT-mg_2017' : [x for x in all_datasets if re.match('QCD_HT.*-mg_2017',x)],
+
+        'Diboson_2017' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*-mg_2017',x)],
+        'Diboson_2018' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*-mg_2018',x)],
     }
 
     # Remove empty lists
@@ -196,7 +204,7 @@ def load_xs():
     # See the documentation in data/datasets/xs/README.md
     # for more information on how the XS is chosen.
     xs = {}
-    loading_priority = ['nnlo','nlo','gen']
+    loading_priority = ['nnlo','nlo','lo','gen']
     for dataset, xs_dict in xs_yml.items():
         if 'use' in xs_dict:
             key_to_use = xs_dict['use']
@@ -244,8 +252,18 @@ def scale_xs_lumi(histogram):
     mcs = [x for x in datasets if not is_data(x)]
 
     # Normalize to XS * lumi/ sumw
-    xs = load_xs()
-    norm_dict = {mc : 1e3 * xs[re.sub('_newpmx','',mc)] * lumi(extract_year(mc)) for mc in mcs}
+    known_xs = load_xs()
+
+    xs_map = {}
+    for mc in mcs:
+        try:
+            ixs = known_xs[re.sub('_new_*pmx','',mc)]
+        except KeyError:
+            print(f"WARNING: Cross section not found for dataset {mc}. Using 0.")
+            ixs = 0
+        xs_map[mc] = ixs
+
+    norm_dict = {mc : 1e3 * xs_map[mc] * lumi(extract_year(mc)) for mc in mcs}
     histogram.scale(norm_dict, axis='dataset')
 
 # def merge_and_norm(histogram, acc):
