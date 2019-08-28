@@ -36,8 +36,7 @@ for line in data:
     xs = float(line[1])
     if not (dataset in xs_dict):
         xs_dict[dataset] = {}
-    else:
-        xs_dict[dataset]['gen'] = xs
+    xs_dict[dataset]['gen'] = xs
 
 
 with open('xs.yml','w') as f:

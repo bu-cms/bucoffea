@@ -108,26 +108,32 @@ DYJetsToLL_M-50_HT-800to1200-MLM_2017:
   gen: 0.8077
 DYJetsToLL_M-50_HT-800to1200_PSweights-MLM_2018:
   gen: 0.8109
-
 EWKWMinus2Jets_WToLNu_M-50-mg_2017:
+  gen: 23.19
   lo: 20.35
 EWKWMinus2Jets_WToLNu_M-50-mg_2018:
+  gen: 23.07
   lo: 20.35
 EWKWPlus2Jets_WToLNu_M-50-mg_2017:
+  gen: 29.53
   lo: 25.81
 EWKWPlus2Jets_WToLNu_M-50-mg_2018:
+  gen: 29.59
   lo: 25.81
 EWKZ2Jets_ZToLL_M-50-mg_2017:
+  gen: 4.323
   lo: 4.321
 EWKZ2Jets_ZToLL_M-50_PSweights-mg_2018:
+  gen: 4.323
   lo: 4.321
 EWKZ2Jets_ZToNuNu-mg_2017:
+  gen: 10.66
   lo: 10.04
 EWKZ2Jets_ZToNuNu_PSweights-mg_2018:
+  gen: 10.68
   lo: 10.04
-
 GJets_HT-100To200-MLM_2017:
-  gen: 8626.0
+  gen: 8702.0
 GJets_HT-100To200-MLM_2018:
   gen: 8648.0
 GJets_HT-200To400-MLM_2017:
@@ -188,32 +194,44 @@ QCD_HT700to1000-mg_2017:
   gen: 6376.0
 ST_s-channel_4f_leptonDecays-amcatnlo_2017:
   gen: 3.74
-  nnlo: 10.32
+  nnlo: 1.1016749829959998
 ST_s-channel_4f_leptonDecays-mg_ext1_2018:
   gen: 3.74
+  nnlo: 1.1016749829959998
+ST_s-channel_4f_leptonDecays_PSweights-amcatnlo_2017:
   nnlo: 10.32
+  gen: 1.1016749829959998
 ST_s-channel_4f_leptonDecays_mtop1715_PSweights-amcatnlo_2017:
-  gen: 3.824
+  nnlo: 10.32
+  gen: 1.1016749829959998
 ST_s-channel_4f_leptonDecays_mtop1715_PSweights-amcatnlo_2018:
-  gen: 3.824
+  nnlo: 10.32
+  gen: 1.1016749829959998
 ST_s-channel_antitop_leptonDecays-PSweights_pow-pythia_2017:
-  nnlo: 4.0138
-ST_s-channel_top_leptonDecays-PSweights_pow-pythia_2017:
-  nnlo: 6.3651
+  gen: 3.579
+  nnlo: 0.4260473698319999
 ST_s-channel_antitop_leptonDecays-PSweights_pow-pythia_2018:
-  nnlo: 4.0138
+  gen: 3.58
+  nnlo: 0.4260473698319999
+ST_s-channel_top_leptonDecays-PSweights_pow-pythia_2017:
+  gen: 5.757
+  nnlo: 0.6756276131639999
 ST_s-channel_top_leptonDecays-PSweights_pow-pythia_2018:
-  nnlo: 6.3651
+  gen: 5.756
+  nnlo: 0.6756276131639999
 ST_t-channel_antitop_4f_inclusiveDecays-powV2-madspin_2017:
   gen: 67.91
-  nnlo: 80.95
+  nnlo: 83.0066 # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopRefXsec#Single_top_Wt
 ST_t-channel_top_4f_inclusiveDecays-powV2-madspin_2017:
   gen: 113.3
-  nnlo: 136.02
+  nnlo:  137.4581 # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopRefXsec#Single_top_Wt
 ST_tW_antitop_5f_inclusiveDecays-pow_2017:
   gen: 34.97
   nnlo: 35.85
 ST_tW_antitop_5f_inclusiveDecays-pow_ext1_2018:
+  gen: 34.97
+  nnlo: 35.85
+ST_tW_antitop_5f_inclusiveDecays_PSweights-pow_2017:
   gen: 34.97
   nnlo: 35.85
 ST_tW_top_5f_inclusiveDecays-pow_2017:
@@ -222,12 +240,52 @@ ST_tW_top_5f_inclusiveDecays-pow_2017:
 ST_tW_top_5f_inclusiveDecays-pow_ext1_2018:
   gen: 34.91
   nnlo: 35.85
+ST_tW_top_5f_inclusiveDecays_PSweights-pow_2017:
+  gen: 34.91
+  nnlo: 35.85
+TTJets-MLM_2017:
+  gen: 493.0
+  nnlo: 831.76
+TTJets-MLM_2018:
+  gen: 493.7
+  nnlo: 831.76
 TTJets-amcatnloFXFX_2017:
   gen: 731.0
   nnlo: 831.76
 TTJets-amcatnloFXFX_ext1_2018:
   gen: 745.5
   nnlo: 831.76
+TTTo2L2Nu-pow_2017:
+  gen: 88.29
+  nlo: 88.29
+TTTo2L2Nu-pow_2018:
+  gen: 88.29
+  nlo: 88.29
+TTTo2L2Nu_PSweights-pow_2017:
+  gen: 88.29
+  nlo: 88.29
+TTToHadronic-pow_2017:
+  gen: 687.1
+  nnlo: 377.96
+TTToHadronic-pow_2018:
+  gen: 687.1
+  nnlo: 377.96
+TTToHadronic_PSweights-pow_2017:
+  gen: 687.1
+  nnlo: 377.96
+TTToSemiLeptonic-pow_2017:
+  gen: 687.1
+  nnlo: 365.34
+TTToSemiLeptonic-pow_2018:
+  gen: 687.1
+  nnlo: 365.34
+TTToSemiLeptonic_PSweights-pow_2017:
+  gen: 687.1
+  nnlo: 365.34
+VBF_HToInvisible_M125_PSweights_pow_pythia8_2018:
+  gen: 3.861
+VBF_HToInvisible_M125_pow_pythia8_2017:
+  gen: 3.861
 W1JetsToLNu-MLM_2017:
   gen: 8087.0
 W1JetsToLNu-MLM_2018:
@@ -340,6 +398,8 @@ WW_2017:
   gen: 75.98
 WW_2018:
   gen: 75.94
+WW_PSweights_2018:
+  gen: 75.87
 WZTo3LNu_0Jets_MLL-4to50-MLM_2017:
   gen: 2.51
 WZTo3LNu_0Jets_MLL-4to50-MLM_2018:
@@ -358,6 +418,8 @@ WZ_2017:
   gen: 27.58
 WZ_2018:
   gen: 27.51
+WZ_PSweights_2018:
+  gen: 27.58
 Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_2017:
   gen: 17.98
 Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_ext1_2017:
