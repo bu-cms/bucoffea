@@ -34,6 +34,9 @@ def choose_processor(args):
     elif args.processor == 'pdfweight':
         from bucoffea.gen import pdfWeightProcessor
         return pdfWeightProcessor
+    elif args.processor == 'lhev':
+        from bucoffea.gen import lheVProcessor
+        return lheVProcessor
 
 def do_run(args):
     """Run the analysis locally."""
@@ -243,7 +246,7 @@ def do_submit(args):
 
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
-    parser.add_argument('processor', type=str, help='Processor to run.', choices=['monojet','vbfhinv','pdfweight'])
+    parser.add_argument('processor', type=str, help='Processor to run.', choices=['monojet','vbfhinv','pdfweight','lhev'])
     parser.add_argument('--outpath', type=str, help='Path to save output under.')
     parser.add_argument('--jobs','-j', type=int, default=1, help='Number of cores to use / request.')
     parser.add_argument('--datasrc', type=str, default='eos', help='Source of data files.', choices=['eos','das','ac'])

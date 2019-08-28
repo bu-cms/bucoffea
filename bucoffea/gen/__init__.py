@@ -1,1 +1,2 @@
 from .pdfWeightProcessor import pdfWeightProcessor
+from .lheVProcessor import lheVProcessor

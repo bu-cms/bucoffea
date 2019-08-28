@@ -256,7 +256,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Gen
         if df['has_lhe_v_pt']:
-            output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
+            output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset, weight=df['Generator_weight'])
 
         if 'LHE_Njets' in df:
             output['lhe_njets'].fill(dataset=dataset, multiplicity=df['LHE_Njets'])
