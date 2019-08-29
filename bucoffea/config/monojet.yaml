@@ -135,6 +135,17 @@ era2016:
   triggers:
     met:
       - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight
+    electron:
+      single:
+        - HLT_Ele35_WPTight_Gsf
+      single_backup:
+        - HLT_Photon200
+    muon:
+      single:
+        - HLT_IsoMu27
+    photon:
+      single:
+        - HLT_Photon200
   btag:
     algo: csvv2
     wp: medium
@@ -160,6 +171,24 @@ era2016:
     pileup_down:
       histogram: "sf2017_down"
       file: "data/sf/pileup/pileup.root"
+  filters:
+    data:
+      - Flag_goodVertices
+      - Flag_globalSuperTightHalo2016Filter
+      - Flag_HBHENoiseFilter
+      - Flag_HBHENoiseIsoFilter
+      - Flag_EcalDeadCellTriggerPrimitiveFilter
+      - Flag_BadPFMuonFilter
+      - Flag_eeBadScFilter
+      - Flag_ecalBadCalibFilterV2
+    mc:
+      - Flag_goodVertices
+      - Flag_globalSuperTightHalo2016Filter
+      - Flag_HBHENoiseFilter
+      - Flag_HBHENoiseIsoFilter
+      - Flag_EcalDeadCellTriggerPrimitiveFilter
+      - Flag_BadPFMuonFilter
+      - Flag_ecalBadCalibFilterV2
 
 era2017:
   triggers:
