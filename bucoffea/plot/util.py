@@ -96,9 +96,9 @@ def merge_extensions(histogram, acc, reweight_pu=True, noscale=False):
         mapping[base].append(d)
         if not is_data(d):
             sumw[base] += acc['sumw'][d]
-            sumw_pileup[base] += acc['sumw_pileup'][d]
-            nevents[base] += acc['nevents'][d]
-
+            if reweight_pu:
+                sumw_pileup[base] += acc['sumw_pileup'][d]
+                nevents[base] += acc['nevents'][d]
     histogram = histogram.group("dataset", hist.Cat("dataset", "Primary dataset"), mapping)
 
     if not noscale:
@@ -163,8 +163,10 @@ def merge_datasets(histogram):
         'QCD_HT-MLM_2018' : [x for x in all_datasets if re.match('QCD_HT.*-MLM_2018',x)],
         'QCD_HT-mg_2017' : [x for x in all_datasets if re.match('QCD_HT.*-mg_2017',x)],
 
-        'Diboson_2017' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*-mg_2017',x)],
-        'Diboson_2018' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*-mg_2018',x)],
+        'Diboson_2017' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*_2017',x)],
+        'Diboson_2018' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*_2018',x)],
+        'EWK_V_2017' : [x for x in all_datasets if re.match('EWK.*_2017',x)],
+        'EWK_V_2018' : [x for x in all_datasets if re.match('EWK.*_2018',x)],
     }
 
     # Remove empty lists
@@ -184,7 +186,6 @@ def merge_datasets(histogram):
             continue
         else:
             mapping[ds] = [ds]
-
     # Apply the mapping
     histogram = histogram.group("dataset",hist.Cat("dataset", "Primary dataset"),  mapping)
 
