@@ -80,21 +80,22 @@ default:
     qcd_ew_nlo_z:
       histogram: kfactor_monojet_qcd_ewk
       file: data/sf/theory/merged_kfactors_zjets.root
-    qcd_ew_w:
+    ewk_nlo_w:
       histogram: kfactor_monojet_ewk
       file: data/sf/theory/merged_kfactors_wjets.root
-    qcd_ew_z:
+    ewk_nlo_z:
       histogram: kfactor_monojet_ewk
       file: data/sf/theory/merged_kfactors_zjets.root
+    ewk_nlo_g:
+      histogram: kfactor_monojet_ewk
+      file: data/sf/theory/merged_kfactors_gjets.root
     qcd_nlo_w_2017:
       histogram: wjet
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
     qcd_nlo_z_2017:
       histogram: dy
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
-    ewk_nlo_g:
-      histogram: kfactor_monojet_ewk
-      file: data/sf/theory/merged_kfactors_gjets.root
+
     qcd_nlo_g:
       histogram: kfactor_monojet_qcd
       file: data/sf/theory/merged_kfactors_gjets.root

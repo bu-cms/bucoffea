@@ -309,9 +309,9 @@ class monojetProcessor(processor.ProcessorABC):
                 raise RuntimeError(f"Unknown value for cfg.PILEUP.MODE: {cfg.PILEUP.MODE}.")
 
             if df['is_lo_w']:
-                all_weights["theory"] = evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w_2017"](gen_v_pt)
+                all_weights["theory"] = evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
             elif df['is_lo_z']:
-                all_weights["theory"] = evaluator["qcd_nlo_z_2017"](gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z_2017"](gen_v_pt)
+                all_weights["theory"] = evaluator["qcd_nlo_z_2017"](gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
             elif df['is_lo_g']:
                 all_weights["theory"] = evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["qcd_nnlo_g"](gen_v_pt)
             else:
