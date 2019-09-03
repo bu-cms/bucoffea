@@ -55,7 +55,7 @@ def trigger_selection(selection, df, cfg):
 
         for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
             if (not df['is_data']) or ('JetHT' in dataset):
-                selection.add(trgname, df[trgname])
+                selection.add(trgname, mask_or(df,[trgname]))
             else:
                 selection.add(trgname, np.ones(df.size)==1)
 
