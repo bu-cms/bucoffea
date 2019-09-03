@@ -63,21 +63,26 @@ def main(stdscr):
             for name, log in sorted(log_dict.items()):
                 jel = htcondor.JobEventLog(log)
                 first = None
-                for event in jel.events(stop_after=0):
-                    if not first:
-                        first = event
-                    latest = event
                 try:
-                    ret = latest["ReturnValue"]
-                except KeyError:
+                    for event in jel.events(stop_after=0):
+                        if not first:
+                            first = event
+                        latest = event
+                    try:
+                        ret = latest["ReturnValue"]
+                    except KeyError:
+                        ret = "-"
+                    status = str(JobEventType.values[latest.type])
+                except OSError:
                     ret = "-"
+                    status = "NOPARSE"
                 if ret == 0:
                     colors.append(1)
                 elif ret != "-":
                     colors.append(2)
                 else:
                     colors.append(3)
-                table.append([counter, name, latest.cluster, str(JobEventType.values[latest.type])])
+                table.append([counter, name, latest.cluster, status])
                 jel.close()
                 counter += 1
             tab = tabulate(sorted(table), headers=["","Name", "Cluster", "Status", "Return"])
