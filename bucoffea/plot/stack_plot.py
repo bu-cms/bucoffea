@@ -32,10 +32,11 @@ class Style():
         }
         self.rebin_axes = {
             'dimuon_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
-            'recoil' : hist.Bin('recoil','recoil',list(range(250,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
+            'recoil' : hist.Bin('recoil','recoil',list(range(250,300,50)) + list(range(300,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,200))),
             'met' : hist.Bin('met','met',list(range(250,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
             'ak4_pt0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
-            'ak4_ptraw0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) )
+            'ak4_ptraw0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
+            'ak4_pt0_eta0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) )
         }
 
 
