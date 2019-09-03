@@ -98,6 +98,15 @@ default:
     qcd_nlo_g:
       histogram: kfactor_monojet_qcd
       file: data/sf/theory/merged_kfactors_gjets.root
+    qcd_nnlo_g:
+      histogram: aj
+      file: data/sf/theory/lindert_qcd_nnlo_sf.root
+    qcd_nnlo_w:
+      histogram: evj
+      file: data/sf/theory/lindert_qcd_nnlo_sf.root
+    qcd_nnlo_z:
+      histogram: eej
+      file: data/sf/theory/lindert_qcd_nnlo_sf.root
     pileup:
       mode: nano
   run:
