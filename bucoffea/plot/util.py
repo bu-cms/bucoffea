@@ -149,6 +149,8 @@ def merge_datasets(histogram):
 
         'TTJets-FXFX_2017' : [x for x in all_datasets if re.match('TTJets-amcatnloFXFX_2017',x)],
         'TTJets-FXFX_2018' : [x for x in all_datasets if re.match('TTJets-amcatnloFXFX_2018',x)],
+        'TT_pow_2017' : [x for x in all_datasets if re.match('TTTo.*pow.*2017',x)],
+        'TT_pow_2018' : [x for x in all_datasets if re.match('TTTo.*pow.*2018',x)],
 
         'ST_2017' : [x for x in all_datasets if re.match('ST.*2017',x)],
         'ST_2018' : [x for x in all_datasets if re.match('ST.*2018',x)],
@@ -163,8 +165,8 @@ def merge_datasets(histogram):
         'ZJetsToNuNu_HT_2018' : [x for x in all_datasets if re.match('ZJetsToNuNu_HT-(\d+)To.*-mg_2018',x)],
         'WNJetsToLNu-MLM_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2017',x)],
         'WNJetsToLNu-MLM_2018' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2018',x)],
-        'QCD_HT-MLM_2018' : [x for x in all_datasets if re.match('QCD_HT.*-MLM_2018',x)],
-        'QCD_HT-mg_2017' : [x for x in all_datasets if re.match('QCD_HT.*-mg_2017',x)],
+        'QCD_HT_2018' : [x for x in all_datasets if re.match('QCD_HT.*_2018',x)],
+        'QCD_HT_2017' : [x for x in all_datasets if re.match('QCD_HT.*_2017',x)],
 
         'Diboson_2017' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*_2017',x)],
         'Diboson_2018' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*_2018',x)],
