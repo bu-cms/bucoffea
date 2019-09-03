@@ -85,13 +85,16 @@ def merge_extensions(histogram, acc, reweight_pu=True, noscale=False):
 
     for d in all_datasets:
         base = d
-        m = re.match('.*(_ext\d+).*', d)
-        if m:
-            base = d.replace(m.groups()[0],"")
 
-        m = re.match('.*(_new_+pmx).*', d)
-        if m:
-            base = base.replace(m.groups()[0],"")
+        to_replace =[
+            '.*(_ext\d+).*',
+            '.*(_new_+pmx).*',
+            '.*(_PSweights).*'
+        ]
+        for regex in to_replace:
+            m = re.match(regex, base)
+            if m:
+                base = base.replace(m.groups()[0],"")
 
         mapping[base].append(d)
         if not is_data(d):
