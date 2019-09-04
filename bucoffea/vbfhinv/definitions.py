@@ -176,6 +176,7 @@ def vbfhinv_regions(cfg):
         'leadak4_pt_eta',
         'leadak4_id',
         'trailak4_pt_eta',
+        'hemisphere',
         'trailak4_id',
         'mjj',
         'dphijj',
