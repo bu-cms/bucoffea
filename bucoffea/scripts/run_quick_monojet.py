@@ -3,6 +3,7 @@
 from bucoffea.helpers.dataset import extract_year
 from bucoffea.processor.executor import run_uproot_job_nanoaod
 from bucoffea.monojet import monojetProcessor
+from bucoffea.vbfhinv import vbfhinvProcessor
 from bucoffea.helpers.cutflow import print_cutflow
 from coffea.util import save
 import coffea.processor as processor
@@ -39,9 +40,12 @@ def main():
         # "zjetsnunu_ht1200to2500_mg_2018_v5":[
         # "data/zjetsnunu_ht1200to2500_mg_2018_v5.root"
         # ]
-        "SingleMuon_2018C" : [
-            "./data/SingleMuon_2018C.root"
-        ]
+        #"SingleMuon_2018C" : [
+        #    "./data/SingleMuon_2018C.root"
+        #]
+		"vbfhinv2017" : [
+			"/store/mc/RunIIFall17NanoAODv4/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/NANOAODSIM/PU2017_12Apr2018_Nano14Dec2018_102X_mc2017_realistic_v6-v1/30000/239875EB-8BC3-0540-9F93-4B30321D6A13.root"
+		]
     }
 
     years = list(set(map(extract_year, fileset.keys())))
@@ -59,7 +63,8 @@ def main():
         tmp = {dataset:filelist}
         output = run_uproot_job_nanoaod(tmp,
                                     treename='Events',
-                                    processor_instance=monojetProcessor(years[0]),
+                                    #processor_instance=monojetProcessor(years[0]),
+                                    processor_instance=vbfhinvProcessor(years[0]),
                                     executor=processor.futures_executor,
                                     executor_args={'workers': 4, 'flatten': True},
                                     chunksize=500000,
