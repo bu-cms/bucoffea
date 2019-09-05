@@ -6,6 +6,7 @@ import copy
 from collections import defaultdict
 from pprint import pprint
 
+import matplotlib.ticker
 import numpy as np
 from coffea import hist
 from coffea.util import load
@@ -21,7 +22,10 @@ def histo_ratio(num, den):
     num_val, num_sw2 = num.values(sumw2=True)
     den_val, den_sw2 = den.values(sumw2=True)
 
-
+colors ={
+    'band' : '#fdd49e',
+    'mc' : '#b30000'
+}
 def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j','cr_2e_j','cr_g_j'], year=2017, outdir='./output'):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -109,11 +113,10 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
             # data_err_opts['color'] = 'r'
             rsumw_mc, rsumw_err_mc = ratio(h1_mc, h2_mc)
             edges = h1_mc.axis(distribution).edges(overflow='over')
-            print(edges)
             ax.step(
                 x=edges,
-                y=np.r_[rsumw_mc, rsumw_mc[-1]],
-                color='r',
+                y=np.r_[rsumw_mc[0], rsumw_mc],
+                color=colors['mc'],
                 label='MC'
                 )
 
@@ -124,8 +127,8 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
                                     y1 = y1,
                                     y2 = y2,
                                     zorder=-1,
-                                    color='gray',
-                                    step='pre',
+                                    color=colors['band'],
+                                    step='post',
                                     label='MC stat. unc'
                                     )
 
@@ -140,7 +143,7 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
 
             rax.set_ylim(0.75,1.25)
 
-            plt.plot([min(edges), max(edges)],[1,1],color='r')
+            plt.plot([min(edges), max(edges)],[1,1],color=colors['mc'])
 
 
             y1 = np.r_[(rsumw_mc - rsumw_err_mc)/rsumw_mc, (rsumw_mc[-1] - rsumw_err_mc[-1])/rsumw_mc[-1]]
@@ -150,8 +153,8 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
                                     y1 = y1,
                                     y2 = y2,
                                     zorder=-1,
-                                    color='gray',
-                                    step='pre'
+                                    color=colors['band'],
+                                    step='post'
                                     )
             ax.legend(title=f'{name[regions[i]]} over {name[regions[j]]}')
             fig.text(1., 1., f'{lumi(year)} fb$^{{-1}}$ ({year})',
@@ -172,6 +175,12 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
             ax.set_xlabel('Recoil (GeV)',fontsize=14)
             ax.set_ylabel(f'Region ratio: {name[regions[i]]} / {name[regions[j]]} (GeV)',fontsize=14)
 
+            loc1 = matplotlib.ticker.MultipleLocator(base=0.2)
+            loc2 = matplotlib.ticker.MultipleLocator(base=0.1)
+            rax.yaxis.set_major_locator(loc1)
+            rax.yaxis.set_minor_locator(loc2)
+            rax.grid(axis='y',which='minor',linestyle='--')
+            rax.grid(axis='y',which='major',linestyle='--')
             # Save and close
             fig.savefig(
                 pjoin(
