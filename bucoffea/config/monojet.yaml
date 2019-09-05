@@ -148,6 +148,7 @@ era2016:
     electron:
       single:
         - HLT_Ele35_WPTight_Gsf
+        - HLT_Ele115_CaloIdVT_GsfTrkIdT
       single_backup:
         - HLT_Photon200
     muon:
@@ -208,6 +209,7 @@ era2017:
     electron:
       single:
         - HLT_Ele35_WPTight_Gsf
+        - HLT_Ele115_CaloIdVT_GsfTrkIdT
       single_backup:
         - HLT_Photon200
     muon:
@@ -295,6 +297,7 @@ era2018:
     electron:
       single:
         - HLT_Ele32_WPTight_Gsf
+        - HLT_Ele115_CaloIdVT_GsfTrkIdT
       single_backup:
         - HLT_Photon200
     muon:
