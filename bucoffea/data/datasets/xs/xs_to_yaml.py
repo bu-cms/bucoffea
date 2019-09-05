@@ -1,10 +1,10 @@
 import os
-
+import re
+import copy
 import numpy as np
 import yaml
-
+from pprint import pprint
 from bucoffea.execute.dataset_definitions import short_name
-
 
 """Script to convert the GenXSecAnalyzer list into YAML
 
@@ -38,6 +38,12 @@ for line in data:
         xs_dict[dataset] = {}
     xs_dict[dataset]['gen'] = xs
 
+tmp = {}
+for k, v in xs_dict.items():
+    k = re.sub('(_ext\d+|_new_+pmx|_PSweights)','',k)
+    if k not in xs_dict:
+        tmp[k] = copy.deepcopy(v)
+xs_dict.update(tmp)
 
 with open('xs.yml','w') as f:
     yaml.dump(xs_dict, f)
