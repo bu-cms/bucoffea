@@ -44,7 +44,7 @@ def main():
         #    "./data/SingleMuon_2018C.root"
         #]
 		"vbfhinv2017" : [
-			"/store/mc/RunIIFall17NanoAODv4/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/NANOAODSIM/PU2017_12Apr2018_Nano14Dec2018_102X_mc2017_realistic_v6-v1/30000/239875EB-8BC3-0540-9F93-4B30321D6A13.root"
+			"/store/mc/RunIIFall17NanoAODv5/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/NANOAODSIM/PU2017_12Apr2018_Nano1June2019_102X_mc2017_realistic_v7-v1/250000/AAC03F20-C936-FD4C-B415-EA86FE48C0D0.root"	
 		]
     }
 
