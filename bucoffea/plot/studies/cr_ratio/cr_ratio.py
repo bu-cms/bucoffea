@@ -39,7 +39,7 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
     scale_xs_lumi(h)
 
     h = merge_datasets(h)
-    
+
     histograms = {}
     for region in regions:
         histograms[region] = copy.deepcopy(h).integrate(h.axis('region'), region)
@@ -105,13 +105,13 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
             data_err_opts['color'] = 'k'
             rsumw_data, rsumw_err_data = ratio(h1_data, h2_data)
             ax.errorbar(x=h1_data.axis(distribution).centers(overflow='over'), y=rsumw_data, yerr=rsumw_err_data,label='Data', **data_err_opts)
-            
+
             # data_err_opts['color'] = 'r'
             rsumw_mc, rsumw_err_mc = ratio(h1_mc, h2_mc)
             edges = h1_mc.axis(distribution).edges(overflow='over')
             print(edges)
             ax.step(
-                x=edges, 
+                x=edges,
                 y=np.r_[rsumw_mc, rsumw_mc[-1]],
                 color='r',
                 label='MC'
@@ -119,8 +119,8 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
 
             y1 = np.r_[rsumw_mc - rsumw_err_mc, rsumw_mc[-1] - rsumw_err_mc[-1]]
             y2 =np.r_[rsumw_mc + rsumw_err_mc, rsumw_mc[-1] + rsumw_err_mc[-1]]
-  
-            ax.fill_between(edges, 
+
+            ax.fill_between(edges,
                                     y1 = y1,
                                     y2 = y2,
                                     zorder=-1,
@@ -128,19 +128,16 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
                                     step='pre',
                                     label='MC stat. unc'
                                     )
-            
+
             rrsumw = rsumw_data / rsumw_mc
-            rrsumw_err = np.hypot(
-                rsumw_err_data / rsumw_mc,
-                rsumw_err_mc * rsumw_data / rsumw_mc**2,
-            )
+            rrsumw_err = rsumw_err_data / rsumw_mc
             rax.errorbar(
                          x=h1_data.axis(distribution).centers(overflow='over'),
                          y = rrsumw,
                          yerr =rrsumw_err,
                          **data_err_opts
                          )
-            
+
             rax.set_ylim(0.75,1.25)
 
             plt.plot([min(edges), max(edges)],[1,1],color='r')
@@ -149,7 +146,7 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
             y1 = np.r_[(rsumw_mc - rsumw_err_mc)/rsumw_mc, (rsumw_mc[-1] - rsumw_err_mc[-1])/rsumw_mc[-1]]
             y2 =np.r_[(rsumw_mc + rsumw_err_mc)/rsumw_mc, (rsumw_mc[-1] + rsumw_err_mc[-1])/rsumw_mc[-1]]
 
-            rax.fill_between(edges, 
+            rax.fill_between(edges,
                                     y1 = y1,
                                     y2 = y2,
                                     zorder=-1,
@@ -183,9 +180,9 @@ def ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1e_j
                 )
             plt.close(fig)
 
-            
+
 def main():
-    infile=os.path.abspath('../after_new_sfs/input/all_new_sf/')
+    infile=os.path.abspath('../after_new_sfs/input/2019-09-05_all_new_sf_neweletrig/')
     acc = acc_from_dir(infile)
     for year in [2017,2018]:
         ratio_plot(acc, year=year,outdir=f'./output/{os.path.basename(infile)}')
