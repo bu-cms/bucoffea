@@ -44,7 +44,7 @@ def main():
         #    "./data/SingleMuon_2018C.root"
         #]
 		"vbfhinv2017" : [
-			"/store/mc/RunIIFall17NanoAODv5/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/NANOAODSIM/PU2017_12Apr2018_Nano1June2019_102X_mc2017_realistic_v7-v1/250000/AAC03F20-C936-FD4C-B415-EA86FE48C0D0.root"	
+			"root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/21Aug19/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/VBF_HToInvisible_M125_pow_pythia8_2017/190822_134734/0000/tree_1.root"
 		]
     }
 
