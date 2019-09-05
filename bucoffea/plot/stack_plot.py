@@ -32,15 +32,16 @@ class Style():
         }
         self.rebin_axes = {
             'dimuon_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
-            'recoil' : hist.Bin('recoil','recoil',list(range(250,300,50)) + list(range(300,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,200))),
-            'met' : hist.Bin('met','met',list(range(250,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
+            'recoil' : hist.Bin('recoil','recoil',list(range(250,300,50)) + list(range(300,500,50)) + list(range(500,1000,100)) + list(range(1000,2200,200))),
+            'met' : hist.Bin('met','met',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
             'ak4_pt0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
             'ak4_ptraw0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
-            'ak4_pt0_eta0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) )
+            'ak4_pt0_eta0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
+            'photon_pt0' : hist.Bin('pt','pt',list(range(200,600,20)) + list(range(600,1000,20)) )
         }
 
 
-def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack/', integrate=None, ylim=None):
+def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack/', integrate=None, ylim=None, xlim=None):
     """Creates a data vs MC comparison plot
 
     :param acc: Accumulator (processor output)
@@ -142,12 +143,26 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
                 verticalalignment='bottom',
                 transform=ax.transAxes
                )
+    fig.text(1., 1., f'{lumi(year)} fb$^{{-1}}$ ({year})',
+                fontsize=14,
+                horizontalalignment='right',
+                verticalalignment='bottom',
+                transform=ax.transAxes
+               )
+    fig.text(0., 1., '$\\bf{CMS}$ internal',
+                fontsize=14,
+                horizontalalignment='left',
+                verticalalignment='bottom',
+                transform=ax.transAxes
+               )
     # Aesthetics
     ax.set_yscale("log")
     if ylim:
         ax.set_ylim(ylim[0],ylim[1])
     else:
         ax.set_ylim(1e-1,1e6)
+    if xlim:
+        ax.set_xlim(xlim[0],xlim[1])
     rax.set_ylim(0.5,1.5)
     ax.set_ylabel('Events / Bin width')
     if not os.path.exists(outdir):
