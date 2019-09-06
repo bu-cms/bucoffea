@@ -1,6 +1,6 @@
 # W NLO
 W*JetsToLNu_LHEWpT_*_Tune*_13TeV-amcnloFXFX-pythia8
-# WJetsToLNu_*J_Tune*_13TeV-amcatnloFXFX-pythia8
+WJetsToLNu_*J_Tune*_13TeV-amcatnloFXFX-pythia8
 
 # W LO
 # W*JetsToLNu_Tune*_13TeV-madgraphMLM-pythia8
