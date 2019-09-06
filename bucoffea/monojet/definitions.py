@@ -12,6 +12,7 @@ import numpy as np
 from bucoffea.helpers import object_overlap
 from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.helpers.gen import find_first_parent
+from bucoffea.helpers.dataset import extract_year
 from pprint import pprint
 
 def monojet_accumulator(cfg):
@@ -298,6 +299,15 @@ def setup_candidates(df, cfg):
         # clean=df['Jet_cleanmask']
         # cef=df['Jet_chEmEF'],
     )
+    # Before cleaning, apply HEM veto
+    if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018):
+        hem_ak4 = ak4[ (ak4.pt>30) &
+        (-3.0 < ak4.eta) &
+        (ak4.eta < -1.3) &
+        (-1.57 < ak4.phi) &
+        (ak4.phi < -0.87)
+        ]
+        df['hemveto'] = hem_ak4.counts == 0
 
     ak4 = ak4[ak4.looseId & object_overlap(ak4, muons) & object_overlap(ak4, electrons)]
 
@@ -338,6 +348,7 @@ def setup_candidates(df, cfg):
 def monojet_regions(cfg):
     common_cuts = [
         'filt_met',
+        'hemveto',
         'veto_ele',
         'veto_muo',
         'veto_photon',
@@ -476,15 +487,10 @@ def monojet_regions(cfg):
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
 
 
-    # Dphi check
-    for region in ['cr_2m_j','cr_1m_j']:
+    # HEM check
+    for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j']:
         tmp = copy.deepcopy(regions[region])
-        tmp.remove('mindphijr')
-        regions[f'{region}_nopdhi'] = tmp
-
-        tmp = copy.deepcopy(regions[region])
-        tmp.remove('mindphijr')
-        tmp.append('mindphijm')
-        regions[f'{region}_dphijm'] = tmp
+        tmp.remove('hemveto')
+        regions[f'{region}_nohem'] = tmp
 
     return regions

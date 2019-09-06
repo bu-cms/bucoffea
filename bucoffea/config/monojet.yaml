@@ -73,6 +73,9 @@ default:
     branch:
       id: Electron_cutBased
 
+  mitigation:
+    hem: True
+
   sf:
     qcd_ew_nlo_w:
       histogram: kfactor_monojet_qcd_ewk
