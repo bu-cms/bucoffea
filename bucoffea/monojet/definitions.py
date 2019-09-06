@@ -286,14 +286,13 @@ def setup_candidates(df, cfg):
         # cef=df['Jet_chEmEF'],
     )
     # Before cleaning, apply HEM veto
-    if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018):
-        hem_ak4 = ak4[ (ak4.pt>30) &
+    hem_ak4 = ak4[ (ak4.pt>30) &
         (-3.0 < ak4.eta) &
         (ak4.eta < -1.3) &
         (-1.57 < ak4.phi) &
         (ak4.phi < -0.87)
         ]
-        df['hemveto'] = hem_ak4.counts == 0
+    df['hemveto'] = hem_ak4.counts == 0
 
     ak4 = ak4[ak4.looseId & object_overlap(ak4, muons) & object_overlap(ak4, electrons)]
 

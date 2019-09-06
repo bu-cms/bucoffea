@@ -186,7 +186,11 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
-        selection.add('hemveto', df['hemveto'])
+
+        if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018):
+            selection.add('hemveto', df['hemveto'])
+        else:
+            selection.add('hemveto', np.ones(df.size)==1)
 
         # AK4 Jet
         leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
@@ -524,7 +528,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=weight[mask])
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
                 ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
-                
+
                 w_leadel = weight_shape(electrons[leadelectron_index].pt[mask], weight[mask])
                 ezfill('electron_pt0',   pt=electrons[leadelectron_index].pt[mask].flatten(),    weight=w_leadel)
                 ezfill('electron_eta0',  eta=electrons[leadelectron_index].eta[mask].flatten(),  weight=w_leadel)
