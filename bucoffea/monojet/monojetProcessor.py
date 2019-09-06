@@ -498,6 +498,12 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
 
+                # Leading muon
+                w_leadmu = weight_shape(muons[leadmuon_index].pt[mask], weight[mask])
+                ezfill('muon_pt0',   pt=muons[leadmuon_index].pt[mask].flatten(),    w_leadmu=w_leadmu )
+                ezfill('muon_eta0',  eta=muons[leadmuon_index].eta[mask].flatten(),  w_leadmu=w_leadmu)
+                ezfill('muon_phi0',  phi=muons[leadmuon_index].phi[mask].flatten(),  w_leadmu=w_leadmu)
+
                 # HLT Matched muons
                 w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], weight[mask])
                 ezfill('muons_hltmatch_eta',  eta=muons_hltmatch.eta[mask].flatten(),  weight=w_muons_hltmatch)
@@ -518,6 +524,11 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=weight[mask])
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
                 ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
+                
+                w_leadel = weight_shape(electrons[leadelectron_index].pt[mask], weight[mask])
+                ezfill('electron_pt0',   pt=electrons[leadelectron_index].pt[mask].flatten(),    weight=w_leadel)
+                ezfill('electron_eta0',  eta=electrons[leadelectron_index].eta[mask].flatten(),  weight=w_leadel)
+                ezfill('electron_phi0',  phi=electrons[leadelectron_index].phi[mask].flatten(),  weight=w_leadel)
 
             # Dielectron
             if '_2e_' in region:
