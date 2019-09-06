@@ -7,6 +7,7 @@ import socket
 import subprocess
 from collections import defaultdict
 pjoin = os.path.join
+
 def short_name(dataset):
     _, name, conditions, _ = dataset.split("/")
 
@@ -24,8 +25,11 @@ def short_name(dataset):
     m=re.match(r".*(ext\d+).*",conditions);
     if m:
         name = name + "_" + m.groups()[0]
-
-    if "RunIIFall17" in conditions:
+    if 'new_pmx' in conditions:
+        name = name + '_new_pmx'
+    if 'RunIISummer16' in conditions:
+        name = name + "_2016"
+    elif "RunIIFall17" in conditions:
         name = name + "_2017"
     elif 'RunIIAutumn18' in conditions:
         name = name + "_2018"
