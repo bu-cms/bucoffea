@@ -6,7 +6,7 @@ import coffea.processor as processor
 
 from dynaconf import settings as cfg
 
-from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, setup_gen_candidates, monojet_regions
+from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, monojet_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi,mask_and, mask_or, evaluator_from_config
 from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_lo_g, is_nlo_z, is_nlo_w, is_data, extract_year
 

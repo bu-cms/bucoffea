@@ -1,4 +1,10 @@
+#!/usr/bin/env python
+
 import numpy as np
+from awkward import JaggedArray
+from coffea.analysis_objects import JaggedCandidateArray
+
+
 def find_first_parent(in_mother, in_pdg, maxgen=10):
     """Finds the first parent with a PDG ID different from the daughter
 
@@ -50,11 +56,33 @@ def find_gen_dilepton(gen, pdgsum=0):
     """
     leps = gen[(gen.status==1) & islep(gen.pdg)]
     dileps = leps.distincts()
-    dilep_mother = dileps.i0.parentIndex == dileps.i1.parentIndex
+    dilep_mother = dileps.i0.parent_index == dileps.i1.parent_index
 
     dilepton_flavour = np.abs(dileps.i0.pdg + dileps.i1.pdg) == pdgsum
     good_dileps = dileps[dilep_mother & dilepton_flavour]
     return good_dileps
+
+
+def setup_gen_candidates(df):
+    # Find first ancestor with different PDG ID
+    # before defining the gen candidates
+    mothers = JaggedArray.fromcounts(df['nGenPart'],df['GenPart_genPartIdxMother'] )
+    pdgids = JaggedArray.fromcounts(df['nGenPart'],df['GenPart_pdgId'] )
+    parent_index =  find_first_parent(mothers, pdgids)
+
+    gen = JaggedCandidateArray.candidatesfromcounts(
+        df['nGenPart'],
+        pt=df['GenPart_pt'],
+        eta=df['GenPart_eta'],
+        phi=df['GenPart_phi'],
+        mass=df['GenPart_mass'],
+        charge=df['GenPart_pdgId'],
+        pdg=df['GenPart_pdgId'],
+        status=df['GenPart_status'],
+        flag = df['GenPart_statusFlags'],
+        mother = df['GenPart_genPartIdxMother'],
+        parent_index=parent_index.flatten())
+    return gen
 
 def islep(pdg):
     """Returns True if the PDG ID represents a lepton."""
