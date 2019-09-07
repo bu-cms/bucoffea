@@ -1,23 +1,54 @@
 #!/usr/bin/env python
 
-import sys
-import htcondor
-from htcondor import JobEventType
+import curses
+import logging
 import os
-from collections import defaultdict
+import pickle
+import sys
+import time
 
 from tabulate import tabulate
-import curses
 
-import time
-import logging
+from bucoffea.helpers.condor import ConMan
 
-logger = logging.getLogger( 'monitor' )
+pjoin = os.path.join
+
+logger = logging.getLogger( 'bumon' )
 format = '%(levelname)s (%(name)s) [%(asctime)s]: %(message)s'
 date = '%F %H:%M:%S'
-logging.basicConfig( level='DEBUG', format=format, datefmt=date, filename='monitor_log.txt')
+logging.basicConfig( level='DEBUG', format=format, datefmt=date, filename='monitor_log.txt', filemode='w')
 
 INTERVAL=5
+
+def write_job_pad(pad, cm):
+    colors = [3,3]
+    table = []
+    counter = 1
+    for job in cm.jobs:
+
+        if job.code == 0:
+            colors.append(1)
+        elif job.code != "-":
+            colors.append(2)
+        else:
+            colors.append(3)
+        table.append([counter, job.name, job.cluster, job.status, job.code, job.resubcount, time.strftime('%H:%M:%S', time.gmtime(job.runtime))])
+        counter += 1
+
+    tab = tabulate(sorted(table), headers=["","Name", "Cluster", "Status", "Return", "Resubmission count", "Runtime"])
+    for i,l in enumerate(tab.split('\n')):
+        pad.addstr(i,0,l, curses.color_pair(colors[i]))
+
+def get_log_lines(maxlines):
+    with open('monitor_log.txt','r') as f:
+        lines = f.readlines()
+        n = min([len(lines),maxlines-2])
+        return lines[-n:]
+
+def write_log_pad(logpad, logpadlen):
+    logpad.addstr(0,0,'-'*curses.COLS)
+    for i,l in enumerate(reversed(get_log_lines(logpadlen))):
+        logpad.addstr(logpadlen-i-2,0,l)
 
 def main(stdscr):
     curses.start_color()
@@ -26,102 +57,81 @@ def main(stdscr):
     curses.init_pair(2, curses.COLOR_RED, -1)
     curses.init_pair(3, curses.COLOR_WHITE, -1)
 
-    directories = sys.argv[1:]
-    for directory in directories:
-        if not os.path.exists(directory):
-            raise RuntimeError(f"Directory does not exist: {directory}. Please check your arguments.")
-
-    def read_logs():
-        log_list = []
-        for directory in directories:
-            for path, _, files in os.walk(directory):
-                log_list.extend([os.path.join(path, x) for x in files if x.startswith("log_")])
-        log_dict = {}
-        for log in log_list:
-            name = os.path.basename(log).replace("log_","").replace(".txt","")
-            log_dict[name] = log
-        return log_dict
+    directory = sys.argv[1]
+    if not os.path.exists(directory):
+        raise RuntimeError(f"Directory does not exist: {directory}. Please check your arguments.")
 
     # Initiate new pad
-    log_dict = read_logs()
-    logger.info(f'Found {len(log_dict)} logs.')
-    padlen = len(log_dict)+5
+    cm = ConMan(directory)
+    logging.info(f'Operating on directory {directory}.')
+    logging.info(f'Found {len(cm.jobs)} jobs.')
+    padlen = len(cm.jobs)+5
+    logpadlen = 10
     pad = curses.newpad(padlen,curses.COLS)
+    logpad = curses.newpad(logpadlen,curses.COLS)
     stdscr.nodelay(True)
     stdscr.timeout(0)
     pad.nodelay(True)
     pad_pos = 0
 
-
     while True:
-        pad.refresh( pad_pos, 0, 1, 1, curses.LINES-1, curses.COLS-1)
-
-        colors = [3,3]
+        cm.update()
         try:
-            table = []
-            counter = 1
-            for name, log in sorted(log_dict.items()):
-                jel = htcondor.JobEventLog(log)
-                first = None
-                try:
-                    for event in jel.events(stop_after=0):
-                        if not first:
-                            first = event
-                        latest = event
-                    try:
-                        ret = latest["ReturnValue"]
-                    except KeyError:
-                        ret = "-"
-                    status = str(JobEventType.values[latest.type])
-                except OSError:
-                    ret = "-"
-                    status = "NOPARSE"
-                if ret == 0:
-                    colors.append(1)
-                elif ret != "-":
-                    colors.append(2)
-                else:
-                    colors.append(3)
-                table.append([counter, name, latest.cluster, status])
-                jel.close()
-                counter += 1
-            tab = tabulate(sorted(table), headers=["","Name", "Cluster", "Status", "Return"])
-            for i,l in enumerate(tab.split('\n')):
-                pad.addstr(i,0,l, curses.color_pair(colors[i]))
+            write_job_pad(pad, cm)
 
 
-            # stdscr.refresh()
             # Scrolling
             start = time.time()
             stop = start
             while stop-start < INTERVAL:
                 stop = time.time()
 
-                pad.refresh( pad_pos, 0, 1, 1, curses.LINES-1, curses.COLS-1)
-                cmd = stdscr.getch()
-                if cmd == 'q':
-                    sys.exit(0)
-                elif  cmd == curses.KEY_HOME:
-                    pad_pos = 0
-                elif  cmd == curses.KEY_END:
-                    pad_pos = len(log_dict) - curses.LINES + 1
-                elif  cmd == curses.KEY_NPAGE:
-                    pad_pos += 25
-                elif  cmd == curses.KEY_PPAGE:
-                    pad_pos -= 25
-                elif  cmd == curses.KEY_DOWN:
-                    pad_pos += 1
-                elif cmd == curses.KEY_UP:
-                    pad_pos -= 1
-
+                pad.refresh(
+                    pad_pos, 0,
+                    1, 1,
+                    curses.LINES-1 - logpadlen, curses.COLS-1
+                    )
+                logpad.refresh(
+                    0, 0,
+                    curses.LINES - logpadlen, 1,
+                    curses.LINES-1, curses.COLS-1
+                )
+                try:
+                    cmd = stdscr.getkey()
+                    if cmd == 'q':
+                        cm.save()
+                        sys.exit(0)
+                    elif cmd == 'r':
+                        logger.info('Resubmit failed jobs.')
+                        njobs = cm.resubmit_failed()
+                        logger.info(f'Resubmitted {njobs} jobs.')
+                    elif cmd == 'a':
+                        cm.autoresub = not cm.autoresub
+                        logger.info(f'Automatic resubmission set to {cm.autoresub}.')
+                    elif  cmd == 'KEY_HOME':
+                        pad_pos = 0
+                    elif  cmd == 'KEY_END':
+                        pad_pos = padlen - curses.LINES + 1
+                    elif  cmd == 'KEY_NPAGE':
+                        pad_pos += 25
+                    elif  cmd == 'KEY_PPAGE':
+                        pad_pos -= 25
+                    elif  cmd == 'KEY_DOWN':
+                        pad_pos += 1
+                    elif cmd == 'KEY_UP':
+                        pad_pos -= 1
+                except curses.error:
+                    pass
                 # Post process
                 if pad_pos < 0:
                     pad_pos = 0
                 if pad_pos >= padlen:
                     pad_pos = padlen-1
 
+                write_log_pad(logpad,logpadlen)
                 time.sleep(0.01)
         except KeyboardInterrupt:
+            cm.save()
             break
 
 if __name__ == "__main__":
