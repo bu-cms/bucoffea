@@ -5,9 +5,9 @@ import os
 from coffea import hist
 import numpy as np
 
-def debug_plot_output(output, region='inclusive'):
+def debug_plot_output(output, region='inclusive', outdir='out'):
     """Dump all histograms as PDF."""
-    outdir = "out"
+    #outdir = "out"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     for name in output.keys():
