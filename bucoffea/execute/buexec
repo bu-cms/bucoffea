@@ -214,7 +214,7 @@ def do_submit(args):
                 "log" : f"{filedir}/log_{chunkname}.txt",
                 # "log" :f"/dev/null",
                 "request_cpus" : str(args.jobs),
-                "request_memory" : str(args.jobs*2100),
+                "request_memory" : str(args.memory if args.memory else args.jobs*2100),
                 "+MaxRuntime" : f"{60*60*8}"
                 })
 
@@ -277,6 +277,7 @@ def main():
     parser_submit.add_argument('--force', action="store_true", default=False, help='Overwrite existing submission folder with same tag.')
     parser_submit.add_argument('--async', action="store_true", default=False, help='Submit asynchronously.')
     parser_submit.add_argument('--debug', action="store_true", default=False, help='Print debugging info.')
+    parser_submit.add_argument('--memory',type=int, default=None, help='Memory to request (in MB). Default is 2100 * number of cores.')
     parser_submit.set_defaults(func=do_submit)
 
     args = parser.parse_args()
