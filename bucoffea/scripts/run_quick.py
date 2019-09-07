@@ -9,11 +9,11 @@ import argparse
 
 def getDatasetType():
 
-	parser = argparse.ArgumentParser()
-	parser.add_argument('type', type=str, help='Type of dataset being considered. (monojet or vbfhinv)')
-	args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('type', type=str, help='Type of dataset being considered. (monojet or vbfhinv)')
+    args = parser.parse_args()
 
-	return args
+    return args
 
 def main():
 
@@ -51,24 +51,24 @@ def main():
         #"SingleMuon_2018C" : [
         #    "./data/SingleMuon_2018C.root"
         #]
-		"vbfhinv2017" : [
-			"root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/21Aug19/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/VBF_HToInvisible_M125_pow_pythia8_2017/190822_134734/0000/tree_1.root"
-		]
+        "vbfhinv2017" : [
+            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/21Aug19/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/VBF_HToInvisible_M125_pow_pythia8_2017/190822_134734/0000/tree_1.root"
+        ]
     }
 
-	years = list(set(map(extract_year, fileset.keys())))
-	assert(len(years)==1)
+    years = list(set(map(extract_year, fileset.keys())))
+    assert(len(years)==1)
 
-	args = getDatasetType()
-	processorClass = args.type
+    args = getDatasetType()
+    processorClass = args.type
 
-	if processorClass == 'monojet': 
-		from bucoffea.monojet import monojetProcessor
-		processorInstance = monojetProcessor(years[0])		
+    if processorClass == 'monojet': 
+        from bucoffea.monojet import monojetProcessor
+        processorInstance = monojetProcessor(years[0])        
 
-	elif processorClass == 'vbfhinv': 
-		from bucoffea.vbfhinv import vbfhinvProcessor
-		processorInstance = vbfhinvProcessor(years[0])		
+    elif processorClass == 'vbfhinv': 
+        from bucoffea.vbfhinv import vbfhinvProcessor
+        processorInstance = vbfhinvProcessor(years[0])        
 
     for dataset, filelist in fileset.items():
         newlist = []
