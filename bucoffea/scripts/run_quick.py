@@ -82,7 +82,6 @@ def main():
         tmp = {dataset:filelist}
         output = run_uproot_job_nanoaod(tmp,
                                     treename='Events',
-                                    #processor_instance=monojetProcessor(years[0]),
                                     processor_instance=processorInstance,
                                     executor=processor.futures_executor,
                                     executor_args={'workers': 4, 'flatten': True},
