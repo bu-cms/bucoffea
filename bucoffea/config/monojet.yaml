@@ -175,6 +175,9 @@ era2016:
   electron:
     branch:
       id: Electron_cutBased_Sum16
+  photon:
+    branch:
+      id: Photon_cutBased17Bitmap
   sf:
     pileup:
       histogram: "sf2017_nominal"
