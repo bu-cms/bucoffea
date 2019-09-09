@@ -56,10 +56,9 @@ def find_gen_dilepton(gen, pdgsum=0):
     """
     leps = gen[(gen.status==1) & islep(gen.pdg)]
     dileps = leps.distincts()
-    dilep_mother = dileps.i0.parent_index == dileps.i1.parent_index
 
     dilepton_flavour = np.abs(dileps.i0.pdg + dileps.i1.pdg) == pdgsum
-    good_dileps = dileps[dilep_mother & dilepton_flavour]
+    good_dileps = dileps[dilepton_flavour]
     return good_dileps
 
 
@@ -68,7 +67,7 @@ def setup_gen_candidates(df):
     # before defining the gen candidates
     mothers = JaggedArray.fromcounts(df['nGenPart'],df['GenPart_genPartIdxMother'] )
     pdgids = JaggedArray.fromcounts(df['nGenPart'],df['GenPart_pdgId'] )
-    parent_index =  find_first_parent(mothers, pdgids)
+    # parent_index =  find_first_parent(mothers, pdgids)
 
     gen = JaggedCandidateArray.candidatesfromcounts(
         df['nGenPart'],
@@ -80,8 +79,7 @@ def setup_gen_candidates(df):
         pdg=df['GenPart_pdgId'],
         status=df['GenPart_status'],
         flag = df['GenPart_statusFlags'],
-        mother = df['GenPart_genPartIdxMother'],
-        parent_index=parent_index.flatten())
+        mother = df['GenPart_genPartIdxMother'])
     return gen
 
 def islep(pdg):
