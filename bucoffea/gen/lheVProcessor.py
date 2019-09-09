@@ -51,8 +51,10 @@ class lheVProcessor(processor.ProcessorABC):
         gen = setup_gen_candidates(df)
         if is_lo_z(dataset) or is_nlo_z(dataset):
             pdgsum = 0
+            gen_v = gen[(gen.status==62) & (gen.pdg==23)]
         elif is_lo_w(dataset) or is_nlo_w(dataset):
             pdgsum = 1
+            gen_v = gen[(gen.status==62) & (gen.pdg==24)]
         gen_dilep = find_gen_dilepton(gen, pdgsum)
 
 
@@ -75,6 +77,15 @@ class lheVProcessor(processor.ProcessorABC):
                                 weight_index=0,
                                 weight=nominal,
                                 type='dilepton'
+                                )
+                            
+        output['gen_vpt'].fill(
+                                dataset=dataset,
+                                vpt=gen_v.pt.max(),
+                                weight_type='nominal',
+                                weight_index=0,
+                                weight=nominal,
+                                type='genv'
                                 )
 
         # PDF variations
