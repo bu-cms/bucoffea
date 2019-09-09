@@ -9,6 +9,7 @@ from dynaconf import settings as cfg
 from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, monojet_regions
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi,mask_and, mask_or, evaluator_from_config
 from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_lo_g, is_nlo_z, is_nlo_w, is_data, extract_year
+from bucoffea.helpers.gen import find_gen_dilepton, setup_gen_candidates
 
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
@@ -102,7 +103,16 @@ class monojetProcessor(processor.ProcessorABC):
         df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g']
         df['is_data'] = is_data(dataset)
 
-        if df['has_lhe_v_pt']:
+        gen_v_pt = None
+        if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
+            gen = setup_gen_candidates(df)
+            if is_lo_z(dataset) or is_nlo_z(dataset):
+                pdgsum = 0
+            elif is_lo_w(dataset) or is_nlo_w(dataset):
+                pdgsum = 1
+                gen_dilep = find_gen_dilepton(gen, pdgsum)
+            gen_v_pt = gen_dilep[gen_dilep.mass.argmax()].pt.max()
+        elif df['is_lo_g']:
             gen_v_pt = df['LHE_Vpt']
 
         # Candidates
@@ -260,7 +270,7 @@ class monojetProcessor(processor.ProcessorABC):
         output = self.accumulator.identity()
 
         # Gen
-        if df['has_lhe_v_pt']:
+        if gen_v_pt is not None:
             output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset, weight=df['Generator_weight'])
 
         if 'LHE_Njets' in df:
