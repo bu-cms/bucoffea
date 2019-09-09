@@ -72,7 +72,7 @@ class lheVProcessor(processor.ProcessorABC):
 
         output['gen_vpt'].fill(
                                 dataset=dataset,
-                                vpt=gen_dilep.pt.max(),
+                                vpt=gen_dilep[gen_dilep.mass.argmax()].pt.max(),
                                 weight_type='nominal',
                                 weight_index=0,
                                 weight=nominal,
