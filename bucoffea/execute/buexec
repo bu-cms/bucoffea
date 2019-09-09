@@ -61,7 +61,7 @@ def do_run(args):
             os.makedirs(args.outpath)
         except FileExistsError:
             pass
-        outpath = pjoin(args.outpath, f"monojet_{dataset}.coffea")
+        outpath = pjoin(args.outpath, f"{args.processor}_{dataset}.coffea")
         save(output, outpath)
 
 def do_worker(args):
