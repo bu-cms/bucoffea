@@ -10,7 +10,7 @@ import argparse
 def getDatasetType():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('type', type=str, help='Type of dataset being considered. (monojet or vbfhinv)')
+    parser.add_argument('type', type=str, help='The processor to be run. (monojet or vbfhinv)')
     args = parser.parse_args()
 
     return args
