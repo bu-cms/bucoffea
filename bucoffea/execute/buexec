@@ -53,7 +53,7 @@ def do_run(args):
                                     processor_instance=choose_processor(args)(),
                                     executor=processor.futures_executor,
                                     executor_args={'workers': args.jobs, 'flatten': True},
-                                    chunksize=500000,
+                                    chunksize=250000,
                                     )
 
         # Save output
@@ -80,7 +80,7 @@ def do_worker(args):
                                   processor_instance=choose_processor(args)(),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': args.jobs, 'flatten': True},
-                                  chunksize=500000,
+                                  chunksize=250000,
                                  )
 
     # Save output
@@ -200,8 +200,7 @@ def do_submit(args):
                 environment['BUCOFFEADEBUG'] = 'true'
 
             chunkname = f'{dataset}_{ichunk:03d}of{len(chunks):03d}'
-            sub = htcondor.Submit({
-                "Proxy_path" : pjoin(proxydir,os.path.basename(proxy)),
+            submission_settings = {
                 "Initialdir" : subdir,
                 "executable": bucoffea_path("execute/htcondor_wrap.sh"),
                 "should_transfer_files" : "YES",
@@ -216,8 +215,11 @@ def do_submit(args):
                 "request_cpus" : str(args.jobs),
                 "request_memory" : str(args.memory if args.memory else args.jobs*2100),
                 "+MaxRuntime" : f"{60*60*8}"
-                })
+                }
+            if args.send_proxy:
+                submission_settings['Proxy_path'] = pjoin(proxydir,os.path.basename(proxy))
 
+            sub = htcondor.Submit(submission_settings)
             jdl = pjoin(subdir,filedir,f'job_{chunkname}.jdl')
             with open(jdl,"w") as f:
                 f.write(str(sub))
