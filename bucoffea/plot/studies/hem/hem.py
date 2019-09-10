@@ -19,23 +19,25 @@ from bucoffea.plot.util import (acc_from_dir, lumi, merge_datasets,
 from bucoffea.plot.stack_plot import make_plot
 
 def main():
-    
-    indir = bucoffea_path("plot/input/21Aug19_v2_newpu")
+
+    indir = "input/2019-09-06_hem/"
 
     acc = acc_from_dir(indir)
 
+    # for year in [2018]:
+    #     data = re.compile(f'EGamma_{year}')
+    #     mc = re.compile(f'(EW.*|TTJets.*|ZZ.*|ST.*|QCD_HT.*|WW.*|WZ.*|.*DYJetsToLL_M-50_HT_MLM.*|WJet.*HT.*){year}')
+
+    #     for region in ['cr_1e_j','cr_1e_j_nohem', 'cr_2e_j','cr_1e_j_nohem']:
+    #         for distribution in ['recoil','ak4_phi','electron_phi','ak4_pt0']:
+    #             make_plot(acc, region=region,distribution=distribution, year=year, data=data, mc=mc, outdir=f'./output/{os.path.basename(indir)}')
+
     for year in [2018]:
-        data = re.compile(f'EGamma_{year}')
-        mc = re.compile(f'(EW.*|TTJets.*|ZZ.*|ST.*|QCD_HT.*|WW.*|WZ.*|.*DYJetsToLL_M-50_HT_MLM.*|WJet.*HT.*){year}')
-        region='cr_1e_j'
-        for distribution in ['ak4_phi']:
-            make_plot(acc, region=region,distribution=distribution, year=year, data=data, mc=mc, outdir=f'./output/{os.path.basename(indir)}')
-    for year in [2017,2018]:
         data = re.compile(f'MET_{year}')
         mc = re.compile(f'(EW.*|TTJets.*|ZZ.*|ST.*|QCD_HT.*|WW.*|WZ.*|.*DYJetsToLL_M-50_HT_MLM.*|WJet.*HT.*){year}')
-        region='cr_1m_j'
-        for distribution in ['ak4_phi','recoil']:
-            make_plot(acc, region=region,distribution=distribution, year=year, data=data, mc=mc, outdir=f'./output/{os.path.basename(indir)}')
+        for region in ['cr_1m_j', 'cr_1m_j_nohem']:
+            for distribution in ['ak4_phi','recoil','ak4_pt0']:
+                make_plot(acc, region=region,distribution=distribution, year=year, data=data, mc=mc, outdir=f'./output/{os.path.basename(indir)}')
 
 if __name__ == "__main__":
     main()
