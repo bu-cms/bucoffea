@@ -16,7 +16,7 @@ from coffea.processor import LazyDataFrame
 
 import uproot
 
-fn = '/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/16Jul19/DYJetsToLL_M-50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-400to600-MLM_2017/190717_212115/0000/tree_6.root'
+fn = 'root://cmsxrootd.fnal.gov/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/16Jul19/DYJetsToLL_M-50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50_HT-400to600-MLM_2017/190717_212115/0000/tree_6.root'
 
 file = uproot.open(fn)
 
