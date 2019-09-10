@@ -245,6 +245,8 @@ def lumi(year):
         return 59.7
     if year==2017:
         return 41.3
+    if year==2016:
+        return 35.9
 
 def scale_xs_lumi(histogram):
     """MC normalization so that it's ready to compare to data
