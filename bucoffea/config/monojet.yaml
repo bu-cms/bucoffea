@@ -179,6 +179,35 @@ era2016:
     branch:
       id: Photon_cutBased17Bitmap
   sf:
+    ele_reco:
+      histogram: EGamma_SF2D
+      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
+    ele_id_loose:
+      histogram: EGamma_SF2D
+      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2.root
+    ele_id_tight:
+      histogram: EGamma_SF2D
+      file: data/sf/egamma/2017_ElectronTight.root
+
+    photon_id_tight:
+      histogram: EGamma_SF2D
+      file: data/sf/egamma/2017_PhotonsMedium.root
+    photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
+      histogram: Tight_ID
+      file: data/sf/egamma/CSEV_ScaleFactors_2017.root
+
+    muon_id_loose:
+      histogram: NUM_LooseID_DEN_genTracks_pt_abseta
+      file: data/sf/muon/2017_RunBCDEF_SF_ID.root
+    muon_id_tight:
+      histogram: NUM_TightID_DEN_genTracks_pt_abseta
+      file: data/sf/muon/2017_RunBCDEF_SF_ID.root
+    muon_iso_tight:
+      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta
+      file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
+    muon_iso_loose:
+      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
+      file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
     pileup:
       histogram: "sf2017_nominal"
       file: "data/sf/pileup/pileup.root"
@@ -188,6 +217,7 @@ era2016:
     pileup_down:
       histogram: "sf2017_down"
       file: "data/sf/pileup/pileup.root"
+
   filters:
     data:
       - Flag_goodVertices
