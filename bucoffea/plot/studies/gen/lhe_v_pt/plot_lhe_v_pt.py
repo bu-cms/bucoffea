@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from pprint import pprint
 import copy
 import os
 import re
@@ -28,7 +29,7 @@ def get_old_kfac(tag):
     elif tag.startswith('dy'):
         f = uproot.open(bucoffea_path('data/sf/theory/merged_kfactors_wjets.root'))
     return f['kfactor_monojet_qcd']
-def plot_lhe_v_pt(acc, tag, regex, outputrootfile):
+def plot_lhe_v_pt(acc, tag, regex, outputrootfile, pttype):
     outdir = './output/'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -39,6 +40,7 @@ def plot_lhe_v_pt(acc, tag, regex, outputrootfile):
 
     for dist in ['gen_vpt']:
         h = copy.deepcopy(acc[dist])
+        h = h.integrate('type',pttype)
         h = h.rebin(h.axis('vpt'), new_ax)
         h = merge_extensions(h, acc, reweight_pu=False)
         scale_xs_lumi(h)
@@ -50,9 +52,8 @@ def plot_lhe_v_pt(acc, tag, regex, outputrootfile):
             h,
             overlay='dataset',
             overflow='all',
-            binwnorm=True, 
+            binwnorm=True,
             ax=ax)
-
         lo = h[re.compile('.*HT.*')].integrate('dataset')
         nlo = h[re.compile('.*LHE.*')].integrate('dataset')
 
@@ -83,7 +84,7 @@ def plot_lhe_v_pt(acc, tag, regex, outputrootfile):
         # try:
         #     f = uproot.create(f'gen_v_pt_qcd_sf.root')
         # except OSError:
-        
+
         outputrootfile[tag] = (sf_y,sf_x)
 
 
@@ -126,10 +127,13 @@ def pdfwgt_sf(vpt):
 
 #         fig.savefig(pjoin(outdir,f'{tag}_{dist}.pdf'))
 def main():
-    acc = acc_from_dir("./input/das_lhevpt_v1")
+    acc = acc_from_dir("./input/das_lhevpt_v2")
     outputrootfile = uproot.recreate(f'gen_v_pt_qcd_sf.root')
-    plot_lhe_v_pt(acc, tag='wjet', regex='W.*',outputrootfile=outputrootfile)
-    plot_lhe_v_pt(acc, tag='dy', regex='DY.*',outputrootfile=outputrootfile)
+    plot_lhe_v_pt(acc, tag='wjet_dilep', regex='W.*',pttype='dilepton',outputrootfile=outputrootfile)
+    plot_lhe_v_pt(acc, tag='dy_dilep', regex='.*DY.*',pttype='dilepton',outputrootfile=outputrootfile)
+
+    plot_lhe_v_pt(acc, tag='wjet_nano', regex='W.*',pttype='nano',outputrootfile=outputrootfile)
+    plot_lhe_v_pt(acc, tag='dy_nano', regex='.*DY.*',pttype='nano',outputrootfile=outputrootfile)
 
 
 
