@@ -515,12 +515,16 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=weight[mask])
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
+                ezfill('muon_dxy',  dxy=muons.dxy[mask].flatten(),  weight=w_allmu)
+                ezfill('muon_dz',  dz=muons.dz[mask].flatten(),  weight=w_allmu)
 
                 # Leading muon
                 w_leadmu = weight_shape(muons[leadmuon_index].pt[mask], weight[mask])
                 ezfill('muon_pt0',   pt=muons[leadmuon_index].pt[mask].flatten(),    w_leadmu=w_leadmu )
                 ezfill('muon_eta0',  eta=muons[leadmuon_index].eta[mask].flatten(),  w_leadmu=w_leadmu)
                 ezfill('muon_phi0',  phi=muons[leadmuon_index].phi[mask].flatten(),  w_leadmu=w_leadmu)
+                ezfill('muon_dxy0',  dxy=muons[leadmuon_index].dxy[mask].flatten(),  weight=w_leadmu)
+                ezfill('muon_dz0',  dz=muons[leadmuon_index].dz[mask].flatten(),  weight=w_leadmu)
 
                 # HLT Matched muons
                 w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], weight[mask])
@@ -542,6 +546,8 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=weight[mask])
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
                 ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
+                ezfill('electron_dz',  dz=electrons.dz[mask].flatten(),  weight=w_allel)
+                ezfill('electron_dxy',  dxy=electrons.dxy[mask].flatten(),  weight=w_allel)
 
                 w_leadel = weight_shape(electrons[leadelectron_index].pt[mask], weight[mask])
                 ezfill('electron_pt0',   pt=electrons[leadelectron_index].pt[mask].flatten(),    weight=w_leadel)
