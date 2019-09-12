@@ -40,6 +40,9 @@ def monojet_accumulator(cfg):
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
+    dxy_ax = Bin("dxy", r"$d_{xy}$", 20, 0, 0.5)
+    dz_ax = Bin("dz", r"$d_{z}$", 20, 0, 0.5)
+
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 100, 0, 4000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
@@ -118,9 +121,13 @@ def monojet_accumulator(cfg):
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["muon_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    items["muon_dxy"] = Hist("Counts", dataset_ax, region_ax, dxy_ax)
+    items["muon_dz"] = Hist("Counts", dataset_ax, region_ax, dz_ax)
     items["muon_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_eta0"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["muon_phi0"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    items["muon_dxy0"] = Hist("Counts", dataset_ax, region_ax, dxy_ax)
+    items["muon_dz0"] = Hist("Counts", dataset_ax, region_ax, dz_ax)
     items["muons_hltmatch_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muons_hltmatch_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["muon_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
@@ -131,6 +138,8 @@ def monojet_accumulator(cfg):
     items["electron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["electron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["electron_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    items["electron_dxy"] = Hist("Counts", dataset_ax, region_ax, dxy_ax)
+    items["electron_dz"] = Hist("Counts", dataset_ax, region_ax, dz_ax)
     items["electron_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["electron_eta0"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["electron_phi0"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
@@ -195,7 +204,9 @@ def setup_candidates(df, cfg):
         charge=df['Muon_charge'],
         looseId=df['Muon_looseId'],
         iso=df["Muon_pfRelIso04_all"],
-        tightId=df['Muon_tightId']
+        tightId=df['Muon_tightId'],
+        dxy=df['Muon_dxy'],
+        dz=df['Muon_dz']
     )
 
     # All muons must be at least loose
@@ -220,11 +231,11 @@ def setup_candidates(df, cfg):
         barrel=np.abs(df['Electron_eta'])< 1.479
     )
     # All electrons must be at least loose
-    pass_dxy = (electrons.barrel & (electrons.dxy < cfg.ELECTRON.CUTS.LOOSE.DXY.BARREL)) \
-    | (~electrons.barrel & (electrons.dxy < cfg.ELECTRON.CUTS.LOOSE.DXY.ENDCAP))
+    pass_dxy = (electrons.barrel & (np.abs(electrons.dxy) < cfg.ELECTRON.CUTS.LOOSE.DXY.BARREL)) \
+    | (~electrons.barrel & (np.abs(electrons.dxy) < cfg.ELECTRON.CUTS.LOOSE.DXY.ENDCAP))
 
-    pass_dz = (electrons.barrel & (electrons.dz < cfg.ELECTRON.CUTS.LOOSE.DZ.BARREL)) \
-    | (~electrons.barrel & (electrons.dz < cfg.ELECTRON.CUTS.LOOSE.DZ.ENDCAP))
+    pass_dz = (electrons.barrel & (np.abs(electrons.dz) < cfg.ELECTRON.CUTS.LOOSE.DZ.BARREL)) \
+    | (~electrons.barrel & (np.abs(electrons.dz) < cfg.ELECTRON.CUTS.LOOSE.DZ.ENDCAP))
 
     electrons = electrons[electrons.looseId \
                                     & (electrons.pt>cfg.ELECTRON.CUTS.LOOSE.PT) \
