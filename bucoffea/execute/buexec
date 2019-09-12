@@ -214,7 +214,8 @@ def do_submit(args):
                 # "log" :f"/dev/null",
                 "request_cpus" : str(args.jobs),
                 "request_memory" : str(args.memory if args.memory else args.jobs*2100),
-                "+MaxRuntime" : f"{60*60*8}"
+                "+MaxRuntime" : f"{60*60*8}",
+                "on_exit_remove" : "((ExitBySignal == False) && (ExitCode == 0)) | (NumJobStarts >= 2)",
                 }
             if args.send_proxy:
                 submission_settings['Proxy_path'] = pjoin(proxydir,os.path.basename(proxy))
