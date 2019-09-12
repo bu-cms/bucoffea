@@ -29,13 +29,13 @@ def main():
     args = parse_commandline()
     processor_class = args.processor
 
-    if processorClass == 'monojet': 
+    if processor_class == 'monojet':
         from bucoffea.monojet import monojetProcessor
-        processorInstance = monojetProcessor(years[0])        
+        processorInstance = monojetProcessor(years[0])
 
-    elif processorClass == 'vbfhinv': 
+    elif processor_class == 'vbfhinv':
         from bucoffea.vbfhinv import vbfhinvProcessor
-        processorInstance = vbfhinvProcessor(years[0])        
+        processorInstance = vbfhinvProcessor(years[0])
 
     for dataset, filelist in fileset.items():
         newlist = []
@@ -54,10 +54,10 @@ def main():
                                     executor_args={'workers': 4, 'flatten': True},
                                     chunksize=500000,
                                     )
-        save(output, f"{processorClass}_{dataset}.coffea")
-    # Debugging / testing output
-    # debug_plot_output(output)
-        print_cutflow(output, outfile=f'{processorClass}_cutflow_{dataset}.txt')
+        save(output, f"{processor_class}_{dataset}.coffea")
+        # Debugging / testing output
+        # debug_plot_output(output)
+        print_cutflow(output, outfile=f'{processor_class}_cutflow_{dataset}.txt')
 
 if __name__ == "__main__":
     main()
