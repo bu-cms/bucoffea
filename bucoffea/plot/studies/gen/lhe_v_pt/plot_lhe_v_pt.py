@@ -127,11 +127,12 @@ def pdfwgt_sf(vpt):
 
 #         fig.savefig(pjoin(outdir,f'{tag}_{dist}.pdf'))
 def main():
-    acc = acc_from_dir("./input/das_lhevpt_v2")
-    outputrootfile = uproot.recreate(f'gen_v_pt_qcd_sf.root')
+    acc = acc_from_dir("./input/das_lhevpt_v3")
+    outputrootfile = uproot.recreate(f'2017_gen_v_pt_stat1_qcd_sf.root')
     plot_lhe_v_pt(acc, tag='wjet_dilep', regex='W.*',pttype='dilepton',outputrootfile=outputrootfile)
     plot_lhe_v_pt(acc, tag='dy_dilep', regex='.*DY.*',pttype='dilepton',outputrootfile=outputrootfile)
 
+    outputrootfile = uproot.recreate(f'2017_gen_v_pt_lhe_qcd_sf.root')
     plot_lhe_v_pt(acc, tag='wjet_nano', regex='W.*',pttype='nano',outputrootfile=outputrootfile)
     plot_lhe_v_pt(acc, tag='dy_nano', regex='.*DY.*',pttype='nano',outputrootfile=outputrootfile)
 
