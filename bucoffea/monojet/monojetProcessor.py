@@ -197,7 +197,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
 
-        if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018):
+        if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
             selection.add('hemveto', df['hemveto'])
         else:
             selection.add('hemveto', np.ones(df.size)==1)
