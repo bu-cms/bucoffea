@@ -553,6 +553,9 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('electron_pt0',   pt=electrons[leadelectron_index].pt[mask].flatten(),    weight=w_leadel)
                 ezfill('electron_eta0',  eta=electrons[leadelectron_index].eta[mask].flatten(),  weight=w_leadel)
                 ezfill('electron_phi0',  phi=electrons[leadelectron_index].phi[mask].flatten(),  weight=w_leadel)
+                
+                w_trailel = weight_shape(electrons[~leadelectron_index].pt[mask], weight[mask])
+                ezfill('electron_tightid1',  id=electrons[~leadelectron_index].tightId[mask].flatten(),  weight=w_trailel)
 
             # Dielectron
             if '_2e_' in region:

@@ -42,6 +42,7 @@ def monojet_accumulator(cfg):
 
     dxy_ax = Bin("dxy", r"$d_{xy}$", 20, 0, 0.5)
     dz_ax = Bin("dz", r"$d_{z}$", 20, 0, 0.5)
+    id_ax = Bin("id", r"ID bool", 2,-0.5,1.5)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 100, 0, 4000)
@@ -143,6 +144,7 @@ def monojet_accumulator(cfg):
     items["electron_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["electron_eta0"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["electron_phi0"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    items["electron_tightid1"] = Hist("Counts", dataset_ax, region_ax, id_ax)
     items["electron_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
     items["dielectron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["dielectron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
