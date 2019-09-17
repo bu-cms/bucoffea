@@ -31,8 +31,7 @@ jobs:
     - name: Install package
       run: |
         pip install -e .
-    - name: Run monojet
+    - name: Run processors over test files
       run: |
-        wget https://aalbert.web.cern.ch/aalbert/public/WJetsToLNu_HT-400To600-MLM_2017.root
-        echo 'WJetsToLNu_HT-400To600-MLM_2017.root' > files.txt
-        ./bucoffea/execute/buexec monojet --outpath ./output/ --jobs 1 worker --dataset WJetsToLNu_HT-400To600-MLM_2017 --filelist files.txt --chunk 0
+        cd test
+        ./run_over_testfiles.sh
