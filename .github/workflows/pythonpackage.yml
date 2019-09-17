@@ -32,4 +32,4 @@ jobs:
       run: |
         wget https://aalbert.web.cern.ch/aalbert/public/WJetsToLNu_HT-400To600-MLM_2017.root
         echo 'WJetsToLNu_HT-400To600-MLM_2017.root' > files.txt
-        buexec monojet --outpath ./output/ --jobs 1 worker --dataset WJetsToLNu_HT-400To600-MLM_2017 --filelist files.txt --chunk 0
+        ./bucoffea/execute/buexec monojet --outpath ./output/ --jobs 1 worker --dataset WJetsToLNu_HT-400To600-MLM_2017 --filelist files.txt --chunk 0
