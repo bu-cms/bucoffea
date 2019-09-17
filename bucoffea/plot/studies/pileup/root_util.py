@@ -1,5 +1,7 @@
 # Utility functions for dealing with ROOT plots
 import ROOT as r
+import string
+import random
 
 def create_tdr_style(want_title=False):
    tdrStyle =r.TStyle("tdrStyle","Style for P-TDR");
