@@ -103,8 +103,3 @@ class pdfWeightProcessor(processor.ProcessorABC):
 
     def postprocess(self, accumulator):
         return accumulator
-
-
-
-if __name__ == "__main__":
-    main()
