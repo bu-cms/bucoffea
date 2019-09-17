@@ -269,7 +269,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                 output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt]
                 output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta]
-                output['kinematics']['leadbtag'] += [jet_btag_val[jet_acceptance & (ak4.pt>20)][mask].max()]
+                output['kinematics']['leadbtag'] += [jet_btag_val[(np.abs(ak4.eta)<2.4) & (ak4.pt>20)][mask].max()]
 
                 output['kinematics']['nLooseMu'] += [muons.counts[mask]]
                 output['kinematics']['nTightMu'] += [muons[is_tight_muon].counts[mask]]

@@ -13,7 +13,7 @@ def bucoffea_path(path_in_repo):
 def xrootd_format(fpath):
     """Ensure that the file path is file:/* or xrootd"""
     if fpath.startswith("/store/"):
-        return f"root://cms-xrd-global.cern.ch//{file}"
+        return f"root://cms-xrd-global.cern.ch//{fpath}"
     elif fpath.startswith("file:"):
         return fpath
     else:
