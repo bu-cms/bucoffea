@@ -1,4 +1,4 @@
-coffea==0.6.8
+coffea==0.6.9
 htcondor
 dynaconf
 pyyaml
