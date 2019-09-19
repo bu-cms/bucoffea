@@ -68,5 +68,6 @@ run_from_list() {
 
 run_from_list ../datasets_2017.txt
 run_from_list ../datasets_2018.txt
+run_from_list ../datasets_2016.txt
 
 
