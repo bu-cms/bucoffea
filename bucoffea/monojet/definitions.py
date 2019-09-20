@@ -491,4 +491,15 @@ def monojet_regions(cfg):
         tmp.remove('hemveto')
         regions[f'{region}_nohem'] = tmp
 
+
+
+    regions['cr_2e_j_bare'] = copy.deepcopy(regions['cr_2e_j'])
+    regions['cr_2e_j_bare'].remove('mindphijr')
+    regions['cr_2e_j_bare'].remove('dpfcalo')
+    regions['cr_2e_j_bare'].remove('filt_met')
+
+    regions['cr_2e_j_vbare'] = copy.deepcopy(regions['cr_2e_j_bare'])
+    regions['cr_2e_j_vbare'].remove('veto_tau')
+    regions['cr_2e_j_vbare'].remove('veto_photon')
+
     return regions
