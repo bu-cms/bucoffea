@@ -310,7 +310,7 @@ def setup_candidates(df, cfg):
         ]
     df['hemveto'] = hem_ak4.counts == 0
 
-    ak4 = ak4[ak4.looseId & object_overlap(ak4, muons) & object_overlap(ak4, electrons)]
+    ak4 = ak4[ak4.looseId & object_overlap(ak4, muons) & object_overlap(ak4, electrons) & object_overlap(ak4, photons)]
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
         df['nFatJet'],
