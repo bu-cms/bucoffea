@@ -538,6 +538,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('dimuon_pt',     pt=dimuons.pt[mask].flatten(),              weight=w_dimu)
                 ezfill('dimuon_eta',    eta=dimuons.eta[mask].flatten(),            weight=w_dimu)
                 ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
+                ezfill('dimuon_dr',   dr=dimuons.i0.p4.delta_r(dimuons.i1.p4)[mask].flatten(), weight=w_dimu )
 
             # Electrons
             if '_1e_' in region or '_2e_' in region:
@@ -563,6 +564,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('dielectron_pt',     pt=dielectrons.pt[mask].flatten(),                  weight=w_diel)
                 ezfill('dielectron_eta',    eta=dielectrons.eta[mask].flatten(),                weight=w_diel)
                 ezfill('dielectron_mass',   dilepton_mass=dielectrons.mass[mask].flatten(),     weight=w_diel)
+                ezfill('dielectron_dr',   dr=dielectrons.i0.p4.delta_r(dielectrons.i1.p4)[mask].flatten(), weight=w_diel )
 
             # Photon
             if '_g_' in region:
