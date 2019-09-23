@@ -277,7 +277,10 @@ def setup_candidates(df, cfg):
     )
     photons = photons[photons.looseId \
               & (photons.pt > cfg.PHOTON.CUTS.LOOSE.pt) \
-              & (np.abs(photons.eta) < cfg.PHOTON.CUTS.LOOSE.eta)]
+              & (np.abs(photons.eta) < cfg.PHOTON.CUTS.LOOSE.eta) \
+              & object_overlap(photons, muons) \
+              & object_overlap(photons, electrons)
+              ]
 
     ak4 = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'],
