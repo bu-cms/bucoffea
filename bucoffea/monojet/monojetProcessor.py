@@ -125,7 +125,7 @@ class monojetProcessor(processor.ProcessorABC):
         is_tight_muon = muons.tightId \
                       & (muons.iso < cfg.MUON.CUTS.TIGHT.ISO) \
                       & (muons.pt>cfg.MUON.CUTS.TIGHT.PT) \
-                      & (np.abs(muons.eta)<cfg.MUON.CUTS.TIGHT.ETA)
+                      & (muons.abseta<cfg.MUON.CUTS.TIGHT.ETA)
 
         dimuons = muons.distincts()
         dimuon_charge = dimuons.i0['charge'] + dimuons.i1['charge']
@@ -135,7 +135,7 @@ class monojetProcessor(processor.ProcessorABC):
         # Electrons
         is_tight_electron = electrons.tightId \
                             & (electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
-                            & (np.abs(electrons.eta) < cfg.ELECTRON.CUTS.TIGHT.ETA)
+                            & (electrons.abseta < cfg.ELECTRON.CUTS.TIGHT.ETA)
 
         dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
@@ -204,7 +204,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # AK4 Jet
         leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
-                         & (np.abs(ak4.eta[leadak4_index]) < cfg.SELECTION.SIGNAL.leadak4.ETA).any()
+                         & (ak4.abseta[leadak4_index] < cfg.SELECTION.SIGNAL.leadak4.ETA).any()
         selection.add('leadak4_pt_eta', leadak4_pt_eta)
 
         selection.add('leadak4_id',(ak4.tightId[leadak4_index] \
@@ -214,7 +214,7 @@ class monojetProcessor(processor.ProcessorABC):
         # AK8 Jet
         leadak8_index=ak8.pt.argmax()
         leadak8_pt_eta = (ak8.pt.max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
-                         & (np.abs(ak8.eta[leadak8_index]) < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
+                         & (ak8.abseta[leadak8_index] < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
         selection.add('leadak8_pt_eta', leadak8_pt_eta)
 
         selection.add('leadak8_id',(ak8.tightId[leadak8_index]).any())
@@ -259,7 +259,7 @@ class monojetProcessor(processor.ProcessorABC):
         leadphoton_index=photons.pt.argmax()
 
         is_tight_photon = photons.mediumId \
-                         & (np.abs(photons.eta) < cfg.PHOTON.CUTS.TIGHT.ETA)
+                         & (photons.abseta < cfg.PHOTON.CUTS.TIGHT.ETA)
 
         selection.add('one_photon', photons.counts==1)
         selection.add('at_least_one_tight_photon', is_tight_photon.any())
@@ -298,10 +298,10 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Muon ID and Isolation for tight and loose WP
             # Function of pT, eta (Order!)
-            all_weights["muon_id_tight"] = evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].eta).prod()
-            all_weights["muon_iso_tight"] = evaluator['muon_iso_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].eta).prod()
-            all_weights["muon_id_loose"] = evaluator['muon_id_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].eta).prod()
-            all_weights["muon_iso_loose"] = evaluator['muon_iso_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].eta).prod()
+            all_weights["muon_id_tight"] = evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].abseta).prod()
+            all_weights["muon_iso_tight"] = evaluator['muon_iso_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].abseta).prod()
+            all_weights["muon_id_loose"] = evaluator['muon_id_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].abseta).prod()
+            all_weights["muon_iso_loose"] = evaluator['muon_iso_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].abseta).prod()
 
             # Electron ID and reco
             # Function of eta, pT (Other way round relative to muons!)

@@ -201,6 +201,7 @@ def setup_candidates(df, cfg):
         df['nMuon'],
         pt=df['Muon_pt'],
         eta=df['Muon_eta'],
+        abseta=np.abs(df['Muon_eta']),
         phi=df['Muon_phi'],
         mass=0 * df['Muon_pt'],
         charge=df['Muon_charge'],
@@ -215,7 +216,7 @@ def setup_candidates(df, cfg):
     muons = muons[muons.looseId \
                     & (muons.iso < cfg.MUON.CUTS.LOOSE.ISO) \
                     & (muons.pt > cfg.MUON.CUTS.LOOSE.PT) \
-                    & (np.abs(muons.eta)<cfg.MUON.CUTS.LOOSE.ETA) \
+                    & (muons.abseta<cfg.MUON.CUTS.LOOSE.ETA) \
                     ]
 
 
@@ -223,6 +224,7 @@ def setup_candidates(df, cfg):
         df['nElectron'],
         pt=df['Electron_pt'],
         eta=df['Electron_eta'],
+        abseta=np.abs(df['Electron_eta']),
         phi=df['Electron_phi'],
         mass=0 * df['Electron_pt'],
         charge=df['Electron_charge'],
@@ -241,7 +243,7 @@ def setup_candidates(df, cfg):
 
     electrons = electrons[electrons.looseId \
                                     & (electrons.pt>cfg.ELECTRON.CUTS.LOOSE.PT) \
-                                    & (np.abs(electrons.eta)<cfg.ELECTRON.CUTS.LOOSE.ETA) \
+                                    & (electrons.abseta<cfg.ELECTRON.CUTS.LOOSE.ETA) \
                                     & pass_dxy \
                                     & pass_dz
                                     ]
@@ -251,6 +253,7 @@ def setup_candidates(df, cfg):
         df['nTau'],
         pt=df['Tau_pt'],
         eta=df['Tau_eta'],
+        abseta=np.abs(df['Tau_eta']),
         phi=df['Tau_phi'],
         mass=0 * df['Tau_pt'],
         decaymode=df['Tau_idDecayModeNewDMs'] & df['Tau_idDecayMode'],
@@ -262,12 +265,14 @@ def setup_candidates(df, cfg):
                 & object_overlap(taus, electrons) \
                 & (taus.decaymode) \
                 & (taus.pt > cfg.TAU.CUTS.PT)\
-                & (np.abs(taus.eta) < cfg.TAU.CUTS.ETA) \
+                & (taus.abseta < cfg.TAU.CUTS.ETA) \
                 & ((taus.iso&2)==2)]
+
     photons = JaggedCandidateArray.candidatesfromcounts(
         df['nPhoton'],
         pt=df['Photon_pt'],
         eta=df['Photon_eta'],
+        abseta=np.abs(df['Photon_eta']),
         phi=df['Photon_phi'],
         mass=0*df['Photon_pt'],
         looseId=(df[cfg.PHOTON.BRANCH.ID]>=1) & df['Photon_electronVeto'],
@@ -277,7 +282,7 @@ def setup_candidates(df, cfg):
     )
     photons = photons[photons.looseId \
               & (photons.pt > cfg.PHOTON.CUTS.LOOSE.pt) \
-              & (np.abs(photons.eta) < cfg.PHOTON.CUTS.LOOSE.eta) \
+              & (photons.abseta < cfg.PHOTON.CUTS.LOOSE.eta) \
               & object_overlap(photons, muons) \
               & object_overlap(photons, electrons)
               ]
@@ -286,6 +291,7 @@ def setup_candidates(df, cfg):
         df['nJet'],
         pt=df[f'Jet_pt{jes_suffix}'],
         eta=df['Jet_eta'],
+        abseta=np.abs(df['Jet_eta']),
         phi=df['Jet_phi'],
         mass=df[f'Jet_mass{jes_suffix}'],
         looseId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight
@@ -316,6 +322,7 @@ def setup_candidates(df, cfg):
         df['nFatJet'],
         pt=df[f'FatJet_pt{jes_suffix}'],
         eta=df['FatJet_eta'],
+        abseta=np.abs(df['FatJet_eta']),
         phi=df['FatJet_phi'],
         mass=df[f'FatJet_msoftdrop{jes_suffix}'],
         tightId=(df['FatJet_jetId']&2) == 2, # Tight
