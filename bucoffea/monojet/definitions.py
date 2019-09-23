@@ -116,7 +116,7 @@ def monojet_accumulator(cfg):
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
 
     # Multiplicity histograms
-    for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
+    for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch','gen_dilepton']:
         items[f"{cand}_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
 
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)

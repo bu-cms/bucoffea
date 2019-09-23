@@ -104,6 +104,7 @@ class monojetProcessor(processor.ProcessorABC):
         df['is_data'] = is_data(dataset)
 
         gen_v_pt = None
+        n_gen_dilepton = np.zeros(df.size)
         if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
             gen = setup_gen_candidates(df)
             if is_lo_z(dataset) or is_nlo_z(dataset):
@@ -111,6 +112,7 @@ class monojetProcessor(processor.ProcessorABC):
             elif is_lo_w(dataset) or is_nlo_w(dataset):
                 pdgsum = 1
             gen_dilep = find_gen_dilepton(gen, pdgsum)
+            n_gen_dilepton = gen_dilep.counts()
             gen_v_pt = gen_dilep[gen_dilep.mass.argmax()].pt.max()
         elif df['is_lo_g']:
             gen_v_pt = df['LHE_Vpt']
@@ -577,6 +579,8 @@ class monojetProcessor(processor.ProcessorABC):
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], weight[mask])
 
+            # Gen
+            ezfill('gen_dilepton_mult', multiplicity=n_gen_dilepton[mask], weight=weight[mask])
 
             # PV
             ezfill('npv', nvtx=df['PV_npvs'][mask], weight=weight[mask])
