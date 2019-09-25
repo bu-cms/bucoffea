@@ -1,4 +1,5 @@
 #/bin/bash
+set -e
 while IFS=" " read -r DATASET REMOTE_PATH REMAINDER
 do
     FNAME=$(basename $REMOTE_PATH)
