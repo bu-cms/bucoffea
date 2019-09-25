@@ -112,7 +112,7 @@ class monojetProcessor(processor.ProcessorABC):
             elif is_lo_w(dataset) or is_nlo_w(dataset):
                 pdgsum = 1
             gen_dilep = find_gen_dilepton(gen, pdgsum)
-            n_gen_dilepton = gen_dilep.counts()
+            n_gen_dilepton = gen_dilep.counts
             gen_v_pt = gen_dilep[gen_dilep.mass.argmax()].pt.max()
         elif df['is_lo_g']:
             gen_v_pt = df['LHE_Vpt']
