@@ -285,65 +285,54 @@ class monojetProcessor(processor.ProcessorABC):
         # Weights
         evaluator = evaluator_from_config(cfg)
 
-
-        weight = np.ones(df.size)
-        weight_nopu = np.ones(df.size)
-        weight_nopref = np.ones(df.size)
-        all_weights = {}
+        weights = processor.Weights(size=df.size, storeIndividual=True)
         if not df['is_data']:
-            all_weights['gen'] = df['Generator_weight']
+            weights.add('gen', df['Generator_weight'])
 
             try:
-                all_weights['prefire'] = df['PrefireWeight']
+                weights.add('prefire', df['PrefireWeight'])
             except KeyError:
-                all_weights['prefire'] = np.ones(df.size)
+                weights.add('prefire', np.ones(df.size))
 
             # Muon ID and Isolation for tight and loose WP
             # Function of pT, eta (Order!)
-            all_weights["muon_id_tight"] = evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].abseta).prod()
-            all_weights["muon_iso_tight"] = evaluator['muon_iso_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].abseta).prod()
-            all_weights["muon_id_loose"] = evaluator['muon_id_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].abseta).prod()
-            all_weights["muon_iso_loose"] = evaluator['muon_iso_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].abseta).prod()
+            weights.add("muon_id_tight", evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].abseta).prod())
+            weights.add("muon_iso_tight", evaluator['muon_iso_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].abseta).prod())
+            weights.add("muon_id_loose", evaluator['muon_id_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].abseta).prod())
+            weights.add("muon_iso_loose", evaluator['muon_iso_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].abseta).prod())
 
             # Electron ID and reco
             # Function of eta, pT (Other way round relative to muons!)
-            all_weights["ele_reco"] = evaluator['ele_reco'](electrons.eta, electrons.pt).prod()
-            all_weights["ele_id_tight"] = evaluator['ele_id_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod()
-            all_weights["ele_id_loose"] = evaluator['ele_id_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod()
+            weights.add("ele_reco", evaluator['ele_reco'](electrons.eta, electrons.pt).prod())
+            weights.add("ele_id_tight", evaluator['ele_id_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod())
+            weights.add("ele_id_loose", evaluator['ele_id_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod())
 
             # Photon ID and electron veto
-            all_weights["photon_id_tight"] = evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod()
+            weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod())
 
             # CSEV not split only by EE/EB for now
             csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
-            all_weights["photon_csev"] = evaluator['photon_csev'](csev_sf_index).prod()
+            weights.add("photon_csev", evaluator['photon_csev'](csev_sf_index).prod())
 
             if cfg.SF.PILEUP.MODE == 'nano':
-                all_weights["pileup"] = df['puWeight']
+                weights.add("pileup", df['puWeight'])
             elif cfg.SF.PILEUP.MODE == 'manual':
-                all_weights["pileup"] = evaluator['pileup'](df['Pileup_nTrueInt'])
+                weights.add("pileup", evaluator['pileup'](df['Pileup_nTrueInt']))
             else:
                 raise RuntimeError(f"Unknown value for cfg.PILEUP.MODE: {cfg.PILEUP.MODE}.")
 
             if df['is_lo_w']:
-                all_weights["theory"] = evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+                weights.add("theory", evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
             elif df['is_lo_z']:
-                all_weights["theory"] = evaluator["qcd_nlo_z_2017"](gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+                weights.add("theory", evaluator["qcd_nlo_z_2017"](gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
             elif df['is_nlo_w']:
-                all_weights["theory"] = evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+                weights.add("theory", evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
             elif df['is_nlo_z']:
-                all_weights["theory"] = evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+                weights.add("theory", evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
             elif df['is_lo_g']:
-                all_weights["theory"] = evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["qcd_nnlo_g"](gen_v_pt)
+                weights.add("theory", evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["qcd_nnlo_g"](gen_v_pt))
             else:
-                all_weights["theory"] = np.ones(df.size)
-
-            for name, iw in all_weights.items():
-                weight = weight * iw
-                if name != 'pileup':
-                    weight_nopu = weight_nopu * iw
-                if name != 'prefire':
-                    weight_nopref = weight_nopref * iw
+                weights.add("theory", np.ones(df.size))
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
@@ -383,7 +372,7 @@ class monojetProcessor(processor.ProcessorABC):
         if not df['is_data']:
             output['sumw'][dataset] +=  df['genEventSumw']
             output['sumw2'][dataset] +=  df['genEventSumw2']
-            output['sumw_pileup'][dataset] +=  all_weights['pileup'].sum()
+            output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
 
         regions = monojet_regions(cfg)
         for region, cuts in regions.items():
@@ -411,7 +400,7 @@ class monojetProcessor(processor.ProcessorABC):
                                   dataset=dataset,
                                   region=region,
                                   multiplicity=candidates[mask].counts,
-                                  weight=weight[mask]
+                                  weight=weights.weight()[mask]
                                   )
 
             fill_mult('ak8_mult', ak8)
@@ -434,14 +423,14 @@ class monojetProcessor(processor.ProcessorABC):
                                   **kwargs
                                   )
             # Monitor weights
-            for wname, wvalue in all_weights.items():
+            for wname, wvalue in weights._weights.items():
                 ezfill("weights", weight_type=wname, weight_value=wvalue[mask])
                 ezfill("weights_wide", weight_type=wname, weight_value=wvalue[mask])
 
             # All ak4
             # This is a workaround to create a weight array of the right dimension
-            w_alljets = weight_shape(ak4[mask].eta, weight[mask])
-            w_alljets_nopref = weight_shape(ak4[mask].eta, weight_nopref[mask])
+            w_alljets = weight_shape(ak4[mask].eta, weights.weight()[mask])
+            w_alljets_nopref = weight_shape(ak4[mask].eta, weights.partial_weight(exclude=['prefire'])[mask])
 
             ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
@@ -452,7 +441,7 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_pt_nopref',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets_nopref)
 
             # Leading ak4
-            w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], weight[mask])
+            w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], weights.weight()[mask])
             ezfill('ak4_eta0',   jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_phi0',   jetphi=ak4[leadak4_index].phi[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_pt0',    jetpt=ak4[leadak4_index].pt[mask].flatten(),      weight=w_leadak4)
@@ -461,9 +450,9 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_nhf0',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_nconst0',    nconst=ak4[leadak4_index].nconst[mask].flatten(),      weight=w_leadak4)
 
-            ezfill('drelejet',    dr=df['dREleJet'][mask],      weight=weight[mask])
-            ezfill('drmuonjet',    dr=df['dRMuonJet'][mask],      weight=weight[mask])
-            ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask],  weight=weight[mask])
+            ezfill('drelejet',    dr=df['dREleJet'][mask],      weight=weights.weight()[mask])
+            ezfill('drmuonjet',    dr=df['dRMuonJet'][mask],      weight=weights.weight()[mask])
+            ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask],  weight=weights.weight()[mask])
 
             # Two-dimensional
             ezfill('ak4_pt0_eta0', jetpt=ak4[leadak4_index].pt[mask].flatten(), jeteta=ak4[leadak4_index].eta[mask].flatten(), weight=w_leadak4)
@@ -474,7 +463,7 @@ class monojetProcessor(processor.ProcessorABC):
             # AK8 jets
             if region=='inclusive' or region.endswith('v'):
                 # All
-                w_allak8 = weight_shape(ak8.eta[mask], weight[mask])
+                w_allak8 = weight_shape(ak8.eta[mask], weights.weight()[mask])
 
                 ezfill('ak8_eta',    jeteta=ak8[mask].eta.flatten(), weight=w_allak8)
                 ezfill('ak8_phi',    jetphi=ak8[mask].phi.flatten(), weight=w_allak8)
@@ -482,7 +471,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_mass',   mass=ak8[mask].mass.flatten(),  weight=w_allak8)
 
                 # Leading
-                w_leadak8 = weight_shape(ak8[leadak8_index].eta[mask], weight[mask])
+                w_leadak8 = weight_shape(ak8[leadak8_index].eta[mask], weights.weight()[mask])
 
                 ezfill('ak8_eta0',       jeteta=ak8[leadak8_index].eta[mask].flatten(),    weight=w_leadak8)
                 ezfill('ak8_phi0',       jetphi=ak8[leadak8_index].phi[mask].flatten(),    weight=w_leadak8)
@@ -496,32 +485,32 @@ class monojetProcessor(processor.ProcessorABC):
 
             # B tag discriminator
             btag = getattr(ak4[jet_acceptance], cfg.BTAG.ALGO)
-            w_btag = weight_shape(btag[mask], weight[mask])
+            w_btag = weight_shape(btag[mask], weights.weight()[mask])
             ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
             # MET
-            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=weight[mask] )
-            ezfill('met',                met=met_pt[mask],            weight=weight[mask] )
-            ezfill('met_phi',            phi=met_phi[mask],            weight=weight[mask] )
-            ezfill('met_noweight',       met=met_pt[mask],            weight=np.ones(weight[mask].size) )
-            ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=weight[mask] )
-            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],      weight=weight[mask] )
-            ezfill('recoil_noweight',    recoil=df["recoil_pt"][mask],      weight=np.ones(weight[mask].size) )
-            ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weight[mask] )
-            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=weight[mask] )
+            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=weights.weight()[mask] )
+            ezfill('met',                met=met_pt[mask],            weight=weights.weight()[mask] )
+            ezfill('met_phi',            phi=met_phi[mask],            weight=weights.weight()[mask] )
+            ezfill('met_noweight',       met=met_pt[mask],            weight=np.ones(weights.weight()[mask].size) )
+            ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=weights.weight()[mask] )
+            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],      weight=weights.weight()[mask] )
+            ezfill('recoil_noweight',    recoil=df["recoil_pt"][mask],      weight=np.ones(weights.weight()[mask].size) )
+            ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weights.weight()[mask] )
+            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=weights.weight()[mask] )
 
             # Muons
             if '_1m_' in region or '_2m_' in region:
-                w_allmu = weight_shape(muons.pt[mask], weight[mask])
+                w_allmu = weight_shape(muons.pt[mask], weights.weight()[mask])
                 ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
-                ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=weight[mask])
+                ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=weights.weight()[mask])
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_dxy',  dxy=muons.dxy[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_dz',  dz=muons.dz[mask].flatten(),  weight=w_allmu)
 
                 # Leading muon
-                w_leadmu = weight_shape(muons[leadmuon_index].pt[mask], weight[mask])
+                w_leadmu = weight_shape(muons[leadmuon_index].pt[mask], weights.weight()[mask])
                 ezfill('muon_pt0',   pt=muons[leadmuon_index].pt[mask].flatten(),    w_leadmu=w_leadmu )
                 ezfill('muon_eta0',  eta=muons[leadmuon_index].eta[mask].flatten(),  w_leadmu=w_leadmu)
                 ezfill('muon_phi0',  phi=muons[leadmuon_index].phi[mask].flatten(),  w_leadmu=w_leadmu)
@@ -529,13 +518,13 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('muon_dz0',  dz=muons[leadmuon_index].dz[mask].flatten(),  weight=w_leadmu)
 
                 # HLT Matched muons
-                w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], weight[mask])
+                w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], weights.weight()[mask])
                 ezfill('muons_hltmatch_eta',  eta=muons_hltmatch.eta[mask].flatten(),  weight=w_muons_hltmatch)
                 ezfill('muons_hltmatch_pt',  pt=muons_hltmatch.pt[mask].flatten(),  weight=w_muons_hltmatch)
 
             # Dimuon
             if '_2m_' in region:
-                w_dimu = weight_shape(dimuons.pt[mask], weight[mask])
+                w_dimu = weight_shape(dimuons.pt[mask], weights.weight()[mask])
 
                 ezfill('dimuon_pt',     pt=dimuons.pt[mask].flatten(),              weight=w_dimu)
                 ezfill('dimuon_eta',    eta=dimuons.eta[mask].flatten(),            weight=w_dimu)
@@ -544,25 +533,25 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Electrons
             if '_1e_' in region or '_2e_' in region:
-                w_allel = weight_shape(electrons.pt[mask], weight[mask])
+                w_allel = weight_shape(electrons.pt[mask], weights.weight()[mask])
                 ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
-                ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=weight[mask])
+                ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=weights.weight()[mask])
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
                 ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
                 ezfill('electron_dz',  dz=electrons.dz[mask].flatten(),  weight=w_allel)
                 ezfill('electron_dxy',  dxy=electrons.dxy[mask].flatten(),  weight=w_allel)
 
-                w_leadel = weight_shape(electrons[leadelectron_index].pt[mask], weight[mask])
+                w_leadel = weight_shape(electrons[leadelectron_index].pt[mask], weights.weight()[mask])
                 ezfill('electron_pt0',   pt=electrons[leadelectron_index].pt[mask].flatten(),    weight=w_leadel)
                 ezfill('electron_eta0',  eta=electrons[leadelectron_index].eta[mask].flatten(),  weight=w_leadel)
                 ezfill('electron_phi0',  phi=electrons[leadelectron_index].phi[mask].flatten(),  weight=w_leadel)
                 
-                w_trailel = weight_shape(electrons[~leadelectron_index].pt[mask], weight[mask])
+                w_trailel = weight_shape(electrons[~leadelectron_index].pt[mask], weights.weight()[mask])
                 ezfill('electron_tightid1',  id=electrons[~leadelectron_index].tightId[mask].flatten(),  weight=w_trailel)
 
             # Dielectron
             if '_2e_' in region:
-                w_diel = weight_shape(dielectrons.pt[mask], weight[mask])
+                w_diel = weight_shape(dielectrons.pt[mask], weights.weight()[mask])
                 ezfill('dielectron_pt',     pt=dielectrons.pt[mask].flatten(),                  weight=w_diel)
                 ezfill('dielectron_eta',    eta=dielectrons.eta[mask].flatten(),                weight=w_diel)
                 ezfill('dielectron_mass',   dilepton_mass=dielectrons.mass[mask].flatten(),     weight=w_diel)
@@ -570,29 +559,29 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Photon
             if '_g_' in region:
-                w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],weight[mask]);
+                w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],weights.weight()[mask]);
                 ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
                 ezfill('photon_pt0_noweight',     pt=photons[leadphoton_index].pt[mask].flatten(),    weight=np.ones(w_leading_photon.size))
                 ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
 
-                # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], weight[mask])
+                # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], weights.weight()[mask])
 
             # Gen
-            ezfill('gen_dilepton_mult', multiplicity=n_gen_dilepton[mask], weight=weight[mask])
+            ezfill('gen_dilepton_mult', multiplicity=n_gen_dilepton[mask], weight=weights.weight()[mask])
 
             # PV
-            ezfill('npv', nvtx=df['PV_npvs'][mask], weight=weight[mask])
-            ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=weight[mask])
+            ezfill('npv', nvtx=df['PV_npvs'][mask], weight=weights.weight()[mask])
+            ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=weights.weight()[mask])
 
-            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=weight_nopu[mask])
-            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=weight_nopu[mask])
+            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=weights.partial_weight(exclude=['pileup'])[mask])
+            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=weights.partial_weight(exclude=['pileup'])[mask])
 
-            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=weight[mask])
-            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weight[mask])
-            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=weight_nopu[mask])
-            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weight_nopu[mask])
+            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=weights.weight()[mask])
+            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weights.weight()[mask])
+            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=weights.partial_weight(exclude=['pileup'])[mask])
+            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weights.partial_weight(exclude=['pileup'])[mask])
         return output
 
     def postprocess(self, accumulator):
