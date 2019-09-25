@@ -6,7 +6,7 @@ import coffea.processor as processor
 
 from dynaconf import settings as cfg
 
-from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, monojet_regions
+from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, monojet_regions, theory_weights, pileup_weights, candidate_weights
 from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi,mask_and, mask_or, evaluator_from_config
 from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_lo_g, is_nlo_z, is_nlo_w, is_data, extract_year
 from bucoffea.helpers.gen import find_gen_dilepton, setup_gen_candidates
@@ -124,7 +124,7 @@ class monojetProcessor(processor.ProcessorABC):
         met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons, hlt = setup_candidates(df, cfg)
 
         # Muons
-        is_tight_muon = muons.tightId \
+        df['is_tight_muon'] = muons.tightId \
                       & (muons.iso < cfg.MUON.CUTS.TIGHT.ISO) \
                       & (muons.pt>cfg.MUON.CUTS.TIGHT.PT) \
                       & (muons.abseta<cfg.MUON.CUTS.TIGHT.ETA)
@@ -135,7 +135,7 @@ class monojetProcessor(processor.ProcessorABC):
         df['MT_mu'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
 
         # Electrons
-        is_tight_electron = electrons.tightId \
+        df['is_tight_electron'] = electrons.tightId \
                             & (electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
                             & (electrons.abseta < cfg.ELECTRON.CUTS.TIGHT.ETA)
 
@@ -230,7 +230,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()
-        selection.add('at_least_one_tight_mu', is_tight_muon.any())
+        selection.add('at_least_one_tight_mu', df['is_tight_muon'].any())
         selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
                                     & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
         selection.add('dimuon_charge', (dimuon_charge==0).any())
@@ -246,7 +246,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         selection.add('one_electron', electrons.counts==1)
         selection.add('two_electrons', electrons.counts==2)
-        selection.add('at_least_one_tight_el', is_tight_electron.any())
+        selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
 
         selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
                                         & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
@@ -260,11 +260,11 @@ class monojetProcessor(processor.ProcessorABC):
         # Photon CR
         leadphoton_index=photons.pt.argmax()
 
-        is_tight_photon = photons.mediumId \
+        df['is_tight_photon'] = photons.mediumId \
                          & (photons.abseta < cfg.PHOTON.CUTS.TIGHT.ETA)
 
         selection.add('one_photon', photons.counts==1)
-        selection.add('at_least_one_tight_photon', is_tight_photon.any())
+        selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
         selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
         selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
@@ -294,45 +294,9 @@ class monojetProcessor(processor.ProcessorABC):
             except KeyError:
                 weights.add('prefire', np.ones(df.size))
 
-            # Muon ID and Isolation for tight and loose WP
-            # Function of pT, eta (Order!)
-            weights.add("muon_id_tight", evaluator['muon_id_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].abseta).prod())
-            weights.add("muon_iso_tight", evaluator['muon_iso_tight'](muons[is_tight_muon].pt, muons[is_tight_muon].abseta).prod())
-            weights.add("muon_id_loose", evaluator['muon_id_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].abseta).prod())
-            weights.add("muon_iso_loose", evaluator['muon_iso_loose'](muons[~is_tight_muon].pt, muons[~is_tight_muon].abseta).prod())
-
-            # Electron ID and reco
-            # Function of eta, pT (Other way round relative to muons!)
-            weights.add("ele_reco", evaluator['ele_reco'](electrons.eta, electrons.pt).prod())
-            weights.add("ele_id_tight", evaluator['ele_id_tight'](electrons[is_tight_electron].eta, electrons[is_tight_electron].pt).prod())
-            weights.add("ele_id_loose", evaluator['ele_id_loose'](electrons[~is_tight_electron].eta, electrons[~is_tight_electron].pt).prod())
-
-            # Photon ID and electron veto
-            weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[is_tight_photon].eta, photons[is_tight_photon].pt).prod())
-
-            # CSEV not split only by EE/EB for now
-            csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
-            weights.add("photon_csev", evaluator['photon_csev'](csev_sf_index).prod())
-
-            if cfg.SF.PILEUP.MODE == 'nano':
-                weights.add("pileup", df['puWeight'])
-            elif cfg.SF.PILEUP.MODE == 'manual':
-                weights.add("pileup", evaluator['pileup'](df['Pileup_nTrueInt']))
-            else:
-                raise RuntimeError(f"Unknown value for cfg.PILEUP.MODE: {cfg.PILEUP.MODE}.")
-
-            if df['is_lo_w']:
-                weights.add("theory", evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
-            elif df['is_lo_z']:
-                weights.add("theory", evaluator["qcd_nlo_z_2017"](gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
-            elif df['is_nlo_w']:
-                weights.add("theory", evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
-            elif df['is_nlo_z']:
-                weights.add("theory", evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
-            elif df['is_lo_g']:
-                weights.add("theory", evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["qcd_nnlo_g"](gen_v_pt))
-            else:
-                weights.add("theory", np.ones(df.size))
+            weights = candidate_weights(weights, df, evaluator, muons, electrons, photons)
+            weights = pileup_weights(weights, df, evaluator, cfg)
+            weights = theory_weights(weights, df, evaluator, gen_v_pt)
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
@@ -351,17 +315,17 @@ class monojetProcessor(processor.ProcessorABC):
                 output['kinematics']['leadbtag'] += [jet_btag_val[jet_acceptance & (ak4.pt>20)][mask].max()]
 
                 output['kinematics']['nLooseMu'] += [muons.counts[mask]]
-                output['kinematics']['nTightMu'] += [muons[is_tight_muon].counts[mask].flatten()]
+                output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask].flatten()]
                 output['kinematics']['mupt0'] += [muons[leadmuon_index][mask].pt.flatten()]
                 output['kinematics']['mueta0'] += [muons[leadmuon_index][mask].eta.flatten()]
 
                 output['kinematics']['nLooseEl'] += [electrons.counts[mask]]
-                output['kinematics']['nTightEl'] += [electrons[is_tight_electron].counts[mask].flatten()]
+                output['kinematics']['nTightEl'] += [electrons[df['is_tight_electron']].counts[mask].flatten()]
                 output['kinematics']['elpt0'] += [electrons[leadelectron_index][mask].pt.flatten()]
                 output['kinematics']['eleta0'] += [electrons[leadelectron_index][mask].eta.flatten()]
 
                 output['kinematics']['nLooseGam'] += [photons.counts[mask]]
-                output['kinematics']['nTightGam'] += [photons[is_tight_photon].counts[mask].flatten()]
+                output['kinematics']['nTightGam'] += [photons[df['is_tight_photon']].counts[mask].flatten()]
                 output['kinematics']['gpt0'] += [photons[leadphoton_index][mask].pt.flatten()]
                 output['kinematics']['geta0'] += [photons[leadphoton_index][mask].eta.flatten()]
 
@@ -407,9 +371,9 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('ak4_mult', ak4)
             fill_mult('bjet_mult',bjets)
             fill_mult('loose_ele_mult',electrons)
-            fill_mult('tight_ele_mult',electrons[is_tight_electron])
+            fill_mult('tight_ele_mult',electrons[df['is_tight_electron']])
             fill_mult('loose_muo_mult',muons)
-            fill_mult('tight_muo_mult',muons[is_tight_muon])
+            fill_mult('tight_muo_mult',muons[df['is_tight_muon']])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
             fill_mult('hlt_single_muon_mult',hlt_single_muons)

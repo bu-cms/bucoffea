@@ -515,3 +515,55 @@ def monojet_regions(cfg):
     regions['cr_2e_j_vbare'].remove('veto_photon')
 
     return regions
+
+
+
+def theory_weights(weights, df, evaluator, gen_v_pt):
+    if df['is_lo_w']:
+        weights.add("theory", evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
+    elif df['is_lo_z']:
+        weights.add("theory", evaluator["qcd_nlo_z_2017"](gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
+    elif df['is_nlo_w']:
+        weights.add("theory", evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
+    elif df['is_nlo_z']:
+        weights.add("theory", evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
+    elif df['is_lo_g']:
+        weights.add("theory", evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["qcd_nnlo_g"](gen_v_pt))
+    else:
+        weights.add("theory", np.ones(df.size))
+
+    return weights
+
+def pileup_weights(weights, df, evaluator, cfg):
+    if cfg.SF.PILEUP.MODE == 'nano':
+                weights.add("pileup", df['puWeight'])
+    elif cfg.SF.PILEUP.MODE == 'manual':
+        weights.add("pileup", evaluator['pileup'](df['Pileup_nTrueInt']))
+    else:
+        raise RuntimeError(f"Unknown value for cfg.PILEUP.MODE: {cfg.PILEUP.MODE}.")
+    return weights
+
+
+
+def candidate_weights(weights, df, evaluator, muons, electrons, photons):
+    # Muon ID and Isolation for tight and loose WP
+    # Function of pT, eta (Order!)
+    weights.add("muon_id_tight", evaluator['muon_id_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod())
+    weights.add("muon_iso_tight", evaluator['muon_iso_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod())
+    weights.add("muon_id_loose", evaluator['muon_id_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
+    weights.add("muon_iso_loose", evaluator['muon_iso_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
+
+    # Electron ID and reco
+    # Function of eta, pT (Other way round relative to muons!)
+    weights.add("ele_reco", evaluator['ele_reco'](electrons.eta, electrons.pt).prod())
+    weights.add("ele_id_tight", evaluator['ele_id_tight'](electrons[df['is_tight_electron']].eta, electrons[df['is_tight_electron']].pt).prod())
+    weights.add("ele_id_loose", evaluator['ele_id_loose'](electrons[~df['is_tight_electron']].eta, electrons[~df['is_tight_electron']].pt).prod())
+
+    # Photon ID and electron veto
+    weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
+
+    # CSEV not split only by EE/EB for now
+    csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
+    weights.add("photon_csev", evaluator['photon_csev'](csev_sf_index).prod())
+
+    return weights
