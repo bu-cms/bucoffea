@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
+import copy
 import os
 import re
-import copy
 from collections import defaultdict
 from pprint import pprint
 
+import matplotlib.ticker
 import numpy as np
 from coffea import hist
 from coffea.util import load
@@ -22,7 +23,7 @@ pjoin = os.path.join
 np.seterr(divide='ignore', invalid='ignore')
 
 colors = {
-    'WJ.*' : '#feb24c',
+    'WN*J.*' : '#feb24c',
     '.*DY.*' : '#ffffcc',
     '.*EWK.*V.*' : '#c6dbef',
     '.*Diboson.*' : '#4292c6',
@@ -42,16 +43,21 @@ class Style():
         }
         self.rebin_axes = {
             'dimuon_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
-            'recoil' : hist.Bin('recoil','recoil',list(range(250,300,50)) + list(range(300,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,200))),
+            'dielectron_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
+            # 'recoil' : hist.Bin('recoil','recoil',list(range(250,300,50)) + list(range(300,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,200))),
+            'recoil' : hist.Bin('recoil','Recoil (GeV)',[ 250.,  280.,  310.,  340.,  370.,  400.,  430.,  470.,  510., 550.,  590.,  640.,  690.,  740.,  790.,  840.,  900.,  960., 1020., 1090., 1160., 1250., 1400., 1600., 1800., 2000.]),
             'met' : hist.Bin('met','met',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
             'ak4_pt0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
+            'ak4_pt' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
             'ak4_ptraw0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
             'ak4_pt0_eta0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
-            'photon_pt0' : hist.Bin('pt','pt',list(range(200,600,20)) + list(range(600,1000,20)) )
+            'photon_pt0' : hist.Bin('pt','pt',list(range(200,600,20)) + list(range(600,1000,20)) ),
+            'dielectron_pt' : hist.Bin('dilepton_pt','dilepton_pt',list(range(100,1000,20))),
+            'dimuon_pt' : hist.Bin('dilepton_pt','dilepton_pt',list(range(100,1000,20))),
         }
 
 
-def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, tag=None):
+def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None):
     """Creates a data vs MC comparison plot
 
     :param acc: Accumulator (processor output)
@@ -185,8 +191,19 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
         ax.set_ylim(1e-1,1e6)
     if xlim:
         ax.set_xlim(xlim[0],xlim[1])
-    rax.set_ylim(0.5,1.5)
+
+    if rylim:
+        rax.set_ylim(*rylim)
+    else:
+        rax.set_ylim(0.75,1.25)
+    loc1 = matplotlib.ticker.MultipleLocator(base=0.2)
+    loc2 = matplotlib.ticker.MultipleLocator(base=0.1)
+    rax.yaxis.set_major_locator(loc1)
+    rax.yaxis.set_minor_locator(loc2)
+    rax.grid(axis='y',which='minor',linestyle='--')
+    rax.grid(axis='y',which='major',linestyle='--')
     ax.set_ylabel('Events / Bin width')
+    rax.set_ylabel('Data / MC')
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
