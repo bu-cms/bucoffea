@@ -91,6 +91,7 @@ def monojet_accumulator(cfg):
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
     items["ak4_pt_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
@@ -122,6 +123,7 @@ def monojet_accumulator(cfg):
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["muon_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    items["muon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
     items["muon_dxy"] = Hist("Counts", dataset_ax, region_ax, dxy_ax)
     items["muon_dz"] = Hist("Counts", dataset_ax, region_ax, dz_ax)
     items["muon_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
@@ -140,6 +142,7 @@ def monojet_accumulator(cfg):
     items["electron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["electron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["electron_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    items["electron_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
     items["electron_dxy"] = Hist("Counts", dataset_ax, region_ax, dxy_ax)
     items["electron_dz"] = Hist("Counts", dataset_ax, region_ax, dz_ax)
     items["electron_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
@@ -156,7 +159,7 @@ def monojet_accumulator(cfg):
     items['photon_pt0_noweight'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-
+    items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
     items['photon_pt0_recoil'] = Hist("Counts", dataset_ax, region_ax, pt_ax, recoil_ax)
 
     items['drphotonjet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
@@ -503,6 +506,9 @@ def monojet_regions(cfg):
         tmp.remove('hemveto')
         regions[f'{region}_nohem'] = tmp
 
+    for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
+        for cut in ['veto_ele', 'veto_muo', 'veto_photon', 'veto_tau', 'veto_b']:
+            regions[f'{region}_no{cut}'] = copy.deepcopy(regions[region])
 
 
     regions['cr_2e_j_bare'] = copy.deepcopy(regions['cr_2e_j'])
