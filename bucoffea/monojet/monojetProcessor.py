@@ -527,6 +527,10 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
                 ezfill('dimuon_dr',   dr=dimuons.i0.p4.delta_r(dimuons.i1.p4)[mask].flatten(), weight=w_dimu )
 
+                ezfill('muon_pt1',   pt=muons[~leadmuon_index].pt[mask].flatten(),    w_leadmu=w_leadmu )
+                ezfill('muon_eta1',  eta=muons[~leadmuon_index].eta[mask].flatten(),  w_leadmu=w_leadmu)
+                ezfill('muon_phi1',  phi=muons[~leadmuon_index].phi[mask].flatten(),  w_leadmu=w_leadmu)
+
             # Electrons
             if '_1e_' in region or '_2e_' in region:
                 w_allel = weight_shape(electrons.pt[mask], weights.weight()[mask])
@@ -554,6 +558,9 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('dielectron_mass',   dilepton_mass=dielectrons.mass[mask].flatten(),     weight=w_diel)
                 ezfill('dielectron_dr',   dr=dielectrons.i0.p4.delta_r(dielectrons.i1.p4)[mask].flatten(), weight=w_diel )
 
+                ezfill('electron_pt1',   pt=electrons[~leadelectron_index].pt[mask].flatten(),    weight=w_leadel)
+                ezfill('electron_eta1',  eta=electrons[~leadelectron_index].eta[mask].flatten(),  weight=w_leadel)
+                ezfill('electron_phi1',  phi=electrons[~leadelectron_index].phi[mask].flatten(),  weight=w_leadel)
             # Photon
             if '_g_' in region:
                 w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],weights.weight()[mask]);
