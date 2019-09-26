@@ -14,8 +14,18 @@ from collections import defaultdict
 
 def plot(inpath):
         indir=os.path.abspath(inpath)
+
+        # The processor output is stored in an
+        # 'accumulator', which in our case is
+        # just a dictionary holding all the histograms
+        # Put all your *coffea files into 'indir' and
+        # pass the directory as an argument here.
+        # All input files in the direcotry will
+        # automatically be found, merged and read.
+        # The merging only happens the first time
+        # you run over a specific set of inputs.
         acc = acc_from_dir(indir)
-        
+
         # Get a settings dictionary that details
         # which plots to make for each region,
         # what the axis limits are, etc
@@ -24,7 +34,7 @@ def plot(inpath):
         settings = plot_settings()
 
         # For this check, I have two extra regions
-        # that are not yet defined, but I want to 
+        # that are not yet defined, but I want to
         # use the same settings as for an existing one
         # so I just copy them.
         settings['cr_2e_j_bare'] = settings['cr_2e_j']
@@ -71,8 +81,8 @@ def plot(inpath):
                     'cr_2e_j_vbare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
                     'cr_g_j' : re.compile(f'(GJets.*|QCD_HT.*|W.*FXFX.*).*{year}'),
             }
-            
-            
+
+
             # Make control region ratio plots for both
             # LO and NLO. Can be skipped if you only
             # want data / MC agreement plots.
@@ -95,26 +105,26 @@ def plot(inpath):
                         print(f"WARNING: Distribution {distribution} not found in input files.")
                     # The heavy lifting of making a plot is hidden
                     # in make_plot. We call it once using the LO MC
-                    make_plot(acc, 
+                    make_plot(acc,
                             region=region,
-                            distribution=distribution, 
-                            year=year, 
-                            data=data[region], 
-                            mc=mc_lo[region], 
-                            ylim=plotset[distribution]['ylim'], 
+                            distribution=distribution,
+                            year=year,
+                            data=data[region],
+                            mc=mc_lo[region],
+                            ylim=plotset[distribution]['ylim'],
                             tag = 'losf',
                             outdir=f'./output/{os.path.basename(indir)}/{region}')
 
                     # And then we also call it for the NLO MC
                     # The output files will be named according to the 'tag'
                     # argument, so we  will be able to tell them apart.
-                    make_plot(acc, 
+                    make_plot(acc,
                             region=region,
-                            distribution=distribution, 
-                            year=year, 
-                            data=data[region], 
-                            mc=mc_nlo[region], 
-                            ylim=plotset[distribution]['ylim'], 
+                            distribution=distribution,
+                            year=year,
+                            data=data[region],
+                            mc=mc_nlo[region],
+                            ylim=plotset[distribution]['ylim'],
                             tag = 'nlo',
                             outdir=f'./output/{os.path.basename(indir)}/{region}')
 
@@ -122,7 +132,7 @@ def plot(inpath):
 def main():
     inpath = sys.argv[1]
     plot(inpath)
-    
+
 
 if __name__ == "__main__":
     main()
