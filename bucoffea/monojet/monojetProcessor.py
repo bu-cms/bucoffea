@@ -185,7 +185,7 @@ class monojetProcessor(processor.ProcessorABC):
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
         jet_btag_val = getattr(ak4, cfg.BTAG.algo)
         jet_btagged = jet_btag_val > btag_cut
-        bjets = ak4[ ak4.abseta<2.4 \
+        bjets = ak4[ (ak4.abseta<2.4) \
                      & jet_btagged \
                      & (ak4.pt>20) ]
 
