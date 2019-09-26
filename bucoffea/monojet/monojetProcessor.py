@@ -488,7 +488,9 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('met_noweight',       met=met_pt[mask],            weight=np.ones(weights.weight()[mask].size) )
             ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=weights.weight()[mask] )
             ezfill('recoil_phi',         phi=df["recoil_phi"][mask],      weight=weights.weight()[mask] )
-            ezfill('recoil_noweight',    recoil=df["recoil_pt"][mask],      weight=np.ones(weights.weight()[mask].size) )
+            ezfill('recoil_nopog',    recoil=df["recoil_pt"][mask],      weight=weights.partial_weight(include=['pileup','theory','gen','prefire'])[mask])
+            ezfill('recoil_nopref',    recoil=df["recoil_pt"][mask],      weight=weights.partial_weight(exclude=['prefire'])[mask])
+            ezfill('recoil_nopu',    recoil=df["recoil_pt"][mask],      weight=weights.partial_weight(exclude=['pileup'])[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=weights.weight()[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=weights.weight()[mask] )
 

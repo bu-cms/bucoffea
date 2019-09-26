@@ -72,6 +72,9 @@ def monojet_accumulator(cfg):
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["met_noweight"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_nopog"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_nopref"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil_noweight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
 
