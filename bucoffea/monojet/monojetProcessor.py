@@ -6,10 +6,39 @@ import coffea.processor as processor
 
 from dynaconf import settings as cfg
 
-from bucoffea.monojet.definitions import monojet_accumulator, setup_candidates, monojet_regions, theory_weights, pileup_weights, candidate_weights
-from bucoffea.helpers import min_dphi_jet_met, recoil, mt, weight_shape, bucoffea_path, dphi,mask_and, mask_or, evaluator_from_config
-from bucoffea.helpers.dataset import is_lo_z, is_lo_w, is_lo_g, is_nlo_z, is_nlo_w, is_data, extract_year
-from bucoffea.helpers.gen import find_gen_dilepton, setup_gen_candidates
+from bucoffea.monojet.definitions import (
+                                          monojet_accumulator,
+                                          setup_candidates,
+                                          monojet_regions,
+                                          theory_weights,
+                                          pileup_weights,
+                                          candidate_weights
+                                         )
+from bucoffea.helpers import (
+                              min_dphi_jet_met,
+                              recoil,
+                              mt,
+                              weight_shape,
+                              bucoffea_path,
+                              dphi,
+                              mask_and,
+                              mask_or,
+                              evaluator_from_config
+                             )
+
+from bucoffea.helpers.dataset import (
+                                      is_lo_z,
+                                      is_lo_w,
+                                      is_lo_g,
+                                      is_nlo_z,
+                                      is_nlo_w,
+                                      is_data,
+                                      extract_year
+                                     )
+from bucoffea.helpers.gen import (
+                                  find_gen_dilepton,
+                                  setup_gen_candidates
+                                 )
 
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
@@ -145,7 +174,6 @@ class monojetProcessor(processor.ProcessorABC):
         df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, met_pt, met_phi)).max()
 
         # ak4
-        jet_acceptance = np.abs(ak4.eta)<2.4
         leadak4_index=ak4.pt.argmax()
 
         elejet_pairs = ak4[:,:1].cross(electrons)
@@ -157,7 +185,7 @@ class monojetProcessor(processor.ProcessorABC):
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
         jet_btag_val = getattr(ak4, cfg.BTAG.algo)
         jet_btagged = jet_btag_val > btag_cut
-        bjets = ak4[ jet_acceptance \
+        bjets = ak4[ ak4.abseta<2.4 \
                      & jet_btagged \
                      & (ak4.pt>20) ]
 
@@ -312,7 +340,7 @@ class monojetProcessor(processor.ProcessorABC):
 
                 output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt.flatten()]
                 output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta.flatten()]
-                output['kinematics']['leadbtag'] += [jet_btag_val[jet_acceptance & (ak4.pt>20)][mask].max()]
+                output['kinematics']['leadbtag'] += [jet_btag_val[(ak4.abseta<2.4) & (ak4.pt>20)][mask].max()]
 
                 output['kinematics']['nLooseMu'] += [muons.counts[mask]]
                 output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask].flatten()]
@@ -448,7 +476,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_zvsqcdmd0',  tagger=ak8[leadak8_index].zvsqcd[mask].flatten(),     weight=w_leadak8)
 
             # B tag discriminator
-            btag = getattr(ak4[jet_acceptance], cfg.BTAG.ALGO)
+            btag = getattr(ak4[ak4.abseta<2.4], cfg.BTAG.ALGO)
             w_btag = weight_shape(btag[mask], weights.weight()[mask])
             ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
@@ -509,7 +537,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('electron_pt0',   pt=electrons[leadelectron_index].pt[mask].flatten(),    weight=w_leadel)
                 ezfill('electron_eta0',  eta=electrons[leadelectron_index].eta[mask].flatten(),  weight=w_leadel)
                 ezfill('electron_phi0',  phi=electrons[leadelectron_index].phi[mask].flatten(),  weight=w_leadel)
-                
+
                 w_trailel = weight_shape(electrons[~leadelectron_index].pt[mask], weights.weight()[mask])
                 ezfill('electron_tightid1',  id=electrons[~leadelectron_index].tightId[mask].flatten(),  weight=w_trailel)
 

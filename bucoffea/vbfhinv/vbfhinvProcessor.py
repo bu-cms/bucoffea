@@ -7,13 +7,13 @@ from coffea import hist
 from dynaconf import settings as cfg
 
 from bucoffea.helpers import (
-                              bucoffea_path,
-                              dphi,
+                              bucoffea_path, 
+                              dphi, 
                               evaluator_from_config,
-                              mask_and,
-                              mask_or,
-                              min_dphi_jet_met,
-                              mt,
+                              mask_and, 
+                              mask_or, 
+                              min_dphi_jet_met, 
+                              mt, 
                               recoil,
                               weight_shape
                               )
@@ -27,18 +27,18 @@ from bucoffea.helpers.dataset import (
                                       is_nlo_z
                                       )
 from bucoffea.helpers.gen import (
-                                  find_gen_dilepton,
+                                  find_gen_dilepton, 
                                   setup_gen_candidates
-                                 )
+                                 )   
 from bucoffea.monojet.definitions import (
-                                          candidate_weights,
+                                          candidate_weights, 
                                           pileup_weights,
-                                          setup_candidates,
+                                          setup_candidates, 
                                           theory_weights
                                           )
 from bucoffea.monojet.monojetProcessor import trigger_selection
 from bucoffea.vbfhinv.definitions import (
-                                           vbfhinv_accumulator,
+                                           vbfhinv_accumulator, 
                                            vbfhinv_regions
                                          )
 
@@ -105,7 +105,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['is_tight_muon'] = muons.tightId \
                       & (muons.iso < cfg.MUON.CUTS.TIGHT.ISO) \
                       & (muons.pt>cfg.MUON.CUTS.TIGHT.PT) \
-                      & (np.abs(muons.eta)<cfg.MUON.CUTS.TIGHT.ETA)
+                      & (muons.abseta<cfg.MUON.CUTS.TIGHT.ETA)
 
         dimuons = muons.distincts()
         dimuon_charge = dimuons.i0['charge'] + dimuons.i1['charge']
@@ -115,7 +115,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Electrons
         df['is_tight_electron'] = electrons.tightId \
                             & (electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
-                            & (np.abs(electrons.eta) < cfg.ELECTRON.CUTS.TIGHT.ETA)
+                            & (electrons.abseta < cfg.ELECTRON.CUTS.TIGHT.ETA)
 
         dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
@@ -130,13 +130,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
         muonjet_pairs = ak4[:,:1].cross(muons)
         df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
 
-
-
         # B tagged ak4
         btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
         jet_btag_val = getattr(ak4, cfg.BTAG.algo)
         jet_btagged = jet_btag_val > btag_cut
-        bjets = ak4[ (np.abs(ak4.eta)<2.4) \
+        bjets = ak4[ (ak4.abseta<2.4) \
                      & jet_btagged \
                      & (ak4.pt>20) ]
 
@@ -221,7 +219,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         leadphoton_index=photons.pt.argmax()
 
         df['is_tight_photon'] = photons.mediumId \
-                         & (np.abs(photons.eta) < cfg.PHOTON.CUTS.TIGHT.ETA)
+                         & (photons.abseta < cfg.PHOTON.CUTS.TIGHT.ETA)
 
         selection.add('one_photon', photons.counts==1)
         selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
@@ -272,7 +270,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                 output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt]
                 output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta]
-                output['kinematics']['leadbtag'] += [jet_btag_val[(np.abs(ak4.eta)<2.4) & (ak4.pt>20)][mask].max()]
+                output['kinematics']['leadbtag'] += [jet_btag_val[(ak4.abseta<2.4) & (ak4.pt>20)][mask].max()]
 
                 output['kinematics']['nLooseMu'] += [muons.counts[mask]]
                 output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask]]
