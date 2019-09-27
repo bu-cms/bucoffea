@@ -111,7 +111,8 @@ def plot(inpath):
                             year=year,
                             data=data[region],
                             mc=mc_lo[region],
-                            ylim=plotset[distribution]['ylim'],
+                            ylim=plotset[distribution].get('ylim',None),
+                            xlim=plotset[distribution].get('xlim',None),
                             tag = 'losf',
                             outdir=f'./output/{os.path.basename(indir)}/{region}')
 
@@ -124,7 +125,8 @@ def plot(inpath):
                             year=year,
                             data=data[region],
                             mc=mc_nlo[region],
-                            ylim=plotset[distribution]['ylim'],
+                            ylim=plotset[distribution].get('ylim',None),
+                            xlim=plotset[distribution].get('xlim',None),
                             tag = 'nlo',
                             outdir=f'./output/{os.path.basename(indir)}/{region}')
 

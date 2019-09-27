@@ -42,6 +42,9 @@ def plot_settings():
             'muon_pt0' : {
                 'ylim' : (1e-3,1e3)
             },
+            'muon_pt1' : {
+                'ylim' : (1e-3,1e3)
+            },
             'met' : {
                 'ylim' : (1e-3,1e3)
             },
@@ -52,6 +55,12 @@ def plot_settings():
                 'ylim' : (1e1,1e5)
             },
             'muon_phi' : {
+                'ylim' : (1e1,1e5)
+            },
+            'muon_phi0' : {
+                'ylim' : (1e1,1e5)
+            },
+            'muon_phi1' : {
                 'ylim' : (1e1,1e5)
             },
             'dimuon_mass' : {
@@ -73,8 +82,16 @@ def plot_settings():
                 'xlim' : (-3,3),
                 'ylim' : (1e3,1e5)
             },
+            'muon_eta1' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e3,1e5)
+            },
             'dimuon_eta' : {
                 'xlim' : (-3,3),
+                'ylim' : (1e3,1e5)
+            },
+            'dimuon_dr' : {
+                'xlim' : (0,2),
                 'ylim' : (1e3,1e5)
             },
             'ak4_chf0' : {
@@ -101,9 +118,22 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
+            'gen_dilepton_mult' : {
+                'xlim' : (0,5),
+                'ylim' : (0.1,1e7)
+            }
         },
         'cr_2e_j' : {
             'recoil' : {
+                'ylim' : (1e-3,1e3)
+            },
+            'recoil_nopu' : {
+                'ylim' : (1e-3,1e3)
+            },
+            'recoil_nopog' : {
+                'ylim' : (1e-3,1e3)
+            },
+            'recoil_nopref' : {
                 'ylim' : (1e-3,1e3)
             },
             'dielectron_pt' : {
@@ -121,6 +151,9 @@ def plot_settings():
             'electron_pt0' : {
                 'ylim' : (1e-3,1e3)
             },
+            'electron_pt1' : {
+                'ylim' : (1e-3,1e3)
+            },
             'met' : {
                 'ylim' : (1e-3,1e3)
             },
@@ -131,6 +164,12 @@ def plot_settings():
                 'ylim' : (1e1,1e5)
             },
             'electron_phi' : {
+                'ylim' : (1e1,1e5)
+            },
+            'electron_phi0' : {
+                'ylim' : (1e1,1e5)
+            },
+            'electron_phi1' : {
                 'ylim' : (1e1,1e5)
             },
             'electron_tightid1' : {
@@ -162,9 +201,17 @@ def plot_settings():
                 'xlim' : (-3,3),
                 'ylim' : (1e3,1e5)
             },
+            'electron_eta1' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e3,1e5)
+            },
             'dielectron_eta' : {
                 'xlim' : (-3,3),
                 'ylim' : (1e3,1e5)
+            },
+            'dielectron_dr' : {
+                'xlim' : (0,2),
+                'ylim' : (1e1,1e5)
             },
             'ak4_chf0' : {
                 'xlim' : (0,1),
@@ -190,6 +237,10 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
+            'gen_dilepton_mult' : {
+                'xlim' : (0,5),
+                'ylim' : (0.1,1e7)
+            }
         },
         'cr_1m_j' : {
             'recoil' : {
@@ -256,9 +307,25 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
+            'gen_dilepton_mult' : {
+                'xlim' : (0,5),
+                'ylim' : (0.1,1e7)
+            }
         },
         'cr_1e_j' : {
             'recoil' : {
+                'ylim' : (1e-3,1e5)
+            },
+            'recoil' : {
+                'ylim' : (1e-3,1e5)
+            },
+            'recoil_nopu' : {
+                'ylim' : (1e-3,1e5)
+            },
+            'recoil_nopog' : {
+                'ylim' : (1e-3,1e5)
+            },
+            'recoil_nopref' : {
                 'ylim' : (1e-3,1e5)
             },
             'ak4_pt0' : {
@@ -344,7 +411,7 @@ def plot_settings():
             'ak4_pt' : {
                 'ylim' : (1e-3,1e5)
             },
-            'photon_pt' : {
+            'photon_pt0' : {
                 'ylim' : (1e-3,1e5)
             },
             'met' : {
