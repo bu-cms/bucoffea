@@ -190,6 +190,10 @@ def monojet_accumulator(cfg):
     items['selected_events'] = processor.defaultdict_accumulator(list)
     items['kinematics'] = processor.defaultdict_accumulator(list)
 
+    for region in ['sr_j','cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
+        for variable in ['recoil','weight','gen_v_pt']:
+            items[f'tree_{region}_{variable}'] = processor.dict_accumulator()
+
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
     items['weights_wide'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_wide_ax)
     items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
