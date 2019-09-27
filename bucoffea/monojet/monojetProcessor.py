@@ -396,7 +396,21 @@ class monojetProcessor(processor.ProcessorABC):
 
             mask = selection.all(*cuts)
 
+            def fill_tree(variable, values):
+                treeacc = processor.column_accumulator(values)
+                name = f'tree_{region}_{variable}'
+                if dataset in output[name].keys():
+                    output[name][dataset] += treeacc
+                else:
+                    output[name][dataset] = treeacc
 
+            if region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
+                fill_tree('recoil',df['recoil_pt'][mask].flatten())
+                fill_tree('weight',weights.weight()[mask].flatten())
+                if gen_v_pt:
+                    fill_tree('gen_v_pt',gen_v_pt[mask].flatten())
+                else:
+                    fill_tree('gen_v_pt', -1 * np.ones(sum(mask)))
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 output['selected_events'][region] += list(df['event'][mask])
