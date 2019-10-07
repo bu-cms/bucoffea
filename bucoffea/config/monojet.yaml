@@ -237,6 +237,10 @@ era2016:
       - Flag_BadPFMuonFilter
       - Flag_ecalBadCalibFilterV2
 
+  trigger_met:
+      histogram: 120pfht_hltmu_1m_2017
+      file: data/sf/trigger/met_trigger_sf.root
+
 era2017:
   triggers:
     met:
@@ -324,6 +328,10 @@ era2017:
     pileup_down:
       histogram: "sf2017_down"
       file: "data/sf/pileup/pileup.root"
+
+    trigger_met:
+      histogram: 120pfht_hltmu_1m_2017
+      file: data/sf/trigger/met_trigger_sf.root
 
 era2018:
   triggers:
@@ -433,3 +441,7 @@ era2018:
     pileup_down:
       histogram: "sf2018_down"
       file: "data/sf/pileup/pileup.root"
+
+    trigger_met:
+      histogram: 120pfht_hltmu_1m_2018
+      file: data/sf/trigger/met_trigger_sf.root
