@@ -7,6 +7,7 @@ from collections import defaultdict
 from pprint import pprint
 
 import numpy as np
+import uproot
 from coffea import hist
 from coffea.hist.plot import clopper_pearson_interval
 from matplotlib import pyplot as plt
@@ -61,7 +62,7 @@ def content_table(hnum, hden, axis_name):
     for x,ynum, yden in zip(hnum.axis(axis_name).identifiers(),hnum.values()[()],hden.values()[()]):
         eff =  ynum/ yden if yden != 0 else 0
         unc = clopper_pearson_interval(ynum, yden, 0.68)
-        line = [(x.lo + x.hi)/2, ynum, yden, eff,unc[0], unc[1]]
+        line = [(x.lo + x.hi)/2, x.lo, x.hi, ynum, yden, eff,unc[0], unc[1]]
         table.append(line)
     return tabulate(table, headers=['Recoil', 'Numerator', 'Denominator',"Efficiency", "Eff-sigma","Eff+sigma"])
 
@@ -147,9 +148,10 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
 def get_xy(file):
     data=np.loadtxt(file,skiprows=2)
     x = np.array(data[:,0])
-    y = np.array(data[:,3])
-    yerr = np.array(data[:,4:6])
-    return x.T, y.T, np.abs(yerr.T-y.T)
+    xedges = np.array(data[:,1:3])
+    y = np.array(data[:,5])
+    yerr = np.array(data[:,6:8])
+    return x.T, xedges.T, y.T, np.abs(yerr.T-y.T)
 
 
 colors = {
@@ -186,7 +188,7 @@ def region_comparison_plot(tag):
                 file = f'output/{tag}/table_{region}_met_EGamma_{year}.txt'
             else:
                 file = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}.txt'
-            x[region], y[region], yerr[region] = get_xy(file)
+            x[region], _, y[region], yerr[region] = get_xy(file)
             opts['color'] = colors[region]
             ax.errorbar(x[region], y[region], yerr=yerr[region],label=f'{region} region', **opts)
 
@@ -256,8 +258,8 @@ def sf_comparison_plot(tag):
                 fden = f'output/{tag}/table_{region}_recoil_DYJetsToLL_M-50_HT_MLM_{year}.txt'
 
 
-            xnum, ynum, yerrnum = get_xy(fnum)
-            xden, yden, yerrden = get_xy(fden)
+            xnum, _, ynum, yerrnum = get_xy(fnum)
+            xden, _, yden, yerrden = get_xy(fden)
             x[region] = xnum
             y[region] = ynum / yden
             yerr[region] = ratio_unc(ynum, yden, yerrnum, yerrden)
@@ -317,6 +319,12 @@ def data_mc_comparison_plot(tag):
     # opts['markersize'] = 5
     # opts['fillstyle'] = 'none'
     emarker = opts.pop('emarker', '')
+    outdir = f"./output/{tag}"
+    outpath = pjoin(outdir,f'trig_sf.root')
+    try:
+        outfile = uproot.recreate(outpath)
+    except OSError:
+        outfile = uproot.update(outpath)
 
     for year in [2017,2018]:
         for region in regions:
@@ -345,8 +353,8 @@ def data_mc_comparison_plot(tag):
                 print(f"File not found {fden}")
                 continue
 
-            xnum, ynum, yerrnum = get_xy(fnum)
-            xden, yden, yerrden = get_xy(fden)
+            xnum, xedgnum, ynum, yerrnum = get_xy(fnum)
+            xden, xedgden, yden, yerrden = get_xy(fden)
 
             xsf = xnum
             ysf = ynum / yden
@@ -370,7 +378,7 @@ def data_mc_comparison_plot(tag):
 
 
 
-            outdir = f"./output/{tag}"
+
         # ax.set_ylim(0.9,1)
             ax.legend()
             ax.set_ylabel("Efficiency")
@@ -402,6 +410,12 @@ def data_mc_comparison_plot(tag):
             fig.savefig(pjoin(outdir, f'data_mc_comparison_{region}_{year}.pdf'))
             fig.clear()
             plt.close(fig)
+
+
+            vals = np.array(sorted(list(set(list(xedgnum.flatten())))))
+            ysf[np.isnan(ysf) | np.isinf(np.abs(ysf))] = 1
+            outfile[f'{tag}_{region}_{year}'] = (ysf, vals)
+
 
 def met_triggers():
         tag = '120pfht_hltmu'
@@ -436,36 +450,36 @@ def met_triggers_ht():
         indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/16Jul19_incomplete_v7"
         acc = acc_from_dir(indir)
 
-        for noscale in [True,False]:
-            distribution = 'recoil_noweight'  if noscale else 'recoil'
-            for year in [2017, 2018]:
-                region = '1m'
-                for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
-                    if dataset=='SingleMuon' and noscale:
-                        continue
-                    plot_recoil(acc,region,distribution=distribution,axis_name='recoil',dataset=dataset,year=year, tag=tag, noscale=noscale)
-                region = '2m'
-                for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
-                    if dataset=='SingleMuon' and noscale:
-                        continue
-                    plot_recoil(acc,region,distribution=distribution,axis_name='recoil',dataset=dataset,year=year, tag=tag, noscale=noscale)
-                # region = '1m_hlt'
-                # for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
-                #     plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
-                region = '2m_hlt'
-                for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
-                    if dataset=='SingleMuon' and noscale:
-                        continue
-                    plot_recoil(acc,region,distribution=distribution,axis_name='recoil',dataset=dataset,year=year, tag=tag, noscale=noscale)
-                region = '1e'
-                for dataset in ["WJetsToLNu_HT_MLM", "EGamma"]:
-                    plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
-                # region = '2e'
-                # for dataset in ["DYJetsToLL_M-50_HT_MLM", "EGamma"]:
-                #     plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
+        # for noscale in [False]:
+        #     distribution = 'recoil_noweight'  if noscale else 'recoil'
+        #     for year in [2017, 2018]:
+        #         region = '1m'
+        #         for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
+        #             if dataset=='SingleMuon' and noscale:
+        #                 continue
+        #             plot_recoil(acc,region,distribution=distribution,axis_name='recoil',dataset=dataset,year=year, tag=tag, noscale=noscale)
+        #         region = '2m'
+        #         for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
+        #             if dataset=='SingleMuon' and noscale:
+        #                 continue
+        #             plot_recoil(acc,region,distribution=distribution,axis_name='recoil',dataset=dataset,year=year, tag=tag, noscale=noscale)
+        #         # region = '1m_hlt'
+        #         # for dataset in ["WJetsToLNu_HT_MLM", "SingleMuon"]:
+        #         #     plot_recoil(acc,region,dataset=dataset,year=year, tag=tag)
+        #         region = '2m_hlt'
+        #         for dataset in ["DYJetsToLL_M-50_HT_MLM", "SingleMuon"]:
+        #             if dataset=='SingleMuon' and noscale:
+        #                 continue
+        #             plot_recoil(acc,region,distribution=distribution,axis_name='recoil',dataset=dataset,year=year, tag=tag, noscale=noscale)
+        #         region = '1e'
+        #         for dataset in ["WJetsToLNu_HT_MLM", "EGamma"]:
+        #             plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
+        #         # region = '2e'
+        #         # for dataset in ["DYJetsToLL_M-50_HT_MLM", "EGamma"]:
+        #         #     plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='met')
 
-        region_comparison_plot(tag)
-        sf_comparison_plot(tag)
+        # region_comparison_plot(tag)
+        # sf_comparison_plot(tag)
         data_mc_comparison_plot(tag)
 
 def photon_triggers_merged():
@@ -612,8 +626,8 @@ def photon_sf_plot(tag):
         fnum = f'output/{tag}/table_g_HLT_PFHT1050_photon_pt0_JetHT_{year}.txt'
         fden = f'output/{tag}/table_g_HLT_PFHT590_photon_pt0_GJets_HT_MLM_{year}.txt'
 
-        xnum, ynum, yerrnum = get_xy(fnum)
-        xden, yden, yerrden = get_xy(fden)
+        xnum, _, ynum, yerrnum = get_xy(fnum)
+        xden, _, yden, yerrden = get_xy(fden)
         x = xnum
         y = ynum / yden
         dy = ratio_unc(ynum, yden, yerrnum, yerrden)
@@ -659,8 +673,8 @@ def photon_sf_plot(tag):
 
 def main():
     # indir = "/home/albert/repos/bucoffea/bucoffea/plot/input/eff/test"
-    # met_triggers_ht()
-    photon_triggers()
+    met_triggers_ht()
+    # photon_triggers()
     # photon_sf_plot('gamma')
     # photon_triggers()
 

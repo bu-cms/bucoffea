@@ -121,6 +121,10 @@ def plot_settings():
             'gen_dilepton_mult' : {
                 'xlim' : (0,5),
                 'ylim' : (0.1,1e7)
+            },
+            'ak4_mult' : {
+                'xlim' : (0,10),
+                'ylim' : (1e2,1e5)
             }
         },
         'cr_2e_j' : {
@@ -240,6 +244,10 @@ def plot_settings():
             'gen_dilepton_mult' : {
                 'xlim' : (0,5),
                 'ylim' : (0.1,1e7)
+            },
+            'ak4_mult' : {
+                'xlim' : (0,10),
+                'ylim' : (1e2,1e5)
             }
         },
         'cr_1m_j' : {
@@ -310,6 +318,10 @@ def plot_settings():
             'gen_dilepton_mult' : {
                 'xlim' : (0,5),
                 'ylim' : (0.1,1e7)
+            },
+            'ak4_mult' : {
+                'xlim' : (0,10),
+                'ylim' : (1e2,1e5)
             }
         },
         'cr_1e_j' : {
@@ -399,6 +411,10 @@ def plot_settings():
             'gen_dilepton_mult' : {
                 'xlim' : (0,5),
                 'ylim' : (0.1,1e7)
+            },
+            'ak4_mult' : {
+                'xlim' : (0,10),
+                'ylim' : (1e2,1e5)
             }
         },
         'cr_g_j' : {
@@ -462,6 +478,10 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
+            'ak4_mult' : {
+                'xlim' : (0,10),
+                'ylim' : (1e2,1e5)
+            }
         }
         }
     )
