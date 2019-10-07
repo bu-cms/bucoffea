@@ -309,8 +309,8 @@ def setup_candidates(df, cfg):
         abseta=np.abs(df['Jet_eta']),
         phi=df['Jet_phi'],
         mass=df[f'Jet_mass{jes_suffix}'],
-        looseId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight
-        tightId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight
+        looseId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
+        tightId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
         puid=df['Jet_puId'],
         csvv2=df["Jet_btagCSVV2"],
         deepcsv=df['Jet_btagDeepB'],
