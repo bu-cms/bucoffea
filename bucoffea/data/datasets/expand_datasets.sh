@@ -34,3 +34,4 @@ sed -i '/DoubleEMEnriched/d' datasets_201*.txt
 sed -i '/WJetsToLNu_.*J_.*2017.*/d' datasets_2017.txt
 sed -i '/.*LHEWpT_0-50.*/d' datasets_201*.txt
 sed -i '/.*LHEWpT_50-150.*/d' datasets_201*.txt
+sed -i '/.*CP5(up|down).*/d' datasets_201*.txt

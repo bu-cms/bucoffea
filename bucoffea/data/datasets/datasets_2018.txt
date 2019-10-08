@@ -62,6 +62,7 @@
 /TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 /TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 /TTToHadronic_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
+/TTToHadronic_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19_ext2-v1/NANOAODSIM
 /TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM
 
 # ST
@@ -124,6 +125,5 @@
 /JetHT/Run2018A-Nano1June2019-v2/NANOAOD
 /JetHT/Run2018B-Nano1June2019-v2/NANOAOD
 /JetHT/Run2018C-Nano1June2019-v1/NANOAOD
-/JetHT/Run2018C-Nano1June2019-v2/NANOAOD
 /JetHT/Run2018D-Nano1June2019_ver2-v1/NANOAOD
 
