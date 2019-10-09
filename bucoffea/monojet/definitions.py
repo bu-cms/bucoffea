@@ -523,16 +523,9 @@ def monojet_regions(cfg):
     for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
         for cut in ['veto_ele', 'veto_muo', 'veto_photon', 'veto_tau', 'veto_b']:
             regions[f'{region}_no{cut}'] = copy.deepcopy(regions[region])
-
-
-    regions['cr_2e_j_bare'] = copy.deepcopy(regions['cr_2e_j'])
-    regions['cr_2e_j_bare'].remove('mindphijr')
-    regions['cr_2e_j_bare'].remove('dpfcalo')
-    regions['cr_2e_j_bare'].remove('filt_met')
-
-    regions['cr_2e_j_vbare'] = copy.deepcopy(regions['cr_2e_j_bare'])
-    regions['cr_2e_j_vbare'].remove('veto_tau')
-    regions['cr_2e_j_vbare'].remove('veto_photon')
+        regions[f'{region}_loose'] = copy.deepcopy(regions[region])
+        regions[f'{region}_loose'].remove('mindphijr')
+        regions[f'{region}_loose'].remove('dpfcalo')
 
     return regions
 
