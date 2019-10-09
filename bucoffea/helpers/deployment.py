@@ -34,7 +34,7 @@ def pack_repo(path_to_gridpack):
     for f in files:
         tar.add(
             name=f,
-            arcname=f.replace(os.path.abspath(bucoffea_path('../..')),''),
+            arcname=f.replace(os.path.abspath(bucoffea_path('..')),'bucoffea'),
             exclude=lambda x: ('tgz' in x or 'submission' in x)
             )
     tar.close()
