@@ -11,30 +11,78 @@ from bucoffea.helpers.dataset import (extract_year, is_lo_w, is_lo_z, is_nlo_w,
                                       is_nlo_z)
 from bucoffea.helpers.gen import find_gen_dilepton, setup_gen_candidates
 
+from bucoffea.helpers import min_dphi_jet_met
+
 Hist = hist.Hist
 Bin = hist.Bin
 Cat = hist.Cat
 
+def vbf_selection(dilepton, dijet, genjets):
+    selection = processor.PackedSelection()
+
+    selection.add(
+                  'two_jets',
+                  dijet.counts>0
+                  )
+    selection.add(
+                  'leadak4_pt_eta',
+                  (dijet.i0.pt.max() > 80) & (np.abs(dijet.i0.eta.max()) < 4.7)
+                  )
+    selection.add(
+                  'trailak4_pt_eta',
+                  (dijet.i1.pt.max() > 40) & (np.abs(dijet.i1.eta.max()) < 4.7)
+                  )
+    selection.add(
+                  'hemisphere',
+                  (dijet.i0.eta.max()*dijet.i1.eta.max() < 0)
+                  )
+    selection.add(
+                  'mindphijr',
+                  min_dphi_jet_met(genjets, dilepton.phi.max(), njet=4, ptmin=30) > 0.5
+                  )
+
+    return selection
+
+def monojet_selection(dilepton, genjets):
+    selection = processor.PackedSelection()
+
+    selection.add(
+                  'at_least_one_jet',
+                  genjets.counts>0
+                  )
+    selection.add(
+                  'leadak4_pt_eta',
+                  (genjets.pt.max() > 100) & (np.abs(genjets[genjets.pt.argmax()].eta.max()) < 2.4)
+                  )
+    selection.add(
+                  'mindphijr',
+                  min_dphi_jet_met(genjets, dilepton.phi.max(), njet=4, ptmin=30) > 0.5
+                  )
+
+    return selection
 
 class lheVProcessor(processor.ProcessorABC):
     def __init__(self):
 
         # Histogram setup
         dataset_ax = Cat("dataset", "Primary dataset")
-        type_ax = Cat("type", "Calculation type")
-        weight_type_ax = Cat("weight_type", "Weight type")
-        weight_index_ax = Bin("weight_index",r"weight index", 50,-0.5,49.5)
 
         vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 50, 0, 2000)
         jpt_ax = Bin("jpt",r"$p_{T}^{j}$ (GeV)", 50, 0, 2000)
+        mjj_ax = Bin("jpt",r"$m(jj)$ (GeV)", 50, 0, 5000)
 
         items = {}
-        items["gen_vpt"] = Hist("Counts",
+        items["gen_vpt_inclusive"] = Hist("Counts",
                                 dataset_ax,
-                                weight_type_ax,
-                                weight_index_ax,
-                                type_ax,
+                                vpt_ax)
+        items["gen_vpt_monojet"] = Hist("Counts",
+                                dataset_ax,
                                 jpt_ax,
+                                vpt_ax)
+        items["gen_vpt_vbf"] = Hist("Counts",
+                                dataset_ax,
+                                jpt_ax,
+                                mjj_ax,
                                 vpt_ax)
         items['sumw'] = processor.defaultdict_accumulator(float)
         items['sumw2'] = processor.defaultdict_accumulator(float)
@@ -68,82 +116,42 @@ class lheVProcessor(processor.ProcessorABC):
             pdgsum = 1
             # gen_v = gen[(gen.status==62) & (gen.pdg==24)]
         gen_dilep = find_gen_dilepton(gen, pdgsum)
+        gen_dilep = gen_dilep[gen_dilep.mass.argmax()]
 
+        # Select jets not overlapping with leptons
         genjets = genjets[
             (~genjets.match(gen_dilep.i0,deltaRCut=0.4)) &
             (~genjets.match(gen_dilep.i1,deltaRCut=0.4)) \
             ]
 
+        # Dijet for VBF
+        dijet = genjets[:,:2].distincts()
+
+        # Selection
+        vbf_sel = vbf_selection(gen_dilep, dijet, genjets)
+        monojet_sel = monojet_selection(gen_dilep, genjets)
+
         nominal = df['Generator_weight']
 
-        # Fill
-        # output['gen_vpt'].fill(
-        #                         dataset=dataset,
-        #                         vpt=df['LHE_Vpt'],
-        #                         weight_type='nominal',
-        #                         weight_index=0,
-        #                         weight=nominal,
-        #                         type='nano'
-        #                         )
-
-        output['gen_vpt'].fill(
+        output['gen_vpt_inclusive'].fill(
                                 dataset=dataset,
-                                vpt=gen_dilep[gen_dilep.mass.argmax()].pt.max(),
+                                vpt=gen_dilep.pt.max(),
                                 jpt=genjets.pt.max(),
-                                weight_type='nominal',
-                                weight_index=0,
-                                weight=nominal,
-                                type='dilepton'
+                                weight=nominal
                                 )
-                            
-        # output['gen_vpt'].fill(
-        #                         dataset=dataset,
-        #                         vpt=gen_v.pt.max(),
-        #                         weight_type='nominal',
-        #                         weight_index=0,
-        #                         weight=nominal,
-        #                         type='genv'
-        #                         )
-
-        # # PDF variations
-        # w_pdf = JaggedArray.fromcounts(df['nLHEPdfWeight'],df['LHEPdfWeight'])
-        # for i in range(df['nLHEPdfWeight'][0]):
-        #     output['gen_vpt'].fill(
-        #                         dataset=dataset,
-        #                         vpt=df['LHE_Vpt'],
-        #                         weight_type='pdf',
-        #                         weight_index=i,
-        #                         weight=nominal*w_pdf[:,i],
-        #                         type='nano'
-        #                         )
-        #     output['gen_vpt'].fill(
-        #                         dataset=dataset,
-        #                         vpt=gen_dilep.pt.max(),
-        #                         weight_type='pdf',
-        #                         weight_index=i,
-        #                         weight=nominal*w_pdf[:,i],
-        #                         type='dilepton'
-        #                         )
-
-        # # Scale variations
-        # w_scale = JaggedArray.fromcounts(df['nLHEScaleWeight'],df['LHEScaleWeight'])
-        # for i in range(df['nLHEScaleWeight'][0]):
-        #     output['gen_vpt'].fill(
-        #                         dataset=dataset,
-        #                         vpt=df['LHE_Vpt'],
-        #                         weight_type='scale',
-        #                         weight_index=i,
-        #                         weight=nominal*w_scale[:,i],
-        #                         type='nano'
-        #                         )
-        #     output['gen_vpt'].fill(
-        #                         dataset=dataset,
-        #                         vpt=gen_dilep.pt.max(),
-        #                         weight_type='scale',
-        #                         weight_index=i,
-        #                         weight=nominal*w_pdf[:,i],
-        #                         type='dilepton'
-        #                         )
+        output['gen_vpt_vbf'].fill(
+                                dataset=dataset,
+                                vpt=gen_dilep[gen_dilep.mass.argmax()].pt[vbf_sel.all()].max(),
+                                jpt=genjets.pt[vbf_sel.all()].max(),
+                                mjj = dijet.mass[vbf_sel.all()],
+                                weight=nominal
+                                )
+        output['gen_vpt_monojet'].fill(
+                                dataset=dataset,
+                                vpt=gen_dilep[gen_dilep.mass.argmax()].pt[monojet_sel.all()].max(),
+                                jpt=genjets.pt.max(),
+                                weight=nominal
+                                )
 
         # Keep track of weight sum
         output['sumw'][dataset] +=  df['genEventSumw']
