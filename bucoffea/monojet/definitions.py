@@ -532,8 +532,23 @@ def monojet_regions(cfg):
     return regions
 
 
+def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
+    if df['is_lo_w']:
+        weights.add("theory", evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
+    elif df['is_lo_z']:
+        weights.add("theory", evaluator["qcd_nlo_z_2017"](gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
+    elif df['is_nlo_w']:
+        weights.add("theory", evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
+    elif df['is_nlo_z']:
+        weights.add("theory", evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
+    elif df['is_lo_g']:
+        weights.add("theory", evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["qcd_nnlo_g"](gen_v_pt))
+    else:
+        weights.add("theory", np.ones(df.size))
 
-def theory_weights(weights, df, evaluator, gen_v_pt, mjj=None):
+    return weights
+
+def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
     if df['is_lo_w']:
         weights.add("theory", evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
     elif df['is_lo_w_ewk']:
