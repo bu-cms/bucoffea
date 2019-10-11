@@ -533,11 +533,15 @@ def monojet_regions(cfg):
 
 
 
-def theory_weights(weights, df, evaluator, gen_v_pt):
+def theory_weights(weights, df, evaluator, gen_v_pt, mjj=None):
     if df['is_lo_w']:
         weights.add("theory", evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
+    elif df['is_lo_w_ewk']:
+        weights.add("theory", evaluator["qcd_nlo_w_ewk"](gen_v_pt, mjj))
     elif df['is_lo_z']:
         weights.add("theory", evaluator["qcd_nlo_z_2017"](gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
+    elif df['is_lo_z_ewk']:
+        weights.add("theory", evaluator["qcd_nlo_z_ewk"](gen_v_pt, mjj))
     elif df['is_nlo_w']:
         weights.add("theory", evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
     elif df['is_nlo_z']:
