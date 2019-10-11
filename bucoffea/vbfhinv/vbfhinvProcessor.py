@@ -23,6 +23,8 @@ from bucoffea.helpers.dataset import (
                                       is_lo_g,
                                       is_lo_w,
                                       is_lo_z,
+                                      is_lo_w_ewk,
+                                      is_lo_z_ewk,
                                       is_nlo_w,
                                       is_nlo_z
                                       )
@@ -75,19 +77,21 @@ class vbfhinvProcessor(processor.ProcessorABC):
         dataset = df['dataset']
         df['is_lo_w'] = is_lo_w(dataset)
         df['is_lo_z'] = is_lo_z(dataset)
+        df['is_lo_w_ewk'] = is_lo_w_ewk(dataset)
+        df['is_lo_z_ewk'] = is_lo_z_ewk(dataset)
         df['is_lo_g'] = is_lo_g(dataset)
         df['is_nlo_z'] = is_nlo_z(dataset)
         df['is_nlo_w'] = is_nlo_w(dataset)
-        df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g']
+        df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g'] | df['is_lo_w_ewk'] | df['is_lo_z_ewk']
         df['is_data'] = is_data(dataset)
 
         gen_v_pt = None
         n_gen_dilepton = np.zeros(df.size)
-        if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
+        if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w'] or df['is_lo_z_ewk'] or df['is_lo_w_ewk']:
             gen = setup_gen_candidates(df)
-            if is_lo_z(dataset) or is_nlo_z(dataset):
+            if is_lo_z(dataset) or is_nlo_z(dataset) or is_lo_z_ewk(dataset):
                 pdgsum = 0
-            elif is_lo_w(dataset) or is_nlo_w(dataset):
+            elif is_lo_w(dataset) or is_nlo_w(dataset) or is_lo_w_ewk(dataset):
                 pdgsum = 1
             gen_dilep = find_gen_dilepton(gen, pdgsum)
             n_gen_dilepton = gen_dilep.counts
