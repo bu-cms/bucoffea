@@ -113,11 +113,12 @@ default:
       file: data/sf/theory/lindert_qcd_nnlo_sf.root
     pileup:
       mode: nano
+
   run:
     sync: False
     save:
       passing: False
-      tree: True
+      tree: False
     kinematics:
       save: False
       events:
