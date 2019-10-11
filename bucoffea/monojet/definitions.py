@@ -211,7 +211,7 @@ def monojet_accumulator(cfg):
 
 
 def setup_candidates(df, cfg):
-    if df['is_data']:
+    if df['is_data'] and extract_year(df['dataset']) != 2018:
         jes_suffix = ''
     else:
         jes_suffix = '_nom'
