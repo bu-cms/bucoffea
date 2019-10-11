@@ -39,7 +39,7 @@ class Style():
             'cr_2m_j' : 'Di-$\mu$ CR, monojet',
             'cr_1e_j' : 'Single-e CR, monojet',
             'cr_2e_j' : 'Di-e CR, monojet',
-            'cr_g_j' : 'Single-Photon CR, vbfhinv',
+            'cr_g_j' : 'Single-Photon CR, monojet',
             'cr_1m_vbf' : 'Single-$\mu$ CR, vbfhinv',
             'cr_2m_vbf' : 'Di-$\mu$ CR, vbfhinv',
             'cr_1e_vbf' : 'Single-e CR, vbfhinv',
