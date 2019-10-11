@@ -103,6 +103,7 @@ def plot(inpath):
                 for distribution in plotset.keys():
                     if not distribution in acc.keys():
                         print(f"WARNING: Distribution {distribution} not found in input files.")
+                        continue
                     # The heavy lifting of making a plot is hidden
                     # in make_plot. We call it once using the LO MC
                     make_plot(acc,
