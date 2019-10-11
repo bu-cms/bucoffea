@@ -201,8 +201,8 @@ class monojetProcessor(processor.ProcessorABC):
         # Recoil
         df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
         df["dPFCalo"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
-        df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30)
-        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30)
+        df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30, etamax=2.4)
+        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=2.4)
         selection = processor.PackedSelection()
 
 
