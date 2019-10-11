@@ -134,7 +134,14 @@ default:
         - 30682767
         - 79123963
         - 51393664
-
+  triggers:
+    ht:
+      gammaeff:
+      - HLT_PFHT1050
+      - HLT_PFHT590
+      - HLT_PFHT680
+      - HLT_PFHT780
+      - HLT_PFHT890
 
 env:
   test: false
