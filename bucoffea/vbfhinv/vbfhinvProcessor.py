@@ -36,7 +36,7 @@ from bucoffea.monojet.definitions import (
                                           candidate_weights, 
                                           pileup_weights,
                                           setup_candidates, 
-                                          theory_weights
+                                          theory_weights_vbf
                                           )
 from bucoffea.monojet.monojetProcessor import trigger_selection
 from bucoffea.vbfhinv.definitions import (
@@ -260,7 +260,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons)
             weights = pileup_weights(weights, df, evaluator, cfg)
-            weights = theory_weights(weights, df, evaluator, gen_v_pt, df['mjj'])
+            weights = theory_weights_vbf(weights, df, evaluator, gen_v_pt, df['mjj'])
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
