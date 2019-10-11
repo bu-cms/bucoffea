@@ -102,7 +102,8 @@ def plot(inpath):
                             ylim=plotset[distribution].get('ylim',None),
                             xlim=plotset[distribution].get('xlim',None),
                             tag = 'losf',
-                            outdir=f'./output/{os.path.basename(indir)}/{region}')
+                            outdir=f'./output/{os.path.basename(indir)}/{region}',
+                            output_format='png')
 
                     # And then we also call it for the NLO MC
                     # The output files will be named according to the 'tag'
@@ -116,7 +117,8 @@ def plot(inpath):
                             ylim=plotset[distribution].get('ylim',None),
                             xlim=plotset[distribution].get('xlim',None),
                             tag = 'nlo',
-                            outdir=f'./output/{os.path.basename(indir)}/{region}')
+                            outdir=f'./output/{os.path.basename(indir)}/{region}',
+                            output_format='png')
 
 
 def main():
