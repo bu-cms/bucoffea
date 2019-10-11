@@ -251,7 +251,7 @@ def setup_candidates(df, cfg):
         tightId=(df[cfg.ELECTRON.BRANCH.ID]==4),
         dxy=np.abs(df['Electron_dxy']),
         dz=np.abs(df['Electron_dz']),
-        barrel=np.abs(df['Electron_eta'])< 1.479
+        barrel=np.abs(df['Electron_eta']) <= 1.479
     )
     # All electrons must be at least loose
     pass_dxy = (electrons.barrel & (np.abs(electrons.dxy) < cfg.ELECTRON.CUTS.LOOSE.DXY.BARREL)) \
