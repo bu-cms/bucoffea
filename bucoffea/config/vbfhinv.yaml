@@ -6,9 +6,14 @@ default:
     signal:
       recoil: 250    # min
       dijet:
-        mass: 200
-        dphi: 1.3
-        deta: 1
+        shape_based:
+          mass: 200
+          dphi: 1.5
+          deta: 1
+        cut_based:
+          mass: 1300
+          dphi: 1.5
+          deta: 4
       leadak4:
         pt: 80   # min
         eta: 4.7  # max
