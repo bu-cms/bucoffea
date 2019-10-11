@@ -123,6 +123,7 @@ class ConJob():
             self.code = "-"
             self.status = "NOPARSE"
             self.cluster = "-"
+            self.runtime = -1
 
         jel.close()
 
