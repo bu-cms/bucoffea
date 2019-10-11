@@ -93,10 +93,10 @@ default:
       histogram: kfactor_monojet_ewk
       file: data/sf/theory/merged_kfactors_gjets.root
     qcd_nlo_w_2017: # QCD k factor for QCD W
-      histogram: wjet_dilep
+      histogram: wjet_monojet
       file: data/sf/theory/2017_gen_v_pt_stat1_qcd_sf.root
     qcd_nlo_z_2017: # QCD k factor for QCD Z
-      histogram: dy_dilep
+      histogram: dy_monojet
       file: data/sf/theory/2017_gen_v_pt_stat1_qcd_sf.root
 
     qcd_nlo_g:
