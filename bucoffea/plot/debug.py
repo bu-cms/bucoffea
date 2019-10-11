@@ -5,7 +5,7 @@ import os
 from coffea import hist
 import numpy as np
 
-def debug_plot_output(output, region='inclusive', outdir='out'):
+def debug_plot_output(output, region='inclusive', outdir='out', logscaley=True):
     """Dump all histograms as PDF."""
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -34,7 +34,10 @@ def debug_plot_output(output, region='inclusive', outdir='out'):
             continue
         fig.suptitle(f'{region}, {name}')
         # ax.set_xscale('log')
-        ax.set_yscale('log')
-        ax.set_ylim(0.1, 1e8)
+        if logscaley:
+            ax.set_yscale('log')
+            ax.set_ylim(0.1, 1e8)
+        else:
+            ax.set_ylim(0.1, 1e3)
         fig.savefig(os.path.join(outdir, f"{region}_{name}.pdf"))
         plt.close(fig)
