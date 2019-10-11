@@ -4,13 +4,13 @@ def is_lo_z(dataset):
     return bool(re.match('(DY|Z)(\d*)Jet.*(mg|MLM|madgraph).*', dataset))
 
 def is_lo_z_ewk(dataset):
-    return bool(re.match('EWKZ2Jets_ZTo.'), dataset)
+    return bool(re.match('EWKZ2Jets_ZTo.', dataset))
 
 def is_lo_w(dataset):
     return bool(re.match('W(\d*)Jet.*(mg|MLM).*', dataset))
 
 def is_lo_w_ewk(dataset):
-    return bool(re.match('EWKW(Minus|Plus)2Jets_WToLNu.'), dataset)
+    return bool(re.match('EWKW(Minus|Plus)2Jets_WToLNu.', dataset))
 
 def is_lo_g(dataset):
     return bool(re.match('GJets.*', dataset))
