@@ -69,7 +69,7 @@ class lheVProcessor(processor.ProcessorABC):
 
         vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 50, 0, 2000)
         jpt_ax = Bin("jpt",r"$p_{T}^{j}$ (GeV)", 50, 0, 2000)
-        mjj_ax = Bin("jpt",r"$m(jj)$ (GeV)", 50, 0, 5000)
+        mjj_ax = Bin("mjj",r"$m(jj)$ (GeV)", 75, 0, 7500)
 
         items = {}
         items["gen_vpt_inclusive"] = Hist("Counts",
@@ -139,18 +139,27 @@ class lheVProcessor(processor.ProcessorABC):
                                 jpt=genjets.pt.max(),
                                 weight=nominal
                                 )
+
+        mask_vbf = vbf_sel.all(*vbf_sel.names)
+        print(mask_vbf.size, mask_vbf)
+        print(nominal.size, nominal)
         output['gen_vpt_vbf'].fill(
                                 dataset=dataset,
-                                vpt=gen_dilep[gen_dilep.mass.argmax()].pt[vbf_sel.all()].max(),
-                                jpt=genjets.pt[vbf_sel.all()].max(),
-                                mjj = dijet.mass[vbf_sel.all()],
-                                weight=nominal
+                                vpt=gen_dilep.pt.max()[mask_vbf],
+                                jpt=genjets.pt.max()[mask_vbf],
+                                mjj = dijet.mass.max()[mask_vbf],
+                                weight=nominal[mask_vbf]
                                 )
+
+        mask_monojet = monojet_sel.all(*monojet_sel.names)
+
+        print(mask_monojet.size, mask_monojet)
+        print(nominal.size, nominal)
         output['gen_vpt_monojet'].fill(
                                 dataset=dataset,
-                                vpt=gen_dilep[gen_dilep.mass.argmax()].pt[monojet_sel.all()].max(),
-                                jpt=genjets.pt.max(),
-                                weight=nominal
+                                vpt=gen_dilep.pt.max()[mask_monojet],
+                                jpt=genjets.pt.max()[mask_monojet],
+                                weight=nominal[mask_monojet]
                                 )
 
         # Keep track of weight sum
