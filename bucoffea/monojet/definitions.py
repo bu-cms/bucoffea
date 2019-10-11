@@ -275,9 +275,9 @@ def setup_candidates(df, cfg):
         abseta=np.abs(df['Tau_eta']),
         phi=df['Tau_phi'],
         mass=0 * df['Tau_pt'],
-        decaymode=df['Tau_idDecayModeNewDMs'] & df['Tau_idDecayMode'],
+        decaymode=df['Tau_idDecayMode'],
         clean=df['Tau_cleanmask'],
-        iso=df['Tau_idMVAnewDM2017v2'],
+        iso=df['Tau_idMVAoldDM2017v2'],
     )
 
     taus = taus[ object_overlap(taus, muons) \
