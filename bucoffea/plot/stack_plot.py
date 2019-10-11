@@ -39,7 +39,12 @@ class Style():
             'cr_2m_j' : 'Di-$\mu$ CR, monojet',
             'cr_1e_j' : 'Single-e CR, monojet',
             'cr_2e_j' : 'Di-e CR, monojet',
-            'cr_g_j' : 'Single-Photon CR, monojet',
+            'cr_g_j' : 'Single-Photon CR, vbfhinv',
+            'cr_1m_vbf' : 'Single-$\mu$ CR, vbfhinv',
+            'cr_2m_vbf' : 'Di-$\mu$ CR, vbfhinv',
+            'cr_1e_vbf' : 'Single-e CR, vbfhinv',
+            'cr_2e_vbf' : 'Di-e CR, vbfhinv',
+            'cr_g_vbf' : 'Single-Photon CR, vbfhinv'
         }
         recoil_bins_2016 = [ 250.,  280.,  310.,  340.,  370.,  400.,  430.,  470.,  510., 550.,  590.,  640.,  690.,  740.,  790.,  840.,  900.,  960., 1020., 1090., 1160., 1250., 1400., 1600., 1800., 2000.]
         self.rebin_axes = {
@@ -51,7 +56,8 @@ class Style():
             'recoil_nopu' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
             'recoil_nopref' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
             'met' : hist.Bin('met','met',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
-            'ak4_pt0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
+            'ak4_pt0' : hist.Bin('jetpt','jetpt',list(range(80,600,20)) + list(range(600,1000,20)) ),
+            'ak4_pt1' : hist.Bin('jetpt','jetpt',list(range(40,600,20)) + list(range(600,1000,20)) ),
             'ak4_pt' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
             'ak4_ptraw0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
             'ak4_pt0_eta0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
