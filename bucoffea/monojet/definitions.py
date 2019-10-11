@@ -315,7 +315,7 @@ def setup_candidates(df, cfg):
         mass=df[f'Jet_mass{jes_suffix}'],
         looseId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
         tightId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
-        puid=df['Jet_puId'],
+        puid=((df['Jet_puId']&2>0) | (df['Jet_pt']>50)), # medium pileup jet ID
         csvv2=df["Jet_btagCSVV2"],
         deepcsv=df['Jet_btagDeepB'],
         # nef=df['Jet_neEmEF'],
