@@ -179,6 +179,7 @@ def vbfhinv_accumulator(cfg):
 def vbfhinv_regions(cfg):
     common_cuts = [
         'filt_met',
+        'hemveto',
         'veto_ele',
         'veto_muo',
         'veto_photon',
