@@ -77,25 +77,25 @@ default:
     hem: True
 
   sf:
-    qcd_ew_nlo_w:
+    qcd_ew_nlo_w: # QCD x EW k factor for QCD Z
       histogram: kfactor_monojet_qcd_ewk
       file: data/sf/theory/merged_kfactors_wjets.root
-    qcd_ew_nlo_z:
+    qcd_ew_nlo_z: # QCD x EW k factor for QCD Z
       histogram: kfactor_monojet_qcd_ewk
       file: data/sf/theory/merged_kfactors_zjets.root
-    ewk_nlo_w:
+    ewk_nlo_w: # EW k factor for QCD W
       histogram: kfactor_monojet_ewk
       file: data/sf/theory/merged_kfactors_wjets.root
-    ewk_nlo_z:
+    ewk_nlo_z: # EW k factor for QCD Z
       histogram: kfactor_monojet_ewk
       file: data/sf/theory/merged_kfactors_zjets.root
-    ewk_nlo_g:
+    ewk_nlo_g: # EW k factor for QCD photon
       histogram: kfactor_monojet_ewk
       file: data/sf/theory/merged_kfactors_gjets.root
-    qcd_nlo_w_2017:
+    qcd_nlo_w_2017: # QCD k factor for QCD W
       histogram: wjet_dilep
       file: data/sf/theory/2017_gen_v_pt_stat1_qcd_sf.root
-    qcd_nlo_z_2017:
+    qcd_nlo_z_2017: # QCD k factor for QCD Z
       histogram: dy_dilep
       file: data/sf/theory/2017_gen_v_pt_stat1_qcd_sf.root
 
