@@ -302,8 +302,8 @@ def setup_candidates(df, cfg):
     photons = photons[photons.looseId \
               & (photons.pt > cfg.PHOTON.CUTS.LOOSE.pt) \
               & (photons.abseta < cfg.PHOTON.CUTS.LOOSE.eta) \
-              & object_overlap(photons, muons) \
-              & object_overlap(photons, electrons)
+              & object_overlap(photons, muons, dr=0.5) \
+              & object_overlap(photons, electrons, dr=0.5)
               ]
 
     ak4 = JaggedCandidateArray.candidatesfromcounts(
