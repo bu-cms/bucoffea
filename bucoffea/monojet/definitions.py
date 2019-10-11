@@ -394,6 +394,7 @@ def monojet_regions(cfg):
         'leadak8_pt_eta',
         'leadak8_id',
         'leadak8_mass',
+        'leadak8_tau21',
     ]
 
     regions = {}
