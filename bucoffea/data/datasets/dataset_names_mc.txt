@@ -66,5 +66,9 @@ QCD_HT*
 
 #### SIGNALS
 # Hinv
-VBF_HToInvisible_M*
 GluGlu_HToInvisible_M*
+VBF_HToInvisible_M*
+WminusH_WToQQ_HToInvisible_M*
+WplusH_WToQQ_HToInvisible_M*
+ZH_ZToQQ_HToInvisible_M*
+ggZH_ZToQQ_HToInvisible_M*
