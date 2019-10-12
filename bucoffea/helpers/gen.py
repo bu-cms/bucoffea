@@ -54,7 +54,7 @@ def find_gen_dilepton(gen, pdgsum=0):
     :return: Dilepton candidates
     :rtype: JaggedCandidateArray
     """
-    leps = gen[(gen.status==1) & islep(gen.pdg)]
+    leps = gen[(((gen.status==1) & islep(gen.pdg))) | ((gen.status==2) & (np.abs(gen.pdg==15)))]
     dileps = leps.distincts()
 
     dilepton_flavour = np.abs(dileps.i0.pdg + dileps.i1.pdg) == pdgsum
