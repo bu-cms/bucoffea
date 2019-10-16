@@ -36,3 +36,7 @@ sed -i '/.*LHEWpT_0-50.*/d' datasets_201*.txt
 sed -i '/.*LHEWpT_50-150.*/d' datasets_201*.txt
 sed -i '/.*CP5up.*/d' datasets_201*.txt
 sed -i '/.*CP5down.*/d' datasets_201*.txt
+
+sed -i '/Run2016/!d' datasets_2016.txt
+sed -i '/.*JetHT.*/d' datasets_2016.txt
+sed -i '/.*SingleMuon.*/d' datasets_2016.txt
