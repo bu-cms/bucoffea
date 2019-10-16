@@ -2,13 +2,13 @@
 import copy
 import os
 import re
+from collections import defaultdict
 
 import uproot
 from coffea import hist
-from collections import defaultdict
-import ROOT as r
 from coffea.hist.export import export1d
 
+import ROOT as r
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
 
 pjoin = os.path.join
@@ -19,8 +19,6 @@ def datasets(year):
                     'cr_2m_j' : f'MET_{year}',
                     'cr_1e_j' : f'EGamma_{year}',
                     'cr_2e_j' : f'EGamma_{year}',
-                    'cr_2e_j_bare' : f'EGamma_{year}',
-                    'cr_2e_j_vbare' : f'EGamma_{year}',
                     'cr_g_j' : f'EGamma_{year}',
                     # 'sr_j' : f'MET_{year}',
                     'sr_j' : f'nomatch',
@@ -97,7 +95,7 @@ def legacy_limit_input(acc, outdir='./output'):
         os.makedirs(outdir)
 
     for year in [2017,2018]:
-        signal = re.compile('VBF_HToInvisible_M125.*{year}')
+        signal = re.compile(f'VBF_HToInvisible_M125.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_monojet_{year}.root'))
         data, mc = datasets(year)
         for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j','sr_j']:
@@ -118,6 +116,7 @@ def legacy_limit_input(acc, outdir='./output'):
             
             for dataset in map(str, h.axis('dataset').identifiers()):
                 if not (data[region].match(dataset) or mc[region].match(dataset) or signal.match(dataset)):
+                    print(f"Skip dataset: {dataset}")
                     continue
                 print(f"   Dataset: {dataset}")
 
@@ -157,6 +156,3 @@ def merge_legacy_inputs(outdir):
                 h.SetDirectory(subdir)
                 # h.Write()
                 subdir.Write()
-
-
-
