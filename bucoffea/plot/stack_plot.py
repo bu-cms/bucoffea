@@ -17,6 +17,7 @@ from bucoffea.helpers.dataset import is_data
 from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.plot.util import (acc_from_dir, lumi, merge_datasets,
                                 merge_extensions, scale_xs_lumi)
+from bucoffea.plot import style
 
 pjoin = os.path.join
 #suppress true_divide warnings
@@ -40,6 +41,11 @@ class Style():
             'cr_1e_j' : 'Single-e CR, monojet',
             'cr_2e_j' : 'Di-e CR, monojet',
             'cr_g_j' : 'Single-Photon CR, monojet',
+            'cr_1m_v' : 'Single-$\mu$ CR, mono-v',
+            'cr_2m_v' : 'Di-$\mu$ CR, mono-v',
+            'cr_1e_v' : 'Single-e CR, mono-v',
+            'cr_2e_v' : 'Di-e CR, mono-v',
+            'cr_g_v' : 'Single-Photon CR, mono-v',
             'cr_1m_vbf' : 'Single-$\mu$ CR, vbfhinv',
             'cr_2m_vbf' : 'Di-$\mu$ CR, vbfhinv',
             'cr_1e_vbf' : 'Single-e CR, vbfhinv',
@@ -61,6 +67,11 @@ class Style():
             'ak4_pt' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
             'ak4_ptraw0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
             'ak4_pt0_eta0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,20)) ),
+            'ak8_pt0' : hist.Bin('jetpt','jetpt',list(range(80,600,20)) + list(range(600,1000,40)) ),
+            'ak8_pt1' : hist.Bin('jetpt','jetpt',list(range(40,600,20)) + list(range(600,1000,40)) ),
+            'ak8_pt' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,40)) ),
+            'ak8_ptraw0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,40)) ),
+            'ak8_pt0_eta0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,40)) ),
             'photon_pt0' : hist.Bin('pt','pt',list(range(200,600,20)) + list(range(600,1000,20)) ),
             'electron_pt0' : hist.Bin('pt','pt',list(range(0,600,20))),
             'electron_pt1' : hist.Bin('pt','pt',list(range(0,600,20))),
@@ -201,12 +212,20 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
                )
     # Aesthetics
     ax.set_yscale("log")
+    plot_settings=style.plot_settings()
+    if region in plot_settings.keys(): plot_settings=plot_settings[region]
+    if distribution in plot_settings.keys(): plot_settings=plot_settings[distribution]
     if ylim:
         ax.set_ylim(ylim[0],ylim[1])
+    elif 'ylim' in plot_settings.keys():
+        ax.set_ylim(plot_settings['ylim'])
     else:
         ax.set_ylim(1e-1,1e6)
+
     if xlim:
         ax.set_xlim(xlim[0],xlim[1])
+    elif 'xlim' in plot_settings.keys():
+        ax.set_xlim(plot_settings['xlim'])
 
     if rylim:
         rax.set_ylim(*rylim)
