@@ -3,7 +3,7 @@
 import numpy as np
 from awkward import JaggedArray
 from coffea.analysis_objects import JaggedCandidateArray
-
+from bucoffea.helpers.dataset import (is_lo_w, is_lo_z, is_nlo_w, is_nlo_z)
 
 def find_first_parent(in_mother, in_pdg, maxgen=10):
     """Finds the first parent with a PDG ID different from the daughter
@@ -62,13 +62,132 @@ def find_gen_dilepton(gen, pdgsum=0):
     return good_dileps
 
 
-def setup_gen_candidates(df):
-    # Find first ancestor with different PDG ID
-    # before defining the gen candidates
-    mothers = JaggedArray.fromcounts(df['nGenPart'],df['GenPart_genPartIdxMother'] )
-    pdgids = JaggedArray.fromcounts(df['nGenPart'],df['GenPart_pdgId'] )
-    # parent_index =  find_first_parent(mothers, pdgids)
+def stat1_dilepton(df, gen):
+    """Build a dilepton candidate from status 1 leptons
+    
+    :param df: Data frame
+    :type df: dataframe
+    :param gen: Gen. candidates
+    :type gen: JaggedCandidateArray
+    :return: pt and phi of dilepton
+    :rtype: tuple of two 1D arrays
+    """
+    if is_lo_z(df['dataset']) or is_nlo_z(df['dataset']):
+        pdgsum = 0
+    elif is_lo_w(df['dataset']) or is_nlo_w(df['dataset']):
+        pdgsum = 1
+    gen_dilep = find_gen_dilepton(gen, pdgsum)
+    gen_dilep = gen_dilep[gen_dilep.mass.argmax()]
+    return gen_dilep.pt.max(), gen_dilep.phi.max()
 
+
+def merge_dileptons(dilepton1, dilepton2, dilepton3=None):
+    """
+    Choose highest mass dilepton from up to three option lists.
+    
+    :return: pt and phi of the chosen dilepton
+    :rtype: tuple of two 1D arrays
+    """
+
+    mmax1 = dilepton1.mass.max()
+    mmax2 = dilepton2.mass.max()
+    if dilepton3 is not None:
+        mmax3 = dilepton3.mass.max()
+    else:
+        mmax3 = -1 * np.ones(dilepton1.size)
+
+    take2 = (mmax2 > mmax1) & (mmax2 > mmax3)
+    take3 = (mmax3 > mmax1) & (mmax3 > mmax2)
+    take1 = ~(take2 | take3)
+
+    vpt1 = dilepton1.pt.max()
+    vphi1 = dilepton1.phi.max()
+    vpt1[~take1] = 0
+    vphi1[~take1] = 0
+
+    vpt2 = dilepton2.pt.max()
+    vphi2 = dilepton2.phi.max()
+    vpt2[~take2] = 0
+    vphi2[~take2] = 0
+
+    if dilepton3 is not None:
+        vpt3 = dilepton3.pt.max()
+        vphi3 = dilepton3.phi.max()
+        vpt3[~take3] = 0
+        vphi3[~take3] = 0
+    else:
+        vpt3 = np.zeros(dilepton1.size)
+        vphi3 = np.zeros(dilepton1.size)
+    vphi = vphi1 + vphi2 + vphi3
+    vpt = vpt1 + vpt2 + vpt3
+
+    return vpt, vphi
+
+
+def dressed_dilep(df, gen, dressed):
+    """
+    Build a dilepton candidate from dressed leptons.
+    
+    :param df: Data frame
+    :type df: dataframe
+    :param gen: Gen. candidates
+    :type gen: JaggedCandidateArray
+    :param dressed: Dressed gen candidates
+    :type dressed: JaggedCandidateArray
+    :return: pt and phi of dilepton
+    :rtype: tuple of two 1D arrays
+    """
+    # Dressed leptons
+    neutrinos = gen[(gen.status==1) & isnu(gen.pdg)]
+    if is_lo_z(df['dataset']) or is_nlo_z(df['dataset']):
+        # e, mu
+        dilep_dress = find_gen_dilepton(dressed, 0)
+        dilep_dress = dilep_dress[dilep_dress.mass.argmax()]
+
+        #nu
+        dilep_nu = find_gen_dilepton(neutrinos, 0)
+        dilep_nu = dilep_nu[dilep_nu.mass.argmax()]
+
+        # tau
+        dilep_tau = find_gen_dilepton(gen[np.abs(gen.pdg)==15], 0)
+        dilep_tau = dilep_tau[dilep_tau.mass.argmax()]
+
+        # Merge by taking higher-mass
+        return merge_dileptons(dilep_tau, dilep_dress, dilep_nu)
+
+    elif is_lo_w(df['dataset']) or is_nlo_w(df['dataset']):
+        # e, mu
+        dilep_dress = dressed.cross(neutrinos)
+        dilep_dress = dilep_dress[np.abs(dilep_dress.i0.pdg + dilep_dress.i1.pdg)==1]
+        dilep_dress = dilep_dress[dilep_dress.mass.argmax()]
+
+        # tau
+        dilep_tau = find_gen_dilepton(gen[(np.abs(gen.pdg)==15) | (np.abs(gen.pdg)==16)], 1)
+        dilep_tau = dilep_tau[dilep_tau.mass.argmax()]
+        return  merge_dileptons(dilep_tau, dilep_dress)
+
+def fill_gen_v_info(df, gen, dressed):
+    '''
+    One-stop function to generate gen v pt info.
+
+    For stat1, dressed and lhe V, the pt and phi
+    information is written into the data frame.
+    '''
+
+    df['gen_v_pt_stat1'], df['gen_v_phi_stat1'] = stat1_dilepton(df, gen)
+    df['gen_v_pt_dress'], df['gen_v_phi_dress'] = dressed_dilep(df, gen, dressed)
+
+    # For events where we cannot find a dressed dilepton,
+    # fill with stat 1 dileptons
+    invalid = df['gen_v_pt_dress'] <= 0
+    df['gen_v_pt_dress'][invalid] = df['gen_v_pt_stat1'][invalid]
+    df['gen_v_phi_dress'][invalid] = df['gen_v_phi_stat1'][invalid]
+
+    # LHE is just pass through
+    df['gen_v_pt_lhe'] = df['LHE_Vpt']
+    df['gen_v_phi_lhe'] = np.zeros(df.size)
+
+def setup_gen_candidates(df):
     gen = JaggedCandidateArray.candidatesfromcounts(
         df['nGenPart'],
         pt=df['GenPart_pt'],
@@ -82,7 +201,23 @@ def setup_gen_candidates(df):
         mother = df['GenPart_genPartIdxMother'])
     return gen
 
+def setup_dressed_gen_candidates(df):
+    dressed = JaggedCandidateArray.candidatesfromcounts(
+        df['nGenDressedLepton'],
+        pt=df['GenDressedLepton_pt'],
+        eta=df['GenDressedLepton_eta'],
+        phi=df['GenDressedLepton_phi'],
+        mass=df['GenDressedLepton_mass'],
+        status=np.ones(df['GenDressedLepton_pt'].size),
+        pdg=df['GenDressedLepton_pdgId'])
+    return dressed
+
 def islep(pdg):
     """Returns True if the PDG ID represents a lepton."""
     abspdg = np.abs(pdg)
     return (11<=abspdg) & (abspdg<=16)
+
+def isnu(pdg):
+    """Returns True if the PDG ID represents a neutrino."""
+    abspdg = np.abs(pdg)
+    return (12==abspdg) | (14==abspdg) | (16==abspdg)
