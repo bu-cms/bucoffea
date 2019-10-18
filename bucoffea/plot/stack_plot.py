@@ -213,8 +213,10 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
     # Aesthetics
     ax.set_yscale("log")
     plot_settings=style.plot_settings()
-    if region in plot_settings.keys(): plot_settings=plot_settings[region]
-    if distribution in plot_settings.keys(): plot_settings=plot_settings[distribution]
+    if region in plot_settings.keys(): 
+        plot_settings=plot_settings[region]
+    if distribution in plot_settings.keys(): 
+        plot_settings=plot_settings[distribution]
     if ylim:
         ax.set_ylim(ylim[0],ylim[1])
     elif 'ylim' in plot_settings.keys():
