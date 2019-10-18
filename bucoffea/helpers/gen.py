@@ -204,8 +204,7 @@ def setup_gen_candidates(df):
         charge=df['GenPart_pdgId'],
         pdg=df['GenPart_pdgId'],
         status=df['GenPart_status'],
-        flag = df['GenPart_statusFlags'],
-        mother = df['GenPart_genPartIdxMother'])
+        flag = df['GenPart_statusFlags'])
     return gen
 
 def setup_dressed_gen_candidates(df):
