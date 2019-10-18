@@ -151,7 +151,7 @@ class monojetProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons, hlt = setup_candidates(df, cfg)
+        met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
@@ -209,12 +209,6 @@ class monojetProcessor(processor.ProcessorABC):
         pass_none = ~pass_all
         selection.add('inclusive', pass_all)
         selection = trigger_selection(selection, df, cfg)
-
-        # Trigger objects
-        hlt_single_muons = hlt[(hlt.id==13) & (hlt.filter & 8 == 8)]
-        muons_hltmatch = muons[muons.match(hlt_single_muons,deltaRCut=0.2,deltaPtCut=0.25)]
-        selection.add('one_hlt_muon', muons_hltmatch.counts>=1)
-        selection.add('two_hlt_muons', muons_hltmatch.counts==2)
         selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
 
         # Common selection
@@ -432,8 +426,6 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('tight_muo_mult',muons[df['is_tight_muon']])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
-            fill_mult('hlt_single_muon_mult',hlt_single_muons)
-            fill_mult('muons_hltmatch_mult',muons_hltmatch)
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
@@ -541,11 +533,6 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('muon_phi0',  phi=muons[leadmuon_index].phi[mask].flatten(),  w_leadmu=w_leadmu)
                 ezfill('muon_dxy0',  dxy=muons[leadmuon_index].dxy[mask].flatten(),  weight=w_leadmu)
                 ezfill('muon_dz0',  dz=muons[leadmuon_index].dz[mask].flatten(),  weight=w_leadmu)
-
-                # HLT Matched muons
-                w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], region_weights.weight()[mask])
-                ezfill('muons_hltmatch_eta',  eta=muons_hltmatch.eta[mask].flatten(),  weight=w_muons_hltmatch)
-                ezfill('muons_hltmatch_pt',  pt=muons_hltmatch.pt[mask].flatten(),  weight=w_muons_hltmatch)
 
             # Dimuon
             if '_2m_' in region:

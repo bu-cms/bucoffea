@@ -100,7 +100,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt, met_phi, ak4, _, muons, electrons, taus, photons, hlt = setup_candidates(df, cfg)
+        met_pt, met_phi, ak4, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]
