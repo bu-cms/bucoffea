@@ -213,7 +213,7 @@ def setup_dressed_gen_candidates(df):
         pt=df['GenDressedLepton_pt'],
         eta=df['GenDressedLepton_eta'],
         phi=df['GenDressedLepton_phi'],
-        mass=df['GenDressedLepton_mass'],
+        mass=0*df['GenDressedLepton_pt'],
         status=np.ones(df['GenDressedLepton_pt'].size),
         pdg=df['GenDressedLepton_pdgId'])
     return dressed
