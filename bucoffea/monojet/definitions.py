@@ -355,6 +355,7 @@ def setup_candidates(df, cfg):
         zvsqcd=df['FatJet_deepTag_ZvsQCD'],
         zvsqcdmd=df['FatJet_deepTagMD_ZvsQCD']
     )
+    ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
     hlt = JaggedCandidateArray.candidatesfromcounts(
         df['nTrigObj'],

@@ -1022,6 +1022,144 @@ def plot_settings():
                 'xlim' : (0,10),
                 'ylim' : (1e2,1e5)
             }
+        },
+        'cr_2m_v' : {
+            'ak8_mass0' : {
+                'xlim' : (60,110),
+                'ylim' : (1e-1,1e5)
+            },
+            'ak8_tau210' : {
+                'xlim' : (0,1),
+                'ylim' : (1e-1,1e6)
+            },
+            'recoil' : {
+                'ylim' : (1e-5,2e2)
+            },
+            'ak8_pt0' : {
+				'xlim' : (200,1000),
+                'ylim' : (1e-3,2e3)
+            },
+            'met' : {
+				'xlim' : (0,1100),
+                'ylim' : (1e-5,2e2)
+            },
+            'ak8_phi0' : {
+                'ylim' : (1e1,1e5)
+            },
+            'ak8_eta0' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e-1,1e5)
+            }
+        },
+        'cr_2e_v' : {
+            'ak8_mass0' : {
+                'xlim' : (60,110),
+                'ylim' : (1e-1,1e5)
+            },
+            'ak8_tau210' : {
+                'xlim' : (0,1),
+                'ylim' : (1e-1,1e6)
+            },
+            'recoil' : {
+                'ylim' : (1e-5,2e2)
+            },
+            'ak8_pt0' : {
+				'xlim' : (200,1000),
+                'ylim' : (1e-3,2e3)
+            },
+            'met' : {
+				'xlim' : (0,1100),
+                'ylim' : (1e-5,2e2)
+            },
+            'ak8_phi0' : {
+                'ylim' : (1e1,1e5)
+            },
+            'ak8_eta0' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e-1,1e5)
+            }
+        },
+        'cr_1m_v' : {
+            'ak8_mass0' : {
+                'xlim' : (60,110),
+                'ylim' : (1e-1,1e5)
+            },
+            'ak8_tau210' : {
+                'xlim' : (0,1),
+                'ylim' : (1e-1,1e6)
+            },
+            'recoil' : {
+                'ylim' : (1e-4,1e3)
+            },
+            'ak8_pt0' : {
+				'xlim' : (200,1000),
+                'ylim' : (1e-2,1e4)
+            },
+            'met' : {
+                'ylim' : (1e-4,1e3)
+            },
+            'ak8_phi0' : {
+                'ylim' : (1e1,1e5)
+            },
+            'ak8_eta0' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e-1,1e5)
+            }
+        },
+        'cr_1e_v' : {
+            'ak8_mass0' : {
+                'xlim' : (60,110),
+                'ylim' : (1e-1,1e5)
+            },
+            'ak8_tau210' : {
+                'xlim' : (0,1),
+                'ylim' : (1e-1,1e6)
+            },
+            'recoil' : {
+                'ylim' : (1e-4,1e3)
+            },
+            'ak8_pt0' : {
+				'xlim' : (200,1000),
+                'ylim' : (1e-2,1e4)
+            },
+            'met' : {
+                'ylim' : (1e-4,1e3)
+            },
+            'ak8_phi0' : {
+                'ylim' : (1e1,1e5)
+            },
+            'ak8_eta0' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e-1,1e5)
+            }
+        },
+        'cr_g_v' : {
+            'ak8_mass0' : {
+                'xlim' : (60,110),
+                'ylim' : (1e-1,1e5)
+            },
+            'ak8_tau210' : {
+                'xlim' : (0,1),
+                'ylim' : (1e-1,1e6)
+            },
+            'recoil' : {
+                'ylim' : (1e-4,1e3)
+            },
+            'ak8_pt0' : {
+				'xlim' : (200,1000),
+                'ylim' : (1e-2,1e4)
+            },
+            'met' : {
+				'xlim' : (0,1100),
+                'ylim' : (1e-4,1e3)
+            },
+            'ak8_phi0' : {
+                'ylim' : (1e1,1e5)
+            },
+            'ak8_eta0' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e-1,1e5)
+            }
         }
         }
     )
