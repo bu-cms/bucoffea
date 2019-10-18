@@ -41,7 +41,9 @@ from bucoffea.helpers.dataset import (
                                      )
 from bucoffea.helpers.gen import (
                                   find_gen_dilepton,
-                                  setup_gen_candidates
+                                  setup_gen_candidates,
+                                  setup_dressed_gen_candidates,
+                                  fill_gen_v_info
                                  )
 
 def trigger_selection(selection, df, cfg):
@@ -137,18 +139,13 @@ class monojetProcessor(processor.ProcessorABC):
         df['is_data'] = is_data(dataset)
 
         gen_v_pt = None
-        n_gen_dilepton = np.zeros(df.size)
         if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
             gen = setup_gen_candidates(df)
-            if is_lo_z(dataset) or is_nlo_z(dataset):
-                pdgsum = 0
-            elif is_lo_w(dataset) or is_nlo_w(dataset):
-                pdgsum = 1
-            gen_dilep = find_gen_dilepton(gen, pdgsum)
-            n_gen_dilepton = gen_dilep.counts
-            gen_v_pt = gen_dilep[gen_dilep.mass.argmax()].pt.max()
+            dressed = setup_dressed_gen_candidates(df)
+            fill_gen_v_info(df, gen, dressed)
+            gen_v_pt = df['gen_v_pt_dress']
         elif df['is_lo_g']:
-            gen_v_pt = df['LHE_Vpt']
+            gen_v_pt = gen[gen.pdg == 22 and gen.status==1].pt.max()
 
         # Candidates
         # Already pre-filtered!
@@ -604,9 +601,6 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], region_weights.weight()[mask])
-
-            # Gen
-            ezfill('gen_dilepton_mult', multiplicity=n_gen_dilepton[mask], weight=region_weights.weight()[mask])
 
             # PV
             ezfill('npv', nvtx=df['PV_npvs'][mask], weight=region_weights.weight()[mask])

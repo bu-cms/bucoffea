@@ -3,7 +3,14 @@
 import numpy as np
 from awkward import JaggedArray
 from coffea.analysis_objects import JaggedCandidateArray
-from bucoffea.helpers.dataset import (is_lo_w, is_lo_z, is_nlo_w, is_nlo_z)
+from bucoffea.helpers.dataset import (
+                                      is_lo_w,
+                                      is_lo_w_ewk,
+                                      is_lo_z,
+                                      is_lo_z_ewk,
+                                      is_nlo_w,
+                                      is_nlo_z
+                                      )
 
 def find_first_parent(in_mother, in_pdg, maxgen=10):
     """Finds the first parent with a PDG ID different from the daughter
@@ -64,7 +71,7 @@ def find_gen_dilepton(gen, pdgsum=0):
 
 def stat1_dilepton(df, gen):
     """Build a dilepton candidate from status 1 leptons
-    
+
     :param df: Data frame
     :type df: dataframe
     :param gen: Gen. candidates
@@ -72,9 +79,9 @@ def stat1_dilepton(df, gen):
     :return: pt and phi of dilepton
     :rtype: tuple of two 1D arrays
     """
-    if is_lo_z(df['dataset']) or is_nlo_z(df['dataset']):
+    if is_lo_z(df['dataset']) or is_lo_z_ewk(df['dataset']) or is_nlo_z(df['dataset']):
         pdgsum = 0
-    elif is_lo_w(df['dataset']) or is_nlo_w(df['dataset']):
+    elif is_lo_w(df['dataset']) or  is_lo_w_ewk(df['dataset']) or is_nlo_w(df['dataset']):
         pdgsum = 1
     gen_dilep = find_gen_dilepton(gen, pdgsum)
     gen_dilep = gen_dilep[gen_dilep.mass.argmax()]
@@ -84,7 +91,7 @@ def stat1_dilepton(df, gen):
 def merge_dileptons(dilepton1, dilepton2, dilepton3=None):
     """
     Choose highest mass dilepton from up to three option lists.
-    
+
     :return: pt and phi of the chosen dilepton
     :rtype: tuple of two 1D arrays
     """
@@ -127,7 +134,7 @@ def merge_dileptons(dilepton1, dilepton2, dilepton3=None):
 def dressed_dilep(df, gen, dressed):
     """
     Build a dilepton candidate from dressed leptons.
-    
+
     :param df: Data frame
     :type df: dataframe
     :param gen: Gen. candidates
