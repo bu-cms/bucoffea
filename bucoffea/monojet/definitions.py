@@ -276,7 +276,6 @@ def setup_candidates(df, cfg):
         phi=df['Tau_phi'],
         mass=0 * df['Tau_pt'],
         decaymode=df['Tau_idDecayMode'],
-        clean=df['Tau_cleanmask'],
         iso=df['Tau_idMVAoldDM2017v2'],
     )
 
@@ -312,7 +311,7 @@ def setup_candidates(df, cfg):
         eta=df['Jet_eta'],
         abseta=np.abs(df['Jet_eta']),
         phi=df['Jet_phi'],
-        mass=df[f'Jet_mass{jes_suffix}'],
+        mass=np.zeros_like(df['Jet_pt']),
         looseId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
         tightId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
         puid=((df['Jet_puId']&2>0) | (df[f'Jet_pt{jes_suffix}']>50)), # medium pileup jet ID
