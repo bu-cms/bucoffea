@@ -49,6 +49,8 @@ def monojet_accumulator(cfg):
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
+    
+    ratio_ax = Bin("ratio", "ratio", 50,0,2)
 
     tau21_ax = Bin("tau21", r"Tagger", 50,-5,5)
     tagger_ax = Bin("tagger", r"Tagger", 50,-5,5)
@@ -78,7 +80,7 @@ def monojet_accumulator(cfg):
     items["recoil_nopref"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil_noweight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-
+    items["ak4_pt0_over_recoil"] = Hist("Counts", dataset_ax, region_ax, ratio_ax)
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_ptraw0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
