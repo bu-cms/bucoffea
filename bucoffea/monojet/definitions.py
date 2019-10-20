@@ -52,7 +52,7 @@ def monojet_accumulator(cfg):
     
     ratio_ax = Bin("ratio", "ratio", 50,0,2)
 
-    tau21_ax = Bin("tau21", r"Tagger", 50,-5,5)
+    tau21_ax = Bin("tau21", r"Tagger", 200,-5,5)
     tagger_ax = Bin("tagger", r"Tagger", 50,-5,5)
 
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 100,50,150)
@@ -380,11 +380,41 @@ def monojet_regions(cfg):
         'leadak4_id',
         # 'veto_vtag'
     ]
+    # Test out different working point for v tagging
+    # the first one is the traditional one used in 2016
     v_cuts = [
         'leadak8_pt_eta',
         'leadak8_id',
         'leadak8_mass',
         'leadak8_tau21',
+    ]
+    v_cuts_inclusive = [
+        'leadak8_pt_eta',
+        'leadak8_id',
+    ]
+    v_cuts_loose = [
+        'leadak8_pt_eta',
+        'leadak8_id',
+        'leadak8_mass',
+        'leadak8_wvsqcd_loose',
+    ]
+    v_cuts_tight = [
+        'leadak8_pt_eta',
+        'leadak8_id',
+        'leadak8_mass',
+        'leadak8_wvsqcd_tight',
+    ]
+    v_cuts_looseMD = [
+        'leadak8_pt_eta',
+        'leadak8_id',
+        'leadak8_mass',
+        'leadak8_wvsqcdmd_loose',
+    ]
+    v_cuts_tightMD = [
+        'leadak8_pt_eta',
+        'leadak8_id',
+        'leadak8_mass',
+        'leadak8_wvsqcdmd_tight',
     ]
 
     regions = {}
@@ -429,8 +459,28 @@ def monojet_regions(cfg):
     regions['cr_g_j'] = cr_g_cuts + j_cuts
     regions['cr_g_v'] = cr_g_cuts + v_cuts
 
+    # a tt-bar populated region by removing b veto
+    regions['cr_nobveto_v'] = copy.deepcopy(regions['sr_v'])
+    regions['cr_nobveto_v'].remove('veto_b')
+    
+    # additional regions to test out deep ak8 WvsQCD tagger
+    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
+        for wp in ['inclusive', 'loose', 'tight','loosemd','tightmd']:
+            # the new region name will be, for example, cr_2m_loose_v
+            newRegionName=region.replace('_v','_'+wp+'_v')
+            regions[newRegionName] = copy.deepcopy(regions[region])
+            regions[newRegionName].remove('leadak8_tau21')
+            if wp is 'inclusive':
+                regions[newRegionName].remove('leadak8_mass')
+            else:
+                regions[newRegionName].append('leadak8_wvsqcd_'+wp)
+
     if not cfg.RUN.MONOV:
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_v')]
+        for key in keys_to_remove:
+            regions.pop(key)
+    if not cfg.RUN.MONOJ:
+        keys_to_remove = [ x for x in regions.keys() if x.endswith('_j')]
         for key in keys_to_remove:
             regions.pop(key)
 
