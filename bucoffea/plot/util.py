@@ -81,7 +81,9 @@ def acc_from_dir(indir):
 
             tmp = "/tmp/tmp_bucoffea_merge_" + "".join(random.sample(string.ascii_uppercase+string.digits,24))
             merged = x+y
+            x, y = None, None
             save(merged, tmp)
+            merged = None
             to_merge.append(tmp)
             tmp_files.append(tmp)
 
