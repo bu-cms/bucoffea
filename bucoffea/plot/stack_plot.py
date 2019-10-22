@@ -84,7 +84,7 @@ class Style():
         }
 
 
-def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf'):
+def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf'):
     """Creates a data vs MC comparison plot
 
     :param acc: Accumulator (processor output)
@@ -140,16 +140,34 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
         'elinewidth': 1,
         'emarker': '_'
     }
+    signal_err_opts = {
+        'linestyle':'none',
+        'marker': '.',
+        'markersize': 10.,
+        'color':'r',
+        'elinewidth': 1,
+        'emarker': '_'
+    }
 
     # Plot single muon data
     # Note the syntax we use to pick the data set
-    fig, ax, _ = hist.plot1d(
-        h[data],
-        overlay='dataset',
-        error_opts=data_err_opts,
-        ax=ax,
-        overflow='all',
-        binwnorm=True)
+    if data:
+        fig, ax, _ = hist.plot1d(
+            h[data],
+            overlay='dataset',
+            error_opts=data_err_opts,
+            ax=ax,
+            overflow='all',
+            binwnorm=True)
+
+    if signal:
+        fig, ax, _ = hist.plot1d(
+            h[signal],
+            overlay='dataset',
+            error_opts=signal_err_opts,
+            ax=ax,
+            overflow='all',
+            binwnorm=True)
 
     # Plot MC background samples
     # Here we use a regular expression to match
@@ -183,14 +201,15 @@ def make_plot(acc, region, distribution, year,  data, mc, outdir='./output/stack
     ax.legend(title=region_name,ncol=1)
 
     # Ratio plot
-    hist.plotratio(h[data].integrate('dataset'), h[mc].integrate('dataset'),
-                ax=rax,
-                denom_fill_opts={},
-                guide_opts={},
-                unc='num',
-                overflow='all',
-                error_opts=data_err_opts
-                )
+    if data:
+        hist.plotratio(h[data].integrate('dataset'), h[mc].integrate('dataset'),
+                    ax=rax,
+                    denom_fill_opts={},
+                    guide_opts={},
+                    unc='num',
+                    overflow='all',
+                    error_opts=data_err_opts
+                    )
 
     ax.text(1., 0., distribution,
                 fontsize=10,

@@ -1,5 +1,6 @@
 import hashlib
 import os
+import shutil
 import random
 import re
 import string
@@ -81,16 +82,19 @@ def acc_from_dir(indir):
 
             tmp = "/tmp/tmp_bucoffea_merge_" + "".join(random.sample(string.ascii_uppercase+string.digits,24))
             merged = x+y
+            # clean up to save memory
+            x = None
+            y = None
             save(merged, tmp)
+            merged = None
             to_merge.append(tmp)
             tmp_files.append(tmp)
 
         t.update()
         assert(len(to_merge)==1)
 
-        acc = next()
-        save(acc, cache)
-        return acc
+        shutil.copy(to_merge[0], cache)
+        return load(cache)
 
 
 
@@ -206,6 +210,8 @@ def merge_datasets(histogram):
         'Diboson_2018' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*_2018',x)],
         'EWK_V_2017' : [x for x in all_datasets if re.match('EWK.*_2017',x)],
         'EWK_V_2018' : [x for x in all_datasets if re.match('EWK.*_2018',x)],
+        'WH_WToQQ_Hinv_M125_2017' : [x for x in all_datasets if re.match('W.*H_WToQQ_HToInvisible_M125.*2017',x)],
+        'WH_WToQQ_Hinv_M125_2018' : [x for x in all_datasets if re.match('W.*H_WToQQ_HToInvisible_M125.*2018',x)]
     }
 
     # Remove empty lists
