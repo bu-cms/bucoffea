@@ -20,12 +20,12 @@ def monojet_accumulator(cfg):
     region_ax = Cat("region", "Selection region")
     type_ax = Cat("type", "Type")
 
-    vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 100, 0, 2000)
+    vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 50, 0, 2000)
 
-    met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 200, 0, 2000)
+    met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
 
-    jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
+    jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
     jet_pt_ax_coarse = Bin("jetpt", r"$p_{T}$ (GeV)", 5, 0, 500)
     jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
     jet_eta_ax_coarse = Bin("jeteta", r"$\eta$", 10, -5, 5)
@@ -44,9 +44,9 @@ def monojet_accumulator(cfg):
     dz_ax = Bin("dz", r"$d_{z}$", 20, 0, 0.5)
     id_ax = Bin("id", r"ID bool", 2,-0.5,1.5)
 
-    pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
-    ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 100, 0, 4000)
-    mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
+    pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 50, 0, 1000)
+    ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 50, 0, 4000)
+    mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 50, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
     
@@ -55,14 +55,14 @@ def monojet_accumulator(cfg):
     tau21_ax = Bin("tau21", r"Tagger", 50,-5,5)
     tagger_ax = Bin("tagger", r"Tagger", 50,-5,5)
 
-    dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 100,50,150)
+    dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 50,50,150)
 
     weight_type_ax = Cat("weight_type", "Weight type")
-    weight_ax = Bin("weight_value", "Weight",100,0.5,1.5)
-    weight_wide_ax = Bin("weight_value", "Weight",100,-10,10)
+    weight_ax = Bin("weight_value", "Weight",50,0.5,1.5)
+    weight_wide_ax = Bin("weight_value", "Weight",50,-10,10)
 
-    nvtx_ax = Bin('nvtx','Number of vertices',100,-0.5,99.5)
-    rho_ax = Bin('rho','Energy density',100, 0, 100)
+    nvtx_ax = Bin('nvtx','Number of vertices',50,-0.5,99.5)
+    rho_ax = Bin('rho','Energy density',50, 0, 100)
     frac_ax = Bin('frac','Fraction', 50, 0, 1)
     Hist = hist.Hist
     items = {}
