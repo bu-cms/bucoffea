@@ -392,30 +392,10 @@ def monojet_regions(cfg):
         'leadak8_pt_eta',
         'leadak8_id',
     ]
-    v_cuts_loose = [
-        'leadak8_pt_eta',
-        'leadak8_id',
-        'leadak8_mass',
-        'leadak8_wvsqcd_loose',
-    ]
-    v_cuts_tight = [
-        'leadak8_pt_eta',
-        'leadak8_id',
-        'leadak8_mass',
-        'leadak8_wvsqcd_tight',
-    ]
-    v_cuts_looseMD = [
-        'leadak8_pt_eta',
-        'leadak8_id',
-        'leadak8_mass',
-        'leadak8_wvsqcdmd_loose',
-    ]
-    v_cuts_tightMD = [
-        'leadak8_pt_eta',
-        'leadak8_id',
-        'leadak8_mass',
-        'leadak8_wvsqcdmd_tight',
-    ]
+    v_cuts_loose = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcd_loose']
+    v_cuts_tight = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcd_tight']
+    v_cuts_looseMD = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcdmd_loose']
+    v_cuts_tightMD = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcdmd_tight']
 
     regions = {}
     regions['inclusive'] = ['inclusive']
@@ -470,7 +450,7 @@ def monojet_regions(cfg):
             newRegionName=region.replace('_v','_'+wp+'_v')
             regions[newRegionName] = copy.deepcopy(regions[region])
             regions[newRegionName].remove('leadak8_tau21')
-            if wp is 'inclusive':
+            if wp == 'inclusive':
                 regions[newRegionName].remove('leadak8_mass')
             else:
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
