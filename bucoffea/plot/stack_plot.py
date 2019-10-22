@@ -151,7 +151,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
 
     # Plot single muon data
     # Note the syntax we use to pick the data set
-    if data is not None:
+    if data:
         fig, ax, _ = hist.plot1d(
             h[data],
             overlay='dataset',
@@ -160,7 +160,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
             overflow='all',
             binwnorm=True)
 
-    if signal is not None:
+    if signal:
         fig, ax, _ = hist.plot1d(
             h[signal],
             overlay='dataset',
@@ -201,7 +201,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     ax.legend(title=region_name,ncol=1)
 
     # Ratio plot
-    if data is not None:
+    if data:
         hist.plotratio(h[data].integrate('dataset'), h[mc].integrate('dataset'),
                     ax=rax,
                     denom_fill_opts={},
@@ -209,15 +209,6 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
                     unc='num',
                     overflow='all',
                     error_opts=data_err_opts
-                    )
-    if signal is not None:
-        hist.plotratio(h[signal].integrate('dataset'), h[mc].integrate('dataset'),
-                    ax=rax,
-                    denom_fill_opts={},
-                    guide_opts={},
-                    unc='num',
-                    overflow='all',
-                    error_opts=signal_err_opts
                     )
 
     ax.text(1., 0., distribution,

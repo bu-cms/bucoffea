@@ -1208,7 +1208,7 @@ def plot_settings():
                     'xlim' : (0,1)
                 }
             }
-            if wp is 'inclusive':
+            if wp == 'inclusive':
                 plot_settings[region]['ak8_mass0']={
                     'ylim' : (1e-1,1e5)
                 }
