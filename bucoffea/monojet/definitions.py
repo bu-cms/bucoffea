@@ -67,19 +67,15 @@ def monojet_accumulator(cfg):
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
-    items["lhe_njets"] = Hist("Counts", dataset_ax, multiplicity_ax)
     items["lhe_ht"] = Hist("Counts", dataset_ax, ht_ax)
-    items["lhe_htinc"] = Hist("Counts", dataset_ax, ht_ax)
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["met_noweight"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopog"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_notrg"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopref"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["recoil_noweight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["ak4_pt0_over_recoil"] = Hist("Counts", dataset_ax, region_ax, ratio_ax)
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_ptraw0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -87,7 +83,6 @@ def monojet_accumulator(cfg):
     items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
 
     items["ak4_pt0_chf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
     items["ak4_pt0_nhf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
@@ -98,9 +93,6 @@ def monojet_accumulator(cfg):
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
-    items["ak4_pt_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["ak4_eta_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
     items["ak8_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -166,7 +158,6 @@ def monojet_accumulator(cfg):
     items["dielectron_dr"] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
     items['photon_pt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items['photon_pt0_noweight'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
@@ -388,7 +379,6 @@ def monojet_regions(cfg):
     ]
 
     regions = {}
-    regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_v'] = ['trig_met'] + common_cuts + v_cuts
@@ -503,13 +493,6 @@ def monojet_regions(cfg):
 
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
-
-
-    # HEM check
-    for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j']:
-        tmp = copy.deepcopy(regions[region])
-        tmp.remove('hemveto')
-        regions[f'{region}_nohem'] = tmp
 
     for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
         for cut in ['veto_ele', 'veto_muo', 'veto_photon', 'veto_tau', 'veto_b']:
