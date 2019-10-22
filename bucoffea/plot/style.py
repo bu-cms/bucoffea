@@ -1036,11 +1036,11 @@ def plot_settings():
                 'ylim' : (1e-5,2e2)
             },
             'ak8_pt0' : {
-				'xlim' : (200,1000),
+                'xlim' : (200,1000),
                 'ylim' : (1e-3,2e3)
             },
             'met' : {
-				'xlim' : (0,1100),
+                'xlim' : (0,1100),
                 'ylim' : (1e-5,2e2)
             },
             'ak8_phi0' : {
@@ -1064,11 +1064,11 @@ def plot_settings():
                 'ylim' : (1e-5,2e2)
             },
             'ak8_pt0' : {
-				'xlim' : (200,1000),
+                'xlim' : (200,1000),
                 'ylim' : (1e-3,2e3)
             },
             'met' : {
-				'xlim' : (0,1100),
+                'xlim' : (0,1100),
                 'ylim' : (1e-5,2e2)
             },
             'ak8_phi0' : {
@@ -1092,7 +1092,7 @@ def plot_settings():
                 'ylim' : (1e-4,1e3)
             },
             'ak8_pt0' : {
-				'xlim' : (200,1000),
+                'xlim' : (200,1000),
                 'ylim' : (1e-2,1e4)
             },
             'met' : {
@@ -1119,7 +1119,7 @@ def plot_settings():
                 'ylim' : (1e-4,1e3)
             },
             'ak8_pt0' : {
-				'xlim' : (200,1000),
+                'xlim' : (200,1000),
                 'ylim' : (1e-2,1e4)
             },
             'met' : {
@@ -1146,11 +1146,11 @@ def plot_settings():
                 'ylim' : (1e-4,1e3)
             },
             'ak8_pt0' : {
-				'xlim' : (200,1000),
+                'xlim' : (200,1000),
                 'ylim' : (1e-2,1e4)
             },
             'met' : {
-				'xlim' : (0,1100),
+                'xlim' : (0,1100),
                 'ylim' : (1e-4,1e3)
             },
             'ak8_phi0' : {
@@ -1163,4 +1163,53 @@ def plot_settings():
         }
         }
     )
+    # add axes limit for control regions with different working points
+    for raw_region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_2e_v','cr_g_v','cr_nobveto_v']:
+        # add default axes limits for these regions:
+        plot_settings[raw_region]['ak8_wvsqcd0']={
+            'xlim' : (0,1)
+        }
+        plot_settings[raw_region]['ak8_wvsqcdmd0']={
+            'xlim' : (0,1)
+        }
+        for wp in ['inclusive','loose','tight','loosemd','tightmd']:
+            region = raw_region.replace('_v','_'+wp+'_v')
+            plot_settings[region] = {
+                'ak8_mass0' : {
+                    'xlim' : (60,110),
+                    'ylim' : (1e-1,1e5)
+                },
+                'ak8_tau210' : {
+                    'xlim' : (0,1),
+                    'ylim' : (1e-1,1e6)
+                },
+                'recoil' : {
+                    'ylim' : (1e-4,1e4)
+                },
+                'ak8_pt0' : {
+                    'xlim' : (200,1000),
+                    'ylim' : (1e-2,1e4)
+                },
+                'met' : {
+                    'xlim' : (0,1100),
+                    'ylim' : (1e-4,1e4)
+                },
+                'ak8_phi0' : {
+                    'ylim' : (1e1,1e5)
+                },
+                'ak8_eta0' : {
+                    'xlim' : (-3,3),
+                    'ylim' : (1e-1,1e5)
+                },
+                'ak8_wvsqcd0' : {
+                    'xlim' : (0,1)
+                },
+                'ak8_wvsqcd0md' : {
+                    'xlim' : (0,1)
+                }
+            }
+            if wp is 'inclusive':
+                plot_settings[region]['ak8_mass0']={
+                    'ylim' : (1e-1,1e5)
+                }
     return plot_settings
