@@ -41,7 +41,9 @@ from bucoffea.helpers.dataset import (
                                      )
 from bucoffea.helpers.gen import (
                                   find_gen_dilepton,
-                                  setup_gen_candidates
+                                  setup_gen_candidates,
+                                  setup_dressed_gen_candidates,
+                                  fill_gen_v_info
                                  )
 
 def trigger_selection(selection, df, cfg):
@@ -137,24 +139,20 @@ class monojetProcessor(processor.ProcessorABC):
         df['is_data'] = is_data(dataset)
 
         gen_v_pt = None
-        n_gen_dilepton = np.zeros(df.size)
         if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
             gen = setup_gen_candidates(df)
-            if is_lo_z(dataset) or is_nlo_z(dataset):
-                pdgsum = 0
-            elif is_lo_w(dataset) or is_nlo_w(dataset):
-                pdgsum = 1
-            gen_dilep = find_gen_dilepton(gen, pdgsum)
-            n_gen_dilepton = gen_dilep.counts
-            gen_v_pt = gen_dilep[gen_dilep.mass.argmax()].pt.max()
+            dressed = setup_dressed_gen_candidates(df)
+            fill_gen_v_info(df, gen, dressed)
+            gen_v_pt = df['gen_v_pt_dress']
         elif df['is_lo_g']:
-            gen_v_pt = df['LHE_Vpt']
+            gen = setup_gen_candidates(df)
+            gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
 
         # Candidates
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons, hlt = setup_candidates(df, cfg)
+        met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
@@ -212,12 +210,6 @@ class monojetProcessor(processor.ProcessorABC):
         pass_none = ~pass_all
         selection.add('inclusive', pass_all)
         selection = trigger_selection(selection, df, cfg)
-
-        # Trigger objects
-        hlt_single_muons = hlt[(hlt.id==13) & (hlt.filter & 8 == 8)]
-        muons_hltmatch = muons[muons.match(hlt_single_muons,deltaRCut=0.2,deltaPtCut=0.25)]
-        selection.add('one_hlt_muon', muons_hltmatch.counts>=1)
-        selection.add('two_hlt_muons', muons_hltmatch.counts==2)
         selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
 
         # Common selection
@@ -435,8 +427,6 @@ class monojetProcessor(processor.ProcessorABC):
             fill_mult('tight_muo_mult',muons[df['is_tight_muon']])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
-            fill_mult('hlt_single_muon_mult',hlt_single_muons)
-            fill_mult('muons_hltmatch_mult',muons_hltmatch)
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
@@ -523,6 +513,7 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('recoil_nopref',    recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=['prefire'])[mask])
             ezfill('recoil_nopu',    recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=['pileup'])[mask])
             ezfill('recoil_notrg',    recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=['trigger'])[mask])
+            ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=['trigger'])[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.weight()[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.weight()[mask] )
 
@@ -544,11 +535,6 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('muon_phi0',  phi=muons[leadmuon_index].phi[mask].flatten(),  w_leadmu=w_leadmu)
                 ezfill('muon_dxy0',  dxy=muons[leadmuon_index].dxy[mask].flatten(),  weight=w_leadmu)
                 ezfill('muon_dz0',  dz=muons[leadmuon_index].dz[mask].flatten(),  weight=w_leadmu)
-
-                # HLT Matched muons
-                w_muons_hltmatch = weight_shape(muons_hltmatch.pt[mask], region_weights.weight()[mask])
-                ezfill('muons_hltmatch_eta',  eta=muons_hltmatch.eta[mask].flatten(),  weight=w_muons_hltmatch)
-                ezfill('muons_hltmatch_pt',  pt=muons_hltmatch.pt[mask].flatten(),  weight=w_muons_hltmatch)
 
             # Dimuon
             if '_2m_' in region:
@@ -604,9 +590,6 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], region_weights.weight()[mask])
-
-            # Gen
-            ezfill('gen_dilepton_mult', multiplicity=n_gen_dilepton[mask], weight=region_weights.weight()[mask])
 
             # PV
             ezfill('npv', nvtx=df['PV_npvs'][mask], weight=region_weights.weight()[mask])

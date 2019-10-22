@@ -49,6 +49,8 @@ def monojet_accumulator(cfg):
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
+    
+    ratio_ax = Bin("ratio", "ratio", 50,0,2)
 
     tau21_ax = Bin("tau21", r"Tagger", 50,-5,5)
     tagger_ax = Bin("tagger", r"Tagger", 50,-5,5)
@@ -78,7 +80,7 @@ def monojet_accumulator(cfg):
     items["recoil_nopref"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil_noweight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-
+    items["ak4_pt0_over_recoil"] = Hist("Counts", dataset_ax, region_ax, ratio_ax)
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_ptraw0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -121,7 +123,7 @@ def monojet_accumulator(cfg):
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
 
     # Multiplicity histograms
-    for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch','gen_dilepton']:
+    for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','gen_dilepton']:
         items[f"{cand}_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
 
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
@@ -138,8 +140,6 @@ def monojet_accumulator(cfg):
     items["muon_phi1"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["muon_dxy0"] = Hist("Counts", dataset_ax, region_ax, dxy_ax)
     items["muon_dz0"] = Hist("Counts", dataset_ax, region_ax, dz_ax)
-    items["muons_hltmatch_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["muons_hltmatch_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["muon_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
     items["dimuon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["dimuon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
@@ -211,7 +211,7 @@ def monojet_accumulator(cfg):
 
 
 def setup_candidates(df, cfg):
-    if df['is_data']:
+    if df['is_data'] and extract_year(df['dataset']) != 2018:
         jes_suffix = ''
     else:
         jes_suffix = '_nom'
@@ -276,7 +276,6 @@ def setup_candidates(df, cfg):
         phi=df['Tau_phi'],
         mass=0 * df['Tau_pt'],
         decaymode=df['Tau_idDecayMode'],
-        clean=df['Tau_cleanmask'],
         iso=df['Tau_idMVAoldDM2017v2'],
     )
 
@@ -312,7 +311,7 @@ def setup_candidates(df, cfg):
         eta=df['Jet_eta'],
         abseta=np.abs(df['Jet_eta']),
         phi=df['Jet_phi'],
-        mass=df[f'Jet_mass{jes_suffix}'],
+        mass=np.zeros_like(df['Jet_pt']),
         looseId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
         tightId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
         puid=((df['Jet_puId']&2>0) | (df[f'Jet_pt{jes_suffix}']>50)), # medium pileup jet ID
@@ -357,20 +356,10 @@ def setup_candidates(df, cfg):
     )
     ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
-    hlt = JaggedCandidateArray.candidatesfromcounts(
-        df['nTrigObj'],
-        pt=df['TrigObj_pt'],
-        eta=df['TrigObj_eta'],
-        phi=df['TrigObj_phi'],
-        mass=0*df['TrigObj_pt'],
-        id=df['TrigObj_id'],
-        filter=df['TrigObj_filterBits']
-    )
-
     met_pt = df[f'MET_pt{jes_suffix}']
     met_phi = df[f'MET_phi{jes_suffix}']
 
-    return met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons, hlt
+    return met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons
 
 
 def monojet_regions(cfg):

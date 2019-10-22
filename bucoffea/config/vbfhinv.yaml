@@ -106,11 +106,11 @@ default:
       histogram: TH2F_kFactor
       file: data/sf/theory/kFactor_WToLNu_pT_Mjj.root
     qcd_nlo_w_2017: # QCD k factor for QCD W
-      histogram: wjet_vbf
-      file: data/sf/theory/2017_gen_v_pt_stat1_qcd_sf.root
+      histogram: wjet_dress_vbf
+      file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
     qcd_nlo_z_2017: # QCD k factor for QCD Z
-      histogram: dy_vbf
-      file: data/sf/theory/2017_gen_v_pt_stat1_qcd_sf.root
+      histogram: dy_dress_vbf
+      file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
 
     qcd_nlo_g:
       histogram: kfactor_monojet_qcd

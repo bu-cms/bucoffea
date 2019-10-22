@@ -1,3 +1,5 @@
+AJJ_EWK_amcatnlo_2017:
+  gen: 6.096
 DY1JetsToLL_M-50-MLM_2017:
   gen: 878.6
 DY1JetsToLL_M-50-MLM_2018:
@@ -270,6 +272,20 @@ GJets_HT-600ToInf-MLM_ext1_2016:
   gen: 93.66
 GJets_HT-600ToInf-MLM_ext1_2018:
   gen: 85.34
+GJets_Mjj-500_SM_5f_EWK-mg_2017:
+  gen: 4.937
+GJets_Mjj-500_SM_5f_INTERFERENCE-mg_2017:
+  gen: 0.6215
+GJets_SM_5f_EWK-mg_2017:
+  gen: 32.91
+GJets_SM_5f_EWK-mg_ext1_2017:
+  gen: 32.91
+GluGlu_HToInvisible_M125_PSweights_pow_pythia8_2018:
+  gen: 21.46
+GluGlu_HToInvisible_M125_pow_pythia8_2017:
+  gen: 21.46
+GluGlu_HToInvisible_M125_pow_pythia8_2018:
+  gen: 21.46
 QCD_HT1000to1500-MLM_2016:
   gen: 1209.0
 QCD_HT1000to1500-MLM_2018:
@@ -514,27 +530,39 @@ TTToHadronic-pow_2017:
 TTToHadronic-pow_2018:
   gen: 687.1
   nnlo: 377.96
+TTToHadronic-pow_ext2_2018:
+  gen: 687.1
+  nnlo: 377.96
 TTToHadronic-pow_new_pmx_2017:
   gen: 687.1
+  nnlo: 377.96
 TTToHadronic_PSweights-pow_2016:
   gen: 687.1
+  nnlo: 377.96
 TTToHadronic_PSweights-pow_2017:
   gen: 687.1
   nnlo: 377.96
 TTToHadronic_PSweights-pow_new_pmx_2017:
   gen: 687.1
+  nnlo: 377.96
 TTToSemiLeptonic-pow_2016:
   gen: 687.1
+  nnlo: 365.34
 TTToSemiLeptonic-pow_2017:
   gen: 687.1
   nnlo: 365.34
 TTToSemiLeptonic-pow_2018:
   gen: 687.1
   nnlo: 365.34
+TTToSemiLeptonic-pow_ext3_2018:
+  gen: 687.1
+  nnlo: 365.34
 TTToSemiLeptonic-pow_new_pmx_2017:
   gen: 687.1
+  nnlo: 365.34
 TTToSemiLeptonic_PSweights-pow_2016:
   gen: 687.1
+  nnlo: 365.34
 TTToSemiLeptonic_PSweights-pow_2017:
   gen: 687.1
   nnlo: 365.34
@@ -624,6 +652,20 @@ W4JetsToLNu-MLM_2017:
   gen: 546.0
 W4JetsToLNu-MLM_2018:
   gen: 541.8
+WGJets_MonoPhoton_PtG-130-mg_2017:
+  gen: 0.7186
+WGJets_MonoPhoton_PtG-130-mg_2018:
+  gen: 0.7149
+WGToLNuG-MLM_2017:
+  gen: 465.1
+WGToLNuG-MLM_2018:
+  gen: 462.6
+WGToLNuG_01J_5f-amcatnloFXFX_2017:
+  gen: 191.6
+WGToLNuG_01J_5f-amcatnloFXFX_2018:
+  gen: 191.2
+WGToLNuG_01J_5f-amcatnloFXFX_ext1_2018:
+  gen: 191.2
 WJetsToLNu-MLM_2017:
   gen: 52730.0
 WJetsToLNu-MLM_2018:
@@ -746,6 +788,18 @@ WZ_PSweights_2018:
   gen: 27.56
 WZ_ext1_2016:
   gen: 23.42
+WminusH_WToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
+  gen: 0.3654
+WminusH_WToQQ_HToInvisible_M125_pow_pythia8_2017:
+  gen: 0.3654
+WminusH_WToQQ_HToInvisible_M125_pow_pythia8_2018:
+  gen: 0.3654
+WplusH_WToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
+  gen: 0.585
+WplusH_WToQQ_HToInvisible_M125_pow_pythia8_2017:
+  gen: 0.585
+WplusH_WToQQ_HToInvisible_M125_pow_pythia8_2018:
+  gen: 0.585
 Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_2017:
   gen: 18.08
 Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_ext1_2017:
@@ -770,6 +824,12 @@ Z2JetsToNuNu_M-50_LHEZpT_250-400-FXFX_ext1_2017:
   gen: 5.174
 Z2JetsToNuNu_M-50_LHEZpT_50-150-FXFX_2017:
   gen: 326.3
+ZH_ZToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
+  gen: 0.554
+ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2017:
+  gen: 0.554
+ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2018:
+  gen: 0.554
 ZJetsToNuNu_HT-100To200-mg_2016:
   gen: 93.51
 ZJetsToNuNu_HT-100To200-mg_2017:
@@ -807,7 +867,7 @@ ZJetsToNuNu_HT-400To600-mg_2016:
 ZJetsToNuNu_HT-400To600-mg_2017:
   gen: 13.13
 ZJetsToNuNu_HT-400To600-mg_2018:
-  gen: 13.13
+  gen: 13.18
 ZJetsToNuNu_HT-400To600-mg_ext1_2016:
   gen: 3.562
 ZJetsToNuNu_HT-400To600-mg_new_pmx_2017:
@@ -822,6 +882,10 @@ ZJetsToNuNu_HT-800To1200-mg_2017:
   gen: 1.501
 ZJetsToNuNu_HT-800To1200-mg_2018:
   gen: 1.5
+ZNuNuGJets_MonoPhoton_PtG-130-mg_2017:
+  gen: 0.2044
+ZNuNuGJets_MonoPhoton_PtG-130-mg_2018:
+  gen: 0.2034
 ZZTo2Q2Nu_amcatnloFXFX_madspin_pythia8_2017:
   gen: 4.561
 ZZTo2Q2Nu_amcatnloFXFX_madspin_pythia8_2018:
@@ -834,3 +898,9 @@ ZZ_2018:
   gen: 12.12
 ZZ_ext1_2016:
   gen: 10.15
+ggZH_ZToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
+  gen: 0.0432
+ggZH_ZToQQ_HToInvisible_M125_pow_pythia8_2017:
+  gen: 0.0432
+ggZH_ZToQQ_HToInvisible_M125_pow_pythia8_2018:
+  gen: 0.0432

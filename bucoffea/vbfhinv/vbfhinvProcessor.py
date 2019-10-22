@@ -29,9 +29,11 @@ from bucoffea.helpers.dataset import (
                                       is_nlo_z
                                       )
 from bucoffea.helpers.gen import (
-                                  find_gen_dilepton, 
-                                  setup_gen_candidates
-                                 )   
+                                  find_gen_dilepton,
+                                  setup_gen_candidates,
+                                  setup_dressed_gen_candidates,
+                                  fill_gen_v_info
+                                 )
 from bucoffea.monojet.definitions import (
                                           candidate_weights, 
                                           pileup_weights,
@@ -86,24 +88,20 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['is_data'] = is_data(dataset)
 
         gen_v_pt = None
-        n_gen_dilepton = np.zeros(df.size)
         if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w'] or df['is_lo_z_ewk'] or df['is_lo_w_ewk']:
             gen = setup_gen_candidates(df)
-            if is_lo_z(dataset) or is_nlo_z(dataset) or is_lo_z_ewk(dataset):
-                pdgsum = 0
-            elif is_lo_w(dataset) or is_nlo_w(dataset) or is_lo_w_ewk(dataset):
-                pdgsum = 1
-            gen_dilep = find_gen_dilepton(gen, pdgsum)
-            n_gen_dilepton = gen_dilep.counts
-            gen_v_pt = gen_dilep[gen_dilep.mass.argmax()].pt.max()
+            dressed = setup_dressed_gen_candidates(df)
+            fill_gen_v_info(df, gen, dressed)
+            gen_v_pt = df['gen_v_pt_dress']
         elif df['is_lo_g']:
-            gen_v_pt = df['LHE_Vpt']
+            gen = setup_gen_candidates(df)
+            gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
 
         # Candidates
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt, met_phi, ak4, _, muons, electrons, taus, photons, hlt = setup_candidates(df, cfg)
+        met_pt, met_phi, ak4, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]

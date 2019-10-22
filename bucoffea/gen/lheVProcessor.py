@@ -9,7 +9,7 @@ from coffea.analysis_objects import JaggedCandidateArray
 
 from bucoffea.helpers.dataset import (extract_year, is_lo_w, is_lo_z, is_nlo_w,
                                       is_nlo_z)
-from bucoffea.helpers.gen import find_gen_dilepton, setup_gen_candidates
+from bucoffea.helpers.gen import find_gen_dilepton, setup_gen_candidates, setup_dressed_gen_candidates, isnu, islep, fill_gen_v_info
 
 from bucoffea.helpers import min_dphi_jet_met
 
@@ -17,7 +17,7 @@ Hist = hist.Hist
 Bin = hist.Bin
 Cat = hist.Cat
 
-def vbf_selection(dilepton, dijet, genjets):
+def vbf_selection(vphi, dijet, genjets):
     selection = processor.PackedSelection()
 
     selection.add(
@@ -38,12 +38,12 @@ def vbf_selection(dilepton, dijet, genjets):
                   )
     selection.add(
                   'mindphijr',
-                  min_dphi_jet_met(genjets, dilepton.phi.max(), njet=4, ptmin=30) > 0.5
+                  min_dphi_jet_met(genjets, vphi.max(), njet=4, ptmin=30) > 0.5
                   )
 
     return selection
 
-def monojet_selection(dilepton, genjets):
+def monojet_selection(vphi, genjets):
     selection = processor.PackedSelection()
 
     selection.add(
@@ -56,10 +56,11 @@ def monojet_selection(dilepton, genjets):
                   )
     selection.add(
                   'mindphijr',
-                  min_dphi_jet_met(genjets, dilepton.phi.max(), njet=4, ptmin=30) > 0.5
+                  min_dphi_jet_met(genjets, vphi.max(), njet=4, ptmin=30) > 0.5
                   )
 
     return selection
+
 
 class lheVProcessor(processor.ProcessorABC):
     def __init__(self):
@@ -70,20 +71,25 @@ class lheVProcessor(processor.ProcessorABC):
         vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 50, 0, 2000)
         jpt_ax = Bin("jpt",r"$p_{T}^{j}$ (GeV)", 50, 0, 2000)
         mjj_ax = Bin("mjj",r"$m(jj)$ (GeV)", 75, 0, 7500)
+        res_ax = Bin("res",r"pt: dressed / stat1 - 1", 80,-0.2,0.2)
 
         items = {}
-        items["gen_vpt_inclusive"] = Hist("Counts",
+        for tag in ['stat1','dress','lhe']:
+            items[f"gen_vpt_inclusive_{tag}"] = Hist("Counts",
+                                    dataset_ax,
+                                    vpt_ax)
+            items[f"gen_vpt_monojet_{tag}"] = Hist("Counts",
+                                    dataset_ax,
+                                    jpt_ax,
+                                    vpt_ax)
+            items[f"gen_vpt_vbf_{tag}"] = Hist("Counts",
+                                    dataset_ax,
+                                    jpt_ax,
+                                    mjj_ax,
+                                    vpt_ax)
+        items["resolution"] = Hist("Counts",
                                 dataset_ax,
-                                vpt_ax)
-        items["gen_vpt_monojet"] = Hist("Counts",
-                                dataset_ax,
-                                jpt_ax,
-                                vpt_ax)
-        items["gen_vpt_vbf"] = Hist("Counts",
-                                dataset_ax,
-                                jpt_ax,
-                                mjj_ax,
-                                vpt_ax)
+                                res_ax)
         items['sumw'] = processor.defaultdict_accumulator(float)
         items['sumw2'] = processor.defaultdict_accumulator(float)
 
@@ -99,68 +105,65 @@ class lheVProcessor(processor.ProcessorABC):
         dataset = df['dataset']
 
         # Dilepton
-        gen = setup_gen_candidates(df)
+        
 
-        genjets = JaggedCandidateArray.candidatesfromcounts(
+        genjets_all = JaggedCandidateArray.candidatesfromcounts(
                 df['nGenJet'],
                 pt=df['GenJet_pt'],
                 eta=df['GenJet_eta'],
+                abseta=np.abs(df['GenJet_eta']),
                 phi=df['GenJet_phi'],
                 mass=df['GenJet_mass']
             )
+        gen = setup_gen_candidates(df)
+        dressed = setup_dressed_gen_candidates(df)
+        fill_gen_v_info(df, gen, dressed)
 
-        if is_lo_z(dataset) or is_nlo_z(dataset):
-            pdgsum = 0
-            # gen_v = gen[(gen.status==62) & (gen.pdg==23)]
-        elif is_lo_w(dataset) or is_nlo_w(dataset):
-            pdgsum = 1
-            # gen_v = gen[(gen.status==62) & (gen.pdg==24)]
-        gen_dilep = find_gen_dilepton(gen, pdgsum)
-        gen_dilep = gen_dilep[gen_dilep.mass.argmax()]
-
-        # Select jets not overlapping with leptons
-        genjets = genjets[
-            (~genjets.match(gen_dilep.i0,deltaRCut=0.4)) &
-            (~genjets.match(gen_dilep.i1,deltaRCut=0.4)) \
+        for tag in ['lhe','dress','stat1']:
+            # Select jets not overlapping with leptons
+            genjets = genjets_all[
+            (~genjets_all.match(dressed,deltaRCut=0.4)) &
+            (~genjets_all.match(gen[islep(gen)],deltaRCut=0.4)) \
             ]
 
-        # Dijet for VBF
-        dijet = genjets[:,:2].distincts()
+            # Dijet for VBF
+            dijet = genjets[:,:2].distincts()
 
-        # Selection
-        vbf_sel = vbf_selection(gen_dilep, dijet, genjets)
-        monojet_sel = monojet_selection(gen_dilep, genjets)
+            # Selection
+            vbf_sel = vbf_selection(df[f'gen_v_phi_{tag}'], dijet, genjets)
+            monojet_sel = monojet_selection(df[f'gen_v_phi_{tag}'], genjets)
 
-        nominal = df['Generator_weight']
+            nominal = df['Generator_weight']
 
-        output['gen_vpt_inclusive'].fill(
-                                dataset=dataset,
-                                vpt=gen_dilep.pt.max(),
-                                jpt=genjets.pt.max(),
-                                weight=nominal
-                                )
+            output[f'gen_vpt_inclusive_{tag}'].fill(
+                                    dataset=dataset,
+                                    vpt=df[f'gen_v_pt_{tag}'],
+                                    jpt=genjets.pt.max(),
+                                    weight=nominal
+                                    )
 
-        mask_vbf = vbf_sel.all(*vbf_sel.names)
-        print(mask_vbf.size, mask_vbf)
-        print(nominal.size, nominal)
-        output['gen_vpt_vbf'].fill(
-                                dataset=dataset,
-                                vpt=gen_dilep.pt.max()[mask_vbf],
-                                jpt=genjets.pt.max()[mask_vbf],
-                                mjj = dijet.mass.max()[mask_vbf],
-                                weight=nominal[mask_vbf]
-                                )
+            mask_vbf = vbf_sel.all(*vbf_sel.names)
+            output[f'gen_vpt_vbf_{tag}'].fill(
+                                    dataset=dataset,
+                                    vpt=df[f'gen_v_pt_{tag}'][mask_vbf],
+                                    jpt=genjets.pt.max()[mask_vbf],
+                                    mjj = dijet.mass.max()[mask_vbf],
+                                    weight=nominal[mask_vbf]
+                                    )
 
-        mask_monojet = monojet_sel.all(*monojet_sel.names)
+            mask_monojet = monojet_sel.all(*monojet_sel.names)
 
-        print(mask_monojet.size, mask_monojet)
-        print(nominal.size, nominal)
-        output['gen_vpt_monojet'].fill(
-                                dataset=dataset,
-                                vpt=gen_dilep.pt.max()[mask_monojet],
-                                jpt=genjets.pt.max()[mask_monojet],
-                                weight=nominal[mask_monojet]
-                                )
+            output[f'gen_vpt_monojet_{tag}'].fill(
+                                    dataset=dataset,
+                                    vpt=df[f'gen_v_pt_{tag}'][mask_monojet],
+                                    jpt=genjets.pt.max()[mask_monojet],
+                                    weight=nominal[mask_monojet]
+                                    )
+
+        output['resolution'].fill(
+            dataset=dataset,
+            res = df['gen_v_pt_dress'] / df['gen_v_pt_stat1'] - 1
+        )
 
         # Keep track of weight sum
         output['sumw'][dataset] +=  df['genEventSumw']
