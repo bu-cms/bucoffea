@@ -103,6 +103,8 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
+    items["recoil_mjj"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, mjj_ax)
+
     items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)

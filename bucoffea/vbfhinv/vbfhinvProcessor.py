@@ -408,6 +408,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('detajj',             deta=df["detajj"][mask],   weight=weights.weight()[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=weights.weight()[mask] )
 
+            # Two dimensional
+            ezfill('recoil_mjj',         recoil=df["recoil_pt"][mask], mjj=df["mjj"][mask], weight=weights.weight()[mask] )
+
             # Muons
             if '_1m_' in region or '_2m_' in region:
                 w_allmu = weight_shape(muons.pt[mask], weights.weight()[mask])
