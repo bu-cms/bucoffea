@@ -116,8 +116,8 @@ def plot(inpath):
                     if not (distribution in merged):
                         acc.load(distribution)
                         if not (distribution in acc.keys()):
-                        print(f"WARNING: Distribution {distribution} not found in input files.")
-                        continue
+                            print(f"WARNING: Distribution {distribution} not found in input files.")
+                            continue
                         acc[distribution] = merge_extensions(acc[distribution], acc, reweight_pu=not ('nopu' in distribution))
                         scale_xs_lumi(acc[distribution])
                         acc[distribution] = merge_datasets(acc[distribution])
