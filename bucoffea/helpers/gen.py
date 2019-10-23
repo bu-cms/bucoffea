@@ -146,7 +146,7 @@ def dressed_dilep(df, gen, dressed):
     """
     # Dressed leptons
     neutrinos = gen[(gen.status==1) & isnu(gen.pdg)]
-    if is_lo_z(df['dataset']) or is_nlo_z(df['dataset']):
+    if is_lo_z(df['dataset']) or is_nlo_z(df['dataset']) or is_lo_z_ewk(df['dataset']):
         # e, mu
         dilep_dress = find_gen_dilepton(dressed, 0)
         dilep_dress = dilep_dress[dilep_dress.mass.argmax()]
@@ -162,7 +162,7 @@ def dressed_dilep(df, gen, dressed):
         # Merge by taking higher-mass
         return merge_dileptons(dilep_tau, dilep_dress, dilep_nu)
 
-    elif is_lo_w(df['dataset']) or is_nlo_w(df['dataset']):
+    elif is_lo_w(df['dataset']) or is_nlo_w(df['dataset']) or is_lo_w_ewk(df['dataset']):
         # e, mu
         dilep_dress = dressed.cross(neutrinos)
         dilep_dress = dilep_dress[np.abs(dilep_dress.i0.pdg + dilep_dress.i1.pdg)==1]
