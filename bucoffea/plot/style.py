@@ -118,11 +118,11 @@ def plot_settings():
                 'ylim' : (1e1,1e7)
             },
             'dphijr' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e0,1e6)
             },
             'dphijm' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e0,1e6)
             },
             'ak4_mult' : {
@@ -245,7 +245,7 @@ def plot_settings():
                 'ylim' : (1e0,1e6)
             },
             'drelejet' : {
-                'xlim' : (0,1),
+                'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
             'dpfcalo' : {
@@ -253,11 +253,11 @@ def plot_settings():
                 'ylim' : (1e0,1e7)
             },
             'dphijr' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e0,1e6)
             },
             'dphijm' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e0,1e6)
             },
             'ak4_mult' : {
@@ -339,11 +339,11 @@ def plot_settings():
                 'ylim' : (1e0,1e9)
             },
             'dphijr' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e0,1e8)
             },
             'dphijm' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e0,1e8)
             },
             'ak4_mult' : {
@@ -436,7 +436,7 @@ def plot_settings():
                 'ylim' : (1e-1,1e5)
             },
             'drelejet' : {
-                'xlim' : (0,1),
+                'xlim' : (0,2),
                 'ylim' : (1e0,1e5)
             },
             'dpfcalo' : {
@@ -444,11 +444,11 @@ def plot_settings():
                 'ylim' : (1e0,1e8)
             },
             'dphijr' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e0,1e8)
             },
             'dphijm' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e0,1e8)
             },
             'ak4_mult' : {
@@ -526,11 +526,11 @@ def plot_settings():
                 'ylim' : (1e0,1e7)
             },
             'dphijr' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e0,1e5)
             },
             'dphijm' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e0,1e5)
             },
             'ak4_mult' : {
@@ -561,7 +561,7 @@ def plot_settings():
                 'ylim' : (1e-3,1e3)
             },
             'ak4_pt' : {
-                'ylim' : (1e-3,1e3)
+                'ylim' : (1e-3,1e4)
             },
             'muon_pt' : {
                 'ylim' : (1e-3,1e3)
@@ -619,7 +619,7 @@ def plot_settings():
             },
             'dimuon_dr' : {
                 'xlim' : (0,2),
-                'ylim' : (1e3,1e5)
+                'ylim' : (1e1,1e6)
             },
             'ak4_chf0' : {
                 'xlim' : (0,1),
@@ -630,7 +630,7 @@ def plot_settings():
                 'ylim' : (1e2,1e6)
             },
             'drmuonjet' : {
-                'xlim' : (0,1),
+                'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
             'dpfcalo' : {
@@ -638,11 +638,11 @@ def plot_settings():
                 'ylim' : (1e1,1e7)
             },
             'dphijr' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e1,1e5)
             },
             'dphijm' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e1,1e5)
             },
             'ak4_mult' : {
@@ -752,7 +752,7 @@ def plot_settings():
                 'ylim' : (1e2,1e6)
             },
             'drelejet' : {
-                'xlim' : (0,1),
+                'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
             'dpfcalo' : {
@@ -760,11 +760,11 @@ def plot_settings():
                 'ylim' : (1e1,1e7)
             },
             'dphijr' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e1,1e5)
             },
             'dphijm' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e1,1e5)
             },
             'ak4_mult' : {
@@ -792,10 +792,10 @@ def plot_settings():
                 'ylim' : (1e-3,1e5)
             },
             'ak4_phi0' : {
-                'ylim' : (1e4,1e5)
+                'ylim' : (1e4,1e7)
             },
             'ak4_phi' : {
-                'ylim' : (1e4,1e5)
+                'ylim' : (1e4,1e7)
             },
             'muon_phi' : {
                 'ylim' : (1e4,1e5)
@@ -833,12 +833,12 @@ def plot_settings():
                 'ylim' : (1e1,1e7)
             },
             'dphijr' : {
-                'xlim' : (0,2),
-                'ylim' : (1e1,1e5)
+                'xlim' : (0,3.2),
+                'ylim' : (1e3,1e7)
             },
             'dphijm' : {
-                'xlim' : (0,2),
-                'ylim' : (1e1,1e5)
+                'xlim' : (0,3.2),
+                'ylim' : (1e3,1e7)
             },
             'ak4_mult' : {
                 'xlim' : (0,10),
@@ -880,17 +880,18 @@ def plot_settings():
                 'ylim' : (1e4,1e5)
             },
             'ak4_phi' : {
-                'ylim' : (1e4,1e5)
+                'ylim' : (1e4,1e7)
             },
             'electron_phi' : {
                 'ylim' : (1e4,1e5)
             },
             'electron_dxy' : {
-                'ylim' : (1e1,1e7),
+                'ylim' : (1e3,1e9),
                 'xlim' : (0,0.15)
             },
             'electron_dz' : {
-                'ylim' : (1e1,1e5)
+                'ylim' : (1e3,1e0)
+                'xlim' : (0,0.25)
             },
             'ak4_eta0' : {
                 'xlim' : (-3,3),
@@ -917,7 +918,7 @@ def plot_settings():
                 'ylim' : (1e1,1e5)
             },
             'drelejet' : {
-                'xlim' : (0,1),
+                'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
             'dpfcalo' : {
@@ -925,11 +926,11 @@ def plot_settings():
                 'ylim' : (1e1,1e7)
             },
             'dphijr' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e1,1e5)
             },
             'dphijm' : {
-                'xlim' : (0,2),
+                'xlim' : (0,3.2),
                 'ylim' : (1e1,1e5)
             },
             'ak4_mult' : {
@@ -960,7 +961,7 @@ def plot_settings():
                 'ylim' : (1e4,1e5)
             },
             'ak4_phi' : {
-                'ylim' : (1e4,1e5)
+                'ylim' : (1e4,1e7)
             },
             'photon_phi' : {
                 'ylim' : (1e4,1e5)
@@ -986,7 +987,7 @@ def plot_settings():
                 'ylim' : (1e3,1e8)
             },
             'drphotonjet' : {
-                'xlim' : (0,1),
+                'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
             'dpfcalo' : {
@@ -994,16 +995,16 @@ def plot_settings():
                 'ylim' : (1e1,1e7)
             },
             'dphijr' : {
-                'xlim' : (0,2),
-                'ylim' : (1e1,1e5)
+                'xlim' : (0,3.2),
+                'ylim' : (1e3,1e7)
             },
             'dphijm' : {
-                'xlim' : (0,2),
-                'ylim' : (1e1,1e5)
+                'xlim' : (0,3.2),
+                'ylim' : (1e3,1e7)
             },
             'ak4_mult' : {
                 'xlim' : (0,10),
-                'ylim' : (1e2,1e5)
+                'ylim' : (1e3,1e6)
             }
         },
         'cr_2m_v' : {
