@@ -125,10 +125,6 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e0,1e6)
             },
-            'gen_dilepton_mult' : {
-                'xlim' : (0,5),
-                'ylim' : (0.1,1e7)
-            },
             'ak4_mult' : {
                 'xlim' : (0,10),
                 'ylim' : (1e0,1e6)
@@ -264,10 +260,6 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e0,1e6)
             },
-            'gen_dilepton_mult' : {
-                'xlim' : (0,5),
-                'ylim' : (0.1,1e7)
-            },
             'ak4_mult' : {
                 'xlim' : (0,10),
                 'ylim' : (1e0,1e5)
@@ -353,10 +345,6 @@ def plot_settings():
             'dphijm' : {
                 'xlim' : (0,2),
                 'ylim' : (1e0,1e8)
-            },
-            'gen_dilepton_mult' : {
-                'xlim' : (0,5),
-                'ylim' : (0.1,1e7)
             },
             'ak4_mult' : {
                 'xlim' : (0,10),
@@ -463,10 +451,6 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e0,1e8)
             },
-            'gen_dilepton_mult' : {
-                'xlim' : (0,5),
-                'ylim' : (0.1,1e7)
-            },
             'ak4_mult' : {
                 'xlim' : (0,10),
                 'ylim' : (1e0,1e5)
@@ -564,6 +548,9 @@ def plot_settings():
             }
         },
         'cr_2m_j' : {
+            'ak4_pt0_over_recoil' : {
+                'ylim' : (1e1,1e7)
+            },
             'recoil' : {
                 'ylim' : (1e-3,1e3)
             },
@@ -608,7 +595,7 @@ def plot_settings():
             },
             'ak4_eta0' : {
                 'xlim' : (-3,3),
-                'ylim' : (1e3,1e5)
+                'ylim' : (1e2,1e5)
             },
             'ak4_eta' : {
                 'xlim' : (-3,3),
@@ -658,16 +645,15 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
-            'gen_dilepton_mult' : {
-                'xlim' : (0,5),
-                'ylim' : (0.1,1e7)
-            },
             'ak4_mult' : {
                 'xlim' : (0,10),
                 'ylim' : (1e2,1e5)
             }
         },
         'cr_2e_j' : {
+            'ak4_pt0_over_recoil' : {
+                'ylim' : (1e1,1e7)
+            },
             'recoil' : {
                 'ylim' : (1e-3,1e3)
             },
@@ -731,7 +717,7 @@ def plot_settings():
             },
             'ak4_eta0' : {
                 'xlim' : (-3,3),
-                'ylim' : (1e3,1e5)
+                'ylim' : (1e2,1e5)
             },
             'ak4_eta' : {
                 'xlim' : (-3,3),
@@ -781,16 +767,15 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
-            'gen_dilepton_mult' : {
-                'xlim' : (0,5),
-                'ylim' : (0.1,1e7)
-            },
             'ak4_mult' : {
                 'xlim' : (0,10),
                 'ylim' : (1e2,1e5)
             }
         },
         'cr_1m_j' : {
+            'ak4_pt0_over_recoil' : {
+                'ylim' : (1e1,1e7)
+            },
             'recoil' : {
                 'ylim' : (1e-3,1e5)
             },
@@ -817,11 +802,11 @@ def plot_settings():
             },
             'ak4_eta0' : {
                 'xlim' : (-3,3),
-                'ylim' : (1e4,1e6)
+                'ylim' : (1e2,1e6)
             },
             'ak4_eta' : {
                 'xlim' : (-3,3),
-                'ylim' : (1e4,1e6)
+                'ylim' : (1e2,1e6)
             },
             'muon_eta' : {
                 'xlim' : (-3,3),
@@ -855,16 +840,15 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
-            'gen_dilepton_mult' : {
-                'xlim' : (0,5),
-                'ylim' : (0.1,1e7)
-            },
             'ak4_mult' : {
                 'xlim' : (0,10),
                 'ylim' : (1e2,1e5)
             }
         },
         'cr_1e_j' : {
+            'ak4_pt0_over_recoil' : {
+                'ylim' : (1e1,1e7)
+            },
             'recoil' : {
                 'ylim' : (1e-3,1e5)
             },
@@ -910,11 +894,11 @@ def plot_settings():
             },
             'ak4_eta0' : {
                 'xlim' : (-3,3),
-                'ylim' : (1e4,1e6)
+                'ylim' : (1e2,1e6)
             },
             'ak4_eta' : {
                 'xlim' : (-3,3),
-                'ylim' : (1e4,1e6)
+                'ylim' : (1e2,1e6)
             },
             'electron_eta' : {
                 'xlim' : (-3,3),
@@ -948,16 +932,15 @@ def plot_settings():
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
             },
-            'gen_dilepton_mult' : {
-                'xlim' : (0,5),
-                'ylim' : (0.1,1e7)
-            },
             'ak4_mult' : {
                 'xlim' : (0,10),
                 'ylim' : (1e2,1e5)
             }
         },
         'cr_g_j' : {
+            'ak4_pt0_over_recoil' : {
+                'ylim' : (1e1,1e7)
+            },
             'recoil' : {
                 'ylim' : (1e-3,1e5)
             },
@@ -984,11 +967,11 @@ def plot_settings():
             },
             'ak4_eta0' : {
                 'xlim' : (-3,3),
-                'ylim' : (1e4,1e6)
+                'ylim' : (1e2,1e6)
             },
             'ak4_eta' : {
                 'xlim' : (-3,3),
-                'ylim' : (1e4,1e6)
+                'ylim' : (1e2,1e6)
             },
             'photon_eta' : {
                 'xlim' : (-3,3),
