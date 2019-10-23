@@ -128,7 +128,7 @@ def legacy_limit_input(acc, outdir='./output'):
                     print(f"Skipping {dataset}")
                     continue
                 f[histo_name] = th1
-    
+        f[f'{legacy_region_name("sr_j")}_data'] = f[f'{legacy_region_name("sr_j")}_zjets']
     merge_legacy_inputs(outdir)
 
 
