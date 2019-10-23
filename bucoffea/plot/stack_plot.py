@@ -92,7 +92,8 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     """
     # Rebin
     s = Style()
-    h=copy.deepcopy(acc[distribution])
+    h = copy.deepcopy(acc[distribution])
+    assert(h)
     try:
         newax = s.rebin_axes[distribution]
         h = h.rebin(h.axis(newax.name), newax)
@@ -106,27 +107,9 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         h = h.integrate(inte_axis,slice(inte_low,inte_high)) #can add an overflow option here
         inte_tag+="_"+inte_axis+"_"+str(inte_low)+"_"+str(inte_high)
 
-
-    # Step 1: Merge extension samples together
-    # Extension samples are separate MC samples for identical physics processes
-    # (E.g. when people realize that they need more events for an existing sample,
-    # they produce an 'extension')
-    h = merge_extensions(h, acc, reweight_pu=('nopu' in distribution))
-
-    # Step 2: Scale each dataset according to its cross section
-    # and the luminosity for the corresponding year
-    # TODO: We may need this to be more flexible for control regions
-    # If a CR has a prescaled trigger, lumi will not be total year lumi
-    scale_xs_lumi(h)
-
-    # Step 3: Merge datasets together
-    # E.g. merge all ZToNuNu HT binned samples into just one sample
-    h = merge_datasets(h)
-
-    # Step 4: Pick the region we want to look at
+    # Pick the region we want to look at
     # E.g. cr_2m_j = Di-Muon control region with monojet selection
     h = h.integrate(h.axis('region'),region)
-
 
     # Plotting
 
