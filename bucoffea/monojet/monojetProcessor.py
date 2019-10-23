@@ -434,7 +434,6 @@ class monojetProcessor(processor.ProcessorABC):
             # Monitor weights
             for wname, wvalue in region_weights._weights.items():
                 ezfill("weights", weight_type=wname, weight_value=wvalue[mask])
-                ezfill("weights_wide", weight_type=wname, weight_value=wvalue[mask])
 
             # All ak4
             # This is a workaround to create a weight array of the right dimension
@@ -572,7 +571,6 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_eta_phi', phi=photons[leadphoton_index].phi[mask].flatten(),eta=photons[leadphoton_index].eta[mask].flatten(), weight=w_leading_photon)
-                ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], region_weights.weight()[mask])
 

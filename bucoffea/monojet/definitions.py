@@ -48,7 +48,9 @@ def monojet_accumulator(cfg):
     ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 50, 0, 4000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 50, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
+    eta_ax_coarse = Bin("eta", r"$\eta$", 25, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
+    phi_ax_coarse = Bin("phi", r"$\phi$", 20,-np.pi, np.pi)
     
     ratio_ax = Bin("ratio", "ratio", 50,0,2)
 
@@ -59,7 +61,6 @@ def monojet_accumulator(cfg):
 
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",50,0.5,1.5)
-    weight_wide_ax = Bin("weight_value", "Weight",50,-10,10)
 
     nvtx_ax = Bin('nvtx','Number of vertices',50,-0.5,99.5)
     rho_ax = Bin('rho','Energy density',50, 0, 100)
@@ -84,15 +85,12 @@ def monojet_accumulator(cfg):
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
 
-    items["ak4_pt0_chf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
-    items["ak4_pt0_nhf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
-    items["ak4_pt0_nconst0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, nconst_ax)
     items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
 
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-    items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
+    items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
     items["ak8_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -121,7 +119,7 @@ def monojet_accumulator(cfg):
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["muon_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["muon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
+    items["muon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
     items["muon_dxy"] = Hist("Counts", dataset_ax, region_ax, dxy_ax)
     items["muon_dz"] = Hist("Counts", dataset_ax, region_ax, dz_ax)
     items["muon_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
@@ -141,7 +139,7 @@ def monojet_accumulator(cfg):
     items["electron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["electron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["electron_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["electron_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
+    items["electron_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
     items["electron_dxy"] = Hist("Counts", dataset_ax, region_ax, dxy_ax)
     items["electron_dz"] = Hist("Counts", dataset_ax, region_ax, dz_ax)
     items["electron_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
@@ -160,8 +158,7 @@ def monojet_accumulator(cfg):
     items['photon_pt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
-    items['photon_pt0_recoil'] = Hist("Counts", dataset_ax, region_ax, pt_ax, recoil_ax)
+    items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
 
     items['drphotonjet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
     items['drelejet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
@@ -187,7 +184,6 @@ def monojet_accumulator(cfg):
             items[f'tree_{region}_{variable}'] = processor.dict_accumulator()
 
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
-    items['weights_wide'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_wide_ax)
     items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
     items['npvgood'] = Hist('Number of good primary vertices', dataset_ax, region_ax, nvtx_ax)
     items['npv_nopu'] = Hist('Number of primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
