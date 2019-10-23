@@ -890,7 +890,7 @@ def plot_settings():
                 'xlim' : (0,0.15)
             },
             'electron_dz' : {
-                'ylim' : (1e3,1e0)
+                'ylim' : (1e3,1e0),
                 'xlim' : (0,0.25)
             },
             'ak4_eta0' : {
