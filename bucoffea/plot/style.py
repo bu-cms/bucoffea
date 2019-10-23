@@ -1213,3 +1213,39 @@ def plot_settings():
                     'ylim' : (1e-1,1e5)
                 }
     return plot_settings
+
+def tangocolor( palettenumber, colornumber):
+    cols = [ [] for x in range( 3 ) ]
+    cols[0] = [ '#729fcf',     # Sky Blue
+               '#ef2929',     # Scarlet Red
+               '#fcaf3e',     # Orange
+               '#8ae234',     # Chameleon
+               '#fce94f',     # Butter
+               '#e9b96e',     # Chocolate
+               '#ad7fa8',     # Plum
+               '#eeeeec',     # Aluminium 1
+               '#888a85' ]    # Aluminium 1
+
+    cols[1] = [ '#3465a4',     # Sky Blue
+               '#cc0000',     # Scarlet Red
+               '#f57900',     # Orange
+               '#73d216',     # Chameleon
+               '#edd400',     # Butter
+               '#c17d11',     # Chocolate
+               '#75507b',     # Plum
+               '#d3d7cf',     # Aluminium 1
+               '#555753' ]    # Aluminium 1
+
+    cols[2] = [ '#204a87',     # Sky Blue
+               '#a40000',     # Scarlet Red
+               '#ce5c00',     # Orange
+               '#4e9a06',     # Chameleon
+               '#c4a000',     # Butter
+               '#8f5902',     # Chocolate
+               '#5c3566',     # Plum
+               '#babdb6',     # Aluminium 1
+               '#2e3436' ]    # Aluminium 1
+    try:
+        return cols[palettenumber][colornumber]
+    except:
+        return '#000000'
