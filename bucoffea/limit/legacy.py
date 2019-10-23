@@ -155,5 +155,6 @@ def merge_legacy_inputs(outdir):
                 h = key.ReadObj().Clone()
                 h.SetTitle(h.GetName())
                 h.SetDirectory(subdir)
+                h.GetXaxis().SetTitle('met')
                 # h.Write()
                 subdir.Write()
