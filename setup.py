@@ -14,6 +14,7 @@ setup(
     install_requires = requirements,
     scripts=[
         'bucoffea/execute/buexec',
-        'bucoffea/execute/bumon'
+        'bucoffea/execute/bumon',
+        'bucoffea/scripts/bumerge'
         ],
 )

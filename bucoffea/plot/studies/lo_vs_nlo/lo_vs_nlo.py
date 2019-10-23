@@ -1,16 +1,17 @@
 #!/usr/bin/env python
-
+import matplotlib as mpl
+mpl.use('Agg')
 import os
 import re
 import sys
 from pprint import pprint
-from bucoffea.plot.util import acc_from_dir
+from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
 from bucoffea.plot.stack_plot import Style, make_plot
 from bucoffea.plot.cr_ratio_plot import cr_ratio_plot
 from bucoffea.plot.style import plot_settings
 
 from collections import defaultdict
-
+from klepto.archives import dir_archive
 
 def plot(inpath):
         indir=os.path.abspath(inpath)
@@ -24,7 +25,12 @@ def plot(inpath):
         # automatically be found, merged and read.
         # The merging only happens the first time
         # you run over a specific set of inputs.
-        acc = acc_from_dir(indir)
+        acc = dir_archive(
+                          inpath,
+                          serialized=True,
+                          compression=0,
+                          memsize=1e3,
+                          )
 
         # Get a settings dictionary that details
         # which plots to make for each region,
@@ -40,6 +46,7 @@ def plot(inpath):
         settings['cr_2e_j_bare'] = settings['cr_2e_j']
         settings['cr_2e_j_vbare'] = settings['cr_2e_j']
 
+        merged = set()
         # Separate plots per year
         for year in [2017,2018]:
             # The data to be used for each region
@@ -51,8 +58,6 @@ def plot(inpath):
                 'cr_2m_j' : f'MET_{year}',
                 'cr_1e_j' : f'EGamma_{year}',
                 'cr_2e_j' : f'EGamma_{year}',
-                'cr_2e_j_bare' : f'EGamma_{year}',
-                'cr_2e_j_vbare' : f'EGamma_{year}',
                 'cr_g_j' : f'EGamma_{year}',
             }
 
@@ -60,12 +65,10 @@ def plot(inpath):
             # Match datasets by regular expressions
             # Here for LO V samples (HT binned)
             mc_lo = {
-                'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
-                'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
+                'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
+                'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
                 'cr_2m_j' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_2e_j' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_2e_j_bare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_2e_j_vbare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_g_j' : re.compile(f'(GJets.*|QCD_HT.*|W.*HT.*).*{year}'),
             }
 
@@ -87,6 +90,13 @@ def plot(inpath):
             # LO and NLO. Can be skipped if you only
             # want data / MC agreement plots.
             outdir = f'./output/{os.path.basename(indir)}/ratios'
+
+            # Load ingredients from cache
+            acc.load('recoil')
+            acc.load('sumw')
+            acc.load('sumw_pileup')
+            acc.load('nevents')
+
             cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo)
             cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo)
 
@@ -101,9 +111,18 @@ def plot(inpath):
 
                 # Loop over the distributions
                 for distribution in plotset.keys():
-                    if not distribution in acc.keys():
+                    # Load from cache
+
+                    if not (distribution in merged):
+                        acc.load(distribution)
+                        acc[distribution] = merge_extensions(acc[distribution], acc, reweight_pu=not ('nopu' in distribution))
+                        scale_xs_lumi(acc[distribution])
+                        acc[distribution] = merge_datasets(acc[distribution])
+                        merged.add(distribution)
+                    if not (distribution in acc.keys()):
                         print(f"WARNING: Distribution {distribution} not found in input files.")
                         continue
+
                     # The heavy lifting of making a plot is hidden
                     # in make_plot. We call it once using the LO MC
                     make_plot(acc,
@@ -130,7 +149,6 @@ def plot(inpath):
                             xlim=plotset[distribution].get('xlim',None),
                             tag = 'nlo',
                             outdir=f'./output/{os.path.basename(indir)}/{region}')
-
 
 def main():
     inpath = sys.argv[1]
