@@ -36,7 +36,7 @@ def datasets(year):
         'cr_2e_j' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
         'cr_2e_j_bare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
         'cr_2e_j_vbare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-        'cr_g_j' : re.compile(f'(GJets.*|QCD_HT.*|W.*HT.*).*{year}'),
+        'cr_g_j' : re.compile(f'(GJets.*HT|QCD_HT.*|W.*HT.*).*{year}'),
         'sr_j' : re.compile(f'(.*W.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
     }
     return data, mc
@@ -52,6 +52,7 @@ def legacy_dataset_name(dataset):
         'WN?J.*' : 'wjets',
         'WJ.*' : 'wjets',
         'ZJ.*' : 'zjets',
+        'GJets.*HT' : 'gjets',
         'VBF_HToInvisible_M125.*' : 'signal',
     }
 
