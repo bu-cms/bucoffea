@@ -4,3 +4,4 @@ dynaconf
 pyyaml
 gitpython
 tabulate
+klepto
