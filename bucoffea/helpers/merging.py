@@ -20,20 +20,20 @@ def _load_acc(args):
 
 def _load_and_sum(args):
     """
-    Returns a merged item from list of coffea files.
+    merge item from list of coffea files and dump it to file
 
     For each file, the saved item corresponding to the
     same key is read out. The sum of the individual
-    items for the individual files is returned.
+    items for the individual files is dumped.
 
-    :param args: Tuple (key to use, file list)
+    :param args: Tuple (key to use, file list, output name)
     :type args: tuple
-    :return: the merged item at corresponding to the key
-    :rtype: depends
+    :return: 0
+    :rtype: int
     """
 
     # Args is a tuple for easy multiprocessing
-    key, files = args
+    key, files, outname = args
 
     # Load the individual items
     items = []
@@ -51,7 +51,18 @@ def _load_and_sum(args):
         items.append(s)
     
     assert(len(items)==1)
-    return key, items[0]
+    
+    # dump the content using klepto
+    arc = dir_archive(
+                    outname,
+                    serialized=True,
+                    compression=0,
+                    memsize=1e3,
+                    )
+    arc[key] = items[0]
+    arc.dump()
+    arc.clear()
+    return 0
 
 class CoffeaMerger(object):
     '''
@@ -100,7 +111,7 @@ class CoffeaMerger(object):
             # Each job loads and merges
             # the items for a specific key
             # from all files
-            args = [(key, self._files)]
+            args = [(key, self._files, outname)]
             result = self._pool.map_async(
                     _load_and_sum,
                     args
@@ -112,10 +123,6 @@ class CoffeaMerger(object):
         while len(results):
             for res in reversed(results):
                 if res.ready():
-                    for tup in res.get():
-                        arc[tup[0]] = tup[1]
-                        arc.dump()
-                        arc.clear()
-                        results.remove(res)
-                        t.update()
+                    results.remove(res)
+                    t.update()
             time.sleep(1)
