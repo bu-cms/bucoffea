@@ -450,11 +450,11 @@ def monojet_regions(cfg):
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
 
     if not cfg.RUN.MONOV:
-        keys_to_remove = [ x for x in regions.keys() if x.endswith('_v')]
+        keys_to_remove = [ x for x in regions.keys() if x.endswith('_v') or '_v_' in x]
         for key in keys_to_remove:
             regions.pop(key)
     if not cfg.RUN.MONOJ:
-        keys_to_remove = [ x for x in regions.keys() if x.endswith('_j')]
+        keys_to_remove = [ x for x in regions.keys() if x.endswith('_j') or '_j_' in x]
         for key in keys_to_remove:
             regions.pop(key)
 
