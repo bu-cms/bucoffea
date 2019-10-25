@@ -51,7 +51,7 @@ def monojet_accumulator(cfg):
     eta_ax_coarse = Bin("eta", r"$\eta$", 25, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
     phi_ax_coarse = Bin("phi", r"$\phi$", 20,-np.pi, np.pi)
-    
+
     ratio_ax = Bin("ratio", "ratio", 50,0,2)
 
     tau21_ax = Bin("tau21", r"Tagger", 200,-5,5)
@@ -199,9 +199,17 @@ def monojet_accumulator(cfg):
 
 def setup_candidates(df, cfg):
     if df['is_data'] and extract_year(df['dataset']) != 2018:
+        # 2016, 2017 data
         jes_suffix = ''
-    else:
+        jes_suffix_met = ''
+    elif df['is_data']:
+        # 2018 data
         jes_suffix = '_nom'
+        jes_suffix_met = '_nom'
+    else:
+        # MC, all years
+        jes_suffix = '_nom'
+        jes_suffix_met = '_jer'
 
     muons = JaggedCandidateArray.candidatesfromcounts(
         df['nMuon'],
@@ -343,8 +351,8 @@ def setup_candidates(df, cfg):
     )
     ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
-    met_pt = df[f'MET_pt{jes_suffix}']
-    met_phi = df[f'MET_phi{jes_suffix}']
+    met_pt = df[f'MET_pt{jes_suffix_met}']
+    met_phi = df[f'MET_phi{jes_suffix_met}']
 
     return met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons
 
@@ -428,7 +436,7 @@ def monojet_regions(cfg):
     # a tt-bar populated region by removing b veto
     regions['cr_nobveto_v'] = copy.deepcopy(regions['sr_v'])
     regions['cr_nobveto_v'].remove('veto_b')
-    
+
     # additional regions to test out deep ak8 WvsQCD tagger
     for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
         for wp in ['inclusive', 'loose', 'tight','loosemd','tightmd']:
