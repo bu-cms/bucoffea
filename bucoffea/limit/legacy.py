@@ -29,16 +29,15 @@ def datasets(year):
     data.update(tmp)
 
 
+ 
     mc = {
-        'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
-        'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
-        'cr_2m_j' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-        'cr_2e_j' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-        'cr_2e_j_bare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-        'cr_2e_j_vbare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-        'cr_g_j' : re.compile(f'(GJets.*HT|QCD_HT.*|W.*HT.*).*{year}'),
-        'sr_j' : re.compile(f'(.*W.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
-    }
+                'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
+                'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
+                'cr_2m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+                'cr_2e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+                'cr_g_j' : re.compile(f'(GJets.*HT.*|QCD_HT.*|W.*HT.*).*{year}'),
+                'sr_j' : re.compile(f'(.*WJ.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
+            }
     return data, mc
 
 
@@ -53,7 +52,7 @@ def legacy_dataset_name(dataset):
         'WJ.*' : 'wjets',
         'ZJ.*' : 'zjets',
         'GJets.*HT' : 'gjets',
-        'VBF_HToInvisible_M125.*' : 'signal',
+        '.*HToInvisible.*' : 'signal',
     }
 
     for pat, ret in patterns.items():
@@ -96,7 +95,7 @@ def legacy_limit_input(acc, outdir='./output'):
         os.makedirs(outdir)
 
     for year in [2017,2018]:
-        signal = re.compile(f'VBF_HToInvisible_M125.*{year}')
+        signal = re.compile(f'GluGlu_HToInvisible.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_monojet_{year}.root'))
         data, mc = datasets(year)
         for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j','sr_j']:
