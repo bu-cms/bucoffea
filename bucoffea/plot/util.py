@@ -250,7 +250,7 @@ def load_xs():
     # See the documentation in data/datasets/xs/README.md
     # for more information on how the XS is chosen.
     xs = {}
-    loading_priority = ['nnlo','nlo','lo','gen']
+    loading_priority = ['nnnlo','nnlo','nlo','lo','gen']
     for dataset, xs_dict in xs_yml.items():
         if 'use' in xs_dict:
             key_to_use = xs_dict['use']
