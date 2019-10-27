@@ -282,10 +282,13 @@ GJets_SM_5f_EWK-mg_ext1_2017:
   gen: 32.91
 GluGlu_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 21.46
+  nnnlo: 4.858E+01
 GluGlu_HToInvisible_M125_pow_pythia8_2017:
   gen: 21.46
+  nnnlo: 4.858E+01
 GluGlu_HToInvisible_M125_pow_pythia8_2018:
   gen: 21.46
+  nnnlo: 4.858E+01
 QCD_HT1000to1500-MLM_2016:
   gen: 1209.0
 QCD_HT1000to1500-MLM_2018:
