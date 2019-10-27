@@ -67,23 +67,28 @@ def plot(inpath):
             mc_lo = {
                 'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
                 'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
-                'cr_2m_j' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_2e_j' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_g_j' : re.compile(f'(GJets.*|QCD_HT.*|W.*HT.*).*{year}'),
+                'cr_2m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+                'cr_2e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+                'cr_g_j' : re.compile(f'(GJets.*HT.*|QCD_HT.*|W.*HT.*).*{year}'),
             }
 
             # Want to compare LO and NLO,
             # so do same thing for NLO V samples
             # All non-V samples remain the same
             mc_nlo = {
-                    'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*W.*FXFX.*).*{year}'),
-                    'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*W.*FXFX.*).*{year}'),
-                    'cr_2m_j' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
-                    'cr_2e_j' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
-                    'cr_2e_j_bare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
-                    'cr_2e_j_vbare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
-                    'cr_g_j' : re.compile(f'(GJets.*|QCD_HT.*|W.*FXFX.*).*{year}'),
+                    'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*WN?Jet.*FXFX.*).*{year}'),
+                    'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*WN?Jet.*FXFX.*).*{year}'),
+                    'cr_2m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
+                    'cr_2e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
+                    # 'cr_2e_j_bare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
+                    # 'cr_2e_j_vbare' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
+                    'cr_g_j' : re.compile(f'(GJets.*HT.*|QCD_HT.*|WN?Jet.*FXFX.*).*{year}'),
             }
+
+            for key in list(map(str,mc_lo.keys())):
+                mc_lo[f'{key}_loose'] = mc_lo[key]
+                mc_nlo[f'{key}_loose'] = mc_nlo[key]
+                settings[f'{key}_loose'] = settings[key]
 
 
             # Make control region ratio plots for both
@@ -122,34 +127,35 @@ def plot(inpath):
                         scale_xs_lumi(acc[distribution])
                         acc[distribution] = merge_datasets(acc[distribution])
                         merged.add(distribution)
+                    try:
+                        # The heavy lifting of making a plot is hidden
+                        # in make_plot. We call it once using the LO MC
+                        make_plot(acc,
+                                region=region,
+                                distribution=distribution,
+                                year=year,
+                                data=data[region],
+                                mc=mc_lo[region],
+                                ylim=plotset[distribution].get('ylim',None),
+                                xlim=plotset[distribution].get('xlim',None),
+                                tag = 'losf',
+                                outdir=f'./output/{os.path.basename(indir)}/{region}')
 
-                    # The heavy lifting of making a plot is hidden
-                    # in make_plot. We call it once using the LO MC
-                    make_plot(acc,
-                            region=region,
-                            distribution=distribution,
-                            year=year,
-                            data=data[region],
-                            mc=mc_lo[region],
-                            ylim=plotset[distribution].get('ylim',None),
-                            xlim=plotset[distribution].get('xlim',None),
-                            tag = 'losf',
-                            outdir=f'./output/{os.path.basename(indir)}/{region}')
-
-                    # And then we also call it for the NLO MC
-                    # The output files will be named according to the 'tag'
-                    # argument, so we  will be able to tell them apart.
-                    make_plot(acc,
-                            region=region,
-                            distribution=distribution,
-                            year=year,
-                            data=data[region],
-                            mc=mc_nlo[region],
-                            ylim=plotset[distribution].get('ylim',None),
-                            xlim=plotset[distribution].get('xlim',None),
-                            tag = 'nlo',
-                            outdir=f'./output/{os.path.basename(indir)}/{region}')
-
+                        # And then we also call it for the NLO MC
+                        # The output files will be named according to the 'tag'
+                        # argument, so we  will be able to tell them apart.
+                        make_plot(acc,
+                                region=region,
+                                distribution=distribution,
+                                year=year,
+                                data=data[region],
+                                mc=mc_nlo[region],
+                                ylim=plotset[distribution].get('ylim',None),
+                                xlim=plotset[distribution].get('xlim',None),
+                                tag = 'nlo',
+                                outdir=f'./output/{os.path.basename(indir)}/{region}')
+                    except KeyError:
+                        continue
 def main():
     inpath = sys.argv[1]
     plot(inpath)
