@@ -13,6 +13,8 @@ matplotlib.rc('font', **font)
 name = {
     'gjets' : '$\gamma$ + jets',
     'wjets' : 'W + jets',
+    'wjet' : 'W + jets',
+    'dy' : 'DY',
     'zjets' : 'Z + jets',
 }
 def plot_nlo_ewk():
@@ -30,6 +32,23 @@ def plot_nlo_ewk():
 
     plt.legend()
     fig.savefig(pjoin(outdir, f'nlo_ewk.pdf'))
+
+def plot_nlo_qcd():
+    outdir = './output'
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    f = uproot.open(f'../../../data/sf/theory/2017_gen_v_pt_qcd_sf.root')
+    for selection in ['monojet','vbf']:
+        fig = plt.gcf()
+        fig.clf()
+        for tag in ['wjet','dy']:
+            h = f[f'{tag}_dress_{selection}']
+            plt.plot(0.5*(h.bins[:,0]+h.bins[:,1]), h.values,'o-', label=name[tag])
+        plt.ylabel('LO -> NLO QCD SF')
+        plt.xlabel('Boson $p_{T}$ (GeV)')
+        plt.grid(linestyle='--')
+        plt.legend()
+        fig.savefig(pjoin(outdir, f'nlo_qcd_{selection}.pdf'))
 
 def plot_consistency():
     outdir = './output'
@@ -51,6 +70,6 @@ def plot_consistency():
     plt.legend()
     fig.savefig(pjoin(outdir, f'consistency.pdf'))
 
-plot_consistency()
-plot_nlo_ewk()
-    
+# plot_consistency()
+# plot_nlo_ewk()
+plot_nlo_qcd()
