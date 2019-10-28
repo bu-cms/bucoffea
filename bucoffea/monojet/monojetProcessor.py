@@ -481,10 +481,10 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_pt0',        jetpt=ak8[leadak8_index].pt[mask].flatten(),      weight=w_leadak8 )
                 ezfill('ak8_mass0',      mass=ak8[leadak8_index].mass[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_tau210',     tau21=ak8[leadak8_index].tau21[mask].flatten(),     weight=w_leadak8)
-                ezfill('ak8_wvsqcd0',    tagger=ak8[leadak8_index].wvsqcdmd[mask].flatten(),     weight=w_leadak8)
-                ezfill('ak8_wvsqcdmd0',  tagger=ak8[leadak8_index].wvsqcd[mask].flatten(),     weight=w_leadak8)
-                ezfill('ak8_zvsqcd0',    tagger=ak8[leadak8_index].zvsqcdmd[mask].flatten(),     weight=w_leadak8)
-                ezfill('ak8_zvsqcdmd0',  tagger=ak8[leadak8_index].zvsqcd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_wvsqcd0',    tagger=ak8[leadak8_index].wvsqcd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_wvsqcdmd0',  tagger=ak8[leadak8_index].wvsqcdmd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_zvsqcd0',    tagger=ak8[leadak8_index].zvsqcd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_zvsqcdmd0',  tagger=ak8[leadak8_index].zvsqcdmd[mask].flatten(),     weight=w_leadak8)
 
             # B tag discriminator
             btag = getattr(ak4[ak4.abseta<2.4], cfg.BTAG.ALGO)
