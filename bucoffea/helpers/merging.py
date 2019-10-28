@@ -60,7 +60,7 @@ def _load_and_sum(args):
                     memsize=1e3,
                     )
     arc[key] = items[0]
-    arc.dump()
+    arc.dump(key)
     arc.clear()
     return 0
 
@@ -96,14 +96,6 @@ class CoffeaMerger(object):
         '''
         Run the merging and save to a klepto dir.
         '''
-
-        # Open the archive
-        arc = dir_archive(
-                        outname,
-                        serialized=True,
-                        compression=0,
-                        memsize=1e3,
-                        )
 
         # Queue asynchronous jobs for each key
         results = []
