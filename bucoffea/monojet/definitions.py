@@ -54,8 +54,8 @@ def monojet_accumulator(cfg):
 
     ratio_ax = Bin("ratio", "ratio", 50,0,2)
 
-    tau21_ax = Bin("tau21", r"Tagger", 200,-5,5)
-    tagger_ax = Bin("tagger", r"Tagger", 50,-5,5)
+    tau21_ax = Bin("tau21", r"Tagger", 50,0,1)
+    tagger_ax = Bin("tagger", r"Tagger", 50,0,1)
 
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 50,50,150)
 
@@ -438,7 +438,7 @@ def monojet_regions(cfg):
     regions['cr_nobveto_v'].remove('veto_b')
 
     # additional regions to test out deep ak8 WvsQCD tagger
-    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
+    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','cr_nobveto_v']:
         for wp in ['inclusive', 'loose', 'tight','loosemd','tightmd']:
             # the new region name will be, for example, cr_2m_loose_v
             newRegionName=region.replace('_v','_'+wp+'_v')
@@ -450,11 +450,11 @@ def monojet_regions(cfg):
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
 
     if not cfg.RUN.MONOV:
-        keys_to_remove = [ x for x in regions.keys() if x.endswith('_v')]
+        keys_to_remove = [ x for x in regions.keys() if x.endswith('_v') or '_v_' in x]
         for key in keys_to_remove:
             regions.pop(key)
     if not cfg.RUN.MONOJ:
-        keys_to_remove = [ x for x in regions.keys() if x.endswith('_j')]
+        keys_to_remove = [ x for x in regions.keys() if x.endswith('_j') or '_j_' in x]
         for key in keys_to_remove:
             regions.pop(key)
 
