@@ -39,7 +39,7 @@ def choose_processor(args):
         return lheVProcessor
     elif args.processor == 'purity':
         from bucoffea.photon_purity import photonPurityProcessor
-        return lheVProcessor
+        return photonPurityProcessor
 
 def do_run(args):
     """Run the analysis locally."""
