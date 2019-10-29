@@ -165,8 +165,9 @@ class photonPurityProcessor(processor.ProcessorABC):
                             )
 
         # Keep track of weight sum
-        output['sumw'][dataset] +=  df['genEventSumw']
-        output['sumw2'][dataset] +=  df['genEventSumw2']
+        if not is_data(dataset):
+            output['sumw'][dataset] +=  df['genEventSumw']
+            output['sumw2'][dataset] +=  df['genEventSumw2']
         return output
 
     def postprocess(self, accumulator):
