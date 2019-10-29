@@ -351,8 +351,13 @@ def setup_candidates(df, cfg):
     )
     ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
-    met_pt = df[f'MET_pt{jes_suffix_met}']
-    met_phi = df[f'MET_phi{jes_suffix_met}']
+    if extract_year(df['dataset']) == 2017:
+        met_branch = 'METFixEE2017'
+    else:
+        met_branch = 'MET'
+
+    met_pt = df[f'{met_branch}_pt{jes_suffix_met}']
+    met_phi = df[f'{met_branch}_phi{jes_suffix_met}']
 
     return met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons
 
