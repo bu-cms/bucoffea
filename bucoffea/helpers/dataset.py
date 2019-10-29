@@ -1,25 +1,28 @@
 import re
 
 def is_lo_z(dataset):
-    return bool(re.match('(DY|Z)(\d*)Jet.*(mg|MLM|madgraph).*', dataset))
+    return bool(re.match(r'(DY|Z)(\d*)Jet.*(mg|MLM|madgraph).*', dataset))
 
 def is_lo_z_ewk(dataset):
-    return bool(re.match('EWKZ2Jets_ZTo.', dataset))
+    return bool(re.match(r'EWKZ2Jets_ZTo.', dataset))
 
 def is_lo_w(dataset):
-    return bool(re.match('W(\d*)Jet.*(mg|MLM).*', dataset))
+    return bool(re.match(r'W(\d*)Jet.*(mg|MLM).*', dataset))
 
 def is_lo_w_ewk(dataset):
-    return bool(re.match('EWKW(Minus|Plus)2Jets_WToLNu.', dataset))
+    return bool(re.match(r'EWKW(Minus|Plus)2Jets_WToLNu.', dataset))
 
 def is_lo_g(dataset):
-    return bool(re.match('GJets.*', dataset))
+    return bool(re.match(r'GJets.*HT.*', dataset))
+
+def is_nlo_g(dataset):
+    return bool(re.match(r'G(\d)+Jet.*amc.*', dataset))
 
 def is_nlo_z(dataset):
-    return bool(re.match('(DY|Z)(\d*)Jet.*FXFX.*', dataset))
+    return bool(re.match(r'(DY|Z)(\d*)Jet.*FXFX.*', dataset))
 
 def is_nlo_w(dataset):
-    return bool(re.match('W(\d*)Jet.*FXFX.*', dataset))
+    return bool(re.match(r'W(\d*)Jet.*FXFX.*', dataset))
 
 def is_data(dataset):
     tags = ['EGamma','MET','SingleElectron','SingleMuon','SinglePhoton','JetHT']
