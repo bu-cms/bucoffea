@@ -36,6 +36,9 @@ def main():
     elif processor_class == 'vbfhinv':
         from bucoffea.vbfhinv import vbfhinvProcessor
         processorInstance = vbfhinvProcessor(years[0])
+    elif processor_class == 'lhe':
+        from bucoffea.gen.lheVProcessor import lheVProcessor
+        processorInstance = lheVProcessor()
 
     for dataset, filelist in fileset.items():
         newlist = []
