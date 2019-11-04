@@ -12,6 +12,7 @@ from bucoffea.helpers.dataset import (extract_year, is_lo_w, is_lo_z, is_nlo_w,
 from bucoffea.helpers.gen import find_gen_dilepton, setup_gen_candidates, setup_dressed_gen_candidates, isnu, islep, fill_gen_v_info
 from bucoffea.helpers import (
                               weight_shape,
+                              object_overlap
                              )
 from bucoffea.helpers import min_dphi_jet_met
 
@@ -83,10 +84,26 @@ def setup_photons(df):
         eleveto= df['Photon_electronVeto'],
         sieie= df['Photon_sieie'],
     )
-    photons.mediumIdNoSieie = medium_id_no_sieie(photons)
-    photons.mediumIdNoSieieInvIso = medium_id_no_sieie_inv_iso(photons)
 
+    photons = photons[ (photons.pt > 200) & photons.barrel]
     return photons
+
+def setup_jets(df):
+    ak4 = JaggedCandidateArray.candidatesfromcounts(
+        df['nJet'],
+        pt=df[f'Jet_pt'],
+        eta=df['Jet_eta'],
+        abseta=np.abs(df['Jet_eta']),
+        phi=df['Jet_phi'],
+        mass=np.zeros_like(df['Jet_pt']),
+        looseId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
+        tightId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
+        nhf=df['Jet_neHEF'],
+        chf=df['Jet_chHEF'],
+        ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
+        nconst=df['Jet_nConstituents']
+    )
+    return ak4
 
 class photonPurityProcessor(processor.ProcessorABC):
     def __init__(self):
@@ -94,7 +111,8 @@ class photonPurityProcessor(processor.ProcessorABC):
         # Histogram setup
         dataset_ax = Cat("dataset", "Primary dataset")
 
-        sieie_ax = Bin("sieie", r"sieie", 100,0,0.1)
+        sieie_ax = Bin("sieie", r"sieie", 100,0,0.02)
+        pt_ax = Bin("sieie", r"sieie", 50, 200, 1200)
         cat_ax = Cat("cat", r"cat")
 
         items = {}
@@ -102,6 +120,7 @@ class photonPurityProcessor(processor.ProcessorABC):
                                "Counts",
                                dataset_ax,
                                sieie_ax,
+                               pt_ax,
                                cat_ax
                                )
 
@@ -120,6 +139,15 @@ class photonPurityProcessor(processor.ProcessorABC):
         dataset = df['dataset']
         photons = setup_photons(df)
 
+        ak4 = setup_jets(df)
+        ak4 = ak4[
+                  object_overlap(ak4, photons) \
+                  & (ak4.pt > 100) \
+                  & (ak4.abseta < 2.4)
+                  ]
+
+        event_mask = (ak4.counts > 0) & df['HLT_Photon200']
+
         # Generator weight
         weights = processor.Weights(size=df.size, storeIndividual=True)
 
@@ -128,39 +156,47 @@ class photonPurityProcessor(processor.ProcessorABC):
         else:
             weights.add('gen', df['Generator_weight'])
 
+        photon_kinematics = (photons.pt > 200) & (photons.barrel)
+
         # Medium
-        vals = photons[photons.mediumId].sieie
+        vals = photons[photon_kinematics & photons.mediumId].sieie[event_mask]
+        pt = photons[photon_kinematics & photons.mediumId].pt[event_mask]
         output['sieie'].fill(
                              dataset=dataset,
                              cat='medium',
                              sieie=vals.flatten(),
+                             pt=pt.flatten(),
                              weights=weight_shape(
                                                   vals,
-                                                  weights.weight()
+                                                  weights.weight()[event_mask]
                                                   )
                             )
 
         # No Sieie
-        vals = photons[photons.mediumIdNoSieie].sieie
+        vals = photons[photon_kinematics & medium_id_no_sieie(photons)].sieie[event_mask]
+        pt = photons[photon_kinematics & medium_id_no_sieie(photons)].pt[event_mask]
         output['sieie'].fill(
                              dataset=dataset,
                              cat='medium_nosieie',
                              sieie=vals.flatten(),
+                             pt=pt.flatten(),
                              weights=weight_shape(
                                                   vals,
-                                                  weights.weight()
+                                                  weights.weight()[event_mask]
                                                   )
                             )
 
         # No Sieie, inverted isolation
-        vals = photons[photons.mediumIdNoSieieInvIso].sieie
+        vals = photons[photon_kinematics & medium_id_no_sieie_inv_iso(photons)].sieie[event_mask]
+        pt = photons[photon_kinematics & medium_id_no_sieie_inv_iso(photons)].pt[event_mask]
         output['sieie'].fill(
                              dataset=dataset,
                              cat='medium_nosieie_invertiso',
                              sieie=vals.flatten(),
+                             pt=pt.flatten(),
                              weights=weight_shape(
                                                   vals,
-                                                  weights.weight()
+                                                  weights.weight()[event_mask]
                                                   )
                             )
 
