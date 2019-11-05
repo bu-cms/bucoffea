@@ -521,9 +521,9 @@ class monojetProcessor(processor.ProcessorABC):
 
                 # Leading muon
                 w_leadmu = weight_shape(muons[leadmuon_index].pt[mask], region_weights.weight()[mask])
-                ezfill('muon_pt0',   pt=muons[leadmuon_index].pt[mask].flatten(),    w_leadmu=w_leadmu )
-                ezfill('muon_eta0',  eta=muons[leadmuon_index].eta[mask].flatten(),  w_leadmu=w_leadmu)
-                ezfill('muon_phi0',  phi=muons[leadmuon_index].phi[mask].flatten(),  w_leadmu=w_leadmu)
+                ezfill('muon_pt0',   pt=muons[leadmuon_index].pt[mask].flatten(),    weight=w_leadmu )
+                ezfill('muon_eta0',  eta=muons[leadmuon_index].eta[mask].flatten(),  weight=w_leadmu)
+                ezfill('muon_phi0',  phi=muons[leadmuon_index].phi[mask].flatten(),  weight=w_leadmu)
                 ezfill('muon_dxy0',  dxy=muons[leadmuon_index].dxy[mask].flatten(),  weight=w_leadmu)
                 ezfill('muon_dz0',  dz=muons[leadmuon_index].dz[mask].flatten(),  weight=w_leadmu)
 
@@ -536,9 +536,9 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
                 ezfill('dimuon_dr',   dr=dimuons.i0.p4.delta_r(dimuons.i1.p4)[mask].flatten(), weight=w_dimu )
 
-                ezfill('muon_pt1',   pt=muons[~leadmuon_index].pt[mask].flatten(),    w_leadmu=w_leadmu )
-                ezfill('muon_eta1',  eta=muons[~leadmuon_index].eta[mask].flatten(),  w_leadmu=w_leadmu)
-                ezfill('muon_phi1',  phi=muons[~leadmuon_index].phi[mask].flatten(),  w_leadmu=w_leadmu)
+                ezfill('muon_pt1',   pt=muons[~leadmuon_index].pt[mask].flatten(),    weight=w_leadmu )
+                ezfill('muon_eta1',  eta=muons[~leadmuon_index].eta[mask].flatten(),  weight=w_leadmu)
+                ezfill('muon_phi1',  phi=muons[~leadmuon_index].phi[mask].flatten(),  weight=w_leadmu)
 
             # Electrons
             if '_1e_' in region or '_2e_' in region:
