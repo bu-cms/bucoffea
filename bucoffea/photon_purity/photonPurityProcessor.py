@@ -55,15 +55,13 @@ def medium_id_no_sieie_inv_iso(photons):
     mask1 = int('00000000101010',2)
     medium_id_no_iso = (photons.vid & mask1) == mask1
 
-    # In second step, actually *veto* the isolation bits
-    # only want to veto medium iso WP, though, so only
-    # the more significant bit of the iso is set to 0
-    # --> 0X-0X-0X-XX-1X-1X-1X
-    #
-    # NB: We are going to OR the mask with the bitmap
-    # so set all X to 1
-    mask2 = int('01010111111111',2)
-    inv_iso = (photons.vid | mask2) == mask2
+    # In second step, require that at least one
+    # of the most significant isolation bits
+    # fails, which we achieve by using a mask
+    # that would *pass* and then requiring that
+    # (vid & mask) != mask
+    mask2 = int('10101000000000',2)
+    inv_iso = (photons.vid & mask2) != mask2
 
     return medium_id_no_iso & inv_iso
 
