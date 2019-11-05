@@ -112,7 +112,7 @@ class photonPurityProcessor(processor.ProcessorABC):
         dataset_ax = Cat("dataset", "Primary dataset")
 
         sieie_ax = Bin("sieie", r"sieie", 100,0,0.02)
-        pt_ax = Bin("sieie", r"sieie", 50, 200, 1200)
+        pt_ax = Bin("pt", r"pt", 50, 200, 1200)
         cat_ax = Cat("cat", r"cat")
 
         items = {}
