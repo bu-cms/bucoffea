@@ -954,6 +954,10 @@ def plot_settings():
             'photon_pt0' : {
                 'ylim' : (1e-3,1e5)
             },
+            'photon_eta0' : {
+                'xlim' : (-1.6, 1.6),
+                'ylim' : (1e4,1e6)
+            },
             'met' : {
                 'ylim' : (1e-3,1e5)
             },
