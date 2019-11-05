@@ -88,7 +88,7 @@ def sf_1d(acc, tag, regex, outputrootfile):
             sf_x = lo.axis('vpt').edges(overflow='over')
             sf_y = nlo.values(overflow='over')[()] / lo.values(overflow='over')[()]
 
-            outputrootfile[f'{tag}_{selection}_{calc}'] = (sf_y,sf_x)
+            outputrootfile[f'{tag}_{calc}_{selection}'] = (sf_y,sf_x)
 
 
 def sf_2d(acc, tag, regex, outputrootfile):
