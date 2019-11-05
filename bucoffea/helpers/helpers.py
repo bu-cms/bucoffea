@@ -27,7 +27,7 @@ def min_dphi_jet_met(jets, met_phi, njet=4, ptmin=30, etamax=2.4):
 
 def mt(pt1, phi1, pt2, phi2):
     """Calculates MT of two objects"""
-    return np.sqrt(pt1 * pt2 * (1-np.cos(phi1-phi2)))
+    return np.sqrt(2 * pt1 * pt2 * (1-np.cos(phi1-phi2)))
 
 def pt_phi_to_px_py(pt, phi):
     """Convert pt and phi to px and py."""
