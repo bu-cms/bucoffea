@@ -2,17 +2,17 @@
 
 import uproot
 from matplotlib import pyplot as plt
+import matplotlib.ticker
 
-
-f = uproot.open('2017_gen_v_pt_stat1_qcd_sf.root')
+f = uproot.open('../../../..//data/sf/theory/2017_gen_v_pt_qcd_sf.root')
 
 
 for process in ['wjet','dy']:
     x = {}
     y = {}
 
-    for selection in ['inclusive','monojet','vbf']:
-        h = f[f'{process}_{selection}']
+    for selection in ['inclusive','monojet']:
+        h = f[f'{process}_dress_{selection}']
         
         x[selection] = 0.5*(h.bins[:,0]+h.bins[:,1])
         y[selection] = h.values
@@ -23,7 +23,16 @@ for process in ['wjet','dy']:
         ax.plot(x[sel],y[sel],'-o',label=sel)
         rax.plot(x[sel],y[sel] / y['inclusive'],'-o')
 
-    rax.set_ylim(0.9,1.1)
-    ax.legend()
+    rax.set_ylim(0.95,1.05)
+    ax.legend(title='Selection', fontsize=14)
+    ax.set_ylabel('LO -> NLO SF', fontsize=14)
+    ax.set_xlabel('$p_{T}$ (V) (GeV)', fontsize=14)
+    rax.set_xlabel('$p_{T}$ (V) (GeV)', fontsize=14)
+    rax.set_ylabel('Ratio to inclusive', fontsize=14)
+
+
+    loc1 = matplotlib.ticker.MultipleLocator(base=0.02)
+    rax.yaxis.set_major_locator(loc1)
+    rax.grid(axis='y',which='major',linestyle='--')
     fig.savefig(f'output/selection_comparison/selection_comparison_{process}.pdf')
     plt.close(fig)
