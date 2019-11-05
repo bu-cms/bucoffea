@@ -83,7 +83,7 @@ def setup_photons(df):
         sieie= df['Photon_sieie'],
     )
 
-    photons = photons[ (photons.pt > 200) & photons.barrel]
+    photons = photons[ (photons.pt > 200) & photons.barrel & photons.eleveto]
     return photons
 
 def setup_jets(df):
