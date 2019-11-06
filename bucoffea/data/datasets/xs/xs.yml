@@ -222,6 +222,30 @@ EWKZ2Jets_ZToNuNu-mg_new_pmx_2017:
 EWKZ2Jets_ZToNuNu_PSweights-mg_2018:
   gen: 10.67
   lo: 10.04
+G1Jet_Pt-100To250-amcatnlo_2016:
+  gen: 1155.0
+G1Jet_Pt-100To250-amcatnlo_ext1_2016:
+  gen: 1155.0
+G1Jet_Pt-100To250-amcatnlo_ext2_2016:
+  gen: 1155.0
+G1Jet_Pt-250To400-amcatnlo_2016:
+  gen: 25.48
+G1Jet_Pt-250To400-amcatnlo_ext1_2016:
+  gen: 25.48
+G1Jet_Pt-250To400-amcatnlo_ext2_2016:
+  gen: 25.48
+G1Jet_Pt-400To650-amcatnlo_2016:
+  gen: 3.14
+G1Jet_Pt-400To650-amcatnlo_ext1_2016:
+  gen: 3.14
+G1Jet_Pt-50To100-amcatnlo_2016:
+  gen: 13530.0
+G1Jet_Pt-50To100-amcatnlo_ext1_2016:
+  gen: 13530.0
+G1Jet_Pt-650ToInf-amcatnlo_2016:
+  gen: 0.2939
+G1Jet_Pt-650ToInf-amcatnlo_ext1_2016:
+  gen: 0.2939
 GJets_HT-100To200-MLM_2016:
   gen: 9230.0
 GJets_HT-100To200-MLM_2017:

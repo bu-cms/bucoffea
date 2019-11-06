@@ -54,8 +54,8 @@ def monojet_accumulator(cfg):
 
     ratio_ax = Bin("ratio", "ratio", 50,0,2)
 
-    tau21_ax = Bin("tau21", r"Tagger", 200,-5,5)
-    tagger_ax = Bin("tagger", r"Tagger", 50,-5,5)
+    tau21_ax = Bin("tau21", r"Tagger", 50,0,1)
+    tagger_ax = Bin("tagger", r"Tagger", 50,0,1)
 
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 50,50,150)
 
@@ -351,8 +351,13 @@ def setup_candidates(df, cfg):
     )
     ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
-    met_pt = df[f'MET_pt{jes_suffix_met}']
-    met_phi = df[f'MET_phi{jes_suffix_met}']
+    if extract_year(df['dataset']) == 2017:
+        met_branch = 'METFixEE2017'
+    else:
+        met_branch = 'MET'
+
+    met_pt = df[f'{met_branch}_pt{jes_suffix_met}']
+    met_phi = df[f'{met_branch}_phi{jes_suffix_met}']
 
     return met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons
 
@@ -438,7 +443,7 @@ def monojet_regions(cfg):
     regions['cr_nobveto_v'].remove('veto_b')
 
     # additional regions to test out deep ak8 WvsQCD tagger
-    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
+    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','cr_nobveto_v']:
         for wp in ['inclusive', 'loose', 'tight','loosemd','tightmd']:
             # the new region name will be, for example, cr_2m_loose_v
             newRegionName=region.replace('_v','_'+wp+'_v')
@@ -450,11 +455,11 @@ def monojet_regions(cfg):
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
 
     if not cfg.RUN.MONOV:
-        keys_to_remove = [ x for x in regions.keys() if x.endswith('_v')]
+        keys_to_remove = [ x for x in regions.keys() if x.endswith('_v') or '_v_' in x]
         for key in keys_to_remove:
             regions.pop(key)
     if not cfg.RUN.MONOJ:
-        keys_to_remove = [ x for x in regions.keys() if x.endswith('_j')]
+        keys_to_remove = [ x for x in regions.keys() if x.endswith('_j') or '_j_' in x]
         for key in keys_to_remove:
             regions.pop(key)
 
@@ -540,17 +545,20 @@ def monojet_regions(cfg):
     return regions
 
 
+def fitfun(x, a, b, c):
+    return a * np.exp(-b * x) + c
+
 def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
     if df['is_lo_w']:
-        weights.add("theory", evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
+        weights.add("theory", fitfun(gen_v_pt, 1.024, 3.072e-3, 0.749) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
     elif df['is_lo_z']:
-        weights.add("theory", evaluator["qcd_nlo_z_2017"](gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
+        weights.add("theory", fitfun(gen_v_pt, 1.423, 2.257e-3, 0.451) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
     elif df['is_nlo_w']:
         weights.add("theory", evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
     elif df['is_nlo_z']:
         weights.add("theory", evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
     elif df['is_lo_g']:
-        weights.add("theory", evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["qcd_nnlo_g"](gen_v_pt))
+        weights.add("theory", fitfun(gen_v_pt, 1.036, 3.537e-3, 0.984) * evaluator["ewk_nlo_g"](gen_v_pt) *  evaluator["qcd_nnlo_g"](gen_v_pt))
     else:
         weights.add("theory", np.ones(df.size))
 
@@ -558,11 +566,11 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
 
 def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
     if df['is_lo_w']:
-        weights.add("theory", evaluator["qcd_nlo_w_2017"](gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
+        weights.add("theory", evaluator["qcd_nlo_w_2017_2d"](mjj, gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt))
     elif df['is_lo_w_ewk']:
         weights.add("theory", evaluator["qcd_nlo_w_ewk"](gen_v_pt, mjj))
     elif df['is_lo_z']:
-        weights.add("theory", evaluator["qcd_nlo_z_2017"](gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
+        weights.add("theory", evaluator["qcd_nlo_z_2017_2d"](mjj, gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
     elif df['is_lo_z_ewk']:
         weights.add("theory", evaluator["qcd_nlo_z_ewk"](gen_v_pt, mjj))
     elif df['is_nlo_w']:
@@ -570,7 +578,7 @@ def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
     elif df['is_nlo_z']:
         weights.add("theory", evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt))
     elif df['is_lo_g']:
-        weights.add("theory", evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["qcd_nnlo_g"](gen_v_pt))
+        weights.add("theory", fitfun(gen_v_pt, 1.058, 2.034e-3, 0.901) * evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nnlo_g"](gen_v_pt))
     else:
         weights.add("theory", np.ones(df.size))
 

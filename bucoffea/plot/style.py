@@ -954,6 +954,10 @@ def plot_settings():
             'photon_pt0' : {
                 'ylim' : (1e-3,1e5)
             },
+            'photon_eta0' : {
+                'xlim' : (-1.6, 1.6),
+                'ylim' : (1e4,1e6)
+            },
             'met' : {
                 'ylim' : (1e-3,1e5)
             },
@@ -1144,11 +1148,79 @@ def plot_settings():
                 'xlim' : (-3,3),
                 'ylim' : (1e-1,1e5)
             }
+        },
+        'cr_nobveto_v' : {
+            'ak8_mass0' : {
+                'xlim' : (60,110),
+                'ylim' : (1e-1,1e5)
+            },
+            'ak8_tau210' : {
+                'xlim' : (0,1),
+                'ylim' : (1e-1,1e6)
+            },
+            'recoil' : {
+                'ylim' : (1e-4,1e3)
+            },
+            'ak8_pt0' : {
+                'xlim' : (200,1000),
+                'ylim' : (1e-2,1e4)
+            },
+            'met' : {
+                'xlim' : (200,2000),
+                'ylim' : (1e-4,1e3)
+            },
+            'ak8_phi0' : {
+                'ylim' : (1e1,1e5)
+            },
+            'ak8_eta0' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e-1,1e5)
+            },
+            'ak8_wvsqcd0' : {
+                'xlim' : (0,1)
+            },
+            'ak8_wvsqcdmd0' : {
+                'xlim' : (0,1)
+            }
+        },
+        'cr_sr_v' : {
+            'ak8_mass0' : {
+                'xlim' : (60,110),
+                'ylim' : (1e-1,1e5)
+            },
+            'ak8_tau210' : {
+                'xlim' : (0,1),
+                'ylim' : (1e-1,1e6)
+            },
+            'recoil' : {
+                'ylim' : (1e-4,1e4)
+            },
+            'ak8_pt0' : {
+                'xlim' : (200,1000),
+                'ylim' : (1e-2,1e4)
+            },
+            'met' : {
+                'xlim' : (200,2000),
+                'ylim' : (1e-4,1e4)
+            },
+            'ak8_phi0' : {
+                'ylim' : (1e1,1e5)
+            },
+            'ak8_eta0' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e-1,1e5)
+            },
+            'ak8_wvsqcd0' : {
+                'xlim' : (0,1)
+            },
+            'ak8_wvsqcdmd0' : {
+                'xlim' : (0,1)
+            }
         }
         }
     )
     # add axes limit for control regions with different working points
-    for raw_region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_2e_v','cr_g_v','cr_nobveto_v']:
+    for raw_region in ['sr_v','cr_2m_v','cr_1m_v','cr_1e_v','cr_2e_v','cr_g_v','cr_nobveto_v']:
         # add default axes limits for these regions:
         plot_settings[raw_region]['ak8_wvsqcd0']={
             'xlim' : (0,1)
@@ -1156,7 +1228,7 @@ def plot_settings():
         plot_settings[raw_region]['ak8_wvsqcdmd0']={
             'xlim' : (0,1)
         }
-        for wp in ['inclusive','loose','tight','loosemd','tightmd']:
+        for wp in ['inclusive','loose','loosemd']:
             region = raw_region.replace('_v','_'+wp+'_v')
             plot_settings[region] = {
                 'ak8_mass0' : {
@@ -1168,6 +1240,7 @@ def plot_settings():
                     'ylim' : (1e-1,1e6)
                 },
                 'recoil' : {
+                    'xlim' : (200,2000),
                     'ylim' : (1e-4,1e4)
                 },
                 'ak8_pt0' : {
@@ -1175,7 +1248,7 @@ def plot_settings():
                     'ylim' : (1e-2,1e4)
                 },
                 'met' : {
-                    'xlim' : (0,1100),
+                    'xlim' : (200,2000),
                     'ylim' : (1e-4,1e4)
                 },
                 'ak8_phi0' : {
@@ -1188,7 +1261,7 @@ def plot_settings():
                 'ak8_wvsqcd0' : {
                     'xlim' : (0,1)
                 },
-                'ak8_wvsqcd0md' : {
+                'ak8_wvsqcdmd0' : {
                     'xlim' : (0,1)
                 }
             }
@@ -1196,6 +1269,43 @@ def plot_settings():
                 plot_settings[region]['ak8_mass0']={
                     'ylim' : (1e-1,1e5)
                 }
+        for wp in ['tight','tightmd']:
+            region = raw_region.replace('_v','_'+wp+'_v')
+            plot_settings[region] = {
+                'ak8_mass0' : {
+                    'xlim' : (60,110),
+                    'ylim' : (1e-3,1e3)
+                },
+                'ak8_tau210' : {
+                    'xlim' : (0,1),
+                    'ylim' : (1e-3,1e4)
+                },
+                'recoil' : {
+                    'xlim' : (200,2000),
+                    'ylim' : (1e-6,1e2)
+                },
+                'ak8_pt0' : {
+                    'xlim' : (200,1000),
+                    'ylim' : (1e-4,1e2)
+                },
+                'met' : {
+                    'xlim' : (200,2000),
+                    'ylim' : (1e-6,1e2)
+                },
+                'ak8_phi0' : {
+                    'ylim' : (1e-1,1e3)
+                },
+                'ak8_eta0' : {
+                    'xlim' : (-3,3),
+                    'ylim' : (1e-3,1e3)
+                },
+                'ak8_wvsqcd0' : {
+                    'xlim' : (0,1)
+                },
+                'ak8_wvsqcdmd0' : {
+                    'xlim' : (0,1)
+                }
+            }
     return plot_settings
 
 def tangocolor( palettenumber, colornumber):
