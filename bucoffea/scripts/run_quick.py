@@ -35,6 +35,9 @@ def main():
     elif processor_class == 'vbfhinv':
         from bucoffea.vbfhinv import vbfhinvProcessor
         processorInstance = vbfhinvProcessor(years[0])
+    elif processor_class == 'lhe':
+        from bucoffea.gen.lheVProcessor import lheVProcessor
+        processorInstance = lheVProcessor()
     elif args.processor == 'purity':
         from bucoffea.photon_purity import photonPurityProcessor
         processorInstance = photonPurityProcessor()
