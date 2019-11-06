@@ -6,15 +6,16 @@ import numpy as np
 from awkward import JaggedArray
 from coffea import hist
 from coffea.analysis_objects import JaggedCandidateArray
+from coffea.lumi_tools import LumiMask
 
-from bucoffea.helpers.dataset import (extract_year, is_lo_w, is_lo_z, is_nlo_w,
-                                      is_nlo_z, is_data)
-from bucoffea.helpers.gen import find_gen_dilepton, setup_gen_candidates, setup_dressed_gen_candidates, isnu, islep, fill_gen_v_info
-from bucoffea.helpers import (
-                              weight_shape,
-                              object_overlap
-                             )
-from bucoffea.helpers import min_dphi_jet_met
+from bucoffea.helpers import bucoffea_path,min_dphi_jet_met, object_overlap, weight_shape, mask_and
+from bucoffea.helpers.dataset import (extract_year, is_data, is_lo_w, is_lo_z,
+                                      is_nlo_w, is_nlo_z)
+from bucoffea.helpers.gen import (fill_gen_v_info, find_gen_dilepton, islep,
+                                  isnu, setup_dressed_gen_candidates,
+                                  setup_gen_candidates)
+
+from dynaconf import settings as cfg
 
 Hist = hist.Hist
 Bin = hist.Bin
@@ -94,8 +95,8 @@ def setup_jets(df):
         abseta=np.abs(df['Jet_eta']),
         phi=df['Jet_phi'],
         mass=np.zeros_like(df['Jet_pt']),
-        looseId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
-        tightId=(df['Jet_jetId']&4) == 4, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
+        looseId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
+        tightId=(df['Jet_jetId']&2) == 2, # bitmask: 1 = loose, 2 = tight, 3 = tight + lep veto
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
@@ -126,6 +127,21 @@ class photonPurityProcessor(processor.ProcessorABC):
         items['sumw2'] = processor.defaultdict_accumulator(float)
 
         self._accumulator = processor.dict_accumulator(items)
+        self._configure()
+
+    def _configure(self, df=None):
+        cfg.DYNACONF_WORKS="merge_configs"
+        cfg.MERGE_ENABLED_FOR_DYNACONF=True
+        cfg.SETTINGS_FILE_FOR_DYNACONF = bucoffea_path("config/monojet.yaml")
+
+        # Reload config based on year
+        if df:
+            dataset = df['dataset']
+            self._year = extract_year(dataset)
+            cfg.ENV_FOR_DYNACONF = f"era{self._year}"
+        else:
+            cfg.ENV_FOR_DYNACONF = f"default"
+        cfg.reload()
 
     @property
     def accumulator(self):
@@ -133,18 +149,45 @@ class photonPurityProcessor(processor.ProcessorABC):
 
 
     def process(self, df):
+        self._configure(df)
         output = self.accumulator.identity()
         dataset = df['dataset']
+
+        # Lumi mask
+        if is_data(dataset):
+            year = extract_year(dataset)
+            if year == 2016:
+                json = bucoffea_path('data/json/Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt')
+            elif year == 2017:
+                json = bucoffea_path('data/json/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON_v1.txt')
+            elif year == 2018:
+                json = bucoffea_path('data/json/Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt')
+            lumi_mask = LumiMask(json)(df['run'], df['luminosityBlock'])
+        else:
+            lumi_mask = np.ones(df.size)==1
+
+        # MET filters
+        if is_data(dataset):
+            filt_met = mask_and(df, cfg.FILTERS.DATA)
+        else:
+            filt_met = mask_and(df, cfg.FILTERS.MC)
+
+
         photons = setup_photons(df)
 
         ak4 = setup_jets(df)
         ak4 = ak4[
                   object_overlap(ak4, photons) \
+                  & ak4.tightId \
                   & (ak4.pt > 100) \
                   & (ak4.abseta < 2.4)
                   ]
 
-        event_mask = (ak4.counts > 0) & df['HLT_Photon200']
+        event_mask = filt_met \
+                     & lumi_mask \
+                     & (ak4.counts > 0) \
+                     & df['HLT_Photon200'] \
+                     & (df['MET_pt'] < 60)
 
         # Generator weight
         weights = processor.Weights(size=df.size, storeIndividual=True)
