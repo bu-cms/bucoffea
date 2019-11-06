@@ -32,10 +32,12 @@ def main():
     if processor_class == 'monojet':
         from bucoffea.monojet import monojetProcessor
         processorInstance = monojetProcessor(years[0])
-
     elif processor_class == 'vbfhinv':
         from bucoffea.vbfhinv import vbfhinvProcessor
         processorInstance = vbfhinvProcessor(years[0])
+    elif args.processor == 'purity':
+        from bucoffea.photon_purity import photonPurityProcessor
+        processorInstance = photonPurityProcessor()
 
     for dataset, filelist in fileset.items():
         newlist = []
