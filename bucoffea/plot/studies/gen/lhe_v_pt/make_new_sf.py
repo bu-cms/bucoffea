@@ -28,6 +28,8 @@ def get_old_kfac(tag):
         f = uproot.open(bucoffea_path('data/sf/theory/merged_kfactors_wjets.root'))
     elif tag.startswith('dy'):
         f = uproot.open(bucoffea_path('data/sf/theory/merged_kfactors_wjets.root'))
+    elif tag.startswith('gjets'):
+        f = uproot.open(bucoffea_path('data/sf/theory/merged_kfactors_gjets.root'))
     return f['kfactor_monojet_qcd']
 
 def sf_1d(acc, tag, regex, outputrootfile):
@@ -37,11 +39,18 @@ def sf_1d(acc, tag, regex, outputrootfile):
 
     fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
     # new_ax = hist.Bin('vpt','LHE V $p_{T}$ (GeV)',list(range(100,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250)))
-    new_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',list(range(100,800,100))+list(range(800,1200,200))+list(range(1200,2800,800)))
 
-    for calc in ['dress','stat1']:
+    pt_types = ['stat1']
+
+    if tag in ['dy','wjet']:
+        pt_types.append('dress')
+        new_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[200,250]+list(range(300,800,100))+list(range(800,1200,200))+list(range(1200,2800,800)))
+    else:
+        new_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[200,250]+list(range(300,800,100))+list(range(800,1400,200)))
+
+    for pt_type in pt_types:
         for selection in ['inclusive','monojet','vbf']:
-            dist = f'gen_vpt_{selection}_{calc}'
+            dist = f'gen_vpt_{selection}_{pt_type}'
             h = copy.deepcopy(acc[dist])
 
             h = h.rebin(h.axis('vpt'), new_ax)
@@ -58,21 +67,23 @@ def sf_1d(acc, tag, regex, outputrootfile):
             hist.plot1d(
                 h,
                 overlay='dataset',
-                overflow='all',
+                overflow='over',
                 binwnorm=True,
                 ax=ax)
             lo = h[re.compile('.*HT.*')].integrate('dataset')
-            nlo = h[re.compile('.*LHE.*')].integrate('dataset')
+            nlo = h[re.compile('.*(LHE|amc).*')].integrate('dataset')
 
             hist.plotratio(nlo, lo,
                 ax=rax,
                 denom_fill_opts={},
                 guide_opts={},
                 unc='num',
-                overflow='all',
+                overflow='over',
                 error_opts=data_err_opts,
                 label='2017 NLO/LO ratio'
                 )
+
+            # if tag in ['dy','wjet']:
             old = get_old_kfac(tag)
             old_x = 0.5*(old.bins[:,0]+old.bins[:,1])
             rax.plot(old_x, old.values,'ob-', label='2016 QCD k fac')
@@ -88,10 +99,10 @@ def sf_1d(acc, tag, regex, outputrootfile):
             sf_x = lo.axis('vpt').edges(overflow='over')
             sf_y = nlo.values(overflow='over')[()] / lo.values(overflow='over')[()]
 
-            outputrootfile[f'{tag}_{calc}_{selection}'] = (sf_y,sf_x)
+            outputrootfile[f'{tag}_{pt_type}_{selection}'] = (sf_y,sf_x)
 
 
-def sf_2d(acc, tag, regex, outputrootfile):
+def sf_2d(acc, tag, regex, pt_type, outputrootfile):
     outdir = './output/2d/'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -102,17 +113,21 @@ def sf_2d(acc, tag, regex, outputrootfile):
     fig.clear()
     ax = plt.gca()
     # new_ax = hist.Bin('vpt','LHE V $p_{T}$ (GeV)',list(range(100,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250)))
-    vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',list(range(250,1000,150))+list(range(1000,1200,200))+list(range(1200,200,800)))
-    # vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',list(range(100,800,100))+list(range(800,1200,200))+list(range(1200,2800,800)))
-    # vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0,10000])
-    mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[200]+list(range(500,2500,500)))
-    # mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,1e5])
 
+
+    if tag in ['dy', 'wjet']:
+        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',list(range(250,1000,150))+list(range(1000,1200,200))+list(range(1200,200,800)))
+        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[200]+list(range(500,2500,500)))
+        clims = 0.75,1.1
+    elif tag in ['gjets']:
+        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[250,300,400,500,600,800])
+        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[200,1000])
+        clims = 1.2, 1.5
 
     for selection in ['vbf']:
-        dist = f'gen_vpt_{selection}_dress'
+        dist = f'gen_vpt_{selection}_{pt_type}'
         h = copy.deepcopy(acc[dist])
-
+        print(h)
         h = h.rebin(h.axis('vpt'), vpt_ax)
         h = h.rebin(h.axis('mjj'), mjj_ax)
         h = h.integrate(h.axis("jpt"))
@@ -123,7 +138,7 @@ def sf_2d(acc, tag, regex, outputrootfile):
         h = h[re.compile(regex)]
 
         lo = h[re.compile('.*HT.*')].integrate('dataset')
-        nlo = h[re.compile('.*LHE.*')].integrate('dataset')
+        nlo = h[re.compile('.*(LHE|amcat).*')].integrate('dataset')
 
         sumw_lo, sumw2_lo = lo.values(overflow='over', sumw2=True)[()]
         sumw_nlo, sumw2_nlo = nlo.values(overflow='over', sumw2=True)[()]
@@ -143,10 +158,10 @@ def sf_2d(acc, tag, regex, outputrootfile):
         y_centers = yaxis.centers(overflow='over')
         for ix in range(len(x_centers)):
             for iy in range(len(y_centers)):
-                textcol = 'white' if sf.T[iy, ix] <0.9 else 'black'
+                textcol = 'white' if sf.T[iy, ix] < 0.5*(clims[0]+clims[1]) else 'black'
                 ax.text(
-                        x_centers[ix], 
-                        y_centers[iy], 
+                        x_centers[ix],
+                        y_centers[iy],
                         f'  {sf.T[iy, ix]:.3f} \n$\\pm$ {dsf.T[iy, ix]:.2f}',
                         ha='center',
                         va='center',
@@ -175,7 +190,7 @@ def sf_2d(acc, tag, regex, outputrootfile):
         ax.set_xlabel('M(jj) (GeV)')
         cb = fig.colorbar(im)
         cb.set_label('LO $\\rightarrow$ NLO SF')
-        im.set_clim(0.75,1.1)
+        im.set_clim(*clims)
         fig.savefig(pjoin(outdir,f'2d_{tag}_{dist}.pdf'))
 
         # sf_x = lo.axis('vpt').edges()
@@ -196,11 +211,15 @@ def main():
     outputrootfile = uproot.recreate(f'2017_gen_v_pt_qcd_sf.root')
     sf_1d(acc, tag='wjet', regex='W.*',outputrootfile=outputrootfile)
     sf_1d(acc, tag='dy', regex='.*DY.*',outputrootfile=outputrootfile)
-    # outputrootfile = uproot.recreate(f'test.root')
-    sf_2d(acc, tag='wjet', regex='W.*',outputrootfile=outputrootfile)
-    sf_2d(acc, tag='dy', regex='.*DY.*',outputrootfile=outputrootfile)
+    # # outputrootfile = uproot.recreate(f'test.root')
+    # sf_2d(acc, tag='wjet', regex='W.*',pt_type='dress',outputrootfile=outputrootfile)
+    # sf_2d(acc, tag='dy', regex='.*DY.*',pt_type='dress',outputrootfile=outputrootfile)
 
+    acc = acc_from_dir("./input/2019-10-29_photon_kfac_v0/")
+    sf_1d(acc, tag='gjets', regex='G\d?Jet.*',outputrootfile=outputrootfile)
+    # outputrootfile = uproot.recreate('test.root')
 
+    # sf_2d(acc, tag='gjets',regex='G\d?Jet.*',pt_type='stat1',outputrootfile=outputrootfile)
 
 
 if __name__ == "__main__":
