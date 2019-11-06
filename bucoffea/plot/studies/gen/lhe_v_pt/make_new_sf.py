@@ -44,10 +44,11 @@ def sf_1d(acc, tag, regex, outputrootfile):
 
     if tag in ['dy','wjet']:
         pt_types.append('dress')
-        new_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[200,250]+list(range(300,800,100))+list(range(800,1200,200))+list(range(1200,2800,800)))
+        new_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',list(range(100,800,100))+list(range(800,1200,200))+list(range(1200,2800,800)))
     else:
         new_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[200,250]+list(range(300,800,100))+list(range(800,1400,200)))
 
+    overflow = 'none'
     for pt_type in pt_types:
         for selection in ['inclusive','monojet','vbf']:
             dist = f'gen_vpt_{selection}_{pt_type}'
@@ -67,7 +68,7 @@ def sf_1d(acc, tag, regex, outputrootfile):
             hist.plot1d(
                 h,
                 overlay='dataset',
-                overflow='over',
+                overflow=overflow,
                 binwnorm=True,
                 ax=ax)
             lo = h[re.compile('.*HT.*')].integrate('dataset')
@@ -78,7 +79,7 @@ def sf_1d(acc, tag, regex, outputrootfile):
                 denom_fill_opts={},
                 guide_opts={},
                 unc='num',
-                overflow='over',
+                overflow=overflow,
                 error_opts=data_err_opts,
                 label='2017 NLO/LO ratio'
                 )
@@ -96,8 +97,8 @@ def sf_1d(acc, tag, regex, outputrootfile):
 
             fig.savefig(pjoin(outdir,f'{tag}_{dist}.pdf'))
 
-            sf_x = lo.axis('vpt').edges(overflow='over')
-            sf_y = nlo.values(overflow='over')[()] / lo.values(overflow='over')[()]
+            sf_x = lo.axis('vpt').edges(overflow=overflow)
+            sf_y = nlo.values(overflow=overflow)[()] / lo.values(overflow=overflow)[()]
 
             outputrootfile[f'{tag}_{pt_type}_{selection}'] = (sf_y,sf_x)
 
