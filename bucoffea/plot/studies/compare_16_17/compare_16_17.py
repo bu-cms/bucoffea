@@ -52,7 +52,7 @@ def main():
             h = h.integrate(h.axis('region'),region)
             s = Style()
             try:
-                newax = s.rebin_axes[distribution]
+                newax = s.get_binning(distribution, region)
                 h = h.rebin(h.axis(newax.name), newax)
             except KeyError:
                 pass

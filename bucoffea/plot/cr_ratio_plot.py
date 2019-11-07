@@ -29,7 +29,7 @@ def cr_ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1
     s = Style()
     h = copy.deepcopy(acc[distribution])
     try:
-        newax = s.rebin_axes[distribution]
+        newax = s.get_binning(distribution)
         h = h.rebin(h.axis(newax.name), newax)
     except KeyError:
         pass
