@@ -266,7 +266,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons)
             weights = pileup_weights(weights, df, evaluator, cfg)
-            weights = theory_weights_vbf(weights, df, evaluator, gen_v_pt, df['mjj'])
+            if not (gen_v_pt is None):
+                weights = theory_weights_vbf(weights, df, evaluator, gen_v_pt, df['mjj'])
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
