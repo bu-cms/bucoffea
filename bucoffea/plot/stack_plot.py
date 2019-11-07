@@ -53,35 +53,51 @@ class Style():
             'cr_g_vbf' : 'Single-Photon CR, vbfhinv'
         }
         recoil_bins_2016 = [ 250.,  280.,  310.,  340.,  370.,  400.,  430.,  470.,  510., 550.,  590.,  640.,  690.,  740.,  790.,  840.,  900.,  960., 1020., 1090., 1160., 1250., 1400., 1600., 1800., 2000.]
-        self.rebin_axes = {
-            'dimuon_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
-            'dielectron_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
-            # 'recoil' : hist.Bin('recoil','recoil',list(range(250,300,50)) + list(range(300,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,200))),
-            'recoil' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
-            'recoil_nopog' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
-            'recoil_nopu' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
-            'recoil_nopref' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
-            'met' : hist.Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
-            'ak4_pt0' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(80,600,20)) + list(range(600,1000,20)) ),
-            'ak4_pt1' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(40,600,20)) + list(range(600,1000,20)) ),
-            'ak4_pt' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,20)) ),
-            'ak4_ptraw0' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,20)) ),
-            'ak4_pt0_eta0' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,20)) ),
-            'ak8_pt0' : hist.Bin('jetpt','jetpt',list(range(80,600,20)) + list(range(600,1000,40)) ),
-            'ak8_pt1' : hist.Bin('jetpt','jetpt',list(range(40,600,20)) + list(range(600,1000,40)) ),
-            'ak8_pt' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,40)) ),
-            'ak8_ptraw0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,40)) ),
-            'ak8_pt0_eta0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,40)) ),
-            'photon_pt0' : hist.Bin('pt',r'Photon $p_{T}$ (GeV)',list(range(200,600,20)) + list(range(600,1000,20)) ),
-            'electron_pt0' : hist.Bin('pt',r'Leading electron $p_{T}$ (GeV)',list(range(0,600,20))),
-            'electron_pt1' : hist.Bin('pt',r'Trailing electron $p_{T}$ (GeV)',list(range(0,600,20))),
-            'electron_pt' : hist.Bin('pt',r'All electron $p_{T}$ (GeV)',list(range(0,600,20))),
-            'muon_pt0' : hist.Bin('pt',r'Leading muon $p_{T}$ (GeV)',list(range(0,600,20))),
-            'muon_pt1' : hist.Bin('pt',r'Trailing muon $p_{T}$ (GeV)',list(range(0,600,20))),
-            'muon_pt' : hist.Bin('pt',r'All muon $p_{T}$ (GeV)',list(range(0,600,20))),
-            'dielectron_pt' : hist.Bin('dilepton_pt',r'Dielectron $p_{T} (GeV)',list(range(0,400,25)) + list(range(400,800,50)) + list(range(800,1100,100))),
-            'dimuon_pt' : hist.Bin('dilepton_pt',r'Dimuon $p_{T} (GeV)',list(range(0,400,25)) + list(range(400,800,50)) + list(range(800,1100,100))),
+        recoil_monov_bins_2016 = [250,300,350,400,500,600,750,1000]
+        self.binnings = {
+            'default': {
+                    'dimuon_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
+                    'dielectron_mass' : hist.Bin('dilepton_mass','dilepton_mass',30,60,120),
+                    # 'recoil' : hist.Bin('recoil','recoil',list(range(250,300,50)) + list(range(300,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,200))),
+                    'recoil' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
+                    'recoil_nopog' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
+                    'recoil_nopu' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
+                    'recoil_nopref' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
+                    'met' : hist.Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
+                    'ak4_pt0' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(80,600,20)) + list(range(600,1000,20)) ),
+                    'ak4_pt1' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(40,600,20)) + list(range(600,1000,20)) ),
+                    'ak4_pt' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,20)) ),
+                    'ak4_ptraw0' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,20)) ),
+                    'ak4_pt0_eta0' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,20)) ),
+                    'ak8_pt0' : hist.Bin('jetpt','jetpt',list(range(80,600,20)) + list(range(600,1000,40)) ),
+                    'ak8_pt1' : hist.Bin('jetpt','jetpt',list(range(40,600,20)) + list(range(600,1000,40)) ),
+                    'ak8_pt' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,40)) ),
+                    'ak8_ptraw0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,40)) ),
+                    'ak8_pt0_eta0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,40)) ),
+                    'photon_pt0' : hist.Bin('pt',r'Photon $p_{T}$ (GeV)',list(range(200,600,20)) + list(range(600,1000,20)) ),
+                    'electron_pt0' : hist.Bin('pt',r'Leading electron $p_{T}$ (GeV)',list(range(0,600,20))),
+                    'electron_pt1' : hist.Bin('pt',r'Trailing electron $p_{T}$ (GeV)',list(range(0,600,20))),
+                    'electron_pt' : hist.Bin('pt',r'All electron $p_{T}$ (GeV)',list(range(0,600,20))),
+                    'muon_pt0' : hist.Bin('pt',r'Leading muon $p_{T}$ (GeV)',list(range(0,600,20))),
+                    'muon_pt1' : hist.Bin('pt',r'Trailing muon $p_{T}$ (GeV)',list(range(0,600,20))),
+                    'muon_pt' : hist.Bin('pt',r'All muon $p_{T}$ (GeV)',list(range(0,600,20))),
+                    'dielectron_pt' : hist.Bin('dilepton_pt',r'Dielectron $p_{T} (GeV)',list(range(0,400,25)) + list(range(400,800,50)) + list(range(800,1100,100))),
+                    'dimuon_pt' : hist.Bin('dilepton_pt',r'Dimuon $p_{T} (GeV)',list(range(0,400,25)) + list(range(400,800,50)) + list(range(800,1100,100))),
+                    }
         }
+        # binning for all monov regions:
+        for region in ['cr_1m_v','cr_2m_v','cr_1e_v','cr_2e_v','cr_g_v','sr_v','cr_nobveto_v']:
+            for wp in ['','_inclusive','_loose','_tight','_loosemd','_tightmd']:
+                new_region_name = region.replace('_v', wp+'_v')
+                self.binnings[new_region_name] = {
+                        'recoil' : hist.Bin('recoil','Recoil (GeV)', recoil_monov_bins_2016),
+                        }
+
+    def get_binning(self, distribution, region='default'):
+        if region in self.binnings and distribution in self.binnings[region]:
+            return self.binnings[region][distribution]
+        else:
+            return self.binnings['default'][distribution]
 
 
 def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf'):
@@ -95,7 +111,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     h = copy.deepcopy(acc[distribution])
     assert(h)
     try:
-        newax = s.rebin_axes[distribution]
+        newax = s.get_binning(distribution, region)
         h = h.rebin(h.axis(newax.name), newax)
     except KeyError:
         pass
