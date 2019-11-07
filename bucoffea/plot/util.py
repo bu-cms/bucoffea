@@ -176,8 +176,11 @@ def merge_datasets(histogram):
         'MET_2018' : [x for x in all_datasets if re.match('MET_2018[A-Z]+',x)],
         'JetHT_2018' : [x for x in all_datasets if re.match('JetHT_2018[A-Z]+',x)],
 
+        'GJets_HT_MLM_2016' : [x for x in all_datasets if re.match('GJets_HT-(\d+)To.*-MLM_2016',x)],
         'GJets_HT_MLM_2017' : [x for x in all_datasets if re.match('GJets_HT-(\d+)To.*-MLM_2017',x)],
         'GJets_HT_MLM_2018' : [x for x in all_datasets if re.match('GJets_HT-(\d+)To.*-MLM_2018',x)],
+        
+        'G1Jet_Pt-amcatnlo_2016' : [x for x in all_datasets if re.match('G1Jet_Pt-.*-amcatnlo_2016',x)],
 
         'WNJetsToLNu_LHEWpT-FXFX_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_LHEWpT_(\d+)-.*-FXFX_2017',x)],
         'WNJetsToLNu-FXFX_2018' : [x for x in all_datasets if re.match('WJetsToLNu_(\d+)J-amcatnloFXFX_2018',x)],
