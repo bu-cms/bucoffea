@@ -1021,7 +1021,8 @@ def plot_settings():
                 'ylim' : (1e-1,1e6)
             },
             'recoil' : {
-                'ylim' : (1e-5,2e2)
+                'xlim' : (250,1000),
+                'ylim' : (1e-4,2e2)
             },
             'ak8_pt0' : {
                 'xlim' : (200,1000),
@@ -1049,7 +1050,8 @@ def plot_settings():
                 'ylim' : (1e-1,1e6)
             },
             'recoil' : {
-                'ylim' : (1e-5,2e2)
+                'xlim' : (250,1000),
+                'ylim' : (1e-4,2e2)
             },
             'ak8_pt0' : {
                 'xlim' : (200,1000),
@@ -1077,7 +1079,8 @@ def plot_settings():
                 'ylim' : (1e-1,1e6)
             },
             'recoil' : {
-                'ylim' : (1e-4,1e3)
+                'xlim' : (250,1000),
+                'ylim' : (1e-3,1e3)
             },
             'ak8_pt0' : {
                 'xlim' : (200,1000),
@@ -1104,7 +1107,8 @@ def plot_settings():
                 'ylim' : (1e-1,1e6)
             },
             'recoil' : {
-                'ylim' : (1e-4,1e3)
+                'xlim' : (250,1000),
+                'ylim' : (1e-3,1e3)
             },
             'ak8_pt0' : {
                 'xlim' : (200,1000),
@@ -1131,7 +1135,8 @@ def plot_settings():
                 'ylim' : (1e-1,1e6)
             },
             'recoil' : {
-                'ylim' : (1e-4,1e3)
+                'xlim' : (250,1000),
+                'ylim' : (1e-3,1e3)
             },
             'ak8_pt0' : {
                 'xlim' : (200,1000),
@@ -1159,7 +1164,8 @@ def plot_settings():
                 'ylim' : (1e-1,1e6)
             },
             'recoil' : {
-                'ylim' : (1e-4,1e3)
+                'xlim' : (250,1000),
+                'ylim' : (1e-3,1e3)
             },
             'ak8_pt0' : {
                 'xlim' : (200,1000),
@@ -1183,7 +1189,7 @@ def plot_settings():
                 'xlim' : (0,1)
             }
         },
-        'cr_sr_v' : {
+        'sr_v' : {
             'ak8_mass0' : {
                 'xlim' : (60,110),
                 'ylim' : (1e-1,1e5)
@@ -1193,7 +1199,8 @@ def plot_settings():
                 'ylim' : (1e-1,1e6)
             },
             'recoil' : {
-                'ylim' : (1e-4,1e4)
+                'xlim' : (250,1000),
+                'ylim' : (1e-3,1e4)
             },
             'ak8_pt0' : {
                 'xlim' : (200,1000),
@@ -1240,8 +1247,8 @@ def plot_settings():
                     'ylim' : (1e-1,1e6)
                 },
                 'recoil' : {
-                    'xlim' : (200,2000),
-                    'ylim' : (1e-4,1e4)
+                    'xlim' : (250,1000),
+                    'ylim' : (1e-3,1e4)
                 },
                 'ak8_pt0' : {
                     'xlim' : (200,1000),
@@ -1281,8 +1288,8 @@ def plot_settings():
                     'ylim' : (1e-3,1e4)
                 },
                 'recoil' : {
-                    'xlim' : (200,2000),
-                    'ylim' : (1e-6,1e2)
+                    'xlim' : (250,1000),
+                    'ylim' : (1e-5,1e2)
                 },
                 'ak8_pt0' : {
                     'xlim' : (200,1000),
