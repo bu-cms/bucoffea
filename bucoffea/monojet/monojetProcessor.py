@@ -36,6 +36,7 @@ from bucoffea.helpers.dataset import (
                                       is_lo_g,
                                       is_nlo_z,
                                       is_nlo_w,
+                                      has_v_jet,
                                       is_data,
                                       extract_year
                                      )
@@ -135,6 +136,7 @@ class monojetProcessor(processor.ProcessorABC):
         df['is_lo_g'] = is_lo_g(dataset)
         df['is_nlo_z'] = is_nlo_z(dataset)
         df['is_nlo_w'] = is_nlo_w(dataset)
+        df['has_v_jet'] = has_v_jet(dataset)
         df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g']
         df['is_data'] = is_data(dataset)
 
@@ -376,6 +378,16 @@ class monojetProcessor(processor.ProcessorABC):
                     region_weights.add('trigger', evaluator["trigger_met"](df['recoil_pt']))
                 elif re.match(r'cr_g.*', region):
                     region_weights.add('trigger', np.ones(df.size))
+
+            if df['has_v_jet']:
+                if re.match(r'.*_loose_v.*', regions):
+                    region_weights.add('wjet_tag_loose', evaluator['wjet_tag_loose'](ak8.pt.max()))
+                if re.match(r'.*_loosemd_v.*', regions):
+                    region_weights.add('wjet_tag_loosemd', evaluator['wjet_tag_loosemd'](ak8.pt.max()))
+                if re.match(r'.*_tight_v.*', regions):
+                    region_weights.add('wjet_tag_tight', evaluator['wjet_tag_tight'](ak8.pt.max()))
+                if re.match(r'.*_tightmd_v.*', regions):
+                    region_weights.add('wjet_tag_tightmd', evaluator['wjet_tag_tightmd'](ak8.pt.max()))
 
 
 
