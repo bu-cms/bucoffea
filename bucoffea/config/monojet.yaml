@@ -464,6 +464,20 @@ era2018:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_syst
       file: data/sf/muon/2018_RunABCD_SF_ISO.root
 
+          # These are 2017 numbers for now
+    wtag_loose: # https://indico.cern.ch/event/840827/contributions/3527925/attachments/1895214/3126510/DeepAK8_Top_W_SFs_2017_JMAR_PK.pdf
+        histogram: WTag_loose_ak8_pt
+        file: data/sf/ak8/wtag_eff_SF_2017.root
+    wtag_loosemd: 
+        histogram: WTag_loosemd_ak8_pt
+        file: data/sf/ak8/wtag_eff_SF_2017.root
+    wtag_tight: # https://indico.cern.ch/event/840827/contributions/3527925/attachments/1895214/3126510/DeepAK8_Top_W_SFs_2017_JMAR_PK.pdf
+        histogram: WTag_tight_ak8_pt
+        file: data/sf/ak8/wtag_eff_SF_2017.root
+    wtag_tightmd: 
+        histogram: WTag_tightmd_ak8_pt
+        file: data/sf/ak8/wtag_eff_SF_2017.root
+
     pileup:
       histogram: "sf2018_nominal"
       file: "data/sf/pileup/pileup.root"
