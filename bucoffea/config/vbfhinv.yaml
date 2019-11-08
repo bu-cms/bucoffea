@@ -14,12 +14,12 @@ default:
           deta: 4
       leadak4:
         pt: 80   # min
-        eta: 4.7  # max
+        eta: 5.0  # max
         nhf: 0.8  # max
         chf: 0.1  # min
       trailak4:
         pt: 40   # min
-        eta: 4.7  # max
+        eta: 5.0  # max
         nhf: 999  # max
         chf: -999  # min
       mindphijr : 0.5 # min
