@@ -381,13 +381,13 @@ class monojetProcessor(processor.ProcessorABC):
 
             if df['has_v_jet']:
                 if re.match(r'.*_loose_v.*', region):
-                    region_weights.add('wjet_tag_loose', evaluator['wjet_tag_loose'](ak8.pt.max()))
+                    region_weights.add('wtag_loose', evaluator['wtag_loose'](ak8.pt.max()))
                 if re.match(r'.*_loosemd_v.*', region):
-                    region_weights.add('wjet_tag_loosemd', evaluator['wjet_tag_loosemd'](ak8.pt.max()))
+                    region_weights.add('wtag_loosemd', evaluator['wtag_loosemd'](ak8.pt.max()))
                 if re.match(r'.*_tight_v.*', region):
-                    region_weights.add('wjet_tag_tight', evaluator['wjet_tag_tight'](ak8.pt.max()))
+                    region_weights.add('wtag_tight', evaluator['wtag_tight'](ak8.pt.max()))
                 if re.match(r'.*_tightmd_v.*', region):
-                    region_weights.add('wjet_tag_tightmd', evaluator['wjet_tag_tightmd'](ak8.pt.max()))
+                    region_weights.add('wtag_tightmd', evaluator['wtag_tightmd'](ak8.pt.max()))
 
 
 
