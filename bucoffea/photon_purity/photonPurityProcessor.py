@@ -69,6 +69,13 @@ def medium_id_no_sieie_inv_iso(photons):
 
 def setup_photons(df):
     # Setup photons
+
+    if extract_year(df['dataset']) == 2016:
+        id_branch = 'Photon_cutBased'
+    else:
+        id_branch = 'Photon_cutBasedBitmap'
+
+
     photons = JaggedCandidateArray.candidatesfromcounts(
         df['nPhoton'],
         pt=df['Photon_pt'],
@@ -76,7 +83,7 @@ def setup_photons(df):
         abseta=np.abs(df['Photon_eta']),
         phi=df['Photon_phi'],
         mass=0*df['Photon_pt'],
-        mediumId=(df['Photon_cutBasedBitmap']>=2) & df['Photon_electronVeto'],
+        mediumId=(df[id_branch]>=2) & df['Photon_electronVeto'],
         r9=df['Photon_r9'],
         barrel=np.abs(df['Photon_eta']) < 1.479,
         vid=df['Photon_vidNestedWPBitmap'],
