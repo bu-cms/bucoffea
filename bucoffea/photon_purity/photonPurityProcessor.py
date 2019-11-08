@@ -161,8 +161,8 @@ class photonPurityProcessor(processor.ProcessorABC):
         dataset = df['dataset']
 
         # Lumi mask
+        year = extract_year(dataset)
         if is_data(dataset):
-            year = extract_year(dataset)
             if year == 2016:
                 json = bucoffea_path('data/json/Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt')
             elif year == 2017:
@@ -179,6 +179,10 @@ class photonPurityProcessor(processor.ProcessorABC):
         else:
             filt_met = mask_and(df, cfg.FILTERS.MC)
 
+        if year == 2016:
+            trigger = 'HLT_Photon175'
+        else:
+            trigger = 'HLT_Photon200'
 
         photons = setup_photons(df)
 
@@ -193,7 +197,7 @@ class photonPurityProcessor(processor.ProcessorABC):
         event_mask = filt_met \
                      & lumi_mask \
                      & (ak4.counts > 0) \
-                     & df['HLT_Photon200'] \
+                     & df[trigger] \
                      & (df['MET_pt'] < 60)
 
         # Generator weight
