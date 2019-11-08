@@ -380,13 +380,13 @@ class monojetProcessor(processor.ProcessorABC):
                     region_weights.add('trigger', np.ones(df.size))
 
             if df['has_v_jet']:
-                if re.match(r'.*_loose_v.*', regions):
+                if re.match(r'.*_loose_v.*', region):
                     region_weights.add('wjet_tag_loose', evaluator['wjet_tag_loose'](ak8.pt.max()))
-                if re.match(r'.*_loosemd_v.*', regions):
+                if re.match(r'.*_loosemd_v.*', region):
                     region_weights.add('wjet_tag_loosemd', evaluator['wjet_tag_loosemd'](ak8.pt.max()))
-                if re.match(r'.*_tight_v.*', regions):
+                if re.match(r'.*_tight_v.*', region):
                     region_weights.add('wjet_tag_tight', evaluator['wjet_tag_tight'](ak8.pt.max()))
-                if re.match(r'.*_tightmd_v.*', regions):
+                if re.match(r'.*_tightmd_v.*', region):
                     region_weights.add('wjet_tag_tightmd', evaluator['wjet_tag_tightmd'](ak8.pt.max()))
 
 

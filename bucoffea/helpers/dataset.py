@@ -25,7 +25,7 @@ def is_nlo_w(dataset):
     return bool(re.match(r'W(\d*)Jet.*FXFX.*', dataset))
 
 def has_v_jet(dataset):
-    return bool(re.match(r'(WW|WZ|ZZ|WW).*', dataset))
+    return bool(re.match(r'(WW|WZ|ZZ).*', dataset))
 
 def is_data(dataset):
     tags = ['EGamma','MET','SingleElectron','SingleMuon','SinglePhoton','JetHT']
