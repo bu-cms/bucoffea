@@ -1,29 +1,28 @@
 import ROOT
 from array import array
 
-outfilename = "../../../data/sf/ak8/wtag_eff_SF_2017.root"
-#outfilename = "wtag_eff_SF_2017.root"
+outfilename = "../../../data/sf/ak8/wtag_eff_SF.root"
+#outfilename = "wtag_eff_SF_2017test.root"
 outfile = ROOT.TFile.Open(outfilename, "recreate")
 
 #ref: These numbers are read from https://indico.cern.ch/event/840827/contributions/3527925/attachments/1895214/3126510/DeepAK8_Top_W_SFs_2017_JMAR_PK.pdf page23
+#loose: 5%, tight: 0.5%
 binning    = [200, 300, 400, 800]
-SF_loose   = [1.01, 0.93, 1.02]
-SF_loosemd = [0.81, 0.95, 0.85]
-SF_tight   = [0.86, 0.86, 0.88]
-SF_tightmd = [0.75, 0.61, 0.78]
+SFs = {}
+SFs[(2017,'loose'  )] = [0.93, 1.00, 1.06]
+SFs[(2017,'tight'  )] = [0.83, 0.79, 0.80]
+SFs[(2018,'loose'  )] = [1.05, 0.82, 0.89]
+SFs[(2018,'tight'  )] = [0.75, 0.76, 0.74]
+SFs[(2017,'loosemd')] = [0.95, 0.99, 0.87]
+SFs[(2017,'tightmd')] = [0.80, 0.66, 0.79]
+SFs[(2018,'loosemd')] = [0.93, 0.95, 0.94]
+SFs[(2018,'tightmd')] = [0.76, 0.71, 0.75]
 
-h_loose = ROOT.TH1F("WTag_loose_ak8_pt", "WTag_loose_ak8_pt", len(binning)-1, array('d',binning))
-for ibin, SF in enumerate(SF_loose):
-    h_loose.SetBinContent(ibin+1, SF)
-h_loosemd = ROOT.TH1F("WTag_loosemd_ak8_pt", "WTag_loosemd_ak8_pt", len(binning)-1, array('d',binning))
-for ibin, SF in enumerate(SF_loosemd):
-    h_loosemd.SetBinContent(ibin+1, SF)
-h_tight = ROOT.TH1F("WTag_tight_ak8_pt", "WTag_tight_ak8_pt", len(binning)-1, array('d',binning))
-for ibin, SF in enumerate(SF_tight):
-    h_tight.SetBinContent(ibin+1, SF)
-h_tightmd = ROOT.TH1F("WTag_tightmd_ak8_pt", "WTag_tightmd_ak8_pt", len(binning)-1, array('d',binning))
-for ibin, SF in enumerate(SF_tightmd):
-    h_tightmd.SetBinContent(ibin+1, SF)
+for year in [2017,2018]:
+	for wp in ['loose','loosemd','tight','tightmd']:
+		htmp = ROOT.TH1F(f'WTag_{year}_{wp}_ak8_pt', f'WTag_{year}_{wp}_ak8_pt', len(binning)-1, array('d',binning))
+		for ibin, SF in enumerate(SFs[(year, wp)]):
+		    htmp.SetBinContent(ibin+1, SF)
+		htmp.Write()
 
-outfile.Write()
 outfile.Close()
