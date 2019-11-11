@@ -50,6 +50,30 @@ def plot_nlo_qcd():
         plt.legend()
         fig.savefig(pjoin(outdir, f'nlo_qcd_{selection}.pdf'))
 
+def plot_nnlo_qcd():
+    outdir = './output'
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    f = uproot.open(f'../../../data/sf/theory/lindert_qcd_nnlo_sf.root')
+    processes = {
+        'aj' : r'$\gamma$',
+        'eej' : 'DY',
+        'evj' : 'W',
+        'vvj' : r'Z($\nu\nu$)',
+    }
+    fig = plt.gcf()
+    fig.clf()
+    for proc, name in processes.items():
+        h = f[proc]
+        plt.plot(0.5*(h.bins[:,0]+h.bins[:,1]), h.values,'o-', label=name,fillstyle='none')
+    plt.ylabel('NLO -> NNLO QCD SF')
+    plt.xlabel('Boson $p_{T}$ (GeV)')
+    plt.grid(linestyle='--')
+    plt.legend()
+    plt.gca().set_xscale('log')
+    plt.gcf().text(0.3,0.9,'From Lindert et al., arxiv:1705.04664')
+    fig.savefig(pjoin(outdir, f'nnlo_qcd.pdf'))
+
 def plot_consistency():
     outdir = './output'
     if not os.path.exists(outdir):
@@ -72,4 +96,5 @@ def plot_consistency():
 
 # plot_consistency()
 # plot_nlo_ewk()
-plot_nlo_qcd()
+# plot_nlo_qcd()
+plot_nnlo_qcd()
