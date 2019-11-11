@@ -50,6 +50,44 @@ def plot_nlo_qcd():
         plt.legend()
         fig.savefig(pjoin(outdir, f'nlo_qcd_{selection}.pdf'))
 
+import numpy as np
+def plot_nlo_qcd_forewk():
+    outdir = './output'
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    infiles = {
+        'W' : 'kFactor_WToLNu_pT_Mjj.root',
+        'DY' : 'kFactor_ZToNuNu_pT_Mjj.root'
+    }
+
+    for proc, infile in infiles.items():
+        f = uproot.open(f'../../../data/sf/theory/{infile}')
+        fig = plt.gcf()
+        fig.clf()
+        h = f['TH2F_kFactor']
+        im = plt.gca().pcolormesh(h.edges[0], h.edges[1], h.values.T)
+        plt.ylabel('LO -> NLO QCD SF')
+        plt.xlabel('Boson $p_{T}$ (GeV)')
+        cb = fig.colorbar(im)
+        cb.set_label('LO $\\rightarrow$ NLO SF')
+        im.set_clim(0.85,1.1)
+
+        for ix in range(len(h.bins[0])):
+            for iy in range(len(h.bins[1])):
+                textcol = 'white' if h.values.T[iy, ix] < 0.95 else 'black'
+                plt.gca().text(
+                        np.mean(h.bins[0],axis=1)[ix],
+                        np.mean(h.bins[1],axis=1)[iy],
+                        f'  {h.values.T[iy, ix]:.3f}',
+                        ha='center',
+                        va='center',
+                        color=textcol,
+                        fontsize=9
+                        )
+        fig.tight_layout()
+        fig.savefig(pjoin(outdir, f'nlo_qcd_for_ewk_{proc.lower()}.pdf'))
+
 def plot_nnlo_qcd():
     outdir = './output'
     if not os.path.exists(outdir):
@@ -97,4 +135,5 @@ def plot_consistency():
 # plot_consistency()
 # plot_nlo_ewk()
 # plot_nlo_qcd()
+plot_nlo_qcd_forewk()
 plot_nnlo_qcd()
