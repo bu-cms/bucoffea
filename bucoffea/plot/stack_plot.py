@@ -72,7 +72,7 @@ class Style():
                     'ak8_pt0' : hist.Bin('jetpt',r'Leading AK8 jet $p_{T}$ (GeV)',list(range(80,600,20)) + list(range(600,1000,40)) ),
                     'ak8_pt1' : hist.Bin('jetpt',r'Trailing AK8 jet $p_{T}$ (GeV)',list(range(40,600,20)) + list(range(600,1000,40)) ),
                     'ak8_pt' : hist.Bin('jetpt',r'All AK8 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,40)) ),
-                    'ak8_ptraw0' : hist.Bin('jetpt',r'Leading AK8 raw jet $p_{T}$ (GeV)'',list(range(100,600,20)) + list(range(600,1000,40)) ),
+                    'ak8_ptraw0' : hist.Bin('jetpt',r'Leading AK8 raw jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,40)) ),
                     'ak8_pt0_eta0' : hist.Bin('jetpt','jetpt',list(range(100,600,20)) + list(range(600,1000,40)) ),
                     'photon_pt0' : hist.Bin('pt',r'Photon $p_{T}$ (GeV)',list(range(200,600,20)) + list(range(600,1000,20)) ),
                     'electron_pt0' : hist.Bin('pt',r'Leading electron $p_{T}$ (GeV)',list(range(0,600,20))),
