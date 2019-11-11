@@ -259,6 +259,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('leadak8_wvsqcd_tight', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.TIGHT)).any())
 
         selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_tau21", "leadak8_mass"))
+        selection.add('only_one_ak8', ak8.counts==1)
 
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()
@@ -379,7 +380,7 @@ class monojetProcessor(processor.ProcessorABC):
                 elif re.match(r'cr_g.*', region):
                     region_weights.add('trigger', np.ones(df.size))
 
-            if df['has_v_jet']:
+            if df['has_v_jet'] and not df['is_data']:
                 if re.match(r'.*_loose_v.*', region):
                     region_weights.add('wtag_loose', evaluator['wtag_loose'](ak8.pt.max()))
                 if re.match(r'.*_loosemd_v.*', region):
@@ -498,6 +499,12 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_wvsqcdmd0',  tagger=ak8[leadak8_index].wvsqcdmd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcd0',    tagger=ak8[leadak8_index].zvsqcd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcdmd0',  tagger=ak8[leadak8_index].zvsqcdmd[mask].flatten(),     weight=w_leadak8)
+                # Dimuon specifically for deepak8 mistag rate measurement
+                if region=='cr_2m_1ak8_inclusive_v':
+                    ezfill('ak8_passloose_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
+                    ezfill('ak8_passtight_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHT, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
+                    ezfill('ak8_passloosemd_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSEMD, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
+                    ezfill('ak8_passtightmd_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHTMD, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
 
             # B tag discriminator
             btag = getattr(ak4[ak4.abseta<2.4], cfg.BTAG.ALGO)

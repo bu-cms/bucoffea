@@ -19,6 +19,7 @@ def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
     region_ax = Cat("region", "Selection region")
     type_ax = Cat("type", "Type")
+    wppass_ax = Bin("wppass", "WP Pass",2,-0.5,1.5)
 
     vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 50, 0, 2000)
 
@@ -102,6 +103,10 @@ def monojet_accumulator(cfg):
     items["ak8_wvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_zvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_zvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+    items["ak8_passtight_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+    items["ak8_passloosemd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+    items["ak8_passtightmd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
 
     items["ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -453,6 +458,10 @@ def monojet_regions(cfg):
                 regions[newRegionName].remove('leadak8_mass')
             else:
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
+
+    # add a only 1 ak8 jet selection for measuring deepak8 mistag rate
+    regions['cr_2m_1ak8_inclusive_v'] = copy.deepcopy(regions['cr_2m_inclusive_v'])
+    regions['cr_2m_1ak8_inclusive_v'].append('only_one_ak8')
 
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
