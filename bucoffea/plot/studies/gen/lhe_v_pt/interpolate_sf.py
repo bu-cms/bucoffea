@@ -9,7 +9,11 @@ f = uproot.open('2017_gen_v_pt_qcd_sf.root')
 def fitfun(x, a, b, c):
     return a * np.exp(-b * x) + c
 
-
+pretty_name = {
+    'wjet' : 'W',
+    'dy' : 'DY',
+    'gjets' : r'$\gamma$+jets'
+}
 for process in ['wjet','dy','gjets']:
     x = {}
     y = {}
@@ -28,11 +32,11 @@ for process in ['wjet','dy','gjets']:
 
         # if not sel=='monojet':
         #     continue
-        ax.plot(x[sel],y[sel],'o',label=sel)
+        ax.plot(x[sel],y[sel],'o',label=f'{pretty_name[process]}, {sel} selection')
         popt, _ = curve_fit(fitfun, x[sel], y[sel], bounds = (0, [3, 5e-3, 1]))
 
         ix = np.linspace(min(x[sel]), max(x[sel]),1e3)
-        ax.plot(ix, fitfun(ix, *popt),'-')
+        ax.plot(ix, fitfun(ix, *popt),'-', label='Exponential fit')
         rax.plot(x[sel], y[sel] / fitfun(x[sel], *popt) ,'-o')
 
         rax.set_ylim(0.9,1.1)
@@ -52,7 +56,7 @@ for process in ['wjet','dy','gjets']:
         '''
         )
 
-        ax.text(0.6, 0.4, text,
+        ax.text(0.6, 0.3, text,
                 fontsize=10,
                 horizontalalignment='left',
                 verticalalignment='bottom',
