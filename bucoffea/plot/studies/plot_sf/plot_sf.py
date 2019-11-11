@@ -71,6 +71,7 @@ def plot_nnlo_qcd():
     plt.grid(linestyle='--')
     plt.legend()
     plt.gca().set_xscale('log')
+    plt.gcf().text(0.3,0.9,'From Lindert et al., arxiv:1705.04664')
     fig.savefig(pjoin(outdir, f'nnlo_qcd.pdf'))
 
 def plot_consistency():
