@@ -598,13 +598,13 @@ VBF_HToInvisible_M1000_pow_pythia8_2016:
 VBF_HToInvisible_M110_pow_pythia8_2016:
   gen: 0.0
 VBF_HToInvisible_M125_PSweights_pow_pythia8_2018:
-  gen: 3.861
+  nnlo: 3.782E+00
 VBF_HToInvisible_M125_pow_pythia8_2016:
-  gen: 0.0
+  nnlo:  3.782E+00
 VBF_HToInvisible_M125_pow_pythia8_2017:
-  gen: 3.861
+  nnlo:  3.782E+00
 VBF_HToInvisible_M125_pow_pythia8_2018:
-  gen: 3.861
+  nnlo:  3.782E+00
 VBF_HToInvisible_M150_pow_pythia8_2016:
   gen: 0.0
 VBF_HToInvisible_M200_pow_pythia8_2016:
