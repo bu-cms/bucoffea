@@ -8,7 +8,7 @@ outfile = ROOT.TFile.Open(outfilename,'recreate')
 newbin = hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [200,300,400,800])
 
 inpath = "../../input/merged"
-region = 'cr_2m_1ak8_v'
+region = 'cr_2m_1ak8_inclusive_v'
 
 plot_dir = 'output/'
 if not os.path.exists(plot_dir):
@@ -37,7 +37,7 @@ def divide_sumw2(sumw_a, sumw2_a, sumw_b, sumw2_b): #return (sumw_c, sumw2_c) fo
 
 
 def get_mistag_rate(hist, dataset):
-    h_all = htmp[dataset].integrate('dataset').integrate('wppass',slice(-0.5,0.5))
+    h_all = htmp[dataset].integrate('dataset').integrate('wppass')
     h_pass= htmp[dataset].integrate('dataset').integrate('wppass',slice(0.5,1.5))
     sumw_all , sumw2_all  = h_all .values(sumw2=True)[('cr_2m_1ak8_inclusive_v',)]
     sumw_pass, sumw2_pass = h_pass.values(sumw2=True)[('cr_2m_1ak8_inclusive_v',)]
@@ -55,6 +55,13 @@ for year in [2017,2018]:
         htmp = merge_extensions(htmp, acc, reweight_pu=True)
         scale_xs_lumi(htmp)
         htmp = merge_datasets(htmp)
+
+        #make stack_plot for all and pass
+        acc[distribution+'_all'] = htmp.integrate('wppass')
+        acc[distribution+'_pass'] = htmp.integrate('wppass', slice(0.5,1.5))
+        make_plot(acc, region=region, distribution=distribution+'_all', year=year, data=data, mc=mc, outdir='./output/stack_plots', output_format='png')
+        make_plot(acc, region=region, distribution=distribution+'_pass', year=year, data=data, mc=mc, outdir='./output/stack_plots', output_format='png', ylim=(10e-3,10e3))
+
         if newbin:
             htmp = htmp.rebin(htmp.axis('jetpt'),newbin)
 
