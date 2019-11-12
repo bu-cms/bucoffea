@@ -19,10 +19,10 @@ SFs[(2018,'loosemd')] = [0.93, 0.95, 0.94]
 SFs[(2018,'tightmd')] = [0.76, 0.71, 0.75]
 
 for year in [2017,2018]:
-	for wp in ['loose','loosemd','tight','tightmd']:
-		htmp = ROOT.TH1F(f'WTag_{year}_{wp}_ak8_pt', f'WTag_{year}_{wp}_ak8_pt', len(binning)-1, array('d',binning))
-		for ibin, SF in enumerate(SFs[(year, wp)]):
-		    htmp.SetBinContent(ibin+1, SF)
-		htmp.Write()
+    for wp in ['loose','loosemd','tight','tightmd']:
+        htmp = ROOT.TH1F(f'WTag_{year}_{wp}_ak8_pt', f'WTag_{year}_{wp}_ak8_pt', len(binning)-1, array('d',binning))
+        for ibin, SF in enumerate(SFs[(year, wp)]):
+            htmp.SetBinContent(ibin+1, SF)
+        htmp.Write()
 
 outfile.Close()
