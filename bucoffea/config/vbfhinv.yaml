@@ -140,6 +140,7 @@ default:
         - 30682767
         - 79123963
         - 51393664
+    trigger_study: True
   triggers:
     ht:
       gammaeff:
