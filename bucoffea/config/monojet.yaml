@@ -345,6 +345,19 @@ era2017:
         histogram: WTag_2017_tightmd_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
 
+    wtag_mistag_loose: 
+        histogram: Wmistag_2017_loose_ak8_pt
+        file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_loosemd: 
+        histogram: Wmistag_2017_loosemd_ak8_pt
+        file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_tight: 
+        histogram: Wmistag_2017_tight_ak8_pt
+        file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_tightmd: 
+        histogram: Wmistag_2017_tightmd_ak8_pt
+        file: data/sf/ak8/wtag_mistag_SF.root
+
     pileup:
       histogram: "sf2017_nominal"
       file: "data/sf/pileup/pileup.root"
@@ -476,6 +489,20 @@ era2018:
     wtag_tightmd: 
         histogram: WTag_2018_tightmd_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
+
+    wtag_mistag_loose: 
+        histogram: Wmistag_2018_loose_ak8_pt
+        file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_loosemd: 
+        histogram: Wmistag_2018_loosemd_ak8_pt
+        file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_tight: 
+        histogram: Wmistag_2018_tight_ak8_pt
+        file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_tightmd: 
+        histogram: Wmistag_2018_tightmd_ak8_pt
+        file: data/sf/ak8/wtag_mistag_SF.root
+
     pileup:
       histogram: "sf2018_nominal"
       file: "data/sf/pileup/pileup.root"

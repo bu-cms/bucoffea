@@ -380,15 +380,25 @@ class monojetProcessor(processor.ProcessorABC):
                 elif re.match(r'cr_g.*', region):
                     region_weights.add('trigger', np.ones(df.size))
 
-            if df['has_v_jet'] and not df['is_data']:
-                if re.match(r'.*_loose_v.*', region):
-                    region_weights.add('wtag_loose', evaluator['wtag_loose'](ak8.pt.max()))
-                if re.match(r'.*_loosemd_v.*', region):
-                    region_weights.add('wtag_loosemd', evaluator['wtag_loosemd'](ak8.pt.max()))
-                if re.match(r'.*_tight_v.*', region):
-                    region_weights.add('wtag_tight', evaluator['wtag_tight'](ak8.pt.max()))
-                if re.match(r'.*_tightmd_v.*', region):
-                    region_weights.add('wtag_tightmd', evaluator['wtag_tightmd'](ak8.pt.max()))
+            if not df['is_data']:
+                if df['has_v_jet']:
+                    if re.match(r'.*_loose_v.*', region):
+                        region_weights.add('wtag_loose', evaluator['wtag_loose'](ak8.pt.max()))
+                    if re.match(r'.*_loosemd_v.*', region):
+                        region_weights.add('wtag_loosemd', evaluator['wtag_loosemd'](ak8.pt.max()))
+                    if re.match(r'.*_tight_v.*', region):
+                        region_weights.add('wtag_tight', evaluator['wtag_tight'](ak8.pt.max()))
+                    if re.match(r'.*_tightmd_v.*', region):
+                        region_weights.add('wtag_tightmd', evaluator['wtag_tightmd'](ak8.pt.max()))
+                else:
+                    if re.match(r'.*_loose_v.*', region):
+                        region_weights.add('wtag_mistag_loose', evaluator['wtag_mistag_loose'](ak8.pt.max()))
+                    if re.match(r'.*_loosemd_v.*', region):
+                        region_weights.add('wtag_mistag_loosemd', evaluator['wtag_mistag_loosemd'](ak8.pt.max()))
+                    if re.match(r'.*_tight_v.*', region):
+                        region_weights.add('wtag_mistag_tight', evaluator['wtag_mistag_tight'](ak8.pt.max()))
+                    if re.match(r'.*_tightmd_v.*', region):
+                        region_weights.add('wtag_mistag_tightmd', evaluator['wtag_mistag_tightmd'](ak8.pt.max()))
 
 
 
