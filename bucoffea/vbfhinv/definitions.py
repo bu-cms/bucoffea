@@ -209,18 +209,18 @@ def vbfhinv_regions(cfg):
     # For sync mode
     if cfg.RUN.SYNC:
         regions['cr_sync'] = [
-		    'trig_met',
-			'veto_photon',
-			'mindphijr',
-			'recoil',
-			'two_jets',
-			'leadak4_pt_eta',
-			'trailak4_pt_eta',
-			'hemisphere',
-			'mjj',
-			'dphijj',
-			'detajj'
-		]
+            'trig_met',
+            'veto_photon',
+            'mindphijr',
+            'recoil',
+            'two_jets',
+            'leadak4_pt_eta',
+            'trailak4_pt_eta',
+            'hemisphere',
+            'mjj',
+            'dphijj',
+            'detajj'
+        ]
 
     # Dimuon CR
     cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
@@ -250,9 +250,9 @@ def vbfhinv_regions(cfg):
     regions['cr_g_vbf'] = cr_g_cuts
 
     if cfg.RUN.TRIGGER_STUDY:
-	    # Trigger studies
-		# num = numerator, den = denominator
-		# Single Mu region: Remove mjj cut, add SingleMu trigger, toggle MET trigger
+        # Trigger studies
+        # num = numerator, den = denominator
+        # Single Mu region: Remove mjj cut, add SingleMu trigger, toggle MET trigger
         tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts) 
         tr_1m_num_cuts.remove('mjj')
         tr_1m_num_cuts.append('trig_mu')

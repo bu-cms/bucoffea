@@ -199,13 +199,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('detajj', df['detajj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DETA)
 
         # Divide into three categories for trigger study
-		if cfg.RUN.TRIGGER_STUDY:
-		    two_central_jets = (np.abs(diak4.i0.eta) <= 2.4) & (np.abs(diak4.i1.eta) <= 2.4)
-		    two_forward_jets = (np.abs(diak4.i0.eta) > 2.4) & (np.abs(diak4.i1.eta) > 2.4)
-		    one_jet_forward_one_jet_central = (~two_central_jets) & (~two_forward_jets)
-			selection.add('two_central_jets', two_central_jets.any())
-			selection.add('two_forward_jets', two_forward_jets.any())
-			selection.add('one_jet_forward_one_jet_central', one_jet_forward_one_jet_central.any())
+        if cfg.RUN.TRIGGER_STUDY:
+            two_central_jets = (np.abs(diak4.i0.eta) <= 2.4) & (np.abs(diak4.i1.eta) <= 2.4)
+            two_forward_jets = (np.abs(diak4.i0.eta) > 2.4) & (np.abs(diak4.i1.eta) > 2.4)
+            one_jet_forward_one_jet_central = (~two_central_jets) & (~two_forward_jets)
+            selection.add('two_central_jets', two_central_jets.any())
+            selection.add('two_forward_jets', two_forward_jets.any())
+            selection.add('one_jet_forward_one_jet_central', one_jet_forward_one_jet_central.any())
 
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()
