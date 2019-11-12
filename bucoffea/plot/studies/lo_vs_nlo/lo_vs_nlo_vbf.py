@@ -82,14 +82,12 @@ def plot(inpath):
             outdir = f'./output/{os.path.basename(indir)}/ratios'
 
             # Load ingredients from cache
-    #        acc.load('recoil')
+            acc.load('recoil')
             acc.load('sumw')
             acc.load('sumw_pileup')
             acc.load('nevents')
-            acc.load('muon_eta0')
-            print(acc.keys()) 
-    #        cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo)
-    #        cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo)
+            cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo)
+            cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo)
 
             # Data / MC plots are made here
             # Loop over all regions
