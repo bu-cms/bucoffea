@@ -4,13 +4,13 @@ import os
 import re
 import sys
 from pprint import pprint
-from bucoffea.plot.util import acc_from_dir
+from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi 
 from bucoffea.plot.stack_plot import Style, make_plot
 from bucoffea.plot.cr_ratio_plot import cr_ratio_plot
 from bucoffea.plot.style import plot_settings
 
 from collections import defaultdict
-
+from klepto.archives import dir_archive
 
 def plot(inpath):
         indir=os.path.abspath(inpath)
@@ -20,18 +20,24 @@ def plot(inpath):
         # just a dictionary holding all the histograms
         # Put all your *coffea files into 'indir' and
         # pass the directory as an argument here.
-        # All input files in the direcotry will
+        # All input files in the directory will
         # automatically be found, merged and read.
         # The merging only happens the first time
         # you run over a specific set of inputs.
-        acc = acc_from_dir(indir)
-
+        acc = dir_archive(
+                          inpath,
+                          serialized=True,
+                          compression=0,
+                          memsize=1e3
+                          )
         # Get a settings dictionary that details
         # which plots to make for each region,
         # what the axis limits are, etc
         # Can add plots by extending the dictionary
         # Or modify axes ranges, etc
         settings = plot_settings()
+
+        merged = set()
 
         # Separate plots per year
         for year in [2017,2018]:
@@ -74,8 +80,16 @@ def plot(inpath):
             # LO and NLO. Can be skipped if you only
             # want data / MC agreement plots.
             outdir = f'./output/{os.path.basename(indir)}/ratios'
-            cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo)
-            cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo)
+
+            # Load ingredients from cache
+    #        acc.load('recoil')
+            acc.load('sumw')
+            acc.load('sumw_pileup')
+            acc.load('nevents')
+            acc.load('muon_eta0')
+            print(acc.keys()) 
+    #        cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo)
+    #        cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo)
 
             # Data / MC plots are made here
             # Loop over all regions
@@ -88,38 +102,49 @@ def plot(inpath):
 
                 # Loop over the distributions
                 for distribution in plotset.keys():
-                    if not distribution in acc.keys():
-                        print(f"WARNING: Distribution {distribution} not found in input files.")
+                    # Load from cache
+                    if not distribution in merged:
+                        acc.load(distribution)
+
+                        if not distribution in acc.keys():
+                            print(f"WARNING: Distribution {distribution} not found in input files.")
+                            continue
+                        acc[distribution] = merge_extensions(acc[distribution], acc, reweight_pu=not ('nopu' in distribution))
+                        scale_xs_lumi(acc[distribution]) 
+                        acc[distribution] = merge_datasets(acc[distribution])
+                        merged.add(distribution)
+                    try:
+                        # The heavy lifting of making a plot is hidden
+                        # in make_plot. We call it once using the LO MC
+                        make_plot(acc,
+                                region=region,
+                                distribution=distribution,
+                                year=year,
+                                data=data[region],
+                                mc=mc_lo[region],
+                                ylim=plotset[distribution].get('ylim',None),
+                                xlim=plotset[distribution].get('xlim',None),
+                                tag = 'losf',
+                                outdir=f'./output/{os.path.basename(indir)}/{region}',
+                                output_format='png')
+
+                        # And then we also call it for the NLO MC
+                        # The output files will be named according to the 'tag'
+                        # argument, so we  will be able to tell them apart.
+                        make_plot(acc,
+                                region=region,
+                                distribution=distribution,
+                                year=year,
+                                data=data[region],
+                                mc=mc_nlo[region],
+                                ylim=plotset[distribution].get('ylim',None),
+                                xlim=plotset[distribution].get('xlim',None),
+                                tag = 'nlo',
+                                outdir=f'./output/{os.path.basename(indir)}/{region}',
+                                output_format='png')
+                    
+                    except KeyError:
                         continue
-                    # The heavy lifting of making a plot is hidden
-                    # in make_plot. We call it once using the LO MC
-                    make_plot(acc,
-                            region=region,
-                            distribution=distribution,
-                            year=year,
-                            data=data[region],
-                            mc=mc_lo[region],
-                            ylim=plotset[distribution].get('ylim',None),
-                            xlim=plotset[distribution].get('xlim',None),
-                            tag = 'losf',
-                            outdir=f'./output/{os.path.basename(indir)}/{region}',
-                            output_format='png')
-
-                    # And then we also call it for the NLO MC
-                    # The output files will be named according to the 'tag'
-                    # argument, so we  will be able to tell them apart.
-                    make_plot(acc,
-                            region=region,
-                            distribution=distribution,
-                            year=year,
-                            data=data[region],
-                            mc=mc_nlo[region],
-                            ylim=plotset[distribution].get('ylim',None),
-                            xlim=plotset[distribution].get('xlim',None),
-                            tag = 'nlo',
-                            outdir=f'./output/{os.path.basename(indir)}/{region}',
-                            output_format='png')
-
 
 def main():
     inpath = sys.argv[1]
