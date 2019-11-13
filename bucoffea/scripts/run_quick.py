@@ -18,8 +18,16 @@ def parse_commandline():
 def main():
 
     fileset = {
-        "VBF_HToInvisible_M125_pow_pythia8_2017" : [
-            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/21Aug19/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/VBF_HToInvisible_M125_pow_pythia8_2017/190822_134734/0000/tree_1.root"
+        "ZJetsToNuNu_HT-400To600-mg_2018" : [
+            "/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/sync_27Oct19/ZJetsToNuNu_HT-400To600_13TeV-madgraph/ZJetsToNuNu_HT-400To600-mg_2018/191108_200239/0000/tree_1.root",
+            "/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/sync_27Oct19/ZJetsToNuNu_HT-400To600_13TeV-madgraph/ZJetsToNuNu_HT-400To600-mg_2018/191108_200239/0000/tree_2.root",
+            "/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/sync_27Oct19/ZJetsToNuNu_HT-400To600_13TeV-madgraph/ZJetsToNuNu_HT-400To600-mg_2018/191108_200239/0000/tree_3.root",
+            "/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/sync_27Oct19/ZJetsToNuNu_HT-400To600_13TeV-madgraph/ZJetsToNuNu_HT-400To600-mg_2018/191108_200239/0000/tree_4.root",
+            "/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/sync_27Oct19/ZJetsToNuNu_HT-400To600_13TeV-madgraph/ZJetsToNuNu_HT-400To600-mg_2018/191108_200239/0000/tree_5.root",
+            "/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/sync_27Oct19/ZJetsToNuNu_HT-400To600_13TeV-madgraph/ZJetsToNuNu_HT-400To600-mg_2018/191108_200239/0000/tree_6.root",  
+            "/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/sync_27Oct19/ZJetsToNuNu_HT-400To600_13TeV-madgraph/ZJetsToNuNu_HT-400To600-mg_2018/191108_200239/0000/tree_7.root",
+            "/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/sync_27Oct19/ZJetsToNuNu_HT-400To600_13TeV-madgraph/ZJetsToNuNu_HT-400To600-mg_2018/191108_200239/0000/tree_8.root",
+            "/eos/cms/store/group/phys_exotica/monojet/aalbert/nanopost/sync_27Oct19/ZJetsToNuNu_HT-400To600_13TeV-madgraph/ZJetsToNuNu_HT-400To600-mg_2018/191108_200239/0000/tree_9.root"
         ]
     }
 
