@@ -52,7 +52,7 @@ def trigger_selection(selection, df, cfg):
     dataset = df['dataset']
     if cfg.RUN.SYNC: # Synchronization mode
         selection.add('filt_met', pass_all)
-        selection.add('trig_met', pass_all)
+        selection.add('trig_met', df['HLT_PFMETNoMu120_PFMHTNoMu120_IDTight'])
         selection.add('trig_ele', pass_all)
         selection.add('trig_mu',  pass_all)
         selection.add('trig_photon',  pass_all)
