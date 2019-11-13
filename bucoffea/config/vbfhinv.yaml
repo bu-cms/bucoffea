@@ -128,7 +128,7 @@ default:
       mode: nano
 
   run:
-    sync: True
+    sync: False
     save:
       passing: False
     kinematics:
