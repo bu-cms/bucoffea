@@ -56,7 +56,10 @@ for lepton_flag in ['1m','2m','1e','2e']:
             mc_Real = re.compile(f'(ST_|TTJets-MLM_|Diboson_){year}')
             mc_False = re.compile(f'(VDY.*HT.*|QCD.*|W.*HT.*|GJets.*HT.*|ZJetsToNuNu.*){year}')
             mc_All = re.compile(f'(VDY.*HT.*|QCD.*|W.*HT.*|ST_|TTJets-MLM_|Diboson_|GJets.*HT.*|ZJetsToNuNu.*){year}')
-            data = re.compile(f'MET_{year}')
+            if lepton_flag=='1e' or lepton_flag=='2e':
+                data = re.compile(f'EGamma_{year}')
+            else:
+                data = re.compile(f'MET_{year}')
             distribution = f'ak8_pass{wp}_pt0'
             acc.load(distribution)
             htmp = acc[distribution]
@@ -106,7 +109,7 @@ for lepton_flag in ['1m','2m','1e','2e']:
             plt.close()
             fig = plt.figure()
             plt.errorbar(centers, sf, xerr=halfwidth, yerr=error_sf)
-            plt.xlabel('ak8 jet pt'); plt.ylabel('mistag rate data/MC SF'); plt.ylim(0,1.5)
+            plt.xlabel('ak8 jet pt'); plt.ylabel('mistag rate data/MC SF'); #plt.ylim(0,1.5)
             fig.savefig(plot_dir+f'mistagSF_{lepton_flag}_{wp}_{year}.png')
             plt.close()
             
