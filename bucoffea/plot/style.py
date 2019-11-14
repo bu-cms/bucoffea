@@ -490,7 +490,7 @@ def plot_settings():
             'ak4_phi' : {
                 'ylim' : (1e0,1e5)
             },
-            'photon_phi' : {
+            'photon_phi0' : {
                 'ylim' : (1e0,1e5)
             },
             'ak4_eta0' : {
@@ -505,7 +505,7 @@ def plot_settings():
                 'xlim' : (-3,3),
                 'ylim' : (1e0,1e7)
             },
-            'photon_eta' : {
+            'photon_eta0' : {
                 'xlim' : (-3,3),
                 'ylim' : (1e0,1e6)
             },
