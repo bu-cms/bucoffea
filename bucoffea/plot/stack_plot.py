@@ -33,6 +33,7 @@ colors = {
     '.*QCD.*' : '#08306b',
     '.*GJets_HT.*' : '#fc4e2a',
     '.*GJets_SM.*' : '#a76b51',
+    'ZJetsToNuNu.*' : '#0050ec',
     'ZNuNuGJets_.*' : '#0050ec'
 }
 class Style():
@@ -48,6 +49,7 @@ class Style():
             'cr_1e_v' : 'Single-e CR, mono-v',
             'cr_2e_v' : 'Di-e CR, mono-v',
             'cr_g_v' : 'Single-Photon CR, mono-v',
+            'sr_vbf' : 'Signal region, vbfhinv',
             'cr_1m_vbf' : 'Single-$\mu$ CR, vbfhinv',
             'cr_2m_vbf' : 'Di-$\mu$ CR, vbfhinv',
             'cr_1e_vbf' : 'Single-e CR, vbfhinv',
@@ -131,8 +133,11 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     h = h.integrate(h.axis('region'),region)
 
     # Plotting
+    if not region.startswith('sr'):
+        fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
 
-    fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
+    else:
+        fig, ax = plt.subplots(1, 1, figsize=(7,5))
 
     data_err_opts = {
         'linestyle':'none',
@@ -203,15 +208,16 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     ax.legend(title=region_name,ncol=1)
 
     # Ratio plot
-    if data:
-        hist.plotratio(h[data].integrate('dataset'), h[mc].integrate('dataset'),
-                    ax=rax,
-                    denom_fill_opts={},
-                    guide_opts={},
-                    unc='num',
-                    overflow='all',
-                    error_opts=data_err_opts
-                    )
+    if not region.startswith('sr'):
+        if data:
+            hist.plotratio(h[data].integrate('dataset'), h[mc].integrate('dataset'),
+                        ax=rax,
+                        denom_fill_opts={},
+                        guide_opts={},
+                        unc='num',
+                        overflow='all',
+                        error_opts=data_err_opts
+                        )
 
     ax.text(1., 0., distribution,
                 fontsize=10,
@@ -233,6 +239,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
                )
     # Aesthetics
     ax.set_yscale("log")
+    ax.set_ylabel('Events / Bin width')
     plot_settings=style.plot_settings()
     if region in plot_settings.keys(): 
         plot_settings=plot_settings[region]
@@ -249,19 +256,19 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         ax.set_xlim(xlim[0],xlim[1])
     elif 'xlim' in plot_settings.keys():
         ax.set_xlim(plot_settings['xlim'])
-
-    if rylim:
-        rax.set_ylim(*rylim)
-    else:
-        rax.set_ylim(0.75,1.25)
-    loc1 = matplotlib.ticker.MultipleLocator(base=0.2)
-    loc2 = matplotlib.ticker.MultipleLocator(base=0.1)
-    rax.yaxis.set_major_locator(loc1)
-    rax.yaxis.set_minor_locator(loc2)
-    rax.grid(axis='y',which='minor',linestyle='--')
-    rax.grid(axis='y',which='major',linestyle='--')
-    ax.set_ylabel('Events / Bin width')
-    rax.set_ylabel('Data / MC')
+    
+    if not region.startswith('sr'):
+        if rylim:
+            rax.set_ylim(*rylim)
+        else:
+            rax.set_ylim(0.75,1.25)
+        loc1 = matplotlib.ticker.MultipleLocator(base=0.2)
+        loc2 = matplotlib.ticker.MultipleLocator(base=0.1)
+        rax.yaxis.set_major_locator(loc1)
+        rax.yaxis.set_minor_locator(loc2)
+        rax.grid(axis='y',which='minor',linestyle='--')
+        rax.grid(axis='y',which='major',linestyle='--')
+        rax.set_ylabel('Data / MC')
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
