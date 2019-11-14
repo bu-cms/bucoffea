@@ -123,7 +123,10 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
                 unc='clopper-pearson',
                 error_opts=markers('data')
                 )
-    ax.set_ylim(0.8,1.1)
+    if distribution == 'recoil':
+        ax.set_ylim(0.0,1.1)
+    elif distribution == 'mjj':
+        ax.set_ylim(0.8,1.1)
     ax.set_xlim(0,xmax)
     ax.set_ylabel("Efficiency")
 
@@ -473,11 +476,27 @@ def met_trigger_eff(distribution):
                           memsize=1e3
                           )
 
+        # Pre-load neccessary information 
+        acc.load('recoil')      
+        acc.load('sumw')      
+        acc.load('sumw2')      
+
         for year in [2017, 2018]:
             for jeteta_config in ['two_central_jets', 'two_forward_jets', 'one_jet_forward_one_jet_central']:
                 # Single muon CR
                 region_tag='1m'
                 for dataset in ['WJetsToLNu_HT_MLM', 'SingleMuon']:
+                    plot_recoil(acc, region_tag=region_tag,
+                                distribution=distribution,
+                                axis_name=distribution,
+                                dataset=dataset,
+                                year=year,
+                                tag=tag,
+                                jeteta_config=jeteta_config,
+                                output_format='pdf')        
+                # Double muon CR
+                region_tag='2m'
+                for dataset in ['VDYJetsToLL_M-50_HT_MLM', 'SingleMuon']:
                     plot_recoil(acc, region_tag=region_tag,
                                 distribution=distribution,
                                 axis_name=distribution,
@@ -715,7 +734,8 @@ def photon_sf_plot(tag):
 
 def main():
     # indir = "/home/albert/repos/bucoffea/bucoffea/plot/input/eff/test"
-    met_triggers_ht()
+    #met_triggers_ht()
+    met_trigger_eff('recoil')
     # photon_triggers()
     # photon_sf_plot('gamma')
     # photon_triggers()
