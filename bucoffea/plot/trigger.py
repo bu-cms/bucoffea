@@ -327,7 +327,7 @@ def sf_comparison_plot(tag):
         fig.clear()
         plt.close(fig)
 
-def data_mc_comparison_plot(tag, jeteta_config=None):
+def data_mc_comparison_plot(tag, distribution='recoil', jeteta_config=None, output_format='pdf'):
     if 'gamma' in tag:
         regions = ['g_HLT_PFHT1050','g_HLT_PFHT590','g_HLT_PFHT680','g_HLT_PFHT780','g_HLT_PFHT890']
     elif 'recoil' in tag:
@@ -358,7 +358,7 @@ def data_mc_comparison_plot(tag, jeteta_config=None):
                 xlabel = "Recoil (GeV)"
             elif '2m' in region:
                 fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}{"_"+jeteta_config if jeteta_config else ""}.txt'
-                fden = f'output/{tag}/table_{region}_recoil_DYJetsToLL_M-50_HT_MLM_{year}{"_"+jeteta_config if jeteta_config else ""}.txt'
+                fden = f'output/{tag}/table_{region}_recoil_VDYJetsToLL_M-50_HT_MLM_{year}{"_"+jeteta_config if jeteta_config else ""}.txt'
                 xlabel = "Recoil (GeV)"
             elif 'g_' in region:
                 fnum = f'output/{tag}/table_{region}_photon_pt0_JetHT_{year}.txt'
@@ -383,30 +383,36 @@ def data_mc_comparison_plot(tag, jeteta_config=None):
             ax.errorbar(xnum, ynum, yerr=yerrnum,label=f'Data, {region} region', **opts)
             opts['color'] = 'r'
             ax.errorbar(xden, yden, yerr=yerrden,label=f'MC, {region} region', **opts)
-            rax.plot([0,1000],[0.98,0.98],color='blue')
-            rax.plot([0,1000],[0.99,0.99],color='blue',linestyle='--')
+#            rax.plot([0,1000],[0.98,0.98],color='blue')
+#            rax.plot([0,1000],[0.99,0.99],color='blue',linestyle='--')
 
             if 'g_' in region:
                 ax.plot([215,215],[0.9,1.1],color='blue')
                 rax.plot([215,215],[0.95,1.05],color='blue')
+            elif distribution == 'recoil':
+                ax.plot([250,250],[0.0,1.1],color='blue')
+                rax.plot([250,250],[0.95,1.05],color='blue')
             else:
                 ax.plot([250,250],[0.9,1.1],color='blue')
                 rax.plot([250,250],[0.95,1.05],color='blue')
             opts['color'] = 'k'
             rax.errorbar(xsf, ysf, ysferr, **opts)
 
-
-
-
-        # ax.set_ylim(0.9,1)
             ax.legend()
             ax.set_ylabel("Efficiency")
             rax.set_ylabel("Data / MC SF")
-            ax.xaxis.set_major_locator(MultipleLocator(200))
-            ax.xaxis.set_minor_locator(MultipleLocator(50))
-            ax.yaxis.set_major_locator(MultipleLocator(0.05))
-            ax.yaxis.set_minor_locator(MultipleLocator(0.01))
-            ax.set_ylim(0.9,1.1)
+            if distribution == 'mjj':
+                ax.xaxis.set_major_locator(MultipleLocator(200))
+                ax.xaxis.set_minor_locator(MultipleLocator(50))
+                ax.yaxis.set_major_locator(MultipleLocator(0.05))
+                ax.yaxis.set_minor_locator(MultipleLocator(0.01))
+                ax.set_ylim(0.9,1.1)
+            elif distribution == 'recoil':
+                ax.xaxis.set_major_locator(MultipleLocator(200))
+                ax.xaxis.set_minor_locator(MultipleLocator(50))
+                ax.yaxis.set_major_locator(MultipleLocator(0.1))
+                ax.yaxis.set_minor_locator(MultipleLocator(0.05))
+                ax.set_ylim(0.0,1.1)
             ax.grid(1)
             rax.set_ylim(0.95,1.05)
             rax.yaxis.set_major_locator(MultipleLocator(0.05))
@@ -420,13 +426,19 @@ def data_mc_comparison_plot(tag, jeteta_config=None):
                     verticalalignment='bottom',
                     transform=ax.transAxes
                 )
+            plt.text(1., 0.95, f'{jeteta_config if jeteta_config else ""}',
+                    fontsize=12,
+                    horizontalalignment='right',
+                    verticalalignment='bottom',
+                    transform=ax.transAxes
+                    )
             plt.text(0., 1., f'{year}',
                     fontsize=16,
                     horizontalalignment='left',
                     verticalalignment='bottom',
                     transform=ax.transAxes
                 )
-            fig.savefig(pjoin(outdir, f'data_mc_comparison_{region}_{year}.pdf'))
+            fig.savefig(pjoin(outdir, f'data_mc_comparison_{region}_{year}{"_"+jeteta_config if jeteta_config else ""}.{output_format}'))
             fig.clear()
             plt.close(fig)
 
@@ -507,6 +519,9 @@ def met_trigger_eff(distribution):
                                 tag=tag,
                                 jeteta_config=jeteta_config,
                                 output_format='pdf')        
+
+        for jeteta_config in ['two_central_jets', 'two_forward_jets', 'one_jet_forward_one_jet_central']:
+            data_mc_comparison_plot(tag, distribution=distribution, jeteta_config=jeteta_config, output_format='pdf')
 
 def met_triggers_ht():
         tag = '120pfht_hltmu'
