@@ -82,12 +82,12 @@ def plot(inpath):
             outdir = f'./output/{os.path.basename(indir)}/ratios'
 
             # Load ingredients from cache
-            acc.load('recoil')
+            #acc.load('recoil')
             acc.load('sumw')
             acc.load('sumw_pileup')
             acc.load('nevents')
-            cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo)
-            cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo)
+            #cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo)
+            #cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo)
 
             # Data / MC plots are made here
             # Loop over all regions
@@ -124,7 +124,7 @@ def plot(inpath):
                                 xlim=plotset[distribution].get('xlim',None),
                                 tag = 'losf',
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
-                                output_format='png')
+                                output_format='pdf')
 
                         # And then we also call it for the NLO MC
                         # The output files will be named according to the 'tag'
@@ -139,7 +139,7 @@ def plot(inpath):
                                 xlim=plotset[distribution].get('xlim',None),
                                 tag = 'nlo',
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
-                                output_format='png')
+                                output_format='pdf')
                     
                     except KeyError:
                         continue
