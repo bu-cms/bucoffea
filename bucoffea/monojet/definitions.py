@@ -460,8 +460,10 @@ def monojet_regions(cfg):
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
 
     # add a only 1 ak8 jet selection for measuring deepak8 mistag rate
-    regions['cr_2m_1ak8_inclusive_v'] = copy.deepcopy(regions['cr_2m_inclusive_v'])
-    regions['cr_2m_1ak8_inclusive_v'].append('only_one_ak8')
+    regions['cr_2m_1ak8_inclusive_v'] = regions['cr_2m_inclusive_v'] + ['only_one_ak8', 'leadak8_mass']
+    regions['cr_2e_1ak8_inclusive_v'] = regions['cr_2e_inclusive_v'] + ['only_one_ak8', 'leadak8_mass']
+    regions['cr_1m_1ak8_inclusive_v'] = regions['cr_1m_inclusive_v'] + ['only_one_ak8', 'leadak8_mass']
+    regions['cr_1e_1ak8_inclusive_v'] = regions['cr_1e_inclusive_v'] + ['only_one_ak8', 'leadak8_mass']
 
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
