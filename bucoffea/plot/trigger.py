@@ -327,9 +327,11 @@ def sf_comparison_plot(tag):
         fig.clear()
         plt.close(fig)
 
-def data_mc_comparison_plot(tag):
+def data_mc_comparison_plot(tag, jeteta_config=None):
     if 'gamma' in tag:
         regions = ['g_HLT_PFHT1050','g_HLT_PFHT590','g_HLT_PFHT680','g_HLT_PFHT780','g_HLT_PFHT890']
+    elif 'recoil' in tag:
+        regions = ['1m', '2m']
     else:
         regions = ['1m', '2m', '1e', '2m_hlt']
     opts = markers('data')
@@ -351,12 +353,12 @@ def data_mc_comparison_plot(tag):
                 fden = f'output/{tag}/table_{region}_met_WJetsToLNu_HT_MLM_{year}.txt'
                 xlabel = "$p_{T}^{miss}$ (GeV)"
             elif '1m' in region:
-                fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}.txt'
-                fden = f'output/{tag}/table_{region}_recoil_WJetsToLNu_HT_MLM_{year}.txt'
+                fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}{"_"+jeteta_config if jeteta_config else ""}.txt'
+                fden = f'output/{tag}/table_{region}_recoil_WJetsToLNu_HT_MLM_{year}{"_"+jeteta_config if jeteta_config else ""}.txt'
                 xlabel = "Recoil (GeV)"
             elif '2m' in region:
-                fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}.txt'
-                fden = f'output/{tag}/table_{region}_recoil_DYJetsToLL_M-50_HT_MLM_{year}.txt'
+                fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}{"_"+jeteta_config if jeteta_config else ""}.txt'
+                fden = f'output/{tag}/table_{region}_recoil_DYJetsToLL_M-50_HT_MLM_{year}{"_"+jeteta_config if jeteta_config else ""}.txt'
                 xlabel = "Recoil (GeV)"
             elif 'g_' in region:
                 fnum = f'output/{tag}/table_{region}_photon_pt0_JetHT_{year}.txt'
