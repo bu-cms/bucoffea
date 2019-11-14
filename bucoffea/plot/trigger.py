@@ -18,6 +18,8 @@ from bucoffea.plot.style import markers, matplotlib_rc
 from bucoffea.plot.util import (acc_from_dir, fig_ratio, lumi, merge_datasets,
                                 merge_extensions, scale_xs_lumi)
 
+from klepto.archives import dir_archive
+
 matplotlib_rc()
 
 pjoin = os.path.join
@@ -66,7 +68,7 @@ def content_table(hnum, hden, axis_name):
         table.append(line)
     return tabulate(table, headers=['Recoil', 'Numerator', 'Denominator',"Efficiency", "Eff-sigma","Eff+sigma"])
 
-def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test", distribution="recoil",axis_name=None, noscale=False):
+def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test", distribution="recoil",axis_name=None, noscale=False, jeteta_config=None, output_format='pdf'):
     # Select and prepare histogram
     h = copy.deepcopy(acc[distribution])
     h = merge_extensions(h, acc,reweight_pu=('nopu' in distribution), noscale=noscale)
@@ -78,6 +80,8 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
     axis_name = distribution if not axis_name else axis_name
     if 'photon' in distribution:
         newbin = hist.Bin(axis_name,f"{axis_name} (GeV)",np.array(list(range(0,250,10)) + list(range(250,400,50))+ list(range(400,1100,100))))
+    elif distribution == 'mjj':
+        newbin = hist.Bin(axis_name,r'$M_{jj}$ (GeV)',np.array(list(range(200,600,200)) + list(range(600,1500,300)) + [1500,2000,2750,3500]))
     else:
         newbin = hist.Bin(axis_name,f"{axis_name} (GeV)",np.array(list(range(0,400,20)) + list(range(400,1100,100))))
     h = h.rebin(h.axis(axis_name), newbin)
@@ -85,8 +89,12 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
 
     # Pick dataset and regions
     h = h.integrate(h.axis('dataset'), ds)
-    hnum = h.integrate(h.axis('region'),f'tr_{region_tag}_num')
-    hden = h.integrate(h.axis('region'),f'tr_{region_tag}_den')
+    if jeteta_config:
+        hnum = h.integrate(h.axis('region'),f'tr_{region_tag}_num_{jeteta_config}')
+        hden = h.integrate(h.axis('region'),f'tr_{region_tag}_den_{jeteta_config}')
+    else:
+        hnum = h.integrate(h.axis('region'),f'tr_{region_tag}_num')
+        hden = h.integrate(h.axis('region'),f'tr_{region_tag}_den')
 
     # Recoil plot
     try:
@@ -102,9 +110,9 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    outname = f'{region_tag}{"_noscale_" if noscale else "_"}{distribution}_{dataset}_{year}'
+    outname = f'{region_tag}{"_noscale_" if noscale else "_"}{distribution}_{dataset}_{year}{"_"+jeteta_config if jeteta_config else ""}'
 
-    fig.savefig(pjoin(outdir, f'{outname}.pdf'))
+    fig.savefig(pjoin(outdir, f'{outname}.{output_format}'))
     with open(pjoin(outdir,f'table_{outname}.txt'),"w") as f:
         f.write(content_table(hnum, hden, axis_name) + "\n")
     plt.close(fig)
@@ -124,19 +132,25 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
                 horizontalalignment='right',
                 verticalalignment='bottom',
                 transform=ax.transAxes
-               )
+                )
+    plt.text(1., 0.95, f'{jeteta_config if jeteta_config else ""}',
+                fontsize=12,
+                horizontalalignment='right',
+                verticalalignment='bottom',
+                transform=ax.transAxes
+                )
     plt.text(0., 1., f'{region_tag}, {year}',
                 fontsize=16,
                 horizontalalignment='left',
                 verticalalignment='bottom',
                 transform=ax.transAxes
-               )
+                )
     plt.text(1., 0., f'{trgname(year, tag)}',
                 fontsize=10,
                 horizontalalignment='right',
                 verticalalignment='bottom',
                 transform=ax.transAxes
-               )
+                )
 
     if 'g_' in region_tag:
         plt.plot([215,215],[0.8,1.1],'r-')
@@ -444,6 +458,34 @@ def met_triggers():
 
         region_comparison_plot(tag)
         sf_comparison_plot(tag)
+
+def met_trigger_eff(distribution):
+        if distribution == 'mjj':
+            tag = '120pfht_mu_mjj'
+        elif distribution == 'recoil':
+            tag = '120pfht_mu_recoil'
+            indir = '/afs/cern.ch/user/a/aakpinar/bucoffea/bucoffea/submission/2019-11-13_vbf_trigger_recoil'
+
+        acc = dir_archive(
+                          indir,
+                          serialized=True,
+                          compression=0,
+                          memsize=1e3
+                          )
+
+        for year in [2017, 2018]:
+            for jeteta_config in ['two_central_jets', 'two_forward_jets', 'one_jet_forward_one_jet_central']:
+                # Single muon CR
+                region_tag='1m'
+                for dataset in ['WJetsToLNu_HT_MLM', 'SingleMuon']:
+                    plot_recoil(acc, region_tag=region_tag,
+                                distribution=distribution,
+                                axis_name=distribution,
+                                dataset=dataset,
+                                year=year,
+                                tag=tag,
+                                jeteta_config=jeteta_config,
+                                output_format='pdf')        
 
 def met_triggers_ht():
         tag = '120pfht_hltmu'
