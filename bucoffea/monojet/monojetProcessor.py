@@ -36,6 +36,7 @@ from bucoffea.helpers.dataset import (
                                       is_lo_g,
                                       is_nlo_z,
                                       is_nlo_w,
+                                      has_v_jet,
                                       is_data,
                                       extract_year
                                      )
@@ -135,6 +136,7 @@ class monojetProcessor(processor.ProcessorABC):
         df['is_lo_g'] = is_lo_g(dataset)
         df['is_nlo_z'] = is_nlo_z(dataset)
         df['is_nlo_w'] = is_nlo_w(dataset)
+        df['has_v_jet'] = has_v_jet(dataset)
         df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g']
         df['is_data'] = is_data(dataset)
 
@@ -257,6 +259,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('leadak8_wvsqcd_tight', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.TIGHT)).any())
 
         selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_tau21", "leadak8_mass"))
+        selection.add('only_one_ak8', ak8.counts==1)
 
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()
@@ -377,6 +380,26 @@ class monojetProcessor(processor.ProcessorABC):
                 elif re.match(r'cr_g.*', region):
                     region_weights.add('trigger', np.ones(df.size))
 
+            if not df['is_data']:
+                if df['has_v_jet']:
+                    if re.match(r'.*_loose_v.*', region):
+                        region_weights.add('wtag_loose', evaluator['wtag_loose'](ak8.pt.max()))
+                    if re.match(r'.*_loosemd_v.*', region):
+                        region_weights.add('wtag_loosemd', evaluator['wtag_loosemd'](ak8.pt.max()))
+                    if re.match(r'.*_tight_v.*', region):
+                        region_weights.add('wtag_tight', evaluator['wtag_tight'](ak8.pt.max()))
+                    if re.match(r'.*_tightmd_v.*', region):
+                        region_weights.add('wtag_tightmd', evaluator['wtag_tightmd'](ak8.pt.max()))
+                else:
+                    if re.match(r'.*_loose_v.*', region):
+                        region_weights.add('wtag_mistag_loose', evaluator['wtag_mistag_loose'](ak8.pt.max()))
+                    if re.match(r'.*_loosemd_v.*', region):
+                        region_weights.add('wtag_mistag_loosemd', evaluator['wtag_mistag_loosemd'](ak8.pt.max()))
+                    if re.match(r'.*_tight_v.*', region):
+                        region_weights.add('wtag_mistag_tight', evaluator['wtag_mistag_tight'](ak8.pt.max()))
+                    if re.match(r'.*_tightmd_v.*', region):
+                        region_weights.add('wtag_mistag_tightmd', evaluator['wtag_mistag_tightmd'](ak8.pt.max()))
+
 
 
             # Blinding
@@ -486,6 +509,12 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_wvsqcdmd0',  tagger=ak8[leadak8_index].wvsqcdmd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcd0',    tagger=ak8[leadak8_index].zvsqcd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcdmd0',  tagger=ak8[leadak8_index].zvsqcdmd[mask].flatten(),     weight=w_leadak8)
+                # Dimuon specifically for deepak8 mistag rate measurement
+                if 'inclusive_v' in region:
+                    ezfill('ak8_passloose_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
+                    ezfill('ak8_passtight_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHT, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
+                    ezfill('ak8_passloosemd_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSEMD, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
+                    ezfill('ak8_passtightmd_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHTMD, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
 
             # B tag discriminator
             btag = getattr(ak4[ak4.abseta<2.4], cfg.BTAG.ALGO)

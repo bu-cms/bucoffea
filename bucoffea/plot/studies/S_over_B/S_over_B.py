@@ -35,21 +35,25 @@ def S_over_B(acc,distribution,region,mc,signal,unc=0.05,outname="S_over_B.png", 
     values_signal = h_signal.values()[(region,)]
 
     cut_points = binax.edges()[:-1]
+    nbins = len(cut_points)
+    bins = list(range(nbins))
 
     if cutlim:
         new_points = []
-        for ipoint in cut_points:
+        new_bins = []
+        for ibin,ipoint in enumerate(cut_points):
             if ipoint >= cutlim[0] and ipoint <= cutlim[1]:
                 new_points.append(ipoint)
+                new_bins.append(ibin)
         cut_points = new_points
+        bins = new_bins
 
-    nbins = len(cut_points)
-    values_SB = np.zeros(nbins)
-    for ibin in range(nbins):
+    values_SB = np.zeros(len(bins))
+    for ix,ibin in enumerate(bins):
         Nsig = sum(values_signal[ibin:])
         Nbkg = sum(values_mc[ibin:])
-        values_SB[ibin] = Nsig / max(1,np.sqrt(Nbkg + pow(unc*Nbkg,2))) 
-        print(cut_points[ibin],round(Nsig,2), round(Nbkg,2), round(values_SB[ibin],2))
+        values_SB[ix] = Nsig / max(1,np.sqrt(Nbkg + pow(unc*Nbkg,2))) 
+        print(cut_points[ix],round(Nsig,2), round(Nbkg,2), round(values_SB[ix],2))
 
     fig = plt.figure()
     plt.plot(cut_points, values_SB)
