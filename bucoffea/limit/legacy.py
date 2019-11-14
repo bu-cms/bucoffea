@@ -64,8 +64,8 @@ def legacy_region_name(region):
     patterns = {
         'cr_2m_.*' : 'Zmm',
         'cr_2e_.*' : 'Zee',
-        'cr_1m_.*' : 'Wen',
-        'cr_1e_.*' : 'Wmn',
+        'cr_1m_.*' : 'Wmn',
+        'cr_1e_.*' : 'Wen',
         'cr_g_.*' : 'gjets',
         'sr_.*' : 'signal',
     }
