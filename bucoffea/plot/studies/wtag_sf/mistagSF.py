@@ -4,16 +4,16 @@ from coffea.hist.plot import clopper_pearson_interval
 from klepto.archives import dir_archive
 import ROOT
 
-outfilename = "../../../data/sf/ak8/wtag_mistag_SF.root"
+#outfilename = "../../../data/sf/ak8/wtag_mistag_SF.root"
+outfilename = "wtag_mistag_SF.root"
 # set to True if want to update the mistag root file
-if False:
+# otherwise just make the plots
+if True:
     outfile = ROOT.TFile.Open(outfilename,'recreate')
 else:
     outfile = None
 newbin = hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [200,300,400,800])
 inpath = "../../input/merged"
-#TODO use clopper pearson interval for error calculation instead of gaussian propagation
-Use_Clopper_Pearson=False
 
 plot_dir = 'output/'
 if not os.path.exists(plot_dir):
@@ -41,19 +41,54 @@ def divide_sumw2(sumw_a, sumw2_a, sumw_b, sumw2_b): #return (sumw_c, sumw2_c) fo
     return (sumw_c, sumw2_c)
 
 
-def get_mistag_rate(hist, region):
+# takes the coffea hists, calculate the efficiency using ROOT and return a TEfficiency containing the efficiencies calculated
+def get_mistag_rate(hist, region, flag='', isData=False): #flag is for histogram naming only
     h_all = hist.integrate('wppass')
     h_pass= hist.integrate('wppass',slice(0.5,1.5))
     sumw_all , sumw2_all  = h_all .values(sumw2=True)[(region,)]
     sumw_pass, sumw2_pass = h_pass.values(sumw2=True)[(region,)]
-    sumw_ratio, sumw2_ratio = divide_sumw2(sumw_pass, sumw2_pass, sumw_all, sumw2_all)
-    return (sumw_ratio, sumw2_ratio)
+    # construct root th1f
+    edges = h_all.axis('jetpt').edges()
+    th1_all = ROOT.TH1F(f'h_all_{flag}',f'h_all{flag}',len(edges)-1, array('d',edges))
+    th1_pass= ROOT.TH1F(f'h_pass_{flag}',f'h_all{flag}',len(edges)-1, array('d',edges))
+    for ibin in range(len(edges)-1):
+        th1_all.SetBinContent(ibin+1, sumw_all[ibin])
+        th1_pass.SetBinContent(ibin+1, sumw_pass[ibin])
+        # data events are un-weighted
+        if isData: continue
+        th1_all.SetBinError(ibin+1, np.sqrt(sumw2_all[ibin]))
+        th1_pass.SetBinError(ibin+1, np.sqrt(sumw2_pass[ibin]))
+    # use TEfficiency
+    teff_mistag_rate = ROOT.TEfficiency(th1_pass, th1_all)
+    return teff_mistag_rate
+
+def efficiency_to_histogram(teff):
+    heff = teff.GetCopyTotalHisto()
+    heff.SetNameTitle('th1f_'+teff.GetName(), teff.GetTitle())
+    Nbins = heff.GetNbinsX()
+    for ibin in range(Nbins+1): #including overflow bins
+        heff.SetBinContent(ibin, teff.GetEfficiency(ibin))
+        heff.SetBinError(ibin, max(teff.GetEfficiencyErrorLow(ibin), teff.GetEfficiencyErrorUp(ibin)))
+    return heff
+
+
+# Divide two TEfficiencies and return a TH1F
+# TH1F doesn't support assymetric error bars, using the larger one
+def ratio_of_efficiencies(name, title, numerator, denominator):
+    # first convert TEfficiencies into histograms
+    h_numerator = efficiency_to_histogram(numerator)
+    h_denominator = efficiency_to_histogram(denominator)
+    h_ratio = h_numerator.Clone(name)
+    h_ratio.SetTitle(title)
+    h_ratio.Divide(h_denominator)
+    return h_ratio
+
 
 for lepton_flag in ['1m','2m','1e','2e']:
     region = f'cr_{lepton_flag}_1ak8_inclusive_v'
     for year in [2017,2018]:
         for wp in ['loose','loosemd','tight','tightmd']:
-            mc_Real = re.compile(f'(ST_|TTJets-MLM_|Diboson_){year}')
+            mc_Real  = re.compile(f'(ST_|TTJets-MLM_|Diboson_){year}')
             mc_False = re.compile(f'(VDY.*HT.*|QCD.*|W.*HT.*|GJets.*HT.*|ZJetsToNuNu.*){year}')
             mc_All = re.compile(f'(VDY.*HT.*|QCD.*|W.*HT.*|ST_|TTJets-MLM_|Diboson_|GJets.*HT.*|ZJetsToNuNu.*){year}')
             if lepton_flag=='1e' or lepton_flag=='2e':
@@ -89,38 +124,21 @@ for lepton_flag in ['1m','2m','1e','2e']:
             h_data.add(h_mc_Real)
 
             # extract mistag rate for data and mc
-            mistagrate_data,sumw2_data = get_mistag_rate(h_data, region)
-            mistagerr_data = np.sqrt(sumw2_data)
-            mistagrate_mc,sumw2_mc = get_mistag_rate(h_mc_False, region)
-            mistagerr_mc = np.sqrt(sumw2_mc)
-            sf, sumw2_sf = divide_sumw2(mistagrate_data, sumw2_data, mistagrate_mc, sumw2_mc)
-            error_sf = np.sqrt(sumw2_sf)
-    
-            # make plots for the mistag rates
-            fig = plt.figure()
-            plt.errorbar(centers, mistagrate_data, xerr=halfwidth, yerr=mistagerr_data)
-            plt.xlabel('ak8 jet pt'); plt.ylabel('mistag rate')
-            fig.savefig(plot_dir+f'mistagrate_data_{lepton_flag}_{wp}_{year}.png')
-            plt.close()
-            fig = plt.figure()
-            plt.errorbar(centers, mistagrate_mc, xerr=halfwidth, yerr=mistagerr_mc)
-            plt.xlabel('ak8 jet pt'); plt.ylabel('mistag rate')
-            fig.savefig(plot_dir+f'mistagrate_mc_{lepton_flag}_{wp}_{year}.png')
-            plt.close()
-            fig = plt.figure()
-            plt.errorbar(centers, sf, xerr=halfwidth, yerr=error_sf)
-            plt.xlabel('ak8 jet pt'); plt.ylabel('mistag rate data/MC SF'); #plt.ylim(0,1.5)
-            fig.savefig(plot_dir+f'mistagSF_{lepton_flag}_{wp}_{year}.png')
-            plt.close()
+            teff_mistag_rate_data = get_mistag_rate(h_data, region, flag=f'data_{lepton_flag}_{wp}_{year}', isData=True)
+            teff_mistag_rate_data.SetNameTitle(f'mistag_rate_data_{lepton_flag}_{wp}_{year}','mistagging rate')
+            teff_mistag_rate_mc = get_mistag_rate(h_mc_False, region, flag=f'mc_{lepton_flag}_{wp}_{year}', isData=False)
+            teff_mistag_rate_mc.SetNameTitle(f'mistag_rate_mc_{lepton_flag}_{wp}_{year}','mistagging rate')
+
+            # get the scale factors
+            # note that it's impossible to divide two TEfficiency in ROOT, have to do that manually
+            th1_mistag_SF = ratio_of_efficiencies(f'mistag_SF_{lepton_flag}_{wp}_{year}', 'mistag scale factor', teff_mistag_rate_data, teff_mistag_rate_mc)
             
-            # save the SFs as root histograms
-            if outfile: 
-                histname = f'Wmistag_{year}_{wp}_ak8_pt'
-                h_sf = ROOT.TH1F(histname, histname, len(edges)-1, array('d',edges))
-                for ibin in range(len(sf)):
-                    h_sf.SetBinContent(ibin+1, sf[ibin])
-                    h_sf.SetBinError(ibin+1, error_sf[ibin])
-                h_sf.Write()
+            # save the mistag rate and SF histograms into root file
+            if outfile:
+                teff_mistag_rate_data.Write()
+                teff_mistag_rate_mc.Write()
+                th1_mistag_SF.Write()
+    
 
 if outfile:
     outfile.Close()
