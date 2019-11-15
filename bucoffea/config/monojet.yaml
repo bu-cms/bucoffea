@@ -316,7 +316,7 @@ era2017:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_PhotonsMedium.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
-      histogram: Tight_ID
+      histogram: Medium_ID
       file: data/sf/egamma/CSEV_ScaleFactors_2017.root
 
     muon_id_loose:
@@ -437,8 +437,8 @@ era2018:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_PhotonsMedium.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
-      histogram: Tight_ID
-      file: data/sf/egamma/CSEV_ScaleFactors_2017.root # TODO: Update to 2018 when available!
+      histogram: eleVeto_SF
+      file: data/sf/egamma/CSEV_2018.root
 
     muon_id_loose:
       histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta
