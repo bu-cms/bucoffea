@@ -46,6 +46,7 @@ def plot(inpath):
             # electron+photon regions use EGamma
             # ( EGamma = SingleElectron+SinglePhoton for 2017)
             data = {
+                'sr_vbf' : None,
                 'cr_1m_vbf' : f'MET_{year}',
                 'cr_2m_vbf' : f'MET_{year}',
                 'cr_1e_vbf' : f'EGamma_{year}',
@@ -57,24 +58,27 @@ def plot(inpath):
             # Match datasets by regular expressions
             # Here for LO V samples (HT binned)
             mc_lo = {
+                'sr_vbf' : re.compile(f'(ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
                 'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
                 'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
                 'cr_2m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_2e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_g_vbf' : re.compile(f'(GJets.*|QCD_HT.*|W.*HT.*).*{year}'),
+                'cr_g_vbf' : re.compile(f'(GJets_(?!Mjj).*|AGJets.*|QCD_HT.*|W.*HT.*).*{year}'),
             }
 
             # Want to compare LO and NLO,
             # so do same thing for NLO V samples
             # All non-V samples remain the same
             mc_nlo = {
-                    'cr_1m_vbf' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*W.*FXFX.*).*{year}'),
-                    'cr_1e_vbf' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*W.*FXFX.*).*{year}'),
+                    'sr_vbf' : re.compile(f'(ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
+                    'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*W.*FXFX.*).*{year}'),
+                    'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*W.*FXFX.*).*{year}'),
                     'cr_2m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
                     'cr_2e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
-                    'cr_g_vbf' : re.compile(f'(GJets.*|QCD_HT.*|W.*FXFX.*).*{year}'),
+                    'cr_g_vbf' : re.compile(f'(GJets_(?!Mjj).*|AGJets.*|QCD_HT.*|W.*FXFX.*).*{year}'),
             }
 
+            regions = list(mc_lo.keys())
 
             # Make control region ratio plots for both
             # LO and NLO. Can be skipped if you only
@@ -82,19 +86,19 @@ def plot(inpath):
             outdir = f'./output/{os.path.basename(indir)}/ratios'
 
             # Load ingredients from cache
-            acc.load('recoil')
+            acc.load('mjj')
             acc.load('sumw')
             acc.load('sumw_pileup')
             acc.load('nevents')
-            cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo)
-            cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo)
+            cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo, regions=regions, distribution='mjj')
+            cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo, regions=regions, distribution='mjj')
 
             # Data / MC plots are made here
             # Loop over all regions
             for region in mc_lo.keys():
+                ratio = True if region != 'sr_vbf' else False 
                 # Make separate output direcotry for each region
                 outdir = f'./output/{os.path.basename(indir)}/{region}'
-
                 # Settings for this region
                 plotset = settings[region]
 
@@ -124,7 +128,8 @@ def plot(inpath):
                                 xlim=plotset[distribution].get('xlim',None),
                                 tag = 'losf',
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
-                                output_format='png')
+                                output_format='pdf',
+                                ratio=ratio)
 
                         # And then we also call it for the NLO MC
                         # The output files will be named according to the 'tag'
@@ -139,8 +144,9 @@ def plot(inpath):
                                 xlim=plotset[distribution].get('xlim',None),
                                 tag = 'nlo',
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
-                                output_format='png')
-                    
+                                output_format='pdf',
+                                ratio=ratio)
+                   
                     except KeyError:
                         continue
 

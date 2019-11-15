@@ -59,6 +59,11 @@ def cr_ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1
             'cr_1e_j' : f'EGamma_{year}',
             'cr_2e_j' : f'EGamma_{year}',
             'cr_g_j' : f'EGamma_{year}',
+            'cr_1m_vbf' : f'MET_{year}',
+            'cr_2m_vbf' : f'MET_{year}',
+            'cr_1e_vbf' : f'EGamma_{year}',
+            'cr_2e_vbf' : f'EGamma_{year}',
+            'cr_g_vbf' : f'EGamma_{year}'
         }
     name = {
         'cr_1m_j' : '1$\mu$',
@@ -66,6 +71,11 @@ def cr_ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1
         'cr_1e_j' : '1e',
         'cr_2e_j' : '2e',
         'cr_g_j' : '$\gamma$',
+        'cr_1m_vbf' : '1$\mu$',
+        'cr_2m_vbf' : '2$\mu$',
+        'cr_1e_vbf' : '1e',
+        'cr_2e_vbf' : '2e',
+        'cr_g_vbf' : '$\gamma$'
     }
     data_err_opts = {
         'linestyle':'none',
@@ -130,6 +140,7 @@ def cr_ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1
                                     label='MC stat. unc'
                                     )
 
+            ax.set_ylim(0,5)
             rrsumw = rsumw_data / rsumw_mc
             rrsumw_err = rsumw_err_data / rsumw_mc
             rax.errorbar(
@@ -168,9 +179,9 @@ def cr_ratio_plot(acc, distribution='recoil', regions=['cr_2m_j','cr_1m_j','cr_1
                 transform=ax.transAxes
                )
 
-            rax.set_xlabel('Recoil (GeV)',fontsize=14)
+            rax.set_xlabel(f'{distribution} (GeV)',fontsize=14)
             rax.set_ylabel('Data / MC',fontsize=14)
-            ax.set_xlabel('Recoil (GeV)',fontsize=14)
+            ax.set_xlabel(f'{distribution} (GeV)',fontsize=14)
             ax.set_ylabel(f'Region ratio: {name[regions[i]]} / {name[regions[j]]} (GeV)',fontsize=14)
 
             loc1 = matplotlib.ticker.MultipleLocator(base=0.2)

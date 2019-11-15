@@ -31,7 +31,10 @@ colors = {
     '.*TT.*' : '#6a51a3',
     '.*ST.*' : '#9e9ac8',
     '.*QCD.*' : '#08306b',
-    '.*GJet.*' : '#fc4e2a',
+    '.*GJets_HT.*' : '#fc4e2a',
+    '.*GJets_SM.*' : '#a76b51',
+    'ZJetsToNuNu.*' : '#0050ec',
+    'ZNuNuGJets_.*' : '#0050ec'
 }
 class Style():
     def __init__(self):
@@ -46,6 +49,7 @@ class Style():
             'cr_1e_v' : 'Single-e CR, mono-v',
             'cr_2e_v' : 'Di-e CR, mono-v',
             'cr_g_v' : 'Single-Photon CR, mono-v',
+            'sr_vbf' : 'Signal region, vbfhinv',
             'cr_1m_vbf' : 'Single-$\mu$ CR, vbfhinv',
             'cr_2m_vbf' : 'Di-$\mu$ CR, vbfhinv',
             'cr_1e_vbf' : 'Single-e CR, vbfhinv',
@@ -81,8 +85,9 @@ class Style():
                     'muon_pt0' : hist.Bin('pt',r'Leading muon $p_{T}$ (GeV)',list(range(0,600,20))),
                     'muon_pt1' : hist.Bin('pt',r'Trailing muon $p_{T}$ (GeV)',list(range(0,600,20))),
                     'muon_pt' : hist.Bin('pt',r'All muon $p_{T}$ (GeV)',list(range(0,600,20))),
-                    'dielectron_pt' : hist.Bin('dilepton_pt',r'Dielectron $p_{T} (GeV)',list(range(0,400,25)) + list(range(400,800,50)) + list(range(800,1100,100))),
-                    'dimuon_pt' : hist.Bin('dilepton_pt',r'Dimuon $p_{T} (GeV)',list(range(0,400,25)) + list(range(400,800,50)) + list(range(800,1100,100))),
+                    'dielectron_pt' : hist.Bin('pt',r'Dielectron $p_{T}$ (GeV)',list(range(0,400,25)) + list(range(400,800,50)) + list(range(800,1100,100))),
+                    'dimuon_pt' : hist.Bin('pt',r'Dimuon $p_{T}$ (GeV)',list(range(0,400,25)) + list(range(400,800,50)) + list(range(800,1100,100))),
+                    'mjj' : hist.Bin('mjj', r'$M_{jj}$ (GeV)', list(range(200,800,300)) + list(range(800,2000,400)) + [2000, 2750, 3500])
                     }
         }
         # binning for all monov regions:
@@ -100,7 +105,7 @@ class Style():
             return self.binnings['default'][distribution]
 
 
-def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf'):
+def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf', ratio=True):
     """Creates a data vs MC comparison plot
 
     :param acc: Accumulator (processor output)
@@ -128,8 +133,13 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     h = h.integrate(h.axis('region'),region)
 
     # Plotting
+    # Add ratio plot at the bottom if specified (default)
+    # Otherwise just plot the histogram
+    if ratio: 
+        fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
 
-    fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
+    else:
+        fig, ax = plt.subplots(1, 1, figsize=(7,5))
 
     data_err_opts = {
         'linestyle':'none',
@@ -230,6 +240,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
                )
     # Aesthetics
     ax.set_yscale("log")
+    ax.set_ylabel('Events / Bin width')
     plot_settings=style.plot_settings()
     if region in plot_settings.keys(): 
         plot_settings=plot_settings[region]
@@ -246,19 +257,19 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         ax.set_xlim(xlim[0],xlim[1])
     elif 'xlim' in plot_settings.keys():
         ax.set_xlim(plot_settings['xlim'])
-
-    if rylim:
-        rax.set_ylim(*rylim)
-    else:
-        rax.set_ylim(0.75,1.25)
-    loc1 = matplotlib.ticker.MultipleLocator(base=0.2)
-    loc2 = matplotlib.ticker.MultipleLocator(base=0.1)
-    rax.yaxis.set_major_locator(loc1)
-    rax.yaxis.set_minor_locator(loc2)
-    rax.grid(axis='y',which='minor',linestyle='--')
-    rax.grid(axis='y',which='major',linestyle='--')
-    ax.set_ylabel('Events / Bin width')
-    rax.set_ylabel('Data / MC')
+    
+    if ratio: 
+        if rylim:
+            rax.set_ylim(*rylim)
+        else:
+            rax.set_ylim(0.75,1.25)
+        loc1 = matplotlib.ticker.MultipleLocator(base=0.2)
+        loc2 = matplotlib.ticker.MultipleLocator(base=0.1)
+        rax.yaxis.set_major_locator(loc1)
+        rax.yaxis.set_minor_locator(loc2)
+        rax.grid(axis='y',which='minor',linestyle='--')
+        rax.grid(axis='y',which='major',linestyle='--')
+        rax.set_ylabel('Data / MC')
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
