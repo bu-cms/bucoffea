@@ -144,7 +144,7 @@ def plot(inpath):
                                 xlim=plotset[distribution].get('xlim',None),
                                 tag = 'nlo',
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
-                                output_format='pdf'
+                                output_format='pdf',
                                 ratio=ratio)
                    
                     except KeyError:
