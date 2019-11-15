@@ -45,7 +45,9 @@ def vbfhinv_accumulator(cfg):
     ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 100, 0, 4000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
+    eta_ax_coarse = Bin("eta", r"$\eta$", 25, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
+    phi_ax_coarse = Bin("phi", r"$\phi$", 20,-np.pi, np.pi)
 
     tau21_ax = Bin("tau21", r"Tagger", 50,-5,5)
     tagger_ax = Bin("tagger", r"Tagger", 50,-5,5)
@@ -104,7 +106,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
     items["recoil_mjj"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, mjj_ax)
-    items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax, phi_ax)
+    items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
 
     items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
