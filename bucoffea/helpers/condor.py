@@ -104,6 +104,15 @@ class ConJob():
         self._runtime = runtime
 
     def update(self):
+        # What's done is done
+        if self.status == 'JOB_TERMINATED':
+            return
+
+        # Updating works by opening the log file,
+        # Looping through and only keeping the last event,
+        # which really tells us what's going on.
+        # This is not very efficient, so an alternative
+        # implementation would be welcome
         jel = htcondor.JobEventLog(self._log)
 
         first = None
@@ -124,14 +133,16 @@ class ConJob():
             self.status = "NOPARSE"
             self.cluster = "-"
             self.runtime = -1
-
-        jel.close()
+        finally:
+            jel.close()
 
     def jdl(self):
         return self.log.replace('log_','job_').replace('.txt','.jdl')
 
     def resubmit(self):
+        self.status = None
         condor_submit(self.jdl())
+
         self.resubcount =  self.resubcount + 1
 
 class ConMan():
@@ -191,7 +202,7 @@ class ConMan():
     def resubmit_failed(self, max_resub=None):
         count = 0
         for j in self.jobs:
-            if not j.code  in [0, '-']:
+            if (not j.code  in [0, '-']) or (j.status == 'JOB_ABORTED'):
                 if max_resub and max_resub <= j.resubcount:
                     continue
                 j.resubmit()

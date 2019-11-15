@@ -18,14 +18,21 @@ format = '%(levelname)s (%(name)s) [%(asctime)s]: %(message)s'
 date = '%F %H:%M:%S'
 logging.basicConfig( level='DEBUG', format=format, datefmt=date, filename='monitor_log.txt', filemode='w')
 
-INTERVAL=5
+settings ={
+    'update_interval' : 20,
+    'hide_finished' : False
+}
 
-def write_job_pad(pad, cm):
+def string_padding(string, length):
+    return string + ' ' * (length - len(string))
+
+def write_job_pad(pad, cm, hide=lambda x: False):
     colors = [3,3]
     table = []
     counter = 1
     for job in cm.jobs:
-
+        if hide(job):
+            continue
         if job.code == 0:
             colors.append(1)
         elif job.code != "-":
@@ -37,7 +44,12 @@ def write_job_pad(pad, cm):
 
     tab = tabulate(sorted(table), headers=["","Name", "Cluster", "Status", "Return", "Resubmission count", "Runtime"])
     for i,l in enumerate(tab.split('\n')):
-        pad.addstr(i,0,l, curses.color_pair(colors[i]))
+        pad.addstr(i,0,string_padding(l, curses.COLS), curses.color_pair(colors[i]))
+    try:
+        for j in range(i, 1000):
+            pad.addstr(j, 0, string_padding('', curses.COLS))
+    except:
+        pass
 
 def get_log_lines(maxlines):
     with open('monitor_log.txt','r') as f:
@@ -77,13 +89,18 @@ def main(stdscr):
     while True:
         cm.update()
         try:
-            write_job_pad(pad, cm)
+            if settings['hide_finished']:
+                hide = lambda x: x.code == 0
+            else:
+                hide = lambda x: False
+
+            write_job_pad(pad, cm, hide=hide)
 
 
             # Scrolling
             start = time.time()
             stop = start
-            while stop-start < INTERVAL:
+            while stop-start < settings['update_interval']:
                 stop = time.time()
 
                 pad.refresh(
@@ -108,6 +125,10 @@ def main(stdscr):
                     elif cmd == 'a':
                         cm.autoresub = not cm.autoresub
                         logger.info(f'Automatic resubmission set to {cm.autoresub}.')
+                    elif cmd == 'h':
+                        settings['hide_finished'] = not settings['hide_finished']
+                        logger.info(f'Will {"not" if settings["hide_finished"] else ""} hide finished jobs.')
+                        break
                     elif  cmd == 'KEY_HOME':
                         pad_pos = 0
                     elif  cmd == 'KEY_END':
