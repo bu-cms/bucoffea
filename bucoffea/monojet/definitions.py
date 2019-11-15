@@ -635,8 +635,13 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     # Photon ID and electron veto
     weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
 
-    # CSEV not split only by EE/EB for now
-    csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
-    weights.add("photon_csev", evaluator['photon_csev'](csev_sf_index).prod())
+    year = extract_year(df['dataset'])
+    if year in [2016,2017]:
+        csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
+        weights.add("photon_csev", evaluator['photon_csev'](csev_sf_index).prod())
+    elif year == 2018:
+        csev_weight = evaluator['photon_csev']().prod(photons.pt, photons.eta)
+        csev_weight[csev_weight==0] = 1
+        weights.add("photon_csev", csev_weight)
 
     return weights
