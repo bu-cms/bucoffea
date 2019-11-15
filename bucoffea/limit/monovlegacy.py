@@ -154,7 +154,7 @@ def merge_legacy_inputs(outdir):
     for year, ifiles in files.items():
         for wp, file in ifiles.items():
             outfile = r.TFile(pjoin(outdir, f'merged_legacy_limit_monov_{wp}_{year}.root'),'RECREATE')
-            subdir = outfile.mkdir(f'category_monov_{wp}')
+            subdir = outfile.mkdir(f'category_monov')
             infile = r.TFile(file)
             for key in infile.GetListOfKeys():
                 print(key)
