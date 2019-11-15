@@ -78,6 +78,7 @@ def plot(inpath):
                     'cr_g_vbf' : re.compile(f'(GJets_(?!Mjj).*|AGJets.*|QCD_HT.*|W.*FXFX.*).*{year}'),
             }
 
+            regions = list(mc_lo.keys())
 
             # Make control region ratio plots for both
             # LO and NLO. Can be skipped if you only
@@ -85,12 +86,12 @@ def plot(inpath):
             outdir = f'./output/{os.path.basename(indir)}/ratios'
 
             # Load ingredients from cache
-            #acc.load('recoil')
+            acc.load('mjj')
             acc.load('sumw')
             acc.load('sumw_pileup')
             acc.load('nevents')
-            #cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo)
-            #cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo)
+            cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo, regions=regions, distribution='mjj')
+            cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo, regions=regions, distribution='mjj')
 
             # Data / MC plots are made here
             # Loop over all regions
@@ -142,7 +143,7 @@ def plot(inpath):
                                 tag = 'nlo',
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
                                 output_format='pdf')
-                    
+                   
                     except KeyError:
                         continue
 
