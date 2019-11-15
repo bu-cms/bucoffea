@@ -5,6 +5,7 @@ import os
 import re
 from collections import defaultdict
 from pprint import pprint
+import warnings 
 
 import numpy as np
 import uproot
@@ -23,6 +24,9 @@ from klepto.archives import dir_archive
 matplotlib_rc()
 
 pjoin = os.path.join
+
+# Ignore warnings
+warnings.filterwarnings('ignore')
 
 def lumi_by_region(region, year):
     if 'HLT' not in region:
@@ -83,7 +87,7 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
     elif distribution == 'mjj':
         newbin = hist.Bin(axis_name,r'$M_{jj}$ (GeV)',np.array(list(range(200,600,200)) + list(range(600,1500,300)) + [1500,2000,2750,3500]))
     else:
-        newbin = hist.Bin(axis_name,f"{axis_name} (GeV)",np.array(list(range(0,400,20)) + list(range(400,1100,100))))
+        newbin = hist.Bin(axis_name,f"{axis_name} (GeV)",np.array(list(range(0,500,25)) + list(range(500,1100,100))))
     h = h.rebin(h.axis(axis_name), newbin)
     ds = f'{dataset}_{year}'
 
@@ -327,6 +331,90 @@ def sf_comparison_plot(tag):
         fig.clear()
         plt.close(fig)
 
+def plot_scalefactors(tag, distribution='recoil', output_format='pdf'):
+    regions = ['1m', '2m']
+    opts = markers('data')
+    emarker = opts.pop('emarker', '')
+    outdir = f"./output/{tag}"
+    jeteta_configs = ['two_central_jets', 'two_forward_jets', 'one_jet_forward_one_jet_central']
+
+    for year in [2017,2018]:
+        for region in regions:
+            fig, ax = plt.subplots(1,1) 
+            
+            ynum = {}
+            yden = {}
+            yerrnum = {}
+            yerrden = {}
+            ysf = {}
+            ysferr = {}
+            
+            for jeteta_config in jeteta_configs:
+                print(f'{year}, {region}, {jeteta_config}')
+                if region == '1m': 
+                    fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}_{jeteta_config}.txt'
+                    fden = f'output/{tag}/table_{region}_recoil_WJetsToLNu_HT_MLM_{year}_{jeteta_config}.txt'
+                    xlabel = f"{distribution} (GeV)"
+                elif region == '2m':
+                    fnum = f'output/{tag}/table_{region}_recoil_SingleMuon_{year}_{jeteta_config}.txt'
+                    fden = f'output/{tag}/table_{region}_recoil_VDYJetsToLL_M-50_HT_MLM_{year}_{jeteta_config}.txt'
+                    xlabel = f"{distribution} (GeV)"
+                if not os.path.exists(fnum):
+                    print(f"File not found {fnum}")
+                    continue
+                if not os.path.exists(fden):
+                    print(f"File not found {fden}")
+                    continue
+                
+                xnum, xedgnum, ynum[f'{jeteta_config}'], yerrnum[f'{jeteta_config}'] = get_xy(fnum)
+                xden, xedgden, yden[f'{jeteta_config}'], yerrden[f'{jeteta_config}'] = get_xy(fden)
+                xsf = xnum
+                ysf[f'{jeteta_config}'] = ynum[f'{jeteta_config}'] / yden[f'{jeteta_config}']
+                ysferr[f'{jeteta_config}'] = ratio_unc(ynum[f'{jeteta_config}'], yden[f'{jeteta_config}'], yerrnum[f'{jeteta_config}'], yerrden[f'{jeteta_config}'])
+
+            # Only consider the values above 250 GeV
+            if distribution == 'recoil':
+                recoil_cut = xedgnum[0]>=250
+                xsf = xsf[recoil_cut]
+
+                ysferr_new = {}
+                ysferr_new['two_central_jets'] = [ ysferr['two_central_jets'][0][recoil_cut], ysferr['two_central_jets'][1][recoil_cut] ] 
+                ysferr_new['two_forward_jets'] = [ ysferr['two_forward_jets'][0][recoil_cut], ysferr['two_forward_jets'][1][recoil_cut] ]
+                ysferr_new['one_jet_forward_one_jet_central'] = [ ysferr['one_jet_forward_one_jet_central'][0][recoil_cut], ysferr['one_jet_forward_one_jet_central'][1][recoil_cut] ]
+
+            opts['color'] = 'k'
+            ax.errorbar(xsf, ysf['two_central_jets'][recoil_cut], yerr=ysferr_new['two_central_jets'],label=f'Two central jets', **opts)
+            opts['color'] = 'g'
+            ax.errorbar(xsf, ysf['two_forward_jets'][recoil_cut], yerr=ysferr_new['two_forward_jets'],label=f'Two forward jets', **opts)
+            opts['color'] = 'r'
+            ax.errorbar(xsf, ysf['one_jet_forward_one_jet_central'][recoil_cut], yerr=ysferr_new['one_jet_forward_one_jet_central'],label=f'Mixed', **opts)
+     
+            ax.legend()
+            ax.set_ylabel('Data / MC SF') 
+            ax.set_xlabel(f'{distribution.capitalize()} (GeV)') 
+            ax.grid(1)
+            ax.xaxis.set_major_locator(MultipleLocator(200))
+            ax.xaxis.set_minor_locator(MultipleLocator(50))
+            ax.yaxis.set_major_locator(MultipleLocator(0.05))
+            ax.yaxis.set_minor_locator(MultipleLocator(0.01))
+            ax.set_ylim(0.9,1.1)
+
+            plt.text(1., 1., r"$\approx$ %.1f fb$^{-1}$ (13 TeV)" % lumi_by_region(region, year),
+                    fontsize=16,
+                    horizontalalignment='right',
+                    verticalalignment='bottom',
+                    transform=ax.transAxes
+                )
+            plt.text(0., 1., f'{year} {region}',
+                    fontsize=16,
+                    horizontalalignment='left',
+                    verticalalignment='bottom',
+                    transform=ax.transAxes
+                )
+            fig.savefig(pjoin(outdir, f'scale_factors_{region}_{year}.{output_format}'))
+            fig.clear()
+            plt.close(fig)
+
 def data_mc_comparison_plot(tag, distribution='recoil', jeteta_config=None, output_format='pdf'):
     if 'gamma' in tag:
         regions = ['g_HLT_PFHT1050','g_HLT_PFHT590','g_HLT_PFHT680','g_HLT_PFHT780','g_HLT_PFHT890']
@@ -522,6 +610,8 @@ def met_trigger_eff(distribution):
 
         for jeteta_config in ['two_central_jets', 'two_forward_jets', 'one_jet_forward_one_jet_central']:
             data_mc_comparison_plot(tag, distribution=distribution, jeteta_config=jeteta_config, output_format='pdf')
+
+        plot_scalefactors(tag, distribution=distribution)
 
 def met_triggers_ht():
         tag = '120pfht_hltmu'
