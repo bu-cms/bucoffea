@@ -640,7 +640,7 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
         csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
         weights.add("photon_csev", evaluator['photon_csev'](csev_sf_index).prod())
     elif year == 2018:
-        csev_weight = evaluator['photon_csev']().prod(photons.pt, photons.eta)
+        csev_weight = evaluator['photon_csev'](photons.pt, photons.eta).prod()
         csev_weight[csev_weight==0] = 1
         weights.add("photon_csev", csev_weight)
 
