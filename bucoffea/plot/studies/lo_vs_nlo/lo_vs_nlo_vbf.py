@@ -46,7 +46,7 @@ def plot(inpath):
             # electron+photon regions use EGamma
             # ( EGamma = SingleElectron+SinglePhoton for 2017)
             data = {
-                'sr_vbf' : f'MET_{year}',
+                'sr_vbf' : None,
                 'cr_1m_vbf' : f'MET_{year}',
                 'cr_2m_vbf' : f'MET_{year}',
                 'cr_1e_vbf' : f'EGamma_{year}',
