@@ -105,7 +105,7 @@ class Style():
             return self.binnings['default'][distribution]
 
 
-def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf'):
+def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf', ratio=True):
     """Creates a data vs MC comparison plot
 
     :param acc: Accumulator (processor output)
@@ -133,7 +133,9 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     h = h.integrate(h.axis('region'),region)
 
     # Plotting
-    if not region.startswith('sr'):
+    # Add ratio plot at the bottom if specified (default)
+    # Otherwise just plot the histogram
+    if ratio: 
         fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
 
     else:
@@ -256,7 +258,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     elif 'xlim' in plot_settings.keys():
         ax.set_xlim(plot_settings['xlim'])
     
-    if not region.startswith('sr'):
+    if ratio: 
         if rylim:
             rax.set_ylim(*rylim)
         else:

@@ -96,6 +96,7 @@ def plot(inpath):
             # Data / MC plots are made here
             # Loop over all regions
             for region in mc_lo.keys():
+                ratio = True if region != 'sr_vbf' else False 
                 # Make separate output direcotry for each region
                 outdir = f'./output/{os.path.basename(indir)}/{region}'
                 # Settings for this region
@@ -127,7 +128,8 @@ def plot(inpath):
                                 xlim=plotset[distribution].get('xlim',None),
                                 tag = 'losf',
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
-                                output_format='pdf')
+                                output_format='pdf',
+                                ratio=ratio)
 
                         # And then we also call it for the NLO MC
                         # The output files will be named according to the 'tag'
@@ -142,7 +144,8 @@ def plot(inpath):
                                 xlim=plotset[distribution].get('xlim',None),
                                 tag = 'nlo',
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
-                                output_format='pdf')
+                                output_format='pdf'
+                                ratio=ratio)
                    
                     except KeyError:
                         continue
