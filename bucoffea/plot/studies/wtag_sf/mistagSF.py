@@ -85,7 +85,7 @@ def ratio_of_efficiencies(name, title, numerator, denominator):
 
 
 for lepton_flag in ['1m','2m','1e','2e']:
-    region = f'cr_{lepton_flag}_1ak8_inclusive_v'
+    region = f'cr_{lepton_flag}_hasmass_inclusive_v'
     for year in [2017,2018]:
         for wp in ['loose','loosemd','tight','tightmd']:
             mc_Real  = re.compile(f'(ST_|TTJets-MLM_|Diboson_){year}')

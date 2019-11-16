@@ -107,6 +107,10 @@ def monojet_accumulator(cfg):
     items["ak8_passtight_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
     items["ak8_passloosemd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
     items["ak8_passtightmd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+    items["ak8_passloose_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+    items["ak8_passtight_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+    items["ak8_passloosemd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+    items["ak8_passtightmd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
 
     items["ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -459,11 +463,12 @@ def monojet_regions(cfg):
             else:
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
 
-    # add a only 1 ak8 jet selection for measuring deepak8 mistag rate
-    regions['cr_2m_1ak8_inclusive_v'] = regions['cr_2m_inclusive_v'] + ['only_one_ak8', 'leadak8_mass']
-    regions['cr_2e_1ak8_inclusive_v'] = regions['cr_2e_inclusive_v'] + ['only_one_ak8', 'leadak8_mass']
-    regions['cr_1m_1ak8_inclusive_v'] = regions['cr_1m_inclusive_v'] + ['only_one_ak8', 'leadak8_mass']
-    regions['cr_1e_1ak8_inclusive_v'] = regions['cr_1e_inclusive_v'] + ['only_one_ak8', 'leadak8_mass']
+    # control regions with mass cut but no tagger cut
+    regions['cr_2m_hasmass_inclusive_v'] = regions['cr_2m_inclusive_v'] + ['leadak8_mass']
+    regions['cr_2e_hasmass_inclusive_v'] = regions['cr_2e_inclusive_v'] + ['leadak8_mass']
+    regions['cr_1m_hasmass_inclusive_v'] = regions['cr_1m_inclusive_v'] + ['leadak8_mass']
+    regions['cr_1e_hasmass_inclusive_v'] = regions['cr_1e_inclusive_v'] + ['leadak8_mass']
+    regions['cr_g_hasmass_inclusive_v']  = regions['cr_g_inclusive_v']  + ['leadak8_mass']
 
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
