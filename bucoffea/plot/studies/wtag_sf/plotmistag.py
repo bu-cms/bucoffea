@@ -1,0 +1,68 @@
+import ROOT
+import time
+
+inputfilename = "wtag_mistag_SF.root"
+inputfile = ROOT.TFile.Open(inputfilename,'read')
+
+colors={
+        '1m':6,
+        '2m':7,
+        '1e':8,
+        '2e':9,
+        }
+ROOT.gStyle.SetOptStat(0)
+ROOT.gStyle.SetOptTitle(ROOT.kFALSE)
+
+canv = ROOT.TCanvas('canv','canv',800,800)
+for year in [2017]:
+    for wp in ['loose', 'loosemd','tightmd']:
+        # plot the mistag rates 
+        for prefix in ['mistag_rate_data','mistag_rate_mc']:
+            canv.Clear()
+            canvEmpty=True
+            for lepton_flag in ['1m','2m','1e','2e']:
+                htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
+                htmp.SetTitle(lepton_flag) # for the legend builder
+                htmp.SetLineColor(colors[lepton_flag])
+                htmp.SetLineWidth(3)
+                if canvEmpty:
+                    htmp.Draw('AP')
+                    canv.Update()
+                    gtmp=htmp.GetPaintedGraph()
+                    print(htmp)
+                    while not gtmp:
+                        time.sleep(1)
+                        gtmp=htmp.GetPaintedGraph()
+                    if wp == 'loose' or wp =='tightmd':
+                        gtmp.GetYaxis().SetRangeUser(0,0.1)
+                    else:
+                        gtmp.GetYaxis().SetRangeUser(0,1)
+                    gtmp.GetYaxis().SetTitle('mistagging rate')
+                    gtmp.GetXaxis().SetTitle('AK8 Jet p_{T}')
+                    canv.Draw()
+                    canvEmpty=False
+                else:
+                    htmp.Draw('P same')
+            canv.BuildLegend()
+            canv.Update()
+            canv.Print(f'output/{prefix}_{wp}_{year}.png')
+        # plot the mistag SF 
+        for prefix in ['mistag_SF']:
+            canv.Clear()
+            canvEmpty=True
+            for lepton_flag in ['1m','2m','1e','2e']:
+                htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
+                htmp.SetTitle(lepton_flag) # for the legend builder
+                htmp.SetLineColor(colors[lepton_flag])
+                htmp.SetLineWidth(3)
+                if canvEmpty:
+                    htmp.GetYaxis().SetRangeUser(0.5,1.6)
+                    htmp.GetYaxis().SetTitle('mistagging SF')
+                    htmp.GetXaxis().SetTitle('AK8 Jet p_{T}')
+                    htmp.Draw('e1')
+                    canvEmpty=False
+                else:
+                    htmp.Draw('e1 same')
+            canv.BuildLegend()
+            canv.Update()
+            canv.Print(f'output/{prefix}_{wp}_{year}.png')
