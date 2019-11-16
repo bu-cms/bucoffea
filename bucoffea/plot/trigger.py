@@ -61,8 +61,6 @@ def trgname(year, tag):
         elif tag=='gamma':
             return 'HLT_Photon200'
 
-xmax = 1e3
-
 def content_table(hnum, hden, axis_name):
     table = []
     for x,ynum, yden in zip(hnum.axis(axis_name).identifiers(),hnum.values()[()],hden.values()[()]):
@@ -72,7 +70,7 @@ def content_table(hnum, hden, axis_name):
         table.append(line)
     return tabulate(table, headers=['Recoil', 'Numerator', 'Denominator',"Efficiency", "Eff-sigma","Eff+sigma"])
 
-def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test", distribution="recoil",axis_name=None, noscale=False, jeteta_config=None, output_format='pdf'):
+def plot_recoil(acc,xmax=1e3,ymin=0,ymax=1.1, region_tag="1m", dataset='SingleMuon', year=2018, tag="test", distribution="recoil",axis_name=None, noscale=False, jeteta_config=None, output_format='pdf'):
     # Select and prepare histogram
     h = copy.deepcopy(acc[distribution])
     h = merge_extensions(h, acc,reweight_pu=('nopu' in distribution), noscale=noscale)
@@ -127,10 +125,7 @@ def plot_recoil(acc, region_tag="1m", dataset='SingleMuon', year=2018, tag="test
                 unc='clopper-pearson',
                 error_opts=markers('data')
                 )
-    if distribution == 'recoil':
-        ax.set_ylim(0.0,1.1)
-    elif distribution == 'mjj':
-        ax.set_ylim(0.8,1.1)
+    ax.set_ylim(ymin,ymax)
     ax.set_xlim(0,xmax)
     ax.set_ylabel("Efficiency")
 
@@ -331,7 +326,7 @@ def sf_comparison_plot(tag):
         fig.clear()
         plt.close(fig)
 
-def plot_scalefactors(tag, distribution='recoil', output_format='pdf'):
+def plot_scalefactors(tag, ymin=0.9, ymax=1.1, distribution='recoil', output_format='pdf'):
     regions = ['1m', '2m']
     opts = markers('data')
     emarker = opts.pop('emarker', '')
@@ -392,12 +387,12 @@ def plot_scalefactors(tag, distribution='recoil', output_format='pdf'):
             ax.legend()
             ax.set_ylabel('Data / MC SF') 
             ax.set_xlabel(f'{distribution.capitalize()} (GeV)') 
+            ax.set_ylim(ymin,ymax)
             ax.grid(1)
             ax.xaxis.set_major_locator(MultipleLocator(200))
             ax.xaxis.set_minor_locator(MultipleLocator(50))
             ax.yaxis.set_major_locator(MultipleLocator(0.05))
             ax.yaxis.set_minor_locator(MultipleLocator(0.01))
-            ax.set_ylim(0.9,1.1)
 
             plt.text(1., 1., r"$\approx$ %.1f fb$^{-1}$ (13 TeV)" % lumi_by_region(region, year),
                     fontsize=16,
@@ -415,7 +410,7 @@ def plot_scalefactors(tag, distribution='recoil', output_format='pdf'):
             fig.clear()
             plt.close(fig)
 
-def data_mc_comparison_plot(tag, distribution='recoil', jeteta_config=None, output_format='pdf'):
+def data_mc_comparison_plot(tag, ymin=0, ymax=1.1, distribution='recoil', jeteta_config=None, output_format='pdf'):
     if 'gamma' in tag:
         regions = ['g_HLT_PFHT1050','g_HLT_PFHT590','g_HLT_PFHT680','g_HLT_PFHT780','g_HLT_PFHT890']
     elif 'recoil' in tag:
@@ -488,26 +483,25 @@ def data_mc_comparison_plot(tag, distribution='recoil', jeteta_config=None, outp
 
             ax.legend()
             ax.set_ylabel("Efficiency")
-            rax.set_ylabel("Data / MC SF")
+            ax.xaxis.set_major_locator(MultipleLocator(200))
+            ax.xaxis.set_minor_locator(MultipleLocator(50))
+            ax.set_ylim(ymin,ymax)
+            ax.grid(1)
+            
             if distribution == 'mjj':
-                ax.xaxis.set_major_locator(MultipleLocator(200))
-                ax.xaxis.set_minor_locator(MultipleLocator(50))
                 ax.yaxis.set_major_locator(MultipleLocator(0.05))
                 ax.yaxis.set_minor_locator(MultipleLocator(0.01))
-                ax.set_ylim(0.9,1.1)
             elif distribution == 'recoil':
-                ax.xaxis.set_major_locator(MultipleLocator(200))
-                ax.xaxis.set_minor_locator(MultipleLocator(50))
                 ax.yaxis.set_major_locator(MultipleLocator(0.1))
                 ax.yaxis.set_minor_locator(MultipleLocator(0.05))
-                ax.set_ylim(0.0,1.1)
-            ax.grid(1)
+            
+            rax.set_xlabel(xlabel)
+            rax.set_ylabel("Data / MC SF")
             rax.set_ylim(0.95,1.05)
             rax.yaxis.set_major_locator(MultipleLocator(0.05))
             rax.yaxis.set_minor_locator(MultipleLocator(0.01))
             rax.grid(1)
 
-            rax.set_xlabel(xlabel)
             plt.text(1., 1., r"$\approx$ %.1f fb$^{-1}$ (13 TeV)" % lumi_by_region(region, year),
                     fontsize=16,
                     horizontalalignment='right',
