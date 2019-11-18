@@ -237,15 +237,22 @@ def vbfhinv_regions(cfg):
     regions['cr_g_vbf'] = cr_g_cuts
 
     if cfg.RUN.SYNC:
-        regions['sync_sr_vbf_round1'] = copy.deepcopy(regions['sr_vbf'])
-        regions['sync_sr_vbf_round1'].remove('filt_met')
-        regions['sync_sr_vbf_round1'].remove('hemveto')
-        regions['sync_sr_vbf_round1'].remove('veto_ele')
-        regions['sync_sr_vbf_round1'].remove('veto_muo')
-        regions['sync_sr_vbf_round1'].remove('veto_photon')
-        regions['sync_sr_vbf_round1'].remove('veto_tau')
-        regions['sync_sr_vbf_round1'].remove('veto_b')
-
+        regions['sync_sr_vbf_round1'] = [
+                                        'filt_met',
+                                        'trig_met',
+                                        'veto_photon',
+                                        'mindphijr',
+                                        'recoil',
+                                        'two_jets',
+                                        'leadak4_pt_eta',
+                                        'leadak4_id',
+                                        'trailak4_pt_eta',
+                                        'trailak4_id',
+                                        'hemisphere',
+                                        'mjj',
+                                        'dphijj',
+                                        'detajj',
+                                        ]
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
         # num = numerator, den = denominator
