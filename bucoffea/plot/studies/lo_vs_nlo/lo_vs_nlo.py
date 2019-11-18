@@ -126,6 +126,7 @@ def plot(inpath):
                         acc[distribution] = merge_extensions(acc[distribution], acc, reweight_pu=not ('nopu' in distribution))
                         scale_xs_lumi(acc[distribution])
                         acc[distribution] = merge_datasets(acc[distribution])
+                        acc[distribution].axis('dataset').sorting = 'integral'
                         merged.add(distribution)
                     try:
                         # The heavy lifting of making a plot is hidden
