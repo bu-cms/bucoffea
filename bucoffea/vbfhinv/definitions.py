@@ -209,22 +209,6 @@ def vbfhinv_regions(cfg):
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_vbf'] = ['trig_met'] + common_cuts
 
-    # For sync mode
-    if cfg.RUN.SYNC:
-        regions['cr_sync'] = [
-            'trig_met',
-            'veto_photon',
-            'mindphijr',
-            'recoil',
-            'two_jets',
-            'leadak4_pt_eta',
-            'trailak4_pt_eta',
-            'hemisphere',
-            'mjj',
-            'dphijj',
-            'detajj'
-        ]
-
     # Dimuon CR
     cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
     cr_2m_cuts.remove('veto_muo')
@@ -251,6 +235,16 @@ def vbfhinv_regions(cfg):
     cr_g_cuts.remove('veto_photon')
 
     regions['cr_g_vbf'] = cr_g_cuts
+
+    if cfg.RUN.SYNC:
+        regions['sync_sr_vbf_round1'] = copy.deepcopy(regions['sr_vbf'])
+        regions['sync_sr_vbf_round1'].remove('filt_met')
+        regions['sync_sr_vbf_round1'].remove('hemveto')
+        regions['sync_sr_vbf_round1'].remove('veto_ele')
+        regions['sync_sr_vbf_round1'].remove('veto_muo')
+        regions['sync_sr_vbf_round1'].remove('veto_photon')
+        regions['sync_sr_vbf_round1'].remove('veto_tau')
+        regions['sync_sr_vbf_round1'].remove('veto_b')
 
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
