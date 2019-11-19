@@ -387,7 +387,7 @@ class monojetProcessor(processor.ProcessorABC):
                     if re.match(r'.*_{wp}_v.*', region):
 
                         real_V_weights = evaluator[f'wtag_{wp}'](ak8.pt.max())
-                        if wp == 'tight': # no mistag SF available for tight cut
+                        if (wp == 'tight') or ('nomistag' in region): # no mistag SF available for tight cut
                             mistag_weights = np.ones(df.size)
                         else:
                             mistag_weights = evaluator[f'wtag_mistag_{wp}'](ak8.pt.max())
