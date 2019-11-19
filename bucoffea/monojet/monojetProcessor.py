@@ -141,13 +141,13 @@ class monojetProcessor(processor.ProcessorABC):
         df['is_data'] = is_data(dataset)
 
         gen_v_pt = None
-        if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
+        if not df['is_data']:
             gen = setup_gen_candidates(df)
+        if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
             gen_v_pt = df['gen_v_pt_dress']
         elif df['is_lo_g']:
-            gen = setup_gen_candidates(df)
             gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
 
         # Candidates
@@ -381,24 +381,22 @@ class monojetProcessor(processor.ProcessorABC):
                     region_weights.add('trigger', np.ones(df.size))
 
             if not df['is_data']:
-                if df['has_v_jet']:
-                    if re.match(r'.*_loose_v.*', region):
-                        region_weights.add('wtag_loose', evaluator['wtag_loose'](ak8.pt.max()))
-                    if re.match(r'.*_loosemd_v.*', region):
-                        region_weights.add('wtag_loosemd', evaluator['wtag_loosemd'](ak8.pt.max()))
-                    if re.match(r'.*_tight_v.*', region):
-                        region_weights.add('wtag_tight', evaluator['wtag_tight'](ak8.pt.max()))
-                    if re.match(r'.*_tightmd_v.*', region):
-                        region_weights.add('wtag_tightmd', evaluator['wtag_tightmd'](ak8.pt.max()))
-                else:
-                    if re.match(r'.*_loose_v.*', region):
-                        region_weights.add('wtag_mistag_loose', evaluator['wtag_mistag_loose'](ak8.pt.max()))
-                    if re.match(r'.*_loosemd_v.*', region):
-                        region_weights.add('wtag_mistag_loosemd', evaluator['wtag_mistag_loosemd'](ak8.pt.max()))
-                    if re.match(r'.*_tight_v.*', region):
-                        region_weights.add('wtag_mistag_tight', evaluator['wtag_mistag_tight'](ak8.pt.max()))
-                    if re.match(r'.*_tightmd_v.*', region):
-                        region_weights.add('wtag_mistag_tightmd', evaluator['wtag_mistag_tightmd'](ak8.pt.max()))
+                genVs = gen[(gen.pdg==23) + (gen.pdg==24) + (gen.pdg==-24)]
+                ak8_matched_mask = ak8.match(genVs, deltaRCut=0.8).flatten()
+                for wp in ['loose','loosemd','tight','tightmd']:
+                    if re.match(r'.*_{wp}_v.*', region):
+
+                        real_V_weights = evaluator[f'wtag_{wp}'](ak8.pt.max())
+                        if wp == 'tight': # no mistag SF available for tight cut
+                            mistag_weights = np.ones(df.size)
+                        else:
+                            mistag_weights = evaluator[f'wtag_mistag_{wp}'](ak8.pt.max())
+
+                        matched_weights=np.ones(df.size)
+                        matched_weights[ak8_matched_mask] = real_V_weights[ak8_matched_mask]
+                        matched_weights[np.invert(ak8_matched_mask)] = mistag_weights[np.invert(ak8_matched_mask)]
+                        print(matched_weights)
+                        region_weights.add('wtag_{wp}', matched_weights)
 
 
 
