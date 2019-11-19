@@ -381,7 +381,7 @@ class monojetProcessor(processor.ProcessorABC):
                     region_weights.add('trigger', np.ones(df.size))
 
             if not df['is_data']:
-                genVs = gen[(gen.pdg==23) + (gen.pdg==24) + (gen.pdg==-24)]
+                genVs = gen[(gen.pdg==23) + (gen.pdg==24) + (gen.pdg==-24) + (gen.pt>10)]
                 ak8_matched_mask = ak8.match(genVs, deltaRCut=0.8).flatten()
                 for wp in ['loose','loosemd','tight','tightmd']:
                     if re.match(r'.*_{wp}_v.*', region):
