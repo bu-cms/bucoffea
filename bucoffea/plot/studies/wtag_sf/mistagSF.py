@@ -42,11 +42,9 @@ def divide_sumw2(sumw_a, sumw2_a, sumw_b, sumw2_b): #return (sumw_c, sumw2_c) fo
 
 
 # takes the coffea hists, calculate the efficiency using ROOT and return a TEfficiency containing the efficiencies calculated
-def get_mistag_rate(hist, region, flag='', isData=False): #flag is for histogram naming only
-    h_all = hist.integrate('wppass')
-    h_pass= hist.integrate('wppass',slice(0.5,1.5))
-    sumw_all , sumw2_all  = h_all .values(sumw2=True)[(region,)]
-    sumw_pass, sumw2_pass = h_pass.values(sumw2=True)[(region,)]
+def get_mistag_rate(hist, region_all, region_pass, flag='', isData=False): #flag is for histogram naming only
+    sumw_all , sumw2_all  = hist.values(sumw2=True)[(region_all,)]
+    sumw_pass, sumw2_pass = hist.values(sumw2=True)[(region_pass,)]
     # construct root th1f
     edges = h_all.axis('jetpt').edges()
     th1_all = ROOT.TH1F(f'h_all_{flag}',f'h_all{flag}',len(edges)-1, array('d',edges))
@@ -85,9 +83,10 @@ def ratio_of_efficiencies(name, title, numerator, denominator):
 
 
 for lepton_flag in ['1m','2m','1e','2e']:
-    region = f'cr_{lepton_flag}_hasmass_inclusive_v'
     for year in [2017,2018]:
         for wp in ['loose','loosemd','tight','tightmd']:
+            region_all = f'cr_{lepton_flag}_hasmass_inclusive_v'
+            region_pass= f'cr_{lepton_flag}_nomistag_{wp}_v'
             mc_Real  = re.compile(f'(ST_|TTJets-MLM_|Diboson_){year}')
             mc_False = re.compile(f'(VDY.*HT.*|QCD.*|W.*HT.*|GJets.*HT.*|ZJetsToNuNu.*){year}')
             mc_All = re.compile(f'(VDY.*HT.*|QCD.*|W.*HT.*|ST_|TTJets-MLM_|Diboson_|GJets.*HT.*|ZJetsToNuNu.*){year}')
@@ -95,7 +94,7 @@ for lepton_flag in ['1m','2m','1e','2e']:
                 data = re.compile(f'EGamma_{year}')
             else:
                 data = re.compile(f'MET_{year}')
-            distribution = f'ak8_pass{wp}_pt0'
+            distribution = f'ak8_pt0'
             acc.load(distribution)
             htmp = acc[distribution]
     
@@ -106,8 +105,8 @@ for lepton_flag in ['1m','2m','1e','2e']:
             #make stack_plot for all and pass
             acc[distribution+'_all'] = htmp.integrate('wppass')
             acc[distribution+'_pass'] = htmp.integrate('wppass', slice(0.5,1.5))
-            make_plot(acc, region=region, distribution=distribution+'_all', year=year, data=data, mc=mc_All, outdir='./output/stack_plots', output_format='png')
-            make_plot(acc, region=region, distribution=distribution+'_pass', year=year, data=data, mc=mc_All, outdir='./output/stack_plots', output_format='png', ylim=(10e-3,10e3))
+            make_plot(acc, region=region_all, distribution=distribution, year=year, data=data, mc=mc_All, outdir='./output/stack_plots', output_format='png')
+            make_plot(acc, region=region_pass, distribution=distribution, year=year, data=data, mc=mc_All, outdir='./output/stack_plots', output_format='png', ylim=(10e-3,10e3))
     
             #binning stuff
             if newbin:
@@ -124,9 +123,9 @@ for lepton_flag in ['1m','2m','1e','2e']:
             h_data.add(h_mc_Real)
 
             # extract mistag rate for data and mc
-            teff_mistag_rate_data = get_mistag_rate(h_data, region, flag=f'data_{lepton_flag}_{wp}_{year}', isData=True)
+            teff_mistag_rate_data = get_mistag_rate(h_data, region_all, region_pass, flag=f'data_{lepton_flag}_{wp}_{year}', isData=True)
             teff_mistag_rate_data.SetNameTitle(f'mistag_rate_data_{lepton_flag}_{wp}_{year}','mistagging rate')
-            teff_mistag_rate_mc = get_mistag_rate(h_mc_False, region, flag=f'mc_{lepton_flag}_{wp}_{year}', isData=False)
+            teff_mistag_rate_mc = get_mistag_rate(h_mc_False, region_all, region_pass, flag=f'mc_{lepton_flag}_{wp}_{year}', isData=False)
             teff_mistag_rate_mc.SetNameTitle(f'mistag_rate_mc_{lepton_flag}_{wp}_{year}','mistagging rate')
 
             # get the scale factors
