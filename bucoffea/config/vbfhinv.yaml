@@ -112,7 +112,7 @@ default:
       histogram: 2d_dy_vbf
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
     qcd_nlo_g_2017_2d: # 2D QCD k factor for QCD photon
-      histogram: 2d_gjet_vbf
+      histogram: 2d_gjets_vbf
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
     qcd_nnlo_g:
       histogram: aj
