@@ -110,20 +110,21 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile):
 
     # fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
     plt.close('all')
-    fig = plt.gcf()
-    fig.clear()
+    # fig = plt.gcf()
+    # fig.clear()
+    fig = plt.figure(figsize=(6,7.5))
     ax = plt.gca()
     # new_ax = hist.Bin('vpt','LHE V $p_{T}$ (GeV)',list(range(100,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250)))
 
 
     if tag in ['dy', 'wjet']:
-        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',list(range(250,1000,150))+list(range(1000,1200,200))+list(range(1200,200,800)))
-        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[200]+list(range(500,2500,500)))
-        clims = 0.75,1.1
+        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0, 40, 80, 120, 160, 200, 240, 280, 320, 400, 520, 640, 760, 880,1200])
+        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200]+list(range(500,2500,500)))
+        clims = 0.5,1.5
     elif tag in ['gjets']:
-        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[250,300,400,500,600,800])
-        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[200,1000])
-        clims = 1.2, 1.5
+        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0, 40, 80, 120, 160, 200, 240, 280, 320, 400, 520, 640, 800])
+        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200,500,1000])
+        clims = 1.0, 1.5
 
     for selection in ['vbf']:
         dist = f'gen_vpt_{selection}_{pt_type}'
@@ -213,14 +214,14 @@ def main():
     sf_1d(acc, tag='wjet', regex='W.*',outputrootfile=outputrootfile)
     sf_1d(acc, tag='dy', regex='.*DY.*',outputrootfile=outputrootfile)
     # # outputrootfile = uproot.recreate(f'test.root')
-    # sf_2d(acc, tag='wjet', regex='W.*',pt_type='dress',outputrootfile=outputrootfile)
-    # sf_2d(acc, tag='dy', regex='.*DY.*',pt_type='dress',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='wjet', regex='W.*',pt_type='dress',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='dy', regex='.*DY.*',pt_type='dress',outputrootfile=outputrootfile)
 
     acc = acc_from_dir("./input/2019-10-29_photon_kfac_v0/")
     sf_1d(acc, tag='gjets', regex='G\d?Jet.*',outputrootfile=outputrootfile)
     # outputrootfile = uproot.recreate('test.root')
 
-    # sf_2d(acc, tag='gjets',regex='G\d?Jet.*',pt_type='stat1',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='gjets',regex='G\d?Jet.*',pt_type='stat1',outputrootfile=outputrootfile)
 
 
 if __name__ == "__main__":
