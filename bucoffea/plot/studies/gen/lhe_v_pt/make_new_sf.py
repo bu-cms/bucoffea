@@ -110,20 +110,21 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile):
 
     # fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
     plt.close('all')
-    fig = plt.gcf()
-    fig.clear()
+    # fig = plt.gcf()
+    # fig.clear()
+    fig = plt.figure(figsize=(6,7.5))
     ax = plt.gca()
     # new_ax = hist.Bin('vpt','LHE V $p_{T}$ (GeV)',list(range(100,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250)))
 
 
     if tag in ['dy', 'wjet']:
-        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0,50,100,150,200,250,300,400,500,600,800])
+        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0, 40, 80, 120, 160, 200, 240, 280, 320, 400, 520, 640, 760, 880,1200])
         mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200]+list(range(500,2500,500)))
-        clims = 0.75,1.1
+        clims = 0.5,1.5
     elif tag in ['gjets']:
-        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0,50,100,150,200,250,300,400,500,600,800])
+        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0, 40, 80, 120, 160, 200, 240, 280, 320, 400, 520, 640, 800])
         mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200,500,1000])
-        clims = 1.2, 1.5
+        clims = 1.0, 1.5
 
     for selection in ['vbf']:
         dist = f'gen_vpt_{selection}_{pt_type}'
