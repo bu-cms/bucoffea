@@ -117,12 +117,12 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile):
 
 
     if tag in ['dy', 'wjet']:
-        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',list(range(250,1000,150))+list(range(1000,1200,200))+list(range(1200,200,800)))
-        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[200]+list(range(500,2500,500)))
+        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0,50,100,150,200,250,300,400,500,600,800])
+        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200]+list(range(500,2500,500)))
         clims = 0.75,1.1
     elif tag in ['gjets']:
-        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[250,300,400,500,600,800])
-        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[200,1000])
+        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0,50,100,150,200,250,300,400,500,600,800])
+        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200,500,1000])
         clims = 1.2, 1.5
 
     for selection in ['vbf']:
@@ -213,14 +213,14 @@ def main():
     sf_1d(acc, tag='wjet', regex='W.*',outputrootfile=outputrootfile)
     sf_1d(acc, tag='dy', regex='.*DY.*',outputrootfile=outputrootfile)
     # # outputrootfile = uproot.recreate(f'test.root')
-    # sf_2d(acc, tag='wjet', regex='W.*',pt_type='dress',outputrootfile=outputrootfile)
-    # sf_2d(acc, tag='dy', regex='.*DY.*',pt_type='dress',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='wjet', regex='W.*',pt_type='dress',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='dy', regex='.*DY.*',pt_type='dress',outputrootfile=outputrootfile)
 
     acc = acc_from_dir("./input/2019-10-29_photon_kfac_v0/")
     sf_1d(acc, tag='gjets', regex='G\d?Jet.*',outputrootfile=outputrootfile)
     # outputrootfile = uproot.recreate('test.root')
 
-    # sf_2d(acc, tag='gjets',regex='G\d?Jet.*',pt_type='stat1',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='gjets',regex='G\d?Jet.*',pt_type='stat1',outputrootfile=outputrootfile)
 
 
 if __name__ == "__main__":
