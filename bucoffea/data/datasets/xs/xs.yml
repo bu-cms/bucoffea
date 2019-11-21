@@ -817,16 +817,22 @@ WZ_ext1_2016:
   gen: 23.42
 WminusH_WToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.3654
+  nnlo: 0.5328
 WminusH_WToQQ_HToInvisible_M125_pow_pythia8_2017:
   gen: 0.3654
+  nnlo: 0.5328
 WminusH_WToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.3654
+  nnlo: 0.5328
 WplusH_WToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.585
+  nnlo: 0.8400
 WplusH_WToQQ_HToInvisible_M125_pow_pythia8_2017:
   gen: 0.585
+  nnlo: 0.8400
 WplusH_WToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.585
+  nnlo: 0.8400
 Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_2017:
   gen: 18.08
 Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_ext1_2017:
@@ -853,10 +859,13 @@ Z2JetsToNuNu_M-50_LHEZpT_50-150-FXFX_2017:
   gen: 326.3
 ZH_ZToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.554
+  nnlo: 0.8839
 ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2017:
   gen: 0.554
+  nnlo: 0.8839
 ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.554
+  nnlo: 0.8839
 ZJetsToNuNu_HT-100To200-mg_2016:
   gen: 93.51
 ZJetsToNuNu_HT-100To200-mg_2017:
