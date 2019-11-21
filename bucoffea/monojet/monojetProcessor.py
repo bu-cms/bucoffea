@@ -381,21 +381,22 @@ class monojetProcessor(processor.ProcessorABC):
                     region_weights.add('trigger', np.ones(df.size))
 
             if not df['is_data']:
-                genVs = gen[(gen.pdg==23) + (gen.pdg==24) + (gen.pdg==-24) + (gen.pt>10)]
-                ak8_matched_mask = ak8.match(genVs, deltaRCut=0.8).flatten()
+                genVs = gen[(gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24) | (gen.pt>10)]
+                leadak8 = ak8[ak8.pt.argmax()]
+                leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
+                matched_leadak8 = leadak8[leadak8_matched_mask]
+                unmatched_leadak8 = leadak8[~leadak8_matched_mask]
                 for wp in ['loose','loosemd','tight','tightmd']:
                     if re.match(r'.*_{wp}_v.*', region):
 
-                        real_V_weights = evaluator[f'wtag_{wp}'](ak8.pt.max())
                         if (wp == 'tight') or ('nomistag' in region): # no mistag SF available for tight cut
-                            mistag_weights = np.ones(df.size)
+                            matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
                         else:
-                            mistag_weights = evaluator[f'wtag_mistag_{wp}'](ak8.pt.max())
+                            matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
+                                    * evaluator[f'wtag_mistag_{wp}'](unmatched_leadak8.pt).prod()
 
-                        matched_weights=np.ones(df.size)
-                        matched_weights[ak8_matched_mask] = real_V_weights[ak8_matched_mask]
-                        matched_weights[np.invert(ak8_matched_mask)] = mistag_weights[np.invert(ak8_matched_mask)]
-                        print(matched_weights)
+                        print(evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod())
+                        print(evaluator[f'wtag_{wp}'](unmatched_leadak8.pt).prod())
                         region_weights.add('wtag_{wp}', matched_weights)
 
 
@@ -507,6 +508,13 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_wvsqcdmd0',  tagger=ak8[leadak8_index].wvsqcdmd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcd0',    tagger=ak8[leadak8_index].zvsqcd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcdmd0',  tagger=ak8[leadak8_index].zvsqcdmd[mask].flatten(),     weight=w_leadak8)
+
+                # histogram with only gen-matched lead ak8 pt
+                if not df['is_data']:
+                    w_matchedleadak8 = weight_shape(matched_leadak8.eta[mask], region_weights.weight()[mask])
+                    ezfill('ak8_Vmatched_pt0', jetpt=matched_leadak8.pt[mask].flatten(),      weight=w_matchedleadak8 )
+
+
                 # Dimuon specifically for deepak8 mistag rate measurement
                 if 'inclusive_v' in region:
                     ezfill('ak8_passloose_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )

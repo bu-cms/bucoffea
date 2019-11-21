@@ -111,6 +111,7 @@ def monojet_accumulator(cfg):
     items["ak8_passtight_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
     items["ak8_passloosemd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
     items["ak8_passtightmd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+    items["ak8_Vmatched_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
 
     items["ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
