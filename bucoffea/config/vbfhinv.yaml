@@ -123,6 +123,25 @@ default:
     qcd_nnlo_z:
       histogram: eej
       file: data/sf/theory/lindert_qcd_nnlo_sf.root
+    unc_zoverw_nlo_muf_down:
+      histogram: znlo1_over_wnlo1_facScaleDown
+      file: data/sf/theory/unc/wtoz_unc.root
+    unc_zoverw_nlo_muf_up:
+      histogram: znlo1_over_wnlo1_facScaleUp
+      file: data/sf/theory/unc/wtoz_unc.root
+    unc_zoverw_nlo_mur_down:
+      histogram: znlo1_over_wnlo1_renScaleDown
+      file: data/sf/theory/unc/wtoz_unc.root
+    unc_zoverw_nlo_mur_up:
+      histogram: znlo1_over_wnlo1_renScaleUp
+      file: data/sf/theory/unc/wtoz_unc.root
+    unc_zoverw_nlo_pdf_down:
+      histogram: znlo1_over_wnlo1_pdfDown
+      file: data/sf/theory/unc/wtoz_unc.root
+    unc_zoverw_nlo_pdf_up:
+      histogram: znlo1_over_wnlo1_pdfUp
+      file: data/sf/theory/unc/wtoz_unc.root
+
     pileup:
       mode: nano
 

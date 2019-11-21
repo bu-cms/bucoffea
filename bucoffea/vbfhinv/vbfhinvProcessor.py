@@ -471,6 +471,18 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('detajj',             deta=df["detajj"][mask],   weight=weights.weight()[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=weights.weight()[mask] )
 
+            # Uncertainty variations
+            if df['is_lo_z'] or df['is_nlo_z']:
+                theory_uncs = [x.replace('_unc','') for x in cfg.SF.keys() if x.startswith('unc')]
+                for unc in theory_uncs:
+                    reweight = evaluator[unc](gen_v_pt)
+                    w = (weights.weight() * reweight)[mask]
+                    ezfill(
+                        'mjj_unc',
+                        mjj=df['mjj'][mask],
+                        uncertainty=unc,
+                        weight=w)
+
             # Two dimensional
             ezfill('recoil_mjj',         recoil=df["recoil_pt"][mask], mjj=df["mjj"][mask], weight=weights.weight()[mask] )
 
