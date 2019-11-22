@@ -395,8 +395,6 @@ class monojetProcessor(processor.ProcessorABC):
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
                                     * evaluator[f'wtag_mistag_{wp}'](unmatched_leadak8.pt).prod()
 
-                        print(evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod())
-                        print(evaluator[f'wtag_{wp}'](unmatched_leadak8.pt).prod())
                         region_weights.add('wtag_{wp}', matched_weights)
 
 
