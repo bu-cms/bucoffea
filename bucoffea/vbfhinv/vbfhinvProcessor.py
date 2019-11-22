@@ -154,7 +154,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Generator-level leading dijet mass
         if df['has_lhe_v_pt']:
             genjets = setup_gen_jets(df)
-            digenjet = genjet[:,:2].distincts()
+            digenjet = genjets[:,:2].distincts()
             df['mjj_gen'] = digenjet.mass().max()
 
         # Candidates
