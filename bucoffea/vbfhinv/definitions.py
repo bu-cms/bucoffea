@@ -183,21 +183,21 @@ def vbfhinv_accumulator(cfg):
 
 def vbfhinv_regions(cfg):
     common_cuts = [
-        'filt_met',
-        'hemveto',
         'veto_ele',
         'veto_muo',
         'veto_photon',
         'veto_tau',
         'veto_b',
+        'filt_met',
+        'hemveto',
         'mindphijr',
         'recoil',
         'two_jets',
         'leadak4_pt_eta',
         'leadak4_id',
         'trailak4_pt_eta',
-        'hemisphere',
         'trailak4_id',
+        'hemisphere',
         'mjj',
         'dphijj',
         'detajj'
