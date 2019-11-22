@@ -381,7 +381,7 @@ class monojetProcessor(processor.ProcessorABC):
                     region_weights.add('trigger', np.ones(df.size))
 
             if not df['is_data']:
-                genVs = gen[(gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24) & (gen.pt>10)]
+                genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
                 leadak8 = ak8[ak8.pt.argmax()]
                 leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
                 matched_leadak8 = leadak8[leadak8_matched_mask]
