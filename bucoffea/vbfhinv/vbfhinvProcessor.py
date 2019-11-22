@@ -155,7 +155,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         if df['has_lhe_v_pt']:
             genjets = setup_gen_jets(df)
             digenjet = genjets[:,:2].distincts()
-            df['mjj_gen'] = digenjet.mass().max()
+            df['mjj_gen'] = digenjet.mass.max()
 
         # Candidates
         # Already pre-filtered!
