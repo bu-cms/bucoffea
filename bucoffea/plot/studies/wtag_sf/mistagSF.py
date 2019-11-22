@@ -46,7 +46,7 @@ def get_mistag_rate(hist, region_all, region_pass, flag='', isData=False): #flag
     sumw_all , sumw2_all  = hist.values(sumw2=True)[(region_all,)]
     sumw_pass, sumw2_pass = hist.values(sumw2=True)[(region_pass,)]
     # construct root th1f
-    edges = h_all.axis('jetpt').edges()
+    edges = hist.axis('jetpt').edges()
     th1_all = ROOT.TH1F(f'h_all_{flag}',f'h_all{flag}',len(edges)-1, array('d',edges))
     th1_pass= ROOT.TH1F(f'h_pass_{flag}',f'h_all{flag}',len(edges)-1, array('d',edges))
     for ibin in range(len(edges)-1):
@@ -103,10 +103,12 @@ for lepton_flag in ['1m','2m','1e','2e']:
             htmp = merge_extensions(htmp, acc, reweight_pu=True)
             scale_xs_lumi(htmp)
             htmp = merge_datasets(htmp)
+            acc[distribution]=htmp
 
             htmp_Vmatched = merge_extensions(htmp_Vmatched, acc, reweight_pu=True)
             scale_xs_lumi(htmp_Vmatched)
             htmp_Vmatched = merge_datasets(htmp_Vmatched)
+            acc['ak8_Vmatched_pt0']=htmp_Vmatched
     
             #make stack_plot for all and pass
             make_plot(acc, region=region_all, distribution=distribution, year=year, data=data, mc=mc_All, outdir='./output/stack_plots', output_format='png')
@@ -116,6 +118,7 @@ for lepton_flag in ['1m','2m','1e','2e']:
             #binning stuff
             if newbin:
                 htmp = htmp.rebin(htmp.axis('jetpt'),newbin)
+                htmp_Vmatched = htmp_Vmatched.rebin(htmp_Vmatched.axis('jetpt'),newbin)
             edges = htmp.axis('jetpt').edges()
             centers = htmp.axis('jetpt').centers()
             halfwidth = [centers[i]-edges[i] for i in range(len(centers))]
