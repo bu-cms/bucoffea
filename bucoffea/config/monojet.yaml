@@ -92,6 +92,12 @@ default:
     ewk_nlo_g: # EW k factor for QCD photon
       histogram: kfactor_monojet_ewk
       file: data/sf/theory/merged_kfactors_gjets.root
+    qcd_nlo_z_ewk: # QCD k factor for EWK Z
+      histogram: TH2F_kFactor
+      file: data/sf/theory/kFactor_ZToNuNu_pT_Mjj.root
+    qcd_nlo_w_ewk: # QCD k factor for EWK W
+      histogram: TH2F_kFactor
+      file: data/sf/theory/kFactor_WToLNu_pT_Mjj.root
     qcd_nlo_w_2017: # QCD k factor for QCD W
       histogram: wjet_dress_monojet
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root

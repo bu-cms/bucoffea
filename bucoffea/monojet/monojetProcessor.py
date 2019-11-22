@@ -44,6 +44,7 @@ from bucoffea.helpers.gen import (
                                   find_gen_dilepton,
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
+                                  setup_gen_jets,
                                   fill_gen_v_info
                                  )
 
@@ -140,6 +141,7 @@ class monojetProcessor(processor.ProcessorABC):
         df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g']
         df['is_data'] = is_data(dataset)
 
+        # Generator-level V pt
         gen_v_pt = None
         if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
             gen = setup_gen_candidates(df)
@@ -149,6 +151,12 @@ class monojetProcessor(processor.ProcessorABC):
         elif df['is_lo_g']:
             gen = setup_gen_candidates(df)
             gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
+
+        # Generator-level leading dijet mass
+        if df['has_lhe_v_pt']:
+            genjets = setup_gen_jets(df)
+            digenjet = genjet[:,:2].distincts()
+            df['mjj_gen'] = digenjet.mass().max()
 
         # Candidates
         # Already pre-filtered!
@@ -326,7 +334,7 @@ class monojetProcessor(processor.ProcessorABC):
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons)
             weights = pileup_weights(weights, df, evaluator, cfg)
             if not (gen_v_pt is None):
-                weights = theory_weights_monojet(weights, df, evaluator, gen_v_pt)
+                weights = theory_weights_monojet(weights, df, evaluator, gen_v_pt, df['mjj_gen'])
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
