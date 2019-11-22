@@ -96,17 +96,22 @@ for lepton_flag in ['1m','2m','1e','2e']:
                 data = re.compile(f'MET_{year}')
             distribution = f'ak8_pt0'
             acc.load(distribution)
+            acc.load('ak8_Vmatched_pt0')
             htmp = acc[distribution]
+            htmp_Vmatched = acc['ak8_Vmatched_pt0']
     
             htmp = merge_extensions(htmp, acc, reweight_pu=True)
             scale_xs_lumi(htmp)
             htmp = merge_datasets(htmp)
+
+            htmp_Vmatched = merge_extensions(htmp_Vmatched, acc, reweight_pu=True)
+            scale_xs_lumi(htmp_Vmatched)
+            htmp_Vmatched = merge_datasets(htmp_Vmatched)
     
             #make stack_plot for all and pass
-            acc[distribution+'_all'] = htmp.integrate('wppass')
-            acc[distribution+'_pass'] = htmp.integrate('wppass', slice(0.5,1.5))
             make_plot(acc, region=region_all, distribution=distribution, year=year, data=data, mc=mc_All, outdir='./output/stack_plots', output_format='png')
             make_plot(acc, region=region_pass, distribution=distribution, year=year, data=data, mc=mc_All, outdir='./output/stack_plots', output_format='png', ylim=(10e-3,10e3))
+            make_plot(acc, region=region_pass, distribution='ak8_Vmatched_pt0', year=year, data=None, mc=mc_All, outdir='./output/stack_plots', output_format='png', ylim=(10e-4,5e3))
     
             #binning stuff
             if newbin:
@@ -117,7 +122,7 @@ for lepton_flag in ['1m','2m','1e','2e']:
     
             # background substraction from data: remove real Vs
             h_data = htmp[data].integrate('dataset')
-            h_mc_Real  = htmp[mc_Real].integrate('dataset')
+            h_mc_Real  = htmp_Vmatched[mc_All].integrate('dataset')
             h_mc_False = htmp[mc_False].integrate('dataset')
             h_mc_Real.scale(-1.) # just for background substraction
             h_data.add(h_mc_Real)

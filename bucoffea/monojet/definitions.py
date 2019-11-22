@@ -472,6 +472,7 @@ def monojet_regions(cfg):
             # save a copy of the v-tagged regions but not applying mistag SFs, for the sake of measuring mistag SF later
             if wp in ['loose','tight','loosemd','tightmd']:
                 noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
+                regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
 
 
     if cfg.RUN.TRIGGER_STUDY:
