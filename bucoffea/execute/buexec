@@ -118,7 +118,7 @@ def chunk_by_events(filelist, chunksize=1e7, workers=4):
     nchunks = int(max([total // chunksize, 1]))
 
     # Distribute files into chunks
-    chunks = [[]] * nchunks
+    chunks = [[] for _ in range(nchunks)]
 
     # The files are sorted in ascending order by number of events,
     # so we add the highest-event file to a chunk, and then move
@@ -135,7 +135,9 @@ def chunk_by_events(filelist, chunksize=1e7, workers=4):
     all_files =[]
     for c in chunks:
         all_files.extend(c)
+    assert(len(filelist)==len(all_files))
     assert(set(filelist)==set(all_files))
+
     return chunks
 
 def do_submit(args):
@@ -331,8 +333,9 @@ def main():
         args.send_pack = True
         args.send_proxy = True
 
-    if args.filesperjob:
-        raise RuntimeError("The --filesperjob argument is deprecated. Use --eventsperjob instead!")
+    if hasattr(args, 'filesperjob'):
+        if args.filesperjob:
+            raise RuntimeError("The --filesperjob argument is deprecated. Use --eventsperjob instead!")
     args.func(args)
 
 
