@@ -144,7 +144,6 @@ def find_files_eos(directory, regex):
     # path=(File path starting with /eos/uscms) size=(Size in bits)
     # For folders, the 'size' part is left out, so they can easily be filtered
     for line in lines:
-        print(line)
         parts = line.split()
 
         # Ignore lines representing directories
