@@ -12,7 +12,7 @@ from bucoffea.helpers.dataset import (extract_year, is_lo_g, is_lo_w, is_lo_z,
                                       is_nlo_g, is_nlo_w, is_nlo_z)
 from bucoffea.helpers.gen import (fill_gen_v_info, find_gen_dilepton, islep,
                                   isnu, setup_dressed_gen_candidates,
-                                  setup_gen_candidates)
+                                  setup_gen_candidates,setup_lhe_cleaned_genjets)
 
 Hist = hist.Hist
 Bin = hist.Bin
@@ -105,29 +105,15 @@ class lheVProcessor(processor.ProcessorABC):
         output = self.accumulator.identity()
         dataset = df['dataset']
 
-        # Dilepton
-        
+        genjets = setup_lhe_cleaned_genjets(df)
 
-        genjets_all = JaggedCandidateArray.candidatesfromcounts(
-                df['nGenJet'],
-                pt=df['GenJet_pt'],
-                eta=df['GenJet_eta'],
-                abseta=np.abs(df['GenJet_eta']),
-                phi=df['GenJet_phi'],
-                mass=df['GenJet_mass']
-            )
+        # Dilepton
         gen = setup_gen_candidates(df)
         tags = ['stat1','lhe']
         if is_lo_w(dataset) or is_nlo_w(dataset) or is_lo_z(dataset) or is_lo_w(dataset):
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
             tags.append('dress')
-
-            # Select jets not overlapping with leptons
-            genjets = genjets_all[
-            (~genjets_all.match(dressed,deltaRCut=0.4)) &
-            (~genjets_all.match(gen[islep(gen)],deltaRCut=0.4)) \
-            ]
         elif is_lo_g(dataset) or is_nlo_g(dataset):
             photons = gen[(gen.status==1)&(gen.pdg==22)]
             df['gen_v_pt_stat1'] = photons.pt.max()
@@ -135,12 +121,7 @@ class lheVProcessor(processor.ProcessorABC):
             df['gen_v_pt_lhe'] = df['LHE_Vpt']
             df['gen_v_phi_lhe'] = np.zeros(df.size)
 
-            # Select jets not overlapping with photon
-            genjets = genjets_all[
-                (~genjets_all.match(photons[photons.pt.argmax()],deltaRCut=0.4)) \
-            ]
         for tag in tags:
-
             # Dijet for VBF
             dijet = genjets[:,:2].distincts()
 
@@ -153,7 +134,6 @@ class lheVProcessor(processor.ProcessorABC):
             output[f'gen_vpt_inclusive_{tag}'].fill(
                                     dataset=dataset,
                                     vpt=df[f'gen_v_pt_{tag}'],
-                                    jpt=genjets.pt.max(),
                                     weight=nominal
                                     )
 

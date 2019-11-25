@@ -44,8 +44,9 @@ from bucoffea.helpers.gen import (
                                   find_gen_dilepton,
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
-                                  setup_gen_jets,
-                                  fill_gen_v_info
+                                  setup_lhe_cleaned_genjets,
+                                  fill_gen_v_info,
+                                  islep
                                  )
 
 def trigger_selection(selection, df, cfg):
@@ -154,7 +155,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Generator-level leading dijet mass
         if df['has_lhe_v_pt']:
-            genjets = setup_gen_jets(df)
+            genjets = setup_lhe_cleaned_genjets(df)
             digenjet = genjets[:,:2].distincts()
             df['mjj_gen'] = digenjet.mass.max()
 
