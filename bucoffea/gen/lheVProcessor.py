@@ -3,8 +3,8 @@ import numpy as np
 from coffea import hist
 
 from bucoffea.helpers import min_dphi_jet_met, dphi
-from bucoffea.helpers.dataset import (is_lo_g, is_lo_w, is_lo_z,
-                                      is_nlo_g, is_nlo_w, is_nlo_z)
+from bucoffea.helpers.dataset import (is_lo_g, is_lo_g_ewk, is_lo_w, is_lo_z,
+                                      is_nlo_g, is_nlo_w, is_nlo_z,)
 from bucoffea.helpers.gen import (fill_gen_v_info,
                                   setup_dressed_gen_candidates,
                                   setup_gen_candidates,setup_lhe_cleaned_genjets)
