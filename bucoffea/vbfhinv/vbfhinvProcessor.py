@@ -472,7 +472,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=weights.weight()[mask] )
 
             # Uncertainty variations
-            if df['is_lo_z'] or df['is_nlo_z']:
+            if df['is_lo_z'] or df['is_nlo_z'] or df['is_lo_z_ewk']:
                 theory_uncs = [x.replace('_unc','') for x in cfg.SF.keys() if x.startswith('unc')]
                 for unc in theory_uncs:
                     reweight = evaluator[unc](gen_v_pt)

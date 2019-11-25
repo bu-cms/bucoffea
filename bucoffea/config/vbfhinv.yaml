@@ -141,7 +141,12 @@ default:
     unc_zoverw_nlo_pdf_up:
       histogram: znlo1_over_wnlo1_pdfUp
       file: data/sf/theory/unc/wtoz_unc.root
-
+    unc_w_ewkcorr_overz_common_up:
+      histogram: w_ewkcorr_overz_Upcommon
+      file: data/sf/theory/unc/wtoz_unc.root
+    unc_w_ewkcorr_overz_common_up:
+      histogram: w_ewkcorr_overz_Downcommon
+      file: data/sf/theory/unc/wtoz_unc.root
     pileup:
       mode: nano
 
