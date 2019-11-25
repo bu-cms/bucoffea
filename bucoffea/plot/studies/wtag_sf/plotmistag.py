@@ -33,7 +33,7 @@ for year in [2017]:
                     while not gtmp:
                         time.sleep(1)
                         gtmp=htmp.GetPaintedGraph()
-                    if wp == 'loose' or wp =='tightmd':
+                    if wp =='tightmd':
                         gtmp.GetYaxis().SetRangeUser(0,0.1)
                     else:
                         gtmp.GetYaxis().SetRangeUser(0,1)

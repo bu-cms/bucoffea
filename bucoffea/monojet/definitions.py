@@ -111,6 +111,7 @@ def monojet_accumulator(cfg):
     items["ak8_passtight_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
     items["ak8_passloosemd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
     items["ak8_passtightmd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+    items["ak8_Vmatched_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
 
     items["ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -460,15 +461,19 @@ def monojet_regions(cfg):
             regions[newRegionName].remove('leadak8_tau21')
             if wp == 'inclusive':
                 regions[newRegionName].remove('leadak8_mass')
+
+                # add regions: cr_2m_hasmass_inclusive_v, cr_1m_hasmass_inclusive_v, cr_2e_hasmass_inclusive_v, cr_1e_hasmass_inclusive_v 
+                # these are regions with mass cut but has no tagger cut
+                hasMassRegionName = region.replace('_v', '_hasmass_'+ wp + '_v')
+                regions[hasMassRegionName] = regions[newRegionName] + ['leadak8_mass']
+
             else:
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
+            # save a copy of the v-tagged regions but not applying mistag SFs, for the sake of measuring mistag SF later
+            if wp in ['loose','tight','loosemd','tightmd']:
+                noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
+                regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
 
-    # control regions with mass cut but no tagger cut
-    regions['cr_2m_hasmass_inclusive_v'] = regions['cr_2m_inclusive_v'] + ['leadak8_mass']
-    regions['cr_2e_hasmass_inclusive_v'] = regions['cr_2e_inclusive_v'] + ['leadak8_mass']
-    regions['cr_1m_hasmass_inclusive_v'] = regions['cr_1m_inclusive_v'] + ['leadak8_mass']
-    regions['cr_1e_hasmass_inclusive_v'] = regions['cr_1e_inclusive_v'] + ['leadak8_mass']
-    regions['cr_g_hasmass_inclusive_v']  = regions['cr_g_inclusive_v']  + ['leadak8_mass']
 
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
