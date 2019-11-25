@@ -15,8 +15,14 @@ def is_lo_w_ewk(dataset):
 def is_lo_g(dataset):
     return bool(re.match(r'GJets.*HT.*', dataset))
 
+def is_lo_g_ewk(dataset):
+    return bool(re.match(r'GJets.*EWK.*', dataset))
+
 def is_nlo_g(dataset):
     return bool(re.match(r'G(\d)+Jet.*amc.*', dataset))
+
+def is_nlo_g_ewk(dataset):
+    return bool(re.match(r'AJJ.*amc.*', dataset))
 
 def is_nlo_z(dataset):
     return bool(re.match(r'(DY|Z)(\d*)Jet.*FXFX.*', dataset))
