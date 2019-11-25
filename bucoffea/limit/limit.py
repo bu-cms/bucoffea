@@ -26,6 +26,7 @@ def main():
     if klepto:
         acc = dir_archive(args.inpath, serialized=True, compression=0, memsize=1e3)
         acc.load('recoil')
+        acc.load('mjj')
         acc.load('sumw')
         acc.load('sumw_pileup')
         acc.load('nevents')
