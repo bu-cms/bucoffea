@@ -3,9 +3,7 @@
 import os
 import sys
 from bucoffea.plot.util import acc_from_dir
-from bucoffea.limit.legacy import legacy_limit_input
 from klepto.archives import dir_archive
-# from bucoffea.limit.new_limit import monojet
 import argparse
 
 def parse_commandline():
