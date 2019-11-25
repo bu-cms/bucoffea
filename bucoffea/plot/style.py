@@ -91,6 +91,11 @@ def plot_settings():
                 'ylim' : (1e-1,1e6)
             }
         },
+        'sr_j' : {
+            'recoil' : {
+                'ylim' : (1e-3,1e5)
+                }
+            },
         'cr_2m_vbf' : {
             'recoil' : {
                 'ylim' : (1e-3,1e3)
@@ -302,7 +307,7 @@ def plot_settings():
             },
             'dielectron_dr' : {
                 'xlim' : (0,2),
-                'ylim' : (1e0,1e5)
+                'ylim' : (1e0,1e6)
             },
             'ak4_chf0' : {
                 'xlim' : (0,1),
@@ -809,7 +814,7 @@ def plot_settings():
             },
             'dielectron_dr' : {
                 'xlim' : (0,2),
-                'ylim' : (1e1,1e5)
+                'ylim' : (1e1,1e6)
             },
             'ak4_chf0' : {
                 'xlim' : (0,1),
