@@ -1,12 +1,9 @@
 import copy
-import os
 import re
 
 import numpy as np
 
-from coffea import hist
 import coffea.processor as processor
-
 
 from dynaconf import settings as cfg
 
@@ -41,7 +38,6 @@ from bucoffea.helpers.dataset import (
                                       extract_year
                                      )
 from bucoffea.helpers.gen import (
-                                  find_gen_dilepton,
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
                                   fill_gen_v_info
@@ -209,7 +205,6 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Triggers
         pass_all = np.ones(df.size)==1
-        pass_none = ~pass_all
         selection.add('inclusive', pass_all)
         selection = trigger_selection(selection, df, cfg)
         selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
