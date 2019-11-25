@@ -40,7 +40,7 @@ default:
         met: 50
   tau:
     cuts:
-      pt: 18
+      pt: 20
       eta: 2.3
   photon:
     cuts:
