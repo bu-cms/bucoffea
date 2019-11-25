@@ -1,17 +1,12 @@
-import os
-import re
-
 import coffea.processor as processor
 import numpy as np
-from awkward import JaggedArray
 from coffea import hist
-from coffea.analysis_objects import JaggedCandidateArray
 
 from bucoffea.helpers import min_dphi_jet_met
-from bucoffea.helpers.dataset import (extract_year, is_lo_g, is_lo_w, is_lo_z,
+from bucoffea.helpers.dataset import (is_lo_g, is_lo_w, is_lo_z,
                                       is_nlo_g, is_nlo_w, is_nlo_z)
-from bucoffea.helpers.gen import (fill_gen_v_info, find_gen_dilepton, islep,
-                                  isnu, setup_dressed_gen_candidates,
+from bucoffea.helpers.gen import (fill_gen_v_info,
+                                  setup_dressed_gen_candidates,
                                   setup_gen_candidates,setup_lhe_cleaned_genjets)
 
 Hist = hist.Hist
@@ -110,7 +105,7 @@ class lheVProcessor(processor.ProcessorABC):
         # Dilepton
         gen = setup_gen_candidates(df)
         tags = ['stat1','lhe']
-        if is_lo_w(dataset) or is_nlo_w(dataset) or is_lo_z(dataset) or is_lo_w(dataset):
+        if is_lo_w(dataset) or is_nlo_w(dataset) or is_lo_z(dataset) or is_nlo_z(dataset):
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
             tags.append('dress')

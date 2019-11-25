@@ -1,9 +1,5 @@
-import os
-import re
-
 import coffea.processor as processor
 import numpy as np
-from coffea import hist
 from dynaconf import settings as cfg
 
 from bucoffea.helpers import (
@@ -29,10 +25,8 @@ from bucoffea.helpers.dataset import (
                                       is_nlo_z
                                       )
 from bucoffea.helpers.gen import (
-                                  find_gen_dilepton,
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
-                                  setup_gen_jets,
                                   setup_lhe_cleaned_genjets,
                                   fill_gen_v_info
                                  )
@@ -213,7 +207,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Triggers
         pass_all = np.ones(df.size)==1
-        pass_none = ~pass_all
         selection.add('inclusive', pass_all)
         selection = trigger_selection(selection, df, cfg)
 
