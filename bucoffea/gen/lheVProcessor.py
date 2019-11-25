@@ -2,9 +2,9 @@ import coffea.processor as processor
 import numpy as np
 from coffea import hist
 
-from bucoffea.helpers import min_dphi_jet_met
-from bucoffea.helpers.dataset import (is_lo_g, is_lo_w, is_lo_z,
-                                      is_nlo_g, is_nlo_w, is_nlo_z)
+from bucoffea.helpers import min_dphi_jet_met, dphi
+from bucoffea.helpers.dataset import (is_lo_g, is_lo_g_ewk, is_lo_w, is_lo_z,
+                                      is_nlo_g,is_nlo_g_ewk, is_nlo_w, is_nlo_z,)
 from bucoffea.helpers.gen import (fill_gen_v_info,
                                   setup_dressed_gen_candidates,
                                   setup_gen_candidates,setup_lhe_cleaned_genjets)
@@ -35,6 +35,14 @@ def vbf_selection(vphi, dijet, genjets):
     selection.add(
                   'mindphijr',
                   min_dphi_jet_met(genjets, vphi.max(), njet=4, ptmin=30) > 0.5
+                  )
+    selection.add(
+                  'detajj',
+                  np.abs(dijet.i0.eta-dijet.i1.eta).max() > 1
+                  )
+    selection.add(
+                  'dphijj',
+                  dphi(dijet.i0.phi,dijet.i1.phi).min() < 1.5
                   )
 
     return selection
@@ -109,7 +117,7 @@ class lheVProcessor(processor.ProcessorABC):
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
             tags.append('dress')
-        elif is_lo_g(dataset) or is_nlo_g(dataset):
+        elif is_lo_g(dataset) or is_nlo_g(dataset) or is_lo_g_ewk(dataset) or is_nlo_g_ewk(dataset):
             photons = gen[(gen.status==1)&(gen.pdg==22)]
             df['gen_v_pt_stat1'] = photons.pt.max()
             df['gen_v_phi_stat1'] = photons[photons.pt.argmax()].phi.max()
