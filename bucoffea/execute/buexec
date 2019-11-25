@@ -5,7 +5,9 @@ import shutil
 from datetime import datetime
 from multiprocessing.pool import Pool
 from pathlib import Path
-
+import itertools
+import concurrent
+import uproot
 import cloudpickle
 import lz4.frame as lz4f
 from coffea import processor
@@ -96,13 +98,47 @@ def do_worker(args):
 
 
 
-def chunkify(items, nchunk):
+def chunk_by_files(items, nchunk):
     '''Split list of items into nchunk ~equal sized chunks'''
     chunks = [[] for _ in range(nchunk)]
     for i in range(len(items)):
         chunks[i % nchunk].append(items[i])
     return chunks
 
+def chunk_by_events(filelist, chunksize=1e7, workers=4):
+    executor = None if len(filelist) < 5 else concurrent.futures.ThreadPoolExecutor(workers)
+
+    entries_per_file = sorted(
+                            uproot.numentries(filelist, 'Events', total=False, executor=executor).items(),
+                            key = lambda x: x[1]
+                            )
+
+    # Total number of events and number of chunks
+    total = int(sum([x[1] for x in entries_per_file]))
+    nchunks = int(max([total // chunksize, 1]))
+
+    # Distribute files into chunks
+    chunks = [[] for _ in range(nchunks)]
+
+    # The files are sorted in ascending order by number of events,
+    # so we add the highest-event file to a chunk, and then move
+    # to the next chunk. When we get to the last chunk, do the
+    # same thing, but moving backwards. Rinse + repeat until no more files.
+    iter_index = itertools.cycle(itertools.chain(range(0, nchunks, 1), range(nchunks-1, -1, -1)))
+    while len(entries_per_file):
+        # Append to current chunk
+        index = iter_index.__next__()
+        item = entries_per_file.pop()
+        chunks[index].append(item[0])
+
+    # Sanity check
+    all_files =[]
+    for c in chunks:
+        all_files.extend(c)
+    assert(len(filelist)==len(all_files))
+    assert(set(filelist)==set(all_files))
+
+    return chunks
 
 def do_submit(args):
     """Submit the analysis to HTCondor."""
@@ -168,7 +204,7 @@ def do_submit(args):
     for dataset, files in dataset_files.items():
         print(f"Writing submission files for dataset: {dataset}.")
 
-        chunks = chunkify(files,int(len(files) / args.filesperjob + 1) )
+        chunks = chunk_by_events(files, chunksize=args.eventsperjob, workers=8)
         for ichunk, chunk in enumerate(chunks):
             # Save input files to a txt file and send to job
             tmpfile = pjoin(subdir, filedir, f"input_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt")
@@ -274,7 +310,8 @@ def main():
     # Arguments passed to the "submit" operation
     parser_submit = subparsers.add_parser('submit', help='Submission help')
     parser_submit.add_argument('--dataset', type=str, help='Dataset regex to use.')
-    parser_submit.add_argument('--filesperjob', type=int, default=10, help='Number of files to process per job')
+    parser_submit.add_argument('--filesperjob', type=int, default=None, help='Number of files to process per job')
+    parser_submit.add_argument('--eventsperjob', type=int, default=5e6, help='Number of events to process per job')
     parser_submit.add_argument('--name', type=str, default=None, help='Name to identify this submission')
     parser_submit.add_argument('--prefetch', action="store_true", default=False, help='Prefetch input files on worker but run over xrootd.')
     parser_submit.add_argument('--no-prefetch', action="store_true", default=False, help='DEPRECATED. Prefetching is now disabled by default. Use --prefetch to activate prefetching.')
@@ -295,6 +332,10 @@ def main():
     elif 'lxplus' in host:
         args.send_pack = True
         args.send_proxy = True
+
+    if hasattr(args, 'filesperjob'):
+        if args.filesperjob:
+            raise RuntimeError("The --filesperjob argument is deprecated. Use --eventsperjob instead!")
     args.func(args)
 
 
