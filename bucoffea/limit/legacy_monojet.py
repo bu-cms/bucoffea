@@ -81,7 +81,7 @@ def recoil_bins_2016():
              1020., 1090., 1160., 1250., 1400.]
 
 
-def legacy_limit_input(acc, outdir='./output'):
+def legacy_limit_input_monojet(acc, outdir='./output'):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
