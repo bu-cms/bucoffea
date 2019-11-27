@@ -144,11 +144,11 @@ class monojetProcessor(processor.ProcessorABC):
         if not df['is_data']:
             gen = setup_gen_candidates(df)
         if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
-            dressed = setup_dressed_gen_candidates(df)
-            fill_gen_v_info(df, gen, dressed)
-            gen_v_pt = df['gen_v_pt_dress']
+            # dressed = setup_dressed_gen_candidates(df)
+            # fill_gen_v_info(df, gen, dressed)
+            gen_v_pt = df['LHE_Vpt']
         elif df['is_lo_g']:
-            gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
+            gen_v_pt = df['LHE_Vpt']
 
         # Candidates
         # Already pre-filtered!
