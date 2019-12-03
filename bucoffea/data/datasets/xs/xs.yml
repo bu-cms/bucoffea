@@ -820,7 +820,7 @@ WminusH_WToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   nnlo: 0.360
 WminusH_WToQQ_HToInvisible_M125_pow_pythia8_2017:
   gen: 0.3654
-  nnlo: 0.0.360
+  nnlo: 0.360
 WminusH_WToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.3654
   nnlo: 0.360
