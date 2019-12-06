@@ -10,12 +10,24 @@ from bucoffea.plot.cr_ratio_plot import cr_ratio_plot
 from bucoffea.plot.style import plot_settings
 import copy
 from collections import defaultdict
+from klepto.archives import dir_archive
 
 pjoin = os.path.join
 def eta_phi_plot(inpath):
     indir=os.path.abspath(inpath)
 
-    acc = acc_from_dir(indir)
+    acc = dir_archive(
+        indir,
+        serialized=True,
+        compression=0,
+        memsize=1e3
+        )
+                      
+    acc.load('sumw')
+    acc.load('sumw_pileup')
+    acc.load('sumw2')
+    acc.load('nevents')
+
     outdir = pjoin('./output/', os.path.basename(indir))
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -36,6 +48,7 @@ def eta_phi_plot(inpath):
             elif 'm_' in region:
                 distributions.append('muon_eta_phi')
             for distribution in distributions:
+                acc.load(distribution)
                 h = copy.deepcopy(acc[distribution])
                 h = merge_extensions(h, acc, reweight_pu=('nopu' in distribution))
                 scale_xs_lumi(h)
