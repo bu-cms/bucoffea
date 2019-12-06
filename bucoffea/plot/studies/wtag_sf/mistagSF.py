@@ -84,7 +84,7 @@ def ratio_of_efficiencies(name, title, numerator, denominator):
 
 for lepton_flag in ['1m','2m','1e','2e']:
     for year in [2017,2018]:
-        for wp in ['loose','loosemd','tight','tightmd']:
+        for wp in ['loose','loosemd','tightmd']:
             region_all = f'cr_{lepton_flag}_hasmass_inclusive_v'
             region_pass= f'cr_{lepton_flag}_nomistag_{wp}_v'
             mc_Real  = re.compile(f'(ST_|TTJets-MLM_|Diboson_){year}')
@@ -145,6 +145,30 @@ for lepton_flag in ['1m','2m','1e','2e']:
                 teff_mistag_rate_data.Write()
                 teff_mistag_rate_mc.Write()
                 th1_mistag_SF.Write()
+
+# soup togather all CRs:
+for year in [2017,2018]:
+    for wp in ['loose','loosemd','tightmd']:
+        teff_mistag_rate_data_1e = outfile.Get(f'mistag_rate_data_1e_{wp}_{year}')
+        teff_mistag_rate_data_2e = outfile.Get(f'mistag_rate_data_2e_{wp}_{year}')
+        teff_mistag_rate_data_1m = outfile.Get(f'mistag_rate_data_1m_{wp}_{year}')
+        teff_mistag_rate_data_2m = outfile.Get(f'mistag_rate_data_2m_{wp}_{year}')
+        teff_mistag_rate_mc_1e = outfile.Get(f'mistag_rate_mc_1e_{wp}_{year}')
+        teff_mistag_rate_mc_2e = outfile.Get(f'mistag_rate_mc_2e_{wp}_{year}')
+        teff_mistag_rate_mc_1m = outfile.Get(f'mistag_rate_mc_1m_{wp}_{year}')
+        teff_mistag_rate_mc_2m = outfile.Get(f'mistag_rate_mc_2m_{wp}_{year}')
+        teff_mistag_rate_data = teff_mistag_rate_data_1e + teff_mistag_rate_data_2e\
+                + teff_mistag_rate_data_1m + teff_mistag_rate_data_2m
+        teff_mistag_rate_data.SetNameTitle(f'mistag_rate_data_{wp}_{year}', 'souped mistagging rate')
+        teff_mistag_rate_mc = teff_mistag_rate_mc_1e + teff_mistag_rate_mc_2e\
+                + teff_mistag_rate_mc_1m + teff_mistag_rate_mc_2m
+        teff_mistag_rate_mc.SetNameTitle(f'mistag_rate_mc_{wp}_{year}', 'souped mistagging rate')
+        th1_mistag_SF = ratio_of_efficiencies(f'Wmistag_{year}_{wp}_ak8_pt', 'souped mistag scale factor', teff_mistag_rate_data, teff_mistag_rate_mc)
+        if outfile:
+            teff_mistag_rate_data.Write()
+            teff_mistag_rate_mc.Write()
+            th1_mistag_SF.Write()
+
     
 
 if outfile:
