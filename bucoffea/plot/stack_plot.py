@@ -273,9 +273,10 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    outpath = pjoin(outdir, f"{region}_{distribution}{inte_tag}_{tag + '_' if tag else ''}{year}.{output_format}")
-    fig.savefig(outpath)
-    print(f"Saved plot file in {outpath}")
+    for form in output_format.split(','):
+        outpath = pjoin(outdir, f"{region}_{distribution}{inte_tag}_{tag + '_' if tag else ''}{year}.{form}")
+        fig.savefig(outpath)
+        print(f"Saved plot file in {outpath}")
     plt.close('all')
 
 def main():
