@@ -84,7 +84,7 @@ def ratio_of_efficiencies(name, title, numerator, denominator):
 
 for lepton_flag in ['1m','2m','1e','2e']:
     for year in [2017,2018]:
-        for wp in ['loose','loosemd','tightmd']:
+        for wp in ['loose','loosemd','tightmd','tight']:
             region_all = f'cr_{lepton_flag}_hasmass_inclusive_v'
             region_pass= f'cr_{lepton_flag}_nomistag_{wp}_v'
             mc_Real  = re.compile(f'(ST_|TTJets-MLM_|Diboson_){year}')
@@ -148,7 +148,7 @@ for lepton_flag in ['1m','2m','1e','2e']:
 
 # soup togather all CRs:
 for year in [2017,2018]:
-    for wp in ['loose','loosemd','tightmd']:
+    for wp in ['loose','loosemd','tightmd','tight']:
         teff_mistag_rate_data_1e = outfile.Get(f'mistag_rate_data_1e_{wp}_{year}')
         teff_mistag_rate_data_2e = outfile.Get(f'mistag_rate_data_2e_{wp}_{year}')
         teff_mistag_rate_data_1m = outfile.Get(f'mistag_rate_data_1m_{wp}_{year}')
