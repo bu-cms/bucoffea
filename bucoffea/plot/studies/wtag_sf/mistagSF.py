@@ -46,7 +46,7 @@ def get_mistag_rate(hist, region_all, region_pass, flag='', isData=False): #flag
     sumw_all , sumw2_all  = hist.values(sumw2=True)[(region_all,)]
     sumw_pass, sumw2_pass = hist.values(sumw2=True)[(region_pass,)]
     # construct root th1f
-    edges = h_all.axis('jetpt').edges()
+    edges = hist.axis('jetpt').edges()
     th1_all = ROOT.TH1F(f'h_all_{flag}',f'h_all{flag}',len(edges)-1, array('d',edges))
     th1_pass= ROOT.TH1F(f'h_pass_{flag}',f'h_all{flag}',len(edges)-1, array('d',edges))
     for ibin in range(len(edges)-1):
@@ -84,7 +84,7 @@ def ratio_of_efficiencies(name, title, numerator, denominator):
 
 for lepton_flag in ['1m','2m','1e','2e']:
     for year in [2017,2018]:
-        for wp in ['loose','loosemd','tight','tightmd']:
+        for wp in ['loose','loosemd','tightmd','tight']:
             region_all = f'cr_{lepton_flag}_hasmass_inclusive_v'
             region_pass= f'cr_{lepton_flag}_nomistag_{wp}_v'
             mc_Real  = re.compile(f'(ST_|TTJets-MLM_|Diboson_){year}')
@@ -103,10 +103,12 @@ for lepton_flag in ['1m','2m','1e','2e']:
             htmp = merge_extensions(htmp, acc, reweight_pu=True)
             scale_xs_lumi(htmp)
             htmp = merge_datasets(htmp)
+            acc[distribution]=htmp
 
             htmp_Vmatched = merge_extensions(htmp_Vmatched, acc, reweight_pu=True)
             scale_xs_lumi(htmp_Vmatched)
             htmp_Vmatched = merge_datasets(htmp_Vmatched)
+            acc['ak8_Vmatched_pt0']=htmp_Vmatched
     
             #make stack_plot for all and pass
             make_plot(acc, region=region_all, distribution=distribution, year=year, data=data, mc=mc_All, outdir='./output/stack_plots', output_format='png')
@@ -116,6 +118,7 @@ for lepton_flag in ['1m','2m','1e','2e']:
             #binning stuff
             if newbin:
                 htmp = htmp.rebin(htmp.axis('jetpt'),newbin)
+                htmp_Vmatched = htmp_Vmatched.rebin(htmp_Vmatched.axis('jetpt'),newbin)
             edges = htmp.axis('jetpt').edges()
             centers = htmp.axis('jetpt').centers()
             halfwidth = [centers[i]-edges[i] for i in range(len(centers))]
@@ -142,6 +145,30 @@ for lepton_flag in ['1m','2m','1e','2e']:
                 teff_mistag_rate_data.Write()
                 teff_mistag_rate_mc.Write()
                 th1_mistag_SF.Write()
+
+# soup togather all CRs:
+for year in [2017,2018]:
+    for wp in ['loose','loosemd','tightmd','tight']:
+        teff_mistag_rate_data_1e = outfile.Get(f'mistag_rate_data_1e_{wp}_{year}')
+        teff_mistag_rate_data_2e = outfile.Get(f'mistag_rate_data_2e_{wp}_{year}')
+        teff_mistag_rate_data_1m = outfile.Get(f'mistag_rate_data_1m_{wp}_{year}')
+        teff_mistag_rate_data_2m = outfile.Get(f'mistag_rate_data_2m_{wp}_{year}')
+        teff_mistag_rate_mc_1e = outfile.Get(f'mistag_rate_mc_1e_{wp}_{year}')
+        teff_mistag_rate_mc_2e = outfile.Get(f'mistag_rate_mc_2e_{wp}_{year}')
+        teff_mistag_rate_mc_1m = outfile.Get(f'mistag_rate_mc_1m_{wp}_{year}')
+        teff_mistag_rate_mc_2m = outfile.Get(f'mistag_rate_mc_2m_{wp}_{year}')
+        teff_mistag_rate_data = teff_mistag_rate_data_1e + teff_mistag_rate_data_2e\
+                + teff_mistag_rate_data_1m + teff_mistag_rate_data_2m
+        teff_mistag_rate_data.SetNameTitle(f'mistag_rate_data_{wp}_{year}', 'souped mistagging rate')
+        teff_mistag_rate_mc = teff_mistag_rate_mc_1e + teff_mistag_rate_mc_2e\
+                + teff_mistag_rate_mc_1m + teff_mistag_rate_mc_2m
+        teff_mistag_rate_mc.SetNameTitle(f'mistag_rate_mc_{wp}_{year}', 'souped mistagging rate')
+        th1_mistag_SF = ratio_of_efficiencies(f'Wmistag_{year}_{wp}_ak8_pt', 'souped mistag scale factor', teff_mistag_rate_data, teff_mistag_rate_mc)
+        if outfile:
+            teff_mistag_rate_data.Write()
+            teff_mistag_rate_mc.Write()
+            th1_mistag_SF.Write()
+
     
 
 if outfile:

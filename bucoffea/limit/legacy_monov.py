@@ -83,7 +83,7 @@ def recoil_bins_2016():
     return [250,300,350,400,500,600,750,1000]
 
 
-def legacy_limit_input(acc, outdir='./output'):
+def legacy_limit_input_monov(acc, outdir='./output'):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
