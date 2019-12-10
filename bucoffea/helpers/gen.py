@@ -207,6 +207,16 @@ def setup_gen_candidates(df):
         flag = df['GenPart_statusFlags'])
     return gen
 
+def setup_gen_jets(df):
+    genjets = JaggedCandidateArray.candidatesfromcounts(
+        df['nGenJet'],
+        pt=df['GenJet_pt'],
+        eta=df['GenJet_eta'],
+        phi=df['GenJet_phi'],
+        mass=0*df['GenJet_pt']
+        )
+    return genjets
+
 def setup_dressed_gen_candidates(df):
     dressed = JaggedCandidateArray.candidatesfromcounts(
         df['nGenDressedLepton'],
