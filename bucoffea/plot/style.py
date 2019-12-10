@@ -46,15 +46,12 @@ def plot_settings():
                 'ylim' : (1e0,1e7)
             },
             'ak4_eta0' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e6)
             },
             'ak4_eta1' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e6)
             },
             'ak4_eta' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e8)
             },
             'ak4_chf0' : {
@@ -143,15 +140,12 @@ def plot_settings():
                 'ylim' : (1e-1,1e7)
             },
             'ak4_eta0' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e6)
             },
             'ak4_eta1' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e6)
             },
             'ak4_eta' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e8)
             },
             'muon_eta' : {
@@ -278,15 +272,12 @@ def plot_settings():
                 'ylim' : (1e1,1e5)
             },
             'ak4_eta0' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e6)
             },
             'ak4_eta1' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e6)
             },
             'ak4_eta' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e6)
             },
             'electron_eta' : {
@@ -376,15 +367,12 @@ def plot_settings():
                 'ylim' : (1e0,1e7)
             },
             'ak4_eta0' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e9)
             },
             'ak4_eta1' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e9)
             },
             'ak4_eta' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e9)
             },
             'muon_eta' : {
@@ -481,15 +469,12 @@ def plot_settings():
                 'ylim' : (1e1,1e5)
             },
             'ak4_eta0' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e8)
             },
             'ak4_eta1' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e8)
             },
             'ak4_eta' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e8)
             },
             'electron_eta' : {
@@ -567,15 +552,12 @@ def plot_settings():
                 'ylim' : (1e0,1e5)
             },
             'ak4_eta0' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e7)
             },
             'ak4_eta1' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e7)
             },
             'ak4_eta' : {
-                'xlim' : (-3,3),
                 'ylim' : (1e0,1e7)
             },
             'photon_eta0' : {
