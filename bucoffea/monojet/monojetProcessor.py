@@ -348,6 +348,7 @@ class monojetProcessor(processor.ProcessorABC):
                 output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask].flatten()]
                 output['kinematics']['mupt0'] += [muons[leadmuon_index][mask].pt.flatten()]
                 output['kinematics']['mueta0'] += [muons[leadmuon_index][mask].eta.flatten()]
+                output['kinematics']['muphi0'] += [muons[leadmuon_index][mask].phi.flatten()]
 
                 output['kinematics']['nLooseEl'] += [electrons.counts[mask]]
                 output['kinematics']['nTightEl'] += [electrons[df['is_tight_electron']].counts[mask].flatten()]
