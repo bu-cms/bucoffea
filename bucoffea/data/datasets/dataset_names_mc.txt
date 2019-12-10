@@ -5,6 +5,7 @@ WJetsToLNu_*J_Tune*_13TeV-amcatnloFXFX-pythia8
 # W LO
 # W*JetsToLNu_Tune*_13TeV-madgraphMLM-pythia8
 WJetsToLNu_HT-*_Tune*_13TeV-madgraphMLM-pythia8
+WJetsToQQ*qc19*
 
 # Z NLO
 Z*JetsToNuNu_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
@@ -14,11 +15,13 @@ DY*JetsToLL_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
 # DY*JetsToLL_M-50_Tune*_13TeV-madgraphMLM-pythia8
 ZJetsToNuNu_HT-*_13TeV-madgraph
 DYJetsToLL_M-50_HT-*_Tune*13TeV-madgraphMLM-pythia8
+ZJetsToQQ*qc19*
 
 # EWK V
 EWK*2Jet*
 
 # Gamma
+GJets_DR-0p4_HT-*-madgraphMLM-pythia8*
 GJets_HT-*_Tune*_13TeV-madgraphMLM-pythia8
 AJJ_EWK_Tune*_13TeV_amcatnlo-pythia8
 GJets_*SM*CP5*
