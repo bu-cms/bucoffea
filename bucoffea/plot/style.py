@@ -40,7 +40,10 @@ def plot_settings():
                 'ylim' : (1e-3,1e3)
             },
             'ak4_phi0' : {
-                'ylim' : (1e0,1e6)
+                'ylim' : (1e0,1e7)
+            },
+            'ak4_phi1' : {
+                'ylim' : (1e0,1e7)
             },
             'ak4_phi' : {
                 'ylim' : (1e0,1e7)
@@ -122,7 +125,10 @@ def plot_settings():
                 'ylim' : (1e-3,1e3)
             },
             'ak4_phi0' : {
-                'ylim' : (1e0,1e6)
+                'ylim' : (1e0,1e7)
+            },
+            'ak4_phi1' : {
+                'ylim' : (1e0,1e7)
             },
             'ak4_phi' : {
                 'ylim' : (1e0,1e7)
@@ -244,7 +250,10 @@ def plot_settings():
                 'ylim' : (1e-3,1e3)
             },
             'ak4_phi0' : {
-                'ylim' : (1e0,1e6)
+                'ylim' : (1e0,1e7)
+            },
+            'ak4_phi1' : {
+                'ylim' : (1e0,1e7)
             },
             'ak4_phi' : {
                 'ylim' : (1e0,1e6)
@@ -360,6 +369,9 @@ def plot_settings():
             'ak4_phi0' : {
                 'ylim' : (1e0,1e7)
             },
+            'ak4_phi1' : {
+                'ylim' : (1e0,1e7)
+            },
             'ak4_phi' : {
                 'ylim' : (1e0,1e8)
             },
@@ -455,6 +467,9 @@ def plot_settings():
             'ak4_phi0' : {
                 'ylim' : (1e0,1e7)
             },
+            'ak4_phi1' : {
+                'ylim' : (1e0,1e7)
+            },
             'ak4_phi' : {
                 'ylim' : (1e0,1e8)
             },
@@ -544,6 +559,9 @@ def plot_settings():
             },
             'ak4_phi0' : {
                 'ylim' : (1e0,1e5)
+            },
+            'ak4_phi1' : {
+                'ylim' : (1e0,1e7)
             },
             'ak4_phi' : {
                 'ylim' : (1e0,1e5)
