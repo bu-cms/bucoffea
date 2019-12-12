@@ -83,7 +83,7 @@ def recoil_bins_2016():
     return [250,300,350,400,500,600,750,1000]
 
 
-def legacy_limit_input(acc, outdir='./output'):
+def legacy_limit_input_monov(acc, outdir='./output'):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
@@ -96,7 +96,7 @@ def legacy_limit_input(acc, outdir='./output'):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    for wp in ['tau21','loosemd','tightmd']:
+    for wp in ['tau21','loosemd','tightmd','loose','tight']:
         year = 2017
         signal = re.compile(f'.*(Hinv|HToInvisible).*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_monov_{wp}_{year}.root'))
@@ -155,6 +155,27 @@ def merge_legacy_inputs(outdir):
         for wp, file in ifiles.items():
             outfile = r.TFile(pjoin(outdir, f'merged_legacy_limit_monov_{wp}_{year}.root'),'RECREATE')
             subdir = outfile.mkdir(f'category_monov')
+            infile = r.TFile(file)
+            for key in infile.GetListOfKeys():
+                print(key)
+                h = key.ReadObj().Clone()
+                h.SetTitle(h.GetName())
+                h.SetDirectory(subdir)
+                h.GetXaxis().SetTitle('met')
+                # h.Write()
+                subdir.Write()
+        # produce a combined version
+        outfile_nominal = r.TFile(pjoin(outdir, f'merged_legacy_limit_nominal_monov_{year}.root'),'RECREATE')
+        outfile_MD = r.TFile(pjoin(outdir, f'merged_legacy_limit_MD_monov_{year}.root'),'RECREATE')
+        for wp, file in ifiles.items():
+            if wp == 'tau21':
+                continue
+            elif 'md' in wp:
+                outfile_MD.cd()
+                subdir = outfile_MD.mkdir('category_monov'+(wp.replace('md','')))
+            else:
+                outfile_nominal.cd()
+                subdir = outfile_nominal.mkdir('category_monov'+wp)
             infile = r.TFile(file)
             for key in infile.GetListOfKeys():
                 print(key)

@@ -56,7 +56,7 @@ class Style():
             'cr_2e_vbf' : 'Di-e CR, vbfhinv',
             'cr_g_vbf' : 'Single-Photon CR, vbfhinv'
         }
-        recoil_bins_2016 = [ 250.,  280.,  310.,  340.,  370.,  400.,  430.,  470.,  510., 550.,  590.,  640.,  690.,  740.,  790.,  840.,  900.,  960., 1020., 1090., 1160., 1250., 1400., 1600., 1800., 2000.]
+        recoil_bins_2016 = [ 250,  280,  310,  340,  370,  400,  430,  470,  510, 550,  590,  640,  690,  740,  790,  840,  900,  960, 1020, 1090, 1160, 1250, 1400]
         recoil_monov_bins_2016 = [250,300,350,400,500,600,750,1000]
         self.binnings = {
             'default': {
@@ -135,7 +135,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     # Plotting
     # Add ratio plot at the bottom if specified (default)
     # Otherwise just plot the histogram
-    if ratio: 
+    if ratio:
         fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
 
     else:
@@ -147,7 +147,6 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         'markersize': 10.,
         'color':'k',
         'elinewidth': 1,
-        'emarker': '_'
     }
     signal_err_opts = {
         'linestyle':'none',
@@ -155,13 +154,12 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         'markersize': 10.,
         'color':'r',
         'elinewidth': 1,
-        'emarker': '_'
     }
 
     # Plot single muon data
     # Note the syntax we use to pick the data set
     if data:
-        fig, ax, _ = hist.plot1d(
+        hist.plot1d(
             h[data],
             overlay='dataset',
             error_opts=data_err_opts,
@@ -181,7 +179,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     # Plot MC background samples
     # Here we use a regular expression to match
     # data sets we want
-    _, _, primitives = hist.plot1d(
+    hist.plot1d(
         h[mc],
         overlay='dataset',
         stack=True,
@@ -190,19 +188,21 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         ax=ax,
         binwnorm=True)
 
-    for name, ps in primitives.items():
-        name = str(name)
+    # Apply correct colors to BG histograms
+    handles, labels = ax.get_legend_handles_labels()
+    for handle, label in zip(handles, labels):
         col = None
         for k, v in colors.items():
-            if re.match(k, name):
+            if re.match(k, label):
                 col = v
                 break
-        for item in ps:
-            if col:
-                item.set_facecolor(col)
-            item.set_linestyle('-')
-            item.set_edgecolor('k')
-    # Legend
+        if col:
+            handle.set_color(col)
+            handle.set_linestyle('-')
+            handle.set_edgecolor('k')
+
+
+    # Update legend
     try:
         region_name = s.region_names[region]
     except KeyError:
@@ -242,9 +242,9 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     ax.set_yscale("log")
     ax.set_ylabel('Events / Bin width')
     plot_settings=style.plot_settings()
-    if region in plot_settings.keys(): 
+    if region in plot_settings.keys():
         plot_settings=plot_settings[region]
-    if distribution in plot_settings.keys(): 
+    if distribution in plot_settings.keys():
         plot_settings=plot_settings[distribution]
     if ylim:
         ax.set_ylim(ylim[0],ylim[1])
@@ -257,8 +257,8 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         ax.set_xlim(xlim[0],xlim[1])
     elif 'xlim' in plot_settings.keys():
         ax.set_xlim(plot_settings['xlim'])
-    
-    if ratio: 
+
+    if ratio:
         if rylim:
             rax.set_ylim(*rylim)
         else:
@@ -273,9 +273,10 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    outpath = pjoin(outdir, f"{region}_{distribution}{inte_tag}_{tag + '_' if tag else ''}{year}.{output_format}")
-    fig.savefig(outpath)
-    print(f"Saved plot file in {outpath}")
+    for form in output_format.split(','):
+        outpath = pjoin(outdir, f"{region}_{distribution}{inte_tag}_{tag + '_' if tag else ''}{year}.{form}")
+        fig.savefig(outpath)
+        print(f"Saved plot file in {outpath}")
     plt.close('all')
 
 def main():

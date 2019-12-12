@@ -254,6 +254,23 @@ def vbfhinv_regions(cfg):
 
     regions['cr_g_vbf'] = cr_g_cuts
 
+    if cfg.RUN.SYNC:
+        regions['sync_sr_vbf_round1'] = [
+                                        'filt_met',
+                                        'trig_met',
+                                        'veto_photon',
+                                        'mindphijr',
+                                        'recoil',
+                                        'two_jets',
+                                        'leadak4_pt_eta',
+                                        'leadak4_id',
+                                        'trailak4_pt_eta',
+                                        'trailak4_id',
+                                        'hemisphere',
+                                        'mjj',
+                                        'dphijj',
+                                        'detajj',
+                                        ]
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
         # num = numerator, den = denominator

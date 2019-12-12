@@ -9,6 +9,7 @@ colors={
         '2m':7,
         '1e':8,
         '2e':9,
+        'combined':46,
         }
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(ROOT.kFALSE)
@@ -20,8 +21,11 @@ for year in [2017]:
         for prefix in ['mistag_rate_data','mistag_rate_mc']:
             canv.Clear()
             canvEmpty=True
-            for lepton_flag in ['1m','2m','1e','2e']:
-                htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
+            for lepton_flag in ['1m','2m','1e','2e','combined']:
+                if lepton_flag=='combined':
+                    htmp = inputfile.Get(f'{prefix}_{wp}_{year}')
+                else:
+                    htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
                 htmp.SetTitle(lepton_flag) # for the legend builder
                 htmp.SetLineColor(colors[lepton_flag])
                 htmp.SetLineWidth(3)
@@ -33,7 +37,7 @@ for year in [2017]:
                     while not gtmp:
                         time.sleep(1)
                         gtmp=htmp.GetPaintedGraph()
-                    if wp == 'loose' or wp =='tightmd':
+                    if wp =='tightmd':
                         gtmp.GetYaxis().SetRangeUser(0,0.1)
                     else:
                         gtmp.GetYaxis().SetRangeUser(0,1)
@@ -50,8 +54,11 @@ for year in [2017]:
         for prefix in ['mistag_SF']:
             canv.Clear()
             canvEmpty=True
-            for lepton_flag in ['1m','2m','1e','2e']:
-                htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
+            for lepton_flag in ['1m','2m','1e','2e','combined']:
+                if lepton_flag=='combined':
+                    htmp = inputfile.Get(f'Wmistag_{year}_{wp}_ak8_pt')
+                else:
+                    htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
                 htmp.SetTitle(lepton_flag) # for the legend builder
                 htmp.SetLineColor(colors[lepton_flag])
                 htmp.SetLineWidth(3)

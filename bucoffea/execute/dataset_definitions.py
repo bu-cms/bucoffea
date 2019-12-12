@@ -132,27 +132,36 @@ def find_files(directory, regex):
 def eosls(path):
     return subprocess.check_output(['xrdfs', 'root://cmseos.fnal.gov','ls','-l',path]).decode('utf-8')
 
+def eosfind(path):
+    cmd = ['eos', 'root://cmseos.fnal.gov/', 'find',  '--size', path]
+    return subprocess.check_output(cmd).decode('utf-8')
+
 
 def find_files_eos(directory, regex):
-    directories = [directory]
     fileset = defaultdict(list)
-    while len(directories):
-        current = directories.pop()
-        output = eosls(current)
+    lines = eosfind(re.sub('.*/store/','/store/',directory)).splitlines()
+    # For files, lines are formatted as
+    # path=(File path starting with /eos/uscms) size=(Size in bits)
+    # For folders, the 'size' part is left out, so they can easily be filtered
+    for line in lines:
+        parts = line.split()
 
-        for line in output.splitlines():
-            parts = line.split()
+        # Ignore lines representing directories
+        if len(parts) < 2:
+            continue
+        # Ensure we are not missing a part
+        if len(parts) > 2:
+            raise RuntimeError(f'Encountered malformed line: {line}')
 
-            abspath = os.path.join(current, parts[-1])
-            if parts[0].startswith('d'):
-                directories.append(abspath)
-            else:
-                if not abspath.endswith('.root'):
-                    continue
-                dataset = abspath.split('/')[9]
-                if not re.match(regex, dataset):
-                    continue
-                fileset[dataset].append(re.sub('.*/store','root://cmsxrootd.fnal.gov//store', abspath))
+        # The info we care about
+        path = parts[0].replace('path=','')
+        if not path.endswith('.root'):
+            continue
+
+        dataset = path.split('/')[9]
+        if not re.match(regex, dataset):
+            continue
+        fileset[dataset].append(re.sub('.*/store','root://cmsxrootd.fnal.gov//store', path))
     return fileset
 
 def files_from_eos(regex):
