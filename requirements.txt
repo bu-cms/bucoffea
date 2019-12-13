@@ -5,3 +5,4 @@ pyyaml
 gitpython
 tabulate
 klepto
+pycairo>=1.18.2
