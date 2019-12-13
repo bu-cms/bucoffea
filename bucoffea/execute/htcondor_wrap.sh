@@ -28,7 +28,10 @@ else
     python -m venv ${ENVNAME}
     source ${ENVNAME}/bin/activate
     python -m pip install -e bucoffea --no-cache-dir
+    export PYTHONPATH="${PWD}/${ENVNAME}/lib/python3.6/site-packages":${PYTHONPATH}
 fi
+
+python -m pip install -U pycairo # Compatibility with coffea 0.6.19
 
 # Copy files to local disk before running
 if [ "$BUCOFFEAPREFETCH" = true ]; then
