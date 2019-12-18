@@ -46,7 +46,7 @@ def write_job_pad(pad, cm, hide=lambda x: False):
     for i,l in enumerate(tab.split('\n')):
         pad.addstr(i,0,string_padding(l, curses.COLS), curses.color_pair(colors[i]))
     try:
-        for j in range(i, 1000):
+        for j in range(i+1, 1000):
             pad.addstr(j, 0, string_padding('', curses.COLS))
     except:
         pass
