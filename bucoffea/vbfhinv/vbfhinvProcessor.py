@@ -49,53 +49,46 @@ def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
     pass_none = ~pass_all
     dataset = df['dataset']
-    if cfg.RUN.SYNC: # Synchronization mode
-        selection.add('filt_met', pass_all)
-        selection.add('trig_met', df['HLT_PFMETNoMu120_PFMHTNoMu120_IDTight'])
-        selection.add('trig_ele', pass_all)
-        selection.add('trig_mu',  pass_all)
-        selection.add('trig_photon',  pass_all)
 
+    if df['is_data']:
+        selection.add('filt_met', mask_and(df, cfg.FILTERS.DATA))
     else:
-        if df['is_data']:
-            selection.add('filt_met', mask_and(df, cfg.FILTERS.DATA))
-        else:
-            selection.add('filt_met', mask_and(df, cfg.FILTERS.MC))
-        selection.add('trig_met', mask_or(df, cfg.TRIGGERS.MET))
+        selection.add('filt_met', mask_and(df, cfg.FILTERS.MC))
+    selection.add('trig_met', mask_or(df, cfg.TRIGGERS.MET))
 
-        # Electron trigger overlap
-        if df['is_data']:
-            if "SinglePhoton" in dataset:
-                # Backup photon trigger, but not main electron trigger
-                trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & (~mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE))
-            elif "SingleElectron" in dataset:
-                # Main electron trigger, no check for backup
-                trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
-            elif "EGamma" in dataset:
-                # 2018 has everything in one stream, so simple OR
-                trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
-            else:
-                trig_ele = pass_none
-        else:
+    # Electron trigger overlap
+    if df['is_data']:
+        if "SinglePhoton" in dataset:
+            # Backup photon trigger, but not main electron trigger
+            trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) & (~mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE))
+        elif "SingleElectron" in dataset:
+            # Main electron trigger, no check for backup
+            trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
+        elif "EGamma" in dataset:
+            # 2018 has everything in one stream, so simple OR
             trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
-
-        selection.add('trig_ele', trig_ele)
-
-        # Photon trigger:
-        if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
-            trig_photon = mask_or(df, cfg.TRIGGERS.PHOTON.SINGLE)
         else:
-            trig_photon = pass_none
-        selection.add('trig_photon', trig_photon)
+            trig_ele = pass_none
+    else:
+        trig_ele = mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE_BACKUP) | mask_or(df, cfg.TRIGGERS.ELECTRON.SINGLE)
 
-        for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
-            if (not df['is_data']) or ('JetHT' in dataset):
-                selection.add(trgname, mask_or(df,[trgname]))
-            else:
-                selection.add(trgname, np.ones(df.size)==1)
+    selection.add('trig_ele', trig_ele)
 
-        # Muon trigger
-        selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
+    # Photon trigger:
+    if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
+        trig_photon = mask_or(df, cfg.TRIGGERS.PHOTON.SINGLE)
+    else:
+        trig_photon = pass_none
+    selection.add('trig_photon', trig_photon)
+
+    for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
+        if (not df['is_data']) or ('JetHT' in dataset):
+            selection.add(trgname, mask_or(df,[trgname]))
+        else:
+            selection.add(trgname, np.ones(df.size)==1)
+
+    # Muon trigger
+    selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
 
     return selection
 
