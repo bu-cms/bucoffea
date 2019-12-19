@@ -85,15 +85,15 @@ default:
   overlap:
     electron:
       muon:
-        clean: false
+        clean: true
         dr: 0.3
     photon:
       muon:
         clean: true
-        dr: 0.5
+        dr: 0.3
       electron:
         clean: true
-        dr: 0.5
+        dr: 0.3
     tau:
       muon:
         clean: true
@@ -113,13 +113,13 @@ default:
         dr: 0.4
     btag:
       muon:
-        clean: true
+        clean: false
         dr: 0.4
       electron:
-        clean: true
+        clean: false
         dr: 0.4
       photon:
-        clean: true
+        clean: false
         dr: 0.4
   mitigation:
     hem: True
