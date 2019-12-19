@@ -1,18 +1,13 @@
-import os
-import re
-
 import coffea.processor as processor
 import numpy as np
-from awkward import JaggedArray
 from coffea import hist
-from coffea.analysis_objects import JaggedCandidateArray
 
-from bucoffea.helpers import min_dphi_jet_met
-from bucoffea.helpers.dataset import (extract_year, is_lo_g, is_lo_w, is_lo_z,
-                                      is_nlo_g, is_nlo_w, is_nlo_z)
-from bucoffea.helpers.gen import (fill_gen_v_info, find_gen_dilepton, islep,
-                                  isnu, setup_dressed_gen_candidates,
-                                  setup_gen_candidates)
+from bucoffea.helpers import min_dphi_jet_met, dphi
+from bucoffea.helpers.dataset import (is_lo_g, is_lo_g_ewk, is_lo_w, is_lo_z,
+                                      is_nlo_g,is_nlo_g_ewk, is_nlo_w, is_nlo_z,)
+from bucoffea.helpers.gen import (fill_gen_v_info,
+                                  setup_dressed_gen_candidates,
+                                  setup_gen_candidates,setup_lhe_cleaned_genjets)
 
 Hist = hist.Hist
 Bin = hist.Bin
@@ -40,6 +35,14 @@ def vbf_selection(vphi, dijet, genjets):
     selection.add(
                   'mindphijr',
                   min_dphi_jet_met(genjets, vphi.max(), njet=4, ptmin=30) > 0.5
+                  )
+    selection.add(
+                  'detajj',
+                  np.abs(dijet.i0.eta-dijet.i1.eta).max() > 1
+                  )
+    selection.add(
+                  'dphijj',
+                  dphi(dijet.i0.phi,dijet.i1.phi).min() < 1.5
                   )
 
     return selection
@@ -105,42 +108,23 @@ class lheVProcessor(processor.ProcessorABC):
         output = self.accumulator.identity()
         dataset = df['dataset']
 
-        # Dilepton
-        
+        genjets = setup_lhe_cleaned_genjets(df)
 
-        genjets_all = JaggedCandidateArray.candidatesfromcounts(
-                df['nGenJet'],
-                pt=df['GenJet_pt'],
-                eta=df['GenJet_eta'],
-                abseta=np.abs(df['GenJet_eta']),
-                phi=df['GenJet_phi'],
-                mass=df['GenJet_mass']
-            )
+        # Dilepton
         gen = setup_gen_candidates(df)
         tags = ['stat1','lhe']
-        if is_lo_w(dataset) or is_nlo_w(dataset) or is_lo_z(dataset) or is_lo_w(dataset):
+        if is_lo_w(dataset) or is_nlo_w(dataset) or is_lo_z(dataset) or is_nlo_z(dataset):
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
             tags.append('dress')
-
-            # Select jets not overlapping with leptons
-            genjets = genjets_all[
-            (~genjets_all.match(dressed,deltaRCut=0.4)) &
-            (~genjets_all.match(gen[islep(gen)],deltaRCut=0.4)) \
-            ]
-        elif is_lo_g(dataset) or is_nlo_g(dataset):
+        elif is_lo_g(dataset) or is_nlo_g(dataset) or is_lo_g_ewk(dataset) or is_nlo_g_ewk(dataset):
             photons = gen[(gen.status==1)&(gen.pdg==22)]
             df['gen_v_pt_stat1'] = photons.pt.max()
             df['gen_v_phi_stat1'] = photons[photons.pt.argmax()].phi.max()
             df['gen_v_pt_lhe'] = df['LHE_Vpt']
             df['gen_v_phi_lhe'] = np.zeros(df.size)
 
-            # Select jets not overlapping with photon
-            genjets = genjets_all[
-                (~genjets_all.match(photons[photons.pt.argmax()],deltaRCut=0.4)) \
-            ]
         for tag in tags:
-
             # Dijet for VBF
             dijet = genjets[:,:2].distincts()
 
@@ -153,7 +137,6 @@ class lheVProcessor(processor.ProcessorABC):
             output[f'gen_vpt_inclusive_{tag}'].fill(
                                     dataset=dataset,
                                     vpt=df[f'gen_v_pt_{tag}'],
-                                    jpt=genjets.pt.max(),
                                     weight=nominal
                                     )
 

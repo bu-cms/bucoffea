@@ -207,6 +207,16 @@ def setup_gen_candidates(df):
         flag = df['GenPart_statusFlags'])
     return gen
 
+def setup_gen_jets(df):
+    genjets = JaggedCandidateArray.candidatesfromcounts(
+        df['nGenJet'],
+        pt=df['GenJet_pt'],
+        eta=df['GenJet_eta'],
+        phi=df['GenJet_phi'],
+        mass=0*df['GenJet_pt']
+        )
+    return genjets
+
 def setup_dressed_gen_candidates(df):
     dressed = JaggedCandidateArray.candidatesfromcounts(
         df['nGenDressedLepton'],
@@ -222,6 +232,29 @@ def islep(pdg):
     """Returns True if the PDG ID represents a lepton."""
     abspdg = np.abs(pdg)
     return (11<=abspdg) & (abspdg<=16)
+
+def setup_lhe_cleaned_genjets(df):
+    genjets = JaggedCandidateArray.candidatesfromcounts(
+            df['nGenJet'],
+            pt=df['GenJet_pt'],
+            eta=df['GenJet_eta'],
+            abseta=np.abs(df['GenJet_eta']),
+            phi=df['GenJet_phi'],
+            mass=df['GenJet_mass']
+        )
+    lhe = JaggedCandidateArray.candidatesfromcounts(
+                df['nLHEPart'],
+                pt=df['LHEPart_pt'],
+                eta=df['LHEPart_eta'],
+                phi=df['LHEPart_phi'],
+                mass=df['LHEPart_mass'],
+                pdg=df['LHEPart_pdgId'],
+            )
+
+    lhe_leps_gams = lhe[(islep(lhe.pdg)) | (lhe.pdg==22)]
+
+    return genjets[(~genjets.match(lhe_leps_gams,deltaRCut=0.4))]
+
 
 def isnu(pdg):
     """Returns True if the PDG ID represents a neutrino."""

@@ -1,9 +1,5 @@
-import os
-import re
-
 import coffea.processor as processor
 import numpy as np
-from coffea import hist
 from dynaconf import settings as cfg
 
 from bucoffea.helpers import (
@@ -29,9 +25,9 @@ from bucoffea.helpers.dataset import (
                                       is_nlo_z
                                       )
 from bucoffea.helpers.gen import (
-                                  find_gen_dilepton,
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
+                                  setup_lhe_cleaned_genjets,
                                   fill_gen_v_info
                                  )
 from bucoffea.monojet.definitions import (
@@ -143,6 +139,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
             gen = setup_gen_candidates(df)
             gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
 
+        # Generator-level leading dijet mass
+        if df['has_lhe_v_pt']:
+            genjets = setup_lhe_cleaned_genjets(df)
+            digenjet = genjets[:,:2].distincts()
+            df['mjj_gen'] = digenjet.mass.max()
+
         # Candidates
         # Already pre-filtered!
         # All leptons are at least loose
@@ -198,7 +200,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Triggers
         pass_all = np.ones(df.size)==1
-        pass_none = ~pass_all
         selection.add('inclusive', pass_all)
         selection = trigger_selection(selection, df, cfg)
 
@@ -322,7 +323,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons)
             weights = pileup_weights(weights, df, evaluator, cfg)
             if not (gen_v_pt is None):
-                weights = theory_weights_vbf(weights, df, evaluator, gen_v_pt, df['mjj'])
+                weights = theory_weights_vbf(weights, df, evaluator, gen_v_pt, df['mjj_gen'])
 
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:

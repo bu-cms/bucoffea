@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import math
 import os
 import shutil
 from datetime import datetime
@@ -204,7 +205,11 @@ def do_submit(args):
     for dataset, files in dataset_files.items():
         print(f"Writing submission files for dataset: {dataset}.")
 
-        chunks = chunk_by_events(files, chunksize=args.eventsperjob, workers=8)
+        if args.filesperjob:
+            nchunk = math.ceil(len(files)/args.filesperjob)
+            chunks = chunk_by_files(files, nchunk=int(nchunk))
+        else:
+            chunks = chunk_by_events(files, chunksize=args.eventsperjob, workers=8)
         for ichunk, chunk in enumerate(chunks):
             # Save input files to a txt file and send to job
             tmpfile = pjoin(subdir, filedir, f"input_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt")
@@ -333,9 +338,6 @@ def main():
         args.send_pack = True
         args.send_proxy = True
 
-    if hasattr(args, 'filesperjob'):
-        if args.filesperjob:
-            raise RuntimeError("The --filesperjob argument is deprecated. Use --eventsperjob instead!")
     args.func(args)
 
 
