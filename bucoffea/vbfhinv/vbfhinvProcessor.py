@@ -149,10 +149,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt, met_phi, ak4, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
+        met_pt, met_phi, ak4, bjets, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]
+        bjets = bjets[bjets.puid]
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
@@ -182,14 +183,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['dREleJet'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
         muonjet_pairs = ak4[:,:1].cross(muons)
         df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
-
-        # B tagged ak4
-        btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
-        jet_btag_val = getattr(ak4, cfg.BTAG.algo)
-        jet_btagged = jet_btag_val > btag_cut
-        bjets = ak4[ (ak4.abseta<2.4) \
-                     & jet_btagged \
-                     & (ak4.pt>20) ]
 
         # Recoil
         df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
@@ -339,7 +332,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                 output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt]
                 output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta]
-                output['kinematics']['leadbtag'] += [jet_btag_val[(ak4.abseta<2.4) & (ak4.pt>20)][mask].max()]
+                output['kinematics']['leadbtag'] += [ak4.pt.max()<0][mask]
 
                 output['kinematics']['nLooseMu'] += [muons.counts[mask]]
                 output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask]]

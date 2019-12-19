@@ -150,7 +150,7 @@ class monojetProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
+        met_pt, met_phi, ak4, bjets, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
@@ -180,14 +180,6 @@ class monojetProcessor(processor.ProcessorABC):
         df['dREleJet'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
         muonjet_pairs = ak4[:,:1].cross(muons)
         df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
-
-        # B tagged ak4
-        btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
-        jet_btag_val = getattr(ak4, cfg.BTAG.algo)
-        jet_btagged = jet_btag_val > btag_cut
-        bjets = ak4[ (ak4.abseta<2.4) \
-                     & jet_btagged \
-                     & (ak4.pt>20) ]
 
         # Photons
         # Angular distance leading photon - leading jet
@@ -337,7 +329,7 @@ class monojetProcessor(processor.ProcessorABC):
 
                 output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt.flatten()]
                 output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta.flatten()]
-                output['kinematics']['leadbtag'] += [jet_btag_val[(ak4.abseta<2.4) & (ak4.pt>20)][mask].max()]
+                output['kinematics']['leadbtag'] += [ak4.pt.max()<0][mask]
 
                 output['kinematics']['nLooseMu'] += [muons.counts[mask]]
                 output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask].flatten()]
@@ -519,11 +511,6 @@ class monojetProcessor(processor.ProcessorABC):
                     ezfill('ak8_passtight_mass0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHT, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passloosemd_mass0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.LOOSEMD, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passtightmd_mass0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.TIGHTMD, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
-
-            # B tag discriminator
-            btag = getattr(ak4[ak4.abseta<2.4], cfg.BTAG.ALGO)
-            w_btag = weight_shape(btag[mask], region_weights.weight()[mask])
-            ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
             # MET
             ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=region_weights.weight()[mask] )
