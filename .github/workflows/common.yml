@@ -1,9 +1,9 @@
 name: Python package
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
-  processors:
+  flake:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -16,14 +16,8 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Lint with flake8
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Install package
-      run: |
-        pip install -e .
-    - name: Run processors over test files
-      run: |
-        cd test
-        ./run_over_testfiles.sh
+        pip install flake8
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
