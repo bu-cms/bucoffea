@@ -79,7 +79,48 @@ default:
           endcap: 0.20
     branch:
       id: Electron_cutBased
-
+  btag:
+    pt: 20
+    eta: 2.4
+  overlap:
+    electron:
+      muon:
+        clean: true
+        dr: 0.3
+    photon:
+      muon:
+        clean: true
+        dr: 0.3
+      electron:
+        clean: true
+        dr: 0.3
+    tau:
+      muon:
+        clean: true
+        dr: 0.4
+      electron:
+        clean: true
+        dr: 0.4
+    ak4:
+      muon:
+        clean: true
+        dr: 0.4
+      electron:
+        clean: true
+        dr: 0.4
+      photon:
+        clean: true
+        dr: 0.4
+    btag:
+      muon:
+        clean: false
+        dr: 0.4
+      electron:
+        clean: false
+        dr: 0.4
+      photon:
+        clean: false
+        dr: 0.4
   mitigation:
     hem: True
 

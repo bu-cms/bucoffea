@@ -272,6 +272,9 @@ def setup_candidates(df, cfg):
                                     & pass_dz
                                     ]
 
+    if cfg.OVERLAP.ELECTRON.MUON.CLEAN:
+        electrons = electrons[object_overlap(electrons, muons, dr=cfg.OVERLAP.ELECTRON.MUON.DR)]
+
 
     taus = JaggedCandidateArray.candidatesfromcounts(
         df['nTau'],
@@ -284,12 +287,15 @@ def setup_candidates(df, cfg):
         iso=df['Tau_idMVAoldDM2017v2'],
     )
 
-    taus = taus[ object_overlap(taus, muons) \
-                & object_overlap(taus, electrons) \
-                & (taus.decaymode) \
+    taus = taus[ (taus.decaymode) \
                 & (taus.pt > cfg.TAU.CUTS.PT)\
                 & (taus.abseta < cfg.TAU.CUTS.ETA) \
                 & ((taus.iso&2)==2)]
+
+    if cfg.OVERLAP.TAU.MUON.CLEAN:
+        taus = taus[object_overlap(taus, muons, dr=cfg.OVERLAP.TAU.MUON.DR)]
+    if cfg.OVERLAP.TAU.ELECTRON.CLEAN:
+        taus = taus[object_overlap(taus, electrons, dr=cfg.OVERLAP.TAU.ELECTRON.DR)]
 
     photons = JaggedCandidateArray.candidatesfromcounts(
         df['nPhoton'],
@@ -305,10 +311,13 @@ def setup_candidates(df, cfg):
     )
     photons = photons[photons.looseId \
               & (photons.pt > cfg.PHOTON.CUTS.LOOSE.pt) \
-              & (photons.abseta < cfg.PHOTON.CUTS.LOOSE.eta) \
-              & object_overlap(photons, muons, dr=0.5) \
-              & object_overlap(photons, electrons, dr=0.5)
+              & (photons.abseta < cfg.PHOTON.CUTS.LOOSE.eta)
               ]
+
+    if cfg.OVERLAP.PHOTON.MUON.CLEAN:
+        photons = photons[object_overlap(photons, muons, dr=cfg.OVERLAP.PHOTON.MUON.DR)]
+    if cfg.OVERLAP.PHOTON.ELECTRON.CLEAN:
+        photons = photons[object_overlap(photons, electrons, dr=cfg.OVERLAP.PHOTON.ELECTRON.DR)]
 
     ak4 = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'],
@@ -339,7 +348,33 @@ def setup_candidates(df, cfg):
         ]
     df['hemveto'] = hem_ak4.counts == 0
 
-    ak4 = ak4[ak4.looseId & object_overlap(ak4, muons) & object_overlap(ak4, electrons) & object_overlap(ak4, photons)]
+    # B jets have their own overlap cleaning,
+    # so deal with them before applying filtering to jets
+    btag_discriminator = getattr(ak4, cfg.BTAG.algo)
+    btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
+    bjets = ak4[
+        (ak4.looseId) \
+        & (ak4.pt > cfg.BTAG.PT) \
+        & (ak4.abseta < cfg.BTAG.ETA) \
+        & (btag_discriminator > btag_cut)
+    ]
+
+    if cfg.OVERLAP.BTAG.MUON.CLEAN:
+        bjets = bjets[object_overlap(bjets, muons, dr=cfg.OVERLAP.BTAG.MUON.DR)]
+    if cfg.OVERLAP.BTAG.ELECTRON.CLEAN:
+        bjets = bjets[object_overlap(bjets, electrons, dr=cfg.OVERLAP.BTAG.ELECTRON.DR)]
+    if cfg.OVERLAP.BTAG.PHOTON.CLEAN:
+        bjets = bjets[object_overlap(bjets, photons, dr=cfg.OVERLAP.BTAG.PHOTON.DR)]
+
+    ak4 = ak4[ak4.looseId]
+
+    if cfg.OVERLAP.AK4.MUON.CLEAN:
+        ak4 = ak4[object_overlap(ak4, muons, dr=cfg.OVERLAP.AK4.MUON.DR)]
+    if cfg.OVERLAP.AK4.ELECTRON.CLEAN:
+        ak4 = ak4[object_overlap(ak4, electrons, dr=cfg.OVERLAP.AK4.ELECTRON.DR)]
+    if cfg.OVERLAP.AK4.PHOTON.CLEAN:
+        ak4 = ak4[object_overlap(ak4, photons, dr=cfg.OVERLAP.AK4.PHOTON.DR)]
+
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
         df['nFatJet'],
@@ -369,8 +404,7 @@ def setup_candidates(df, cfg):
     met_pt = df[f'{met_branch}_pt{jes_suffix_met}']
     met_phi = df[f'{met_branch}_phi{jes_suffix_met}']
 
-    return met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons
-
+    return met_pt, met_phi, ak4, bjets, ak8, muons, electrons, taus, photons
 
 def monojet_regions(cfg):
     common_cuts = [
@@ -462,7 +496,7 @@ def monojet_regions(cfg):
             if wp == 'inclusive':
                 regions[newRegionName].remove('leadak8_mass')
 
-                # add regions: cr_2m_hasmass_inclusive_v, cr_1m_hasmass_inclusive_v, cr_2e_hasmass_inclusive_v, cr_1e_hasmass_inclusive_v 
+                # add regions: cr_2m_hasmass_inclusive_v, cr_1m_hasmass_inclusive_v, cr_2e_hasmass_inclusive_v, cr_1e_hasmass_inclusive_v
                 # these are regions with mass cut but has no tagger cut
                 hasMassRegionName = region.replace('_v', '_hasmass_'+ wp + '_v')
                 regions[hasMassRegionName] = regions[newRegionName] + ['leadak8_mass']
