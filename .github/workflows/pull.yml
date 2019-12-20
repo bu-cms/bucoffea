@@ -29,7 +29,7 @@ jobs:
         cd test
         ./run_over_testfiles.sh
 
-  processors_head:
+  processors_master:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -39,7 +39,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: ${{ github.event.pull_request.head.sha }}
+        ref: master
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
