@@ -3,7 +3,6 @@ name: Pull request
 on: [pull_request]
 
 jobs:
-  
   processors_pr:
     runs-on: ubuntu-latest
     strategy:
@@ -28,6 +27,12 @@ jobs:
       run: |
         cd test
         ./run_over_testfiles.sh
+        mkdir cutflow
+        for file in *coffea; do ../../bucoffea/scripts/print_cutflow.py $file> cutflow/cutflow_$file.txt; done
+    - uses: actions/upload-artifact@v1
+      with:
+        name: cutflow_pull
+        path: test/cutflow
 
   processors_master:
     runs-on: ubuntu-latest
@@ -55,3 +60,30 @@ jobs:
       run: |
         cd test
         ./run_over_testfiles.sh
+        mkdir cutflow
+        for file in *coffea; do ../../bucoffea/scripts/print_cutflow.py $file> cutflow/cutflow_$file.txt; done
+    - uses: actions/upload-artifact@v1
+      with:
+        name: cutflow_master
+        path: test/cutflow
+
+  compare_cutflow:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.6]
+    steps:
+      - uses: actions/download-artifact@v1
+      with:
+        name: cutflow_pull
+        path: cutflow_pull
+      - uses: actions/download-artifact@v1
+      with:
+        name: cutflow_master
+        path: cutflow_master
+      - name: Compare cutflows
+        run: |
+          ls -lR
+    
+    - name: Compare cutflow
