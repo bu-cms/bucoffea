@@ -154,7 +154,7 @@ default:
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
     qcd_nlo_g_2017_2d: # 2D QCD k factor for QCD photon
       histogram: 2d_gjets_vbf
-      file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
+      file: data/sf/theory/gjets_new_sf_mjj1500.root
     qcd_nnlo_g:
       histogram: aj
       file: data/sf/theory/lindert_qcd_nnlo_sf.root
