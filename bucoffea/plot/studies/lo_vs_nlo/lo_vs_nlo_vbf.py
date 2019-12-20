@@ -59,11 +59,11 @@ def plot(inpath):
             # Here for LO V samples (HT binned)
             mc_lo = {
                 'sr_vbf' : re.compile(f'(ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
-                'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
-                'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
+                'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
+                'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
                 'cr_2m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_2e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_g_vbf' : re.compile(f'(GJets_(?!Mjj).*|AGJets.*|QCD_HT.*|W.*HT.*).*{year}'),
+                'cr_g_vbf' : re.compile(f'(GJets_(HT|SM).*|QCD_HT.*|WJetsToLNu.*HT.*).*{year}'),
             }
 
             # Want to compare LO and NLO,
@@ -71,11 +71,11 @@ def plot(inpath):
             # All non-V samples remain the same
             mc_nlo = {
                     'sr_vbf' : re.compile(f'(ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
-                    'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*W.*FXFX.*).*{year}'),
-                    'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*W.*FXFX.*).*{year}'),
+                    'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*WJetsToLNu.*FXFX.*).*{year}'),
+                    'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*WJetsToLNu.*FXFX.*).*{year}'),
                     'cr_2m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
                     'cr_2e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
-                    'cr_g_vbf' : re.compile(f'(GJets_(?!Mjj).*|AGJets.*|QCD_HT.*|W.*FXFX.*).*{year}'),
+                    'cr_g_vbf' : re.compile(f'(GJets_(HT|SM).*|QCD_HT.*|W.*FXFX.*).*{year}'),
             }
 
             regions = list(mc_lo.keys())
@@ -114,6 +114,7 @@ def plot(inpath):
                         acc[distribution] = merge_extensions(acc[distribution], acc, reweight_pu=not ('nopu' in distribution))
                         scale_xs_lumi(acc[distribution]) 
                         acc[distribution] = merge_datasets(acc[distribution])
+                        acc[distribution].axis('dataset').sorting = 'integral'
                         merged.add(distribution)
                     try:
                         # The heavy lifting of making a plot is hidden
