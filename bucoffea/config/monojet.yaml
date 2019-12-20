@@ -192,19 +192,22 @@ global:
 era2016:
   triggers:
     met:
+      - HLT_PFMETNoMu90_PFMHTNoMu90_IDTight
+      - HLT_PFMETNoMu100_PFMHTNoMu100_IDTight
+      - HLT_PFMETNoMu110_PFMHTNoMu110_IDTight
       - HLT_PFMETNoMu120_PFMHTNoMu120_IDTight
     electron:
       single:
-        - HLT_Ele35_WPTight_Gsf
-        - HLT_Ele115_CaloIdVT_GsfTrkIdT
-      single_backup:
-        - HLT_Photon200
+        - HLT_Ele27_WPTight_Gsf
+        - HLT_Ele105_CaloIdVT_GsfTrkIdT
+      single_backup: []
     muon:
       single:
         - HLT_IsoMu27
     photon:
       single:
-        - HLT_Photon200
+        - HLT_Photon165_HE10
+        - HLT_Photon175
   btag:
     algo: csvv2
     wp: medium
@@ -279,7 +282,6 @@ era2016:
       - Flag_EcalDeadCellTriggerPrimitiveFilter
       - Flag_BadPFMuonFilter
       - Flag_eeBadScFilter
-      - Flag_ecalBadCalibFilterV2
     mc:
       - Flag_goodVertices
       - Flag_globalSuperTightHalo2016Filter
@@ -287,8 +289,6 @@ era2016:
       - Flag_HBHENoiseIsoFilter
       - Flag_EcalDeadCellTriggerPrimitiveFilter
       - Flag_BadPFMuonFilter
-      - Flag_ecalBadCalibFilterV2
-
 
 era2017:
   triggers:
