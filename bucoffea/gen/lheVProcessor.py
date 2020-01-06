@@ -22,11 +22,11 @@ def vbf_selection(vphi, dijet, genjets):
                   )
     selection.add(
                   'leadak4_pt_eta',
-                  (dijet.i0.pt.max() > 80) & (np.abs(dijet.i0.eta.max()) < 4.7)
+                  (dijet.i0.pt.max() > 80) & (np.abs(dijet.i0.eta.max()) < 5.0)
                   )
     selection.add(
                   'trailak4_pt_eta',
-                  (dijet.i1.pt.max() > 40) & (np.abs(dijet.i1.eta.max()) < 4.7)
+                  (dijet.i1.pt.max() > 40) & (np.abs(dijet.i1.eta.max()) < 5.0)
                   )
     selection.add(
                   'hemisphere',
@@ -34,7 +34,7 @@ def vbf_selection(vphi, dijet, genjets):
                   )
     selection.add(
                   'mindphijr',
-                  min_dphi_jet_met(genjets, vphi.max(), njet=4, ptmin=30) > 0.5
+                  min_dphi_jet_met(genjets, vphi.max(), njet=4, ptmin=30, etamax=5.0) > 0.5
                   )
     selection.add(
                   'detajj',
