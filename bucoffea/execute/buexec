@@ -327,8 +327,7 @@ def main():
     parser_submit.set_defaults(func=do_submit)
 
     args = parser.parse_args()
-
-    if getattr(args, 'async'):
+    if getattr(args, 'async', False):
         raise IOError('The --async option is deprecated. Use --asynchronous instead.')
 
     host = socket.gethostname()
