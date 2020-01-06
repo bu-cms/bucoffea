@@ -5,12 +5,9 @@ import os
 import shutil
 from datetime import datetime
 from multiprocessing.pool import Pool
-from pathlib import Path
 import itertools
 import concurrent
 import uproot
-import cloudpickle
-import lz4.frame as lz4f
 from coffea import processor
 from coffea.util import save
 
