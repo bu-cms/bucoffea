@@ -162,19 +162,19 @@ def merge_datasets(histogram):
     #   * lots of duplicate code (re.match etc) -> simplify
     mapping = {
         'SingleMuon_2016' : [x for x in all_datasets if re.match('SingleMuon_2016[A-Z]+',x)],
-        'EGamma_2016' : [x for x in all_datasets if re.match('SingleElectron_2016[A-Z]+',x) or re.match('SinglePhoton_2016[A-Z]+',x)],
-        'MET_2016' : [x for x in all_datasets if re.match('MET_2016[A-Z]+',x)],
-        'JetHT_2016' : [x for x in all_datasets if re.match('JetHT_2016[A-Z]+',x)],
+        'EGamma_2016' : [x for x in all_datasets if re.match('SingleElectron_.*2016[A-Z]+',x) or re.match('SinglePhoton_2016[A-Z]+',x)],
+        'MET_2016' : [x for x in all_datasets if re.match('MET_.*2016[A-Z]+',x)],
+        'JetHT_2016' : [x for x in all_datasets if re.match('JetHT_.*2016[A-Z]+',x)],
 
-        'SingleMuon_2017' : [x for x in all_datasets if re.match('SingleMuon_2017[A-Z]+',x)],
-        'EGamma_2017' : [x for x in all_datasets if re.match('SingleElectron_2017[A-Z]+',x) or re.match('SinglePhoton_2017[A-Z]+',x)],
-        'MET_2017' : [x for x in all_datasets if re.match('MET_2017[A-Z]+',x)],
-        'JetHT_2017' : [x for x in all_datasets if re.match('JetHT_2017[A-Z]+',x)],
+        'SingleMuon_2017' : [x for x in all_datasets if re.match('SingleMuon_.*2017[A-Z]+',x)],
+        'EGamma_2017' : [x for x in all_datasets if re.match('SingleElectron_.*2017[A-Z]+',x) or re.match('SinglePhoton_2017[A-Z]+',x)],
+        'MET_2017' : [x for x in all_datasets if re.match('MET_.*2017[A-Z]+',x)],
+        'JetHT_2017' : [x for x in all_datasets if re.match('JetHT_.*2017[A-Z]+',x)],
 
-        'SingleMuon_2018' : [x for x in all_datasets if re.match('SingleMuon_2018[A-Z]+',x)],
-        'EGamma_2018' : [x for x in all_datasets if re.match('EGamma_2018[A-Z]+',x)],
-        'MET_2018' : [x for x in all_datasets if re.match('MET_2018[A-Z]+',x)],
-        'JetHT_2018' : [x for x in all_datasets if re.match('JetHT_2018[A-Z]+',x)],
+        'SingleMuon_2018' : [x for x in all_datasets if re.match('SingleMuon_.*2018[A-Z]+',x)],
+        'EGamma_2018' : [x for x in all_datasets if re.match('EGamma_.*2018[A-Z]+',x)],
+        'MET_2018' : [x for x in all_datasets if re.match('MET_.*2018[A-Z]+',x)],
+        'JetHT_2018' : [x for x in all_datasets if re.match('JetHT_.*2018[A-Z]+',x)],
 
         'GJets_HT_MLM_2016' : [x for x in all_datasets if re.match('GJets_HT-(\d+)To.*-MLM_2016',x)],
         'GJets_HT_MLM_2017' : [x for x in all_datasets if re.match('GJets_HT-(\d+)To.*-MLM_2017',x)],
