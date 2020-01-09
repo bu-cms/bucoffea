@@ -79,6 +79,8 @@ def plot(inpath):
             }
 
             regions = list(mc_lo.keys())
+            # Remove signal region, no need in ratio plots
+            regions.remove('sr_vbf')
 
             # Make control region ratio plots for both
             # LO and NLO. Can be skipped if you only
