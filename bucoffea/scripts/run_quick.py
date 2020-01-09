@@ -41,6 +41,9 @@ def main():
     elif args.processor == 'purity':
         from bucoffea.photon_purity import photonPurityProcessor
         processorInstance = photonPurityProcessor()
+    elif args.processor == 'sumw':
+        from bucoffea.gen import mcSumwProcessor
+        processorInstance = mcSumwProcessor()
 
     for dataset, filelist in fileset.items():
         newlist = []
@@ -53,7 +56,7 @@ def main():
     for dataset, filelist in fileset.items():
         tmp = {dataset:filelist}
         output = run_uproot_job_nanoaod(tmp,
-                                    treename='Events',
+                                    treename='Runs' if args.processor=='sumw' else 'Events',
                                     processor_instance=processorInstance,
                                     executor=processor.futures_executor,
                                     executor_args={'workers': 4, 'flatten': True},
