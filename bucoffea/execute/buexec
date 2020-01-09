@@ -40,6 +40,9 @@ def choose_processor(args):
     elif args.processor == 'purity':
         from bucoffea.photon_purity import photonPurityProcessor
         return photonPurityProcessor
+    elif args.processor == 'sumw':
+        from bucoffea.gen import mcSumwProcessor
+        return mcSumwProcessor
 
 def do_run(args):
     """Run the analysis locally."""
@@ -52,7 +55,7 @@ def do_run(args):
     print(fileset)
     for dataset, files in fileset.items():
         output = run_uproot_job_nanoaod({dataset:files},
-                                    treename='Events',
+                                    treename=args.tree,
                                     processor_instance=choose_processor(args)(),
                                     executor=processor.futures_executor,
                                     executor_args={'workers': args.jobs, 'flatten': True},
@@ -79,7 +82,7 @@ def do_worker(args):
     print(f"Running over {ndatasets} datasets with a total of {nfiles} files.")
 
     output = run_uproot_job_nanoaod(fileset,
-                                  treename='Events',
+                                  treename=args.tree,
                                   processor_instance=choose_processor(args)(),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': args.jobs, 'flatten': True},
@@ -219,6 +222,7 @@ def do_submit(args):
                 args.processor,
                 f'--outpath .',
                 f'--jobs {args.jobs}',
+                f'--tree {args.tree}',
                 'worker',
                 f'--dataset {dataset}',
                 f'--filelist {os.path.basename(tmpfile)}',
@@ -290,10 +294,11 @@ def do_submit(args):
 
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
-    parser.add_argument('processor', type=str, help='Processor to run.', choices=['monojet','vbfhinv','pdfweight','lhev','purity'])
+    parser.add_argument('processor', type=str, help='Processor to run.', choices=['monojet','vbfhinv','pdfweight','lhev','purity','sumw'])
     parser.add_argument('--outpath', type=str, help='Path to save output under.')
     parser.add_argument('--jobs','-j', type=int, default=1, help='Number of cores to use / request.')
     parser.add_argument('--datasrc', type=str, default='eos', help='Source of data files.', choices=['eos','das','ac'])
+    parser.add_argument('--tree',type=str, default='Events', help='Name of the TTree in the input files.')
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
