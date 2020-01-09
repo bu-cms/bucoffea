@@ -627,6 +627,15 @@ def plot_settings():
             'recoil' : {
                 'ylim' : (1e-3,1e3)
             },
+            'recoil_nopog' : {
+                'ylim' : (1e-3,1e3)
+            },
+            'recoil_nopu' : {
+                'ylim' : (1e-3,1e3)
+            },
+            'recoil_nopref' : {
+                'ylim' : (1e-3,1e3)
+            },
             'dimuon_pt' : {
                 'ylim' : (1e-3,1e3)
             },
@@ -852,6 +861,15 @@ def plot_settings():
             'recoil' : {
                 'ylim' : (1e-3,1e5)
             },
+            'recoil_nopog' : {
+                'ylim' : (1e-3,1e5)
+            },
+            'recoil_nopu' : {
+                'ylim' : (1e-3,1e5)
+            },
+            'recoil_nopref' : {
+                'ylim' : (1e-3,1e5)
+            },
             'ak4_pt0' : {
                 'ylim' : (1e-3,1e5)
             },
@@ -921,9 +939,6 @@ def plot_settings():
         'cr_1e_j' : {
             'ak4_pt0_over_recoil' : {
                 'ylim' : (1e1,1e7)
-            },
-            'recoil' : {
-                'ylim' : (1e-3,1e5)
             },
             'recoil' : {
                 'ylim' : (1e-3,1e5)
