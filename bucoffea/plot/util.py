@@ -214,8 +214,6 @@ def merge_datasets(histogram):
 
         'Diboson_2017' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*_2017',x)],
         'Diboson_2018' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*_2018',x)],
-        'EWK_V_2017' : [x for x in all_datasets if re.match('EWK.*_2017',x)],
-        'EWK_V_2018' : [x for x in all_datasets if re.match('EWK.*_2018',x)],
         'WH_WToQQ_Hinv_M125_2017' : [x for x in all_datasets if re.match('W.*H_WToQQ_HToInvisible_M125.*2017',x)],
         'WH_WToQQ_Hinv_M125_2018' : [x for x in all_datasets if re.match('W.*H_WToQQ_HToInvisible_M125.*2018',x)]
     }
