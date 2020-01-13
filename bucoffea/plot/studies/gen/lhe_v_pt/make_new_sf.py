@@ -235,11 +235,11 @@ def main():
 
 
     outputrootfile = uproot.recreate(f'2017_gen_v_pt_qcd_sf.root')
-    sf_1d(acc, tag='wjet', regex='W.*',outputrootfile=outputrootfile)
-    sf_1d(acc, tag='dy', regex='.*DY.*',outputrootfile=outputrootfile)
+    sf_1d(acc, tag='wjet', regex='WN?JetsToLNu.*',outputrootfile=outputrootfile)
+    sf_1d(acc, tag='dy', regex='DYN?JetsToLL.*',outputrootfile=outputrootfile)
     # # outputrootfile = uproot.recreate(f'test.root')
-    sf_2d(acc, tag='wjet', regex='W.*',pt_type='dress',outputrootfile=outputrootfile)
-    sf_2d(acc, tag='dy', regex='.*DY.*',pt_type='dress',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='wjet', regex='WN?JetsToLNu.*',pt_type='dress',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='dy', regex='DYN?JetsToLL.*',pt_type='dress',outputrootfile=outputrootfile)
 
     sf_1d(acc, tag='gjets', regex='G\d?Jet.*',outputrootfile=outputrootfile)
     # outputrootfile = uproot.recreate('test.root')
