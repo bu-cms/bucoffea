@@ -251,7 +251,7 @@ def setup_lhe_cleaned_genjets(df):
                 pdg=df['LHEPart_pdgId'],
             )
 
-    lhe_leps_gams = lhe[(islep(lhe.pdg)) | (lhe.pdg==22)]
+    lhe_leps_gams = lhe[(islep(lhe.pdg) & ~isnu(lhe.pdg)) | (lhe.pdg==22)]
 
     return genjets[(~genjets.match(lhe_leps_gams,deltaRCut=0.4))]
 
