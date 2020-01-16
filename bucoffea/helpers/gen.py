@@ -81,14 +81,16 @@ def stat1_dilepton(df, gen):
     """
     if is_lo_z(df['dataset']) or is_lo_z_ewk(df['dataset']) or is_nlo_z(df['dataset']):
         pdgsum = 0
+        target = 91
     elif is_lo_w(df['dataset']) or  is_lo_w_ewk(df['dataset']) or is_nlo_w(df['dataset']):
         pdgsum = 1
+        target = 81
     gen_dilep = find_gen_dilepton(gen, pdgsum)
-    gen_dilep = gen_dilep[gen_dilep.mass.argmax()]
+    gen_dilep = gen_dilep[(np.abs(gen_dilep.mass-target)).argmin()]
     return gen_dilep.pt.max(), gen_dilep.phi.max()
 
 
-def merge_dileptons(dilepton1, dilepton2, dilepton3=None):
+def merge_dileptons(dilepton1, dilepton2, target, dilepton3=None):
     """
     Choose highest mass dilepton from up to three option lists.
 
@@ -101,10 +103,14 @@ def merge_dileptons(dilepton1, dilepton2, dilepton3=None):
     if dilepton3 is not None:
         mmax3 = dilepton3.mass.max()
     else:
-        mmax3 = -1 * np.ones(dilepton1.size)
+        mmax3 = -1e3 * np.ones(dilepton1.size)
 
-    take2 = (mmax2 > mmax1) & (mmax2 > mmax3)
-    take3 = (mmax3 > mmax1) & (mmax3 > mmax2)
+    dist1 = np.abs(mmax1 - target)
+    dist2 = np.abs(mmax2 - target)
+    dist3 = np.abs(mmax3 - target)
+
+    take2 = (dist2 < dist1) & (dist2 < dist3)
+    take3 = (dist3 < dist1) & (dist3 < dist2)
     take1 = ~(take2 | take3)
 
     vpt1 = dilepton1.pt.max()
@@ -147,31 +153,37 @@ def dressed_dilep(df, gen, dressed):
     # Dressed leptons
     neutrinos = gen[(gen.status==1) & isnu(gen.pdg)]
     if is_lo_z(df['dataset']) or is_nlo_z(df['dataset']) or is_lo_z_ewk(df['dataset']):
+        target = 91
         # e, mu
         dilep_dress = find_gen_dilepton(dressed, 0)
-        dilep_dress = dilep_dress[dilep_dress.mass.argmax()]
+        dilep_dress = dilep_dress[np.abs(dilep_dress.mass-target).argmin()]
 
         #nu
         dilep_nu = find_gen_dilepton(neutrinos, 0)
-        dilep_nu = dilep_nu[dilep_nu.mass.argmax()]
+        dilep_nu = dilep_nu[np.abs(dilep_nu.mass-target).argmin()]
 
         # tau
         dilep_tau = find_gen_dilepton(gen[np.abs(gen.pdg)==15], 0)
-        dilep_tau = dilep_tau[dilep_tau.mass.argmax()]
+        dilep_tau = dilep_tau[np.abs(dilep_tau.mass-target).argmin()]
 
         # Merge by taking higher-mass
-        return merge_dileptons(dilep_tau, dilep_dress, dilep_nu)
+        return merge_dileptons(dilep_tau, dilep_dress, dilepton3=dilep_nu, target=target)
 
     elif is_lo_w(df['dataset']) or is_nlo_w(df['dataset']) or is_lo_w_ewk(df['dataset']):
+        target = 81
         # e, mu
         dilep_dress = dressed.cross(neutrinos)
-        dilep_dress = dilep_dress[np.abs(dilep_dress.i0.pdg + dilep_dress.i1.pdg)==1]
-        dilep_dress = dilep_dress[dilep_dress.mass.argmax()]
+        dilep_dress = dilep_dress[ (
+                                      ((np.abs(dilep_dress.i0.pdg)==11) & (np.abs(dilep_dress.i1.pdg)==12) ) \
+                                    | ((np.abs(dilep_dress.i0.pdg)==13) & (np.abs(dilep_dress.i1.pdg)==14) ) \
+                                    ) & (dilep_dress.i0.pdg*dilep_dress.i1.pdg< 0)
+                                    ]
+        dilep_dress = dilep_dress[np.abs(dilep_dress.mass-target).argmin()]
 
         # tau
         dilep_tau = find_gen_dilepton(gen[(np.abs(gen.pdg)==15) | (np.abs(gen.pdg)==16)], 1)
-        dilep_tau = dilep_tau[dilep_tau.mass.argmax()]
-        return  merge_dileptons(dilep_tau, dilep_dress)
+        dilep_tau = dilep_tau[np.abs(dilep_tau.mass-target).argmin()]
+        return  merge_dileptons(dilep_tau, dilep_dress, target=target)
 
 def fill_gen_v_info(df, gen, dressed):
     '''
