@@ -134,7 +134,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             gen = setup_gen_candidates(df)
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
-            gen_v_pt = df['gen_v_pt_dress']
+            gen_v_pt = df['gen_v_pt_combined']
         elif df['is_lo_g']:
             gen = setup_gen_candidates(df)
             gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
