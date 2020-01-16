@@ -185,6 +185,11 @@ def dressed_dilep(df, gen, dressed):
         dilep_tau = dilep_tau[np.abs(dilep_tau.mass-target).argmin()]
         return  merge_dileptons(dilep_tau, dilep_dress, target=target)
 
+
+def genv(gen):
+    genbosons = gen[(gen.status==62)&((gen.abspdg==23)|(gen.abspdg==24))]
+    return genbosons
+
 def fill_gen_v_info(df, gen, dressed):
     '''
     One-stop function to generate gen v pt info.
@@ -193,14 +198,26 @@ def fill_gen_v_info(df, gen, dressed):
     information is written into the data frame.
     '''
 
+    # Gen bosons derived with different methods
+    genbosons = genv(gen)
+    df['gen_v_pt_part'], df['gen_v_phi_part'] = genbosons.pt[genbosons.pt.argmax()].max(), genbosons.phi[genbosons.pt.argmax()].max()
     df['gen_v_pt_stat1'], df['gen_v_phi_stat1'] = stat1_dilepton(df, gen)
     df['gen_v_pt_dress'], df['gen_v_phi_dress'] = dressed_dilep(df, gen, dressed)
 
-    # For events where we cannot find a dressed dilepton,
-    # fill with stat 1 dileptons
-    invalid = df['gen_v_pt_dress'] <= 0
-    df['gen_v_pt_dress'][invalid] = df['gen_v_pt_stat1'][invalid]
-    df['gen_v_phi_dress'][invalid] = df['gen_v_phi_stat1'][invalid]
+
+    # Combine in order of preference:
+    # 1. Gen boson from generator history
+    df['gen_v_pt_combined'], df['gen_v_phi_combined'] = df['gen_v_pt_part'], df['gen_v_phi_part']
+    # 2. Dilepton made from dressed leptons
+    filler_pt, filler_phi = df['gen_v_pt_dress'], df['gen_v_phi_dress']
+    # 3. Dilepton made from naked leptons
+    invalid_filler = filler_pt <= 0
+    filler_pt[invalid_filler] = df['gen_v_pt_stat1'][invalid_filler]
+    filler_phi[invalid_filler] = df['gen_v_phi_stat1'][invalid_filler]
+
+    invalid = genbosons.counts == 0
+    df['gen_v_pt_combined'][invalid] = filler_pt[invalid]
+    df['gen_v_phi_combined'][invalid] = filler_phi[invalid]
 
     # LHE is just pass through
     df['gen_v_pt_lhe'] = df['LHE_Vpt']
@@ -215,6 +232,7 @@ def setup_gen_candidates(df):
         mass=df['GenPart_mass'],
         charge=df['GenPart_pdgId'],
         pdg=df['GenPart_pdgId'],
+        abspdg=np.abs(df['GenPart_pdgId']),
         status=df['GenPart_status'],
         flag = df['GenPart_statusFlags'])
     return gen

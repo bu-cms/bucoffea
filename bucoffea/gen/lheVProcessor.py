@@ -78,7 +78,7 @@ class lheVProcessor(processor.ProcessorABC):
         res_ax = Bin("res",r"pt: dressed / stat1 - 1", 80,-0.2,0.2)
 
         items = {}
-        for tag in ['stat1','dress','lhe']:
+        for tag in ['stat1','dress','lhe','combined']:
             items[f"gen_vpt_inclusive_{tag}"] = Hist("Counts",
                                     dataset_ax,
                                     vpt_ax)
@@ -116,7 +116,7 @@ class lheVProcessor(processor.ProcessorABC):
         if is_lo_w(dataset) or is_nlo_w(dataset) or is_lo_z(dataset) or is_nlo_z(dataset):
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
-            tags.append('dress')
+            tags.extend(['dress','combined'])
         elif is_lo_g(dataset) or is_nlo_g(dataset) or is_lo_g_ewk(dataset) or is_nlo_g_ewk(dataset):
             photons = gen[(gen.status==1)&(gen.pdg==22)]
             df['gen_v_pt_stat1'] = photons.pt.max()
