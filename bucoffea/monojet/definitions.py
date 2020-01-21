@@ -1,19 +1,17 @@
 import copy
+
+import coffea.processor as processor
+import numpy as np
 from coffea import hist
+from coffea.analysis_objects import JaggedCandidateArray
+
+from bucoffea.helpers import object_overlap
+from bucoffea.helpers.dataset import extract_year
 
 Hist = hist.Hist
 Bin = hist.Bin
 Cat = hist.Cat
 
-from coffea.analysis_objects import JaggedCandidateArray
-import coffea.processor as processor
-from awkward import JaggedArray
-import numpy as np
-from bucoffea.helpers import object_overlap
-from bucoffea.helpers.paths import bucoffea_path
-from bucoffea.helpers.gen import find_first_parent
-from bucoffea.helpers.dataset import extract_year
-from pprint import pprint
 
 def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
