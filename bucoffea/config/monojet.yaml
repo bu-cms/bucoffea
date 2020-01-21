@@ -253,8 +253,8 @@ era2016:
       histogram: EGamma_SF2D
       file: data/sf/egamma/Fall17V2_2016_Medium_photons.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
-      histogram: Scaling_Factors_CSEV_R9 Inclusive
-      file: data/sf/egamma/ScalingFactors_80X_Summer16.root
+      histogram: Scaling_Factors_CSEV_R9_Inclusive
+      file: data/sf/egamma/ScalingFactors_80X_Summer16_rename.root
 
     muon_id_loose:
       histogram: NUM_LooseID_DEN_genTracks_pt_abseta
