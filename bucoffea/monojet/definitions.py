@@ -687,13 +687,13 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
 
     year = extract_year(df['dataset'])
     if year == 2016:
-        weights.add("photon_csev", evaluator["photon_csev"](photons.abseta, photons.pt))
+        csev_weight = evaluator["photon_csev"](photons.abseta, photons.pt).prod()
     elif year == 2017:
         csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
-        weights.add("photon_csev", evaluator['photon_csev'](csev_sf_index).prod())
+        csev_weight = evaluator['photon_csev'](csev_sf_index).prod())
     elif year == 2018:
         csev_weight = evaluator['photon_csev'](photons.pt, photons.abseta).prod()
-        csev_weight[csev_weight==0] = 1
-        weights.add("photon_csev", csev_weight)
+    csev_weight[csev_weight==0] = 1
+    weight.add("photon_csev", csev_weight)
 
     return weights
