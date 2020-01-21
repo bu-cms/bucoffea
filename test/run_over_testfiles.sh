@@ -2,9 +2,9 @@
 set -e
 while IFS=" " read -r DATASET REMOTE_PATH REMAINDER
 do
-    FNAME=$(basename ${REMOTE_PATH})
+    FNAME=${DATASET}.root
     if [[ ! -f $FNAME ]]; then
-        wget ${REMOTE_PATH}
+        wget ${REMOTE_PATH}/${FNAME}
     fi
     echo ${FNAME} > files.txt
     for PROCESSOR in monojet vbfhinv; do
