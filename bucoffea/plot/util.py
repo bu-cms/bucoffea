@@ -19,6 +19,8 @@ from bucoffea.execute.dataset_definitions import short_name
 from bucoffea.helpers.dataset import extract_year, is_data
 from bucoffea.helpers.paths import bucoffea_path
 
+from klepto.archives import dir_archive
+
 pjoin = os.path.join
 
 def sha256sum(filelist):
@@ -30,6 +32,15 @@ def sha256sum(filelist):
             for n in iter(lambda : f.readinto(mv), 0):
                 h.update(mv[:n])
     return h.hexdigest()
+
+def klepto_load(inpath):
+    acc = dir_archive(
+                    inpath,
+                    serialized=True,
+                    compression=0,
+                    memsize=1e3,
+                    )
+    return acc
 
 def acc_from_dir(indir):
     """Load Coffea accumulator from directory with *.coffea files
