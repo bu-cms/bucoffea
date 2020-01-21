@@ -15,7 +15,6 @@ Cat = hist.Cat
 
 def vbf_selection(vphi, dijet, genjets):
     selection = processor.PackedSelection()
-
     selection.add(
                   'two_jets',
                   dijet.counts>0
@@ -124,9 +123,10 @@ class lheVProcessor(processor.ProcessorABC):
             df['gen_v_pt_lhe'] = df['LHE_Vpt']
             df['gen_v_phi_lhe'] = np.zeros(df.size)
 
+        dijet = genjets[:,:2].distincts()
+        mjj = dijet.mass.max()
         for tag in tags:
             # Dijet for VBF
-            dijet = genjets[:,:2].distincts()
 
             # Selection
             vbf_sel = vbf_selection(df[f'gen_v_phi_{tag}'], dijet, genjets)
@@ -139,13 +139,12 @@ class lheVProcessor(processor.ProcessorABC):
                                     vpt=df[f'gen_v_pt_{tag}'],
                                     weight=nominal
                                     )
-
             mask_vbf = vbf_sel.all(*vbf_sel.names)
             output[f'gen_vpt_vbf_{tag}'].fill(
                                     dataset=dataset,
                                     vpt=df[f'gen_v_pt_{tag}'][mask_vbf],
                                     jpt=genjets.pt.max()[mask_vbf],
-                                    mjj = dijet.mass.max()[mask_vbf],
+                                    mjj = mjj[mask_vbf],
                                     weight=nominal[mask_vbf]
                                     )
 
