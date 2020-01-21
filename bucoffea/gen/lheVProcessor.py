@@ -34,7 +34,7 @@ def vbf_selection(vphi, dijet, genjets):
                   )
     selection.add(
                   'mindphijr',
-                  min_dphi_jet_met(genjets, vphi.max(), njet=4, ptmin=30, etamax=5.0) > 0.5
+                  min_dphi_jet_met(genjets, vphi, njet=4, ptmin=30, etamax=5.0) > 0.5
                   )
     selection.add(
                   'detajj',
@@ -60,7 +60,7 @@ def monojet_selection(vphi, genjets):
                   )
     selection.add(
                   'mindphijr',
-                  min_dphi_jet_met(genjets, vphi.max(), njet=4, ptmin=30) > 0.5
+                  min_dphi_jet_met(genjets, vphi, njet=4, ptmin=30) > 0.5
                   )
 
     return selection

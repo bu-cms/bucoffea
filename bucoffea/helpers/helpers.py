@@ -19,6 +19,11 @@ def min_dphi_jet_met(jets, met_phi, njet=4, ptmin=30, etamax=2.4):
     :type njet: int, optional
     """
 
+    # Make sure that met_phi is not just a single float
+    # which can happen accidentally, but is not what
+    # we want.
+    assert(met_phi.shape!=())
+
     # Use the first njet jets with pT > ptmin
     jets=jets[(jets.pt>ptmin)&(jets.abseta < etamax)]
     jets = jets[:,:njet]
