@@ -606,13 +606,13 @@ def fitfun(x, a, b, c):
 
 def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
     if df['is_lo_w']:
-        if extract_year(dataset) == 2016:
+        if extract_year(df['dataset']) == 2016:
             qcd_nlo = evaluator["qcd_nlo_w_2016"](gen_v_pt)
         else:
             qcd_nlo = fitfun(gen_v_pt, 1.024, 3.072e-3, 0.749)
         theory_weights =  qcd_nlo * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
-        if extract_year(dataset) == 2016:
+        if extract_year(df['dataset']) == 2016:
             qcd_nlo = evaluator["qcd_nlo_z_2016"](gen_v_pt)
         else:
             qcd_nlo = fitfun(gen_v_pt, 1.423, 2.257e-3, 0.451)
