@@ -227,27 +227,34 @@ era2016:
       tightmd: 0.759
   electron:
     branch:
-      id: Electron_cutBased_Sum16
+      id: Electron_cutBased
   photon:
     branch:
-      id: Photon_cutBased17Bitmap
+      id: Photon_cutBased
   sf:
+    qcd_nlo_w_2016: # QCD k factor for QCD W
+      histogram: kfactor_monojet_qcd
+      file: data/sf/theory/merged_kfactors_wjets.root
+    qcd_nlo_z_2016: # QCD k factor for QCD Z
+      histogram: kfactor_monojet_qcd
+      file: data/sf/theory/merged_kfactors_zjets.root
+
     ele_reco:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
+      file: data/sf/egamma/EGM2D_BtoH_GT20GeV_RecoSF_Legacy2016.root
     ele_id_loose:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2.root
+      file: data/sf/egamma/2016_ElectronWPVeto_Fall17V2.root
     ele_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronTight.root
+      file: data/sf/egamma/2016LegacyReReco_ElectronTight_Fall17V2.root
 
     photon_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_PhotonsMedium.root
+      file: data/sf/egamma/Fall17V2_2016_Medium_photons.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
-      histogram: Tight_ID
-      file: data/sf/egamma/CSEV_ScaleFactors_2017.root
+      histogram: Scaling_Factors_CSEV_R9 Inclusive
+      file: data/sf/egamma/ScalingFactors_80X_Summer16.root
 
     muon_id_loose:
       histogram: NUM_LooseID_DEN_genTracks_pt_abseta

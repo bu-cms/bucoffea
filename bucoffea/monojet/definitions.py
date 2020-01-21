@@ -606,9 +606,17 @@ def fitfun(x, a, b, c):
 
 def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
     if df['is_lo_w']:
-        theory_weights = fitfun(gen_v_pt, 1.024, 3.072e-3, 0.749) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        if extract_year(dataset) == 2016:
+            qcd_nlo = evaluator["qcd_nlo_w_2016"](gen_v_pt)
+        else:
+            qcd_nlo = fitfun(gen_v_pt, 1.024, 3.072e-3, 0.749)
+        theory_weights =  qcd_nlo * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
-        theory_weights = fitfun(gen_v_pt, 1.423, 2.257e-3, 0.451) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        if extract_year(dataset) == 2016:
+            qcd_nlo = evaluator["qcd_nlo_z_2016"](gen_v_pt)
+        else:
+            qcd_nlo = fitfun(gen_v_pt, 1.423, 2.257e-3, 0.451)
+        theory_weights =  * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_nlo_w']:
         theory_weights = evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_nlo_z']:
@@ -680,11 +688,13 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
 
     year = extract_year(df['dataset'])
-    if year in [2016,2017]:
+    if year == 2016:
+        weights.add("photon_csev", evaluator["photon_csev"](photons.abseta, photons.pt))
+    elif year == 2017:
         csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
         weights.add("photon_csev", evaluator['photon_csev'](csev_sf_index).prod())
     elif year == 2018:
-        csev_weight = evaluator['photon_csev'](photons.pt, photons.eta).prod()
+        csev_weight = evaluator['photon_csev'](photons.pt, photons.abseta).prod()
         csev_weight[csev_weight==0] = 1
         weights.add("photon_csev", csev_weight)
 
