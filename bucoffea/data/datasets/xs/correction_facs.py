@@ -57,7 +57,7 @@ def main():
 		updated_xsec_list = apply_corrections(xsec_list)
 		
 	# Override the original yaml file
-	with open('./xs_updated.yml', 'w+') as f:
+	with open('./xs.yml', 'w+') as f:
 		yaml.dump(updated_xsec_list, f)
 
 if __name__ == '__main__':
