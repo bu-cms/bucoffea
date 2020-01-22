@@ -187,10 +187,6 @@ def merge_datasets(histogram):
         'MET_2018' : [x for x in all_datasets if re.match('MET_.*2018[A-Z]+',x)],
         'JetHT_2018' : [x for x in all_datasets if re.match('JetHT_.*2018[A-Z]+',x)],
 
-        'GJets_HT_MLM_2016' : [x for x in all_datasets if re.match('GJets_HT-(\d+)To.*-MLM_2016',x)],
-        'GJets_HT_MLM_2017' : [x for x in all_datasets if re.match('GJets_HT-(\d+)To.*-MLM_2017',x)],
-        'GJets_HT_MLM_2018' : [x for x in all_datasets if re.match('GJets_HT-(\d+)To.*-MLM_2018',x)],
-
         'GJets_SM_5f_EWK-mg_2017' : ['GJets_SM_5f_EWK-mg_2017'],
         'GJets_SM_5f_EWK-mg_2018' : ['GJets_SM_5f_EWK-mg_2017'],
         
@@ -202,34 +198,40 @@ def merge_datasets(histogram):
         'DYNJetsToLL_M-50_LHEZpT-FXFX_2017' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50_LHEZpT_(\d+)-.*-FXFX_2017',x)],
         'DYNJetsToLL_M-50_LHEZpT-FXFX_2018' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50_LHEZpT_(\d+)-.*-FXFX_2018',x)],
 
-        'TTJets-FXFX_2017' : [x for x in all_datasets if re.match('TTJets-amcatnloFXFX_2017',x)],
-        'TTJets-FXFX_2018' : [x for x in all_datasets if re.match('TTJets-amcatnloFXFX_2018',x)],
-        'TT_pow_2017' : [x for x in all_datasets if re.match('TTTo.*pow.*2017',x)],
-        'TT_pow_2018' : [x for x in all_datasets if re.match('TTTo.*pow.*2018',x)],
-
-        'ST_2017' : [x for x in all_datasets if re.match('ST.*2017',x)],
-        'ST_2018' : [x for x in all_datasets if re.match('ST.*2018',x)],
-
         'DYNJetsToLL_M-50-MLM_2017' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50-MLM_2017',x)],
         'DYNJetsToLL_M-50-MLM_2018' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50-MLM_2018',x)],
-        'DYJetsToLL_M-50_HT_MLM_2017' : [x for x in all_datasets if re.match('DYJetsToLL_M-50_HT-(\d+)to.*-MLM_2017',x)],
-        'DYJetsToLL_M-50_HT_MLM_2018' : [x for x in all_datasets if re.match('DYJetsToLL_M-50_HT-(\d+)to.*-MLM_2018',x)],
-        'WJetsToLNu_HT_MLM_2017' : [x for x in all_datasets if re.match('WJetsToLNu_HT-(\d+)To.*-MLM_2017',x)],
-        'WJetsToLNu_HT_MLM_2018' : [x for x in all_datasets if re.match('WJetsToLNu_HT-(\d+)To.*-MLM_2018',x)],
+
         'ZJetsToNuNu_HT_2017' : [x for x in all_datasets if re.match('ZJetsToNuNu_HT-(\d+)To.*-mg_2017',x)],
         'ZJetsToNuNu_HT_2018' : [x for x in all_datasets if re.match('ZJetsToNuNu_HT-(\d+)To.*-mg_2018',x)],
+
         'WNJetsToLNu-MLM_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2017',x)],
         'WNJetsToLNu-MLM_2018' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_2018',x)],
-        'QCD_HT_2018' : [x for x in all_datasets if re.match('QCD_HT.*_2018',x)],
-        'QCD_HT_2017' : [x for x in all_datasets if re.match('QCD_HT.*_2017',x)],
 
-        'Diboson_2017' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*_2017',x)],
-        'Diboson_2018' : [x for x in all_datasets if re.match('(WW|WZ|ZZ|WW).*_2018',x)],
-        'EWK_V_2017' : [x for x in all_datasets if re.match('EWK.*_2017',x)],
-        'EWK_V_2018' : [x for x in all_datasets if re.match('EWK.*_2018',x)],
         'WH_WToQQ_Hinv_M125_2017' : [x for x in all_datasets if re.match('W.*H_WToQQ_HToInvisible_M125.*2017',x)],
         'WH_WToQQ_Hinv_M125_2018' : [x for x in all_datasets if re.match('W.*H_WToQQ_HToInvisible_M125.*2018',x)]
     }
+
+    # Some combinations are the same for all years
+    yearly = {
+        'GJets_HT_MLM_{year}' : 'GJets_HT-(\d+)To.*-MLM_{year}',
+        'WJetsToQQ_HT_MLM_{year}' : 'WJetsToQQ_HT-?(\d+)(T|t)o.*-MLM_{year}',
+        'DYJetsToLL_M-50_HT_MLM_{year}' : 'DYJetsToLL_M-50_HT-(\d+)to.*-MLM_{year}',
+        'WJetsToLNu_HT_MLM_{year}' : 'WJetsToLNu_HT-(\d+)To.*-MLM_{year}',
+
+        'TTJets-FXFX_{year}' : 'TTJets-amcatnloFXFX_{year}',
+        'TTJets-MLM_{year}' : 'TTJets-MLM_{year}',
+        'TT_pow_{year}' : 'TTTo.*pow.*{year}',
+        'ST_{year}' : 'ST.*{year}',
+
+        'QCD_HT_{year}' : 'QCD_HT.*_{year}',
+
+        'EWK_V_{year}' : 'EWK.*_{year}',
+        'Diboson_{year}' : '(WW|WZ|ZZ|WW).*_{year}',
+
+    }
+    for year in [2016,2017,2018]:
+        for name, regex in yearly.items():
+            mapping[name.format(year=year)] = [x for x in all_datasets if re.match(regex.format(year=year), x)]
 
     # Remove empty lists
     tmp = {}
