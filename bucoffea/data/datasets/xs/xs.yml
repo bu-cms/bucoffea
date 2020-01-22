@@ -91,57 +91,57 @@ DYJetsToLL_M-50_HT-100to200_PSweights-MLM_2018:
 DYJetsToLL_M-50_HT-1200to2500-MLM_2016:
   gen: 0.1511
 DYJetsToLL_M-50_HT-1200to2500-MLM_2017:
-  gen: 0.1923
+  gen: 0.1601859
 DYJetsToLL_M-50_HT-1200to2500-MLM_2018:
-  gen: 0.1935
+  gen: 0.1611855
 DYJetsToLL_M-50_HT-1200to2500_PSweights-MLM_2018:
-  gen: 0.1937
+  gen: 0.1613521
 DYJetsToLL_M-50_HT-200to400-MLM_2016:
   gen: 40.98
 DYJetsToLL_M-50_HT-200to400-MLM_2017:
-  gen: 48.68
+  gen: 48.63132
 DYJetsToLL_M-50_HT-200to400-MLM_2018:
-  gen: 48.5
+  gen: 48.4515
 DYJetsToLL_M-50_HT-200to400-MLM_ext1_2016:
   gen: 40.96
 DYJetsToLL_M-50_HT-200to400-MLM_ext1_2017:
-  gen: 48.52
+  gen: 48.47148
 DYJetsToLL_M-50_HT-200to400_PSweights-MLM_2018:
-  gen: 48.56
+  gen: 48.51144
 DYJetsToLL_M-50_HT-2500toInf-MLM_2016:
   gen: 0.003659
 DYJetsToLL_M-50_HT-2500toInf-MLM_2017:
-  gen: 0.003477
+  gen: 0.0035291549999999995
 DYJetsToLL_M-50_HT-2500toInf-MLM_2018:
-  gen: 0.003512
+  gen: 0.0035646799999999998
 DYJetsToLL_M-50_HT-2500toInf-MLM_new_pmx_2017:
-  gen: 0.003474
+  gen: 0.00352611
 DYJetsToLL_M-50_HT-2500toInf_PSweights-MLM_2018:
-  gen: 0.003507
+  gen: 0.003559605
 DYJetsToLL_M-50_HT-400to600-MLM_2016:
   gen: 5.675
 DYJetsToLL_M-50_HT-400to600-MLM_2017:
-  gen: 7.033
+  gen: 6.96267
 DYJetsToLL_M-50_HT-400to600-MLM_2018:
-  gen: 7.018
+  gen: 6.94782
 DYJetsToLL_M-50_HT-400to600-MLM_ext1_2016:
   gen: 5.689
 DYJetsToLL_M-50_HT-400to600-MLM_ext1_2017:
-  gen: 6.998
+  gen: 6.92802
 DYJetsToLL_M-50_HT-400to600-MLM_new_pmx_2017:
-  gen: 7.035
+  gen: 6.96465
 DYJetsToLL_M-50_HT-400to600_PSweights-MLM_ext2_2018:
-  gen: 7.005
+  gen: 6.93495
 DYJetsToLL_M-50_HT-600to800-MLM_2016:
   gen: 1.357
 DYJetsToLL_M-50_HT-600to800-MLM_2017:
-  gen: 1.745
+  gen: 1.701375
 DYJetsToLL_M-50_HT-600to800-MLM_2018:
-  gen: 1.747
+  gen: 1.703325
 DYJetsToLL_M-50_HT-600to800-MLM_new_pmx_2017:
-  gen: 1.745
+  gen: 1.701375
 DYJetsToLL_M-50_HT-600to800_PSweights-MLM_2018:
-  gen: 1.759
+  gen: 1.7150249999999998
 DYJetsToLL_M-50_HT-70to100-MLM_2016:
   gen: 170.4
 DYJetsToLL_M-50_HT-70to100-MLM_2017:
@@ -153,13 +153,13 @@ DYJetsToLL_M-50_HT-70to100_PSweights-MLM_2018:
 DYJetsToLL_M-50_HT-800to1200-MLM_2016:
   gen: 0.6243
 DYJetsToLL_M-50_HT-800to1200-MLM_2017:
-  gen: 0.8077
+  gen: 0.7325839
 DYJetsToLL_M-50_HT-800to1200-MLM_2018:
-  gen: 0.8109
+  gen: 0.7354862999999999
 DYJetsToLL_M-50_HT-800to1200-MLM_new_pmx_2017:
-  gen: 0.8059
+  gen: 0.7309513
 DYJetsToLL_M-50_HT-800to1200_PSweights-MLM_2018:
-  gen: 0.8076
+  gen: 0.7324932
 EWKWMinus2Jets_WToLNu_M-50-mg_2016:
   gen: 20.35
 EWKWMinus2Jets_WToLNu_M-50-mg_2017:
@@ -332,13 +332,13 @@ GJets_SM_5f_EWK-mg_ext1_2017:
   gen: 32.91
 GluGlu_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 21.46
-  nnnlo: 4.858E+01
+  nnnlo: 48.58
 GluGlu_HToInvisible_M125_pow_pythia8_2017:
   gen: 21.46
-  nnnlo: 4.858E+01
+  nnnlo: 48.58
 GluGlu_HToInvisible_M125_pow_pythia8_2018:
   gen: 21.46
-  nnnlo: 4.858E+01
+  nnnlo: 48.58
 QCD_HT1000to1500-MLM_2016:
   gen: 1209.0
 QCD_HT1000to1500-MLM_2018:
@@ -749,9 +749,9 @@ WJetsToLNu_2J-amcatnloFXFX_ext1_2017:
 WJetsToLNu_HT-100To200-MLM_2016:
   gen: 1348.0
 WJetsToLNu_HT-100To200-MLM_2017:
-  gen: 1392.0
+  gen: 1382.256
 WJetsToLNu_HT-100To200-MLM_2018:
-  gen: 1390.0
+  gen: 1380.27
 WJetsToLNu_HT-100To200-MLM_ext1_2016:
   gen: 1348.0
 WJetsToLNu_HT-100To200-MLM_ext2_2016:
@@ -759,17 +759,17 @@ WJetsToLNu_HT-100To200-MLM_ext2_2016:
 WJetsToLNu_HT-1200To2500-MLM_2016:
   gen: 1.329
 WJetsToLNu_HT-1200To2500-MLM_2017:
-  gen: 1.08
+  gen: 1.4385600000000003
 WJetsToLNu_HT-1200To2500-MLM_2018:
-  gen: 1.088
+  gen: 1.4492160000000003
 WJetsToLNu_HT-1200To2500-MLM_ext1_2016:
   gen: 1.324
 WJetsToLNu_HT-200To400-MLM_2016:
   gen: 359.6
 WJetsToLNu_HT-200To400-MLM_2017:
-  gen: 410.2
+  gen: 411.0204
 WJetsToLNu_HT-200To400-MLM_2018:
-  gen: 410.1
+  gen: 410.9202
 WJetsToLNu_HT-200To400-MLM_ext1_2016:
   gen: 359.7
 WJetsToLNu_HT-200To400-MLM_ext2_2016:
@@ -777,25 +777,25 @@ WJetsToLNu_HT-200To400-MLM_ext2_2016:
 WJetsToLNu_HT-2500ToInf-MLM_2016:
   gen: 0.03219
 WJetsToLNu_HT-2500ToInf-MLM_2017:
-  gen: 0.008098
+  gen: 0.034011599999999996
 WJetsToLNu_HT-2500ToInf-MLM_2018:
-  gen: 0.008119
+  gen: 0.0340998
 WJetsToLNu_HT-2500ToInf-MLM_ext1_2016:
   gen: 0.03212
 WJetsToLNu_HT-400To600-MLM_2016:
   gen: 48.85
 WJetsToLNu_HT-400To600-MLM_2017:
-  gen: 57.95
+  gen: 58.47154999999999
 WJetsToLNu_HT-400To600-MLM_2018:
-  gen: 57.87
+  gen: 58.390829999999994
 WJetsToLNu_HT-400To600-MLM_ext1_2016:
   gen: 48.74
 WJetsToLNu_HT-600To800-MLM_2016:
   gen: 12.07
 WJetsToLNu_HT-600To800-MLM_2017:
-  gen: 12.98
+  gen: 14.537600000000001
 WJetsToLNu_HT-600To800-MLM_2018:
-  gen: 12.91
+  gen: 14.459200000000001
 WJetsToLNu_HT-600To800-MLM_ext1_2016:
   gen: 12.04
 WJetsToLNu_HT-70To100-MLM_2016:
@@ -807,9 +807,9 @@ WJetsToLNu_HT-70To100-MLM_2018:
 WJetsToLNu_HT-800To1200-MLM_2016:
   gen: 5.47
 WJetsToLNu_HT-800To1200-MLM_2017:
-  gen: 5.39
+  gen: 6.4787799999999995
 WJetsToLNu_HT-800To1200-MLM_2018:
-  gen: 5.493
+  gen: 6.6025860000000005
 WJetsToLNu_HT-800To1200-MLM_ext1_2016:
   gen: 5.499
 WJetsToQQ_HT-800toInf_qc19_3j-MLM_2017:
@@ -866,13 +866,13 @@ WZ_ext1_2016:
   gen: 23.42
 WminusH_WToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.3654
-  nnlo: 0.360
+  nnlo: 0.36
 WminusH_WToQQ_HToInvisible_M125_pow_pythia8_2017:
   gen: 0.3654
-  nnlo: 0.360
+  nnlo: 0.36
 WminusH_WToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.3654
-  nnlo: 0.360
+  nnlo: 0.36
 WplusH_WToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.585
   nnlo: 0.5678
@@ -918,55 +918,55 @@ ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2018:
 ZJetsToNuNu_HT-100To200-mg_2016:
   gen: 93.51
 ZJetsToNuNu_HT-100To200-mg_2017:
-  gen: 305.3
+  gen: 303.4682
 ZJetsToNuNu_HT-100To200-mg_2018:
-  gen: 304.2
+  gen: 302.3748
 ZJetsToNuNu_HT-100To200-mg_ext1_2016:
   gen: 93.48
 ZJetsToNuNu_HT-1200To2500-mg_2016:
   gen: 0.09579
 ZJetsToNuNu_HT-1200To2500-mg_2017:
-  gen: 0.3431
+  gen: 0.30192800000000003
 ZJetsToNuNu_HT-1200To2500-mg_2018:
-  gen: 0.3425
+  gen: 0.3014
 ZJetsToNuNu_HT-1200To2500-mg_ext1_2016:
   gen: 0.09579
 ZJetsToNuNu_HT-1200To2500-mg_new_pmx_2017:
-  gen: 0.3424
+  gen: 0.30131199999999997
 ZJetsToNuNu_HT-200To400-mg_2016:
   gen: 25.86
 ZJetsToNuNu_HT-200To400-mg_2017:
-  gen: 91.86
+  gen: 90.11466
 ZJetsToNuNu_HT-200To400-mg_2018:
-  gen: 91.62
+  gen: 89.87922
 ZJetsToNuNu_HT-200To400-mg_ext1_2016:
   gen: 25.83
 ZJetsToNuNu_HT-2500ToInf-mg_2016:
   gen: 0.002304
 ZJetsToNuNu_HT-2500ToInf-mg_2017:
-  gen: 0.005146
+  gen: 0.006566296000000001
 ZJetsToNuNu_HT-2500ToInf-mg_2018:
-  gen: 0.005277
+  gen: 0.006733451999999999
 ZJetsToNuNu_HT-400To600-mg_2016:
   gen: 3.579
 ZJetsToNuNu_HT-400To600-mg_2017:
-  gen: 13.13
+  gen: 12.82801
 ZJetsToNuNu_HT-400To600-mg_2018:
-  gen: 13.18
+  gen: 12.876859999999999
 ZJetsToNuNu_HT-400To600-mg_ext1_2016:
   gen: 3.562
 ZJetsToNuNu_HT-400To600-mg_new_pmx_2017:
-  gen: 13.14
+  gen: 12.83778
 ZJetsToNuNu_HT-600To800-mg_2017:
-  gen: 3.242
+  gen: 3.1609499999999997
 ZJetsToNuNu_HT-600To800-mg_2018:
-  gen: 3.241
+  gen: 3.159975
 ZJetsToNuNu_HT-600To800-mg_new_pmx_2017:
-  gen: 3.267
+  gen: 3.1853249999999997
 ZJetsToNuNu_HT-800To1200-mg_2017:
-  gen: 1.501
+  gen: 1.374916
 ZJetsToNuNu_HT-800To1200-mg_2018:
-  gen: 1.5
+  gen: 1.374
 ZJetsToQQ_HT-800toInf_qc19_4j-MLM_2017:
   gen: 18.47
 ZJetsToQQ_HT-800toInf_qc19_4j-MLM_2018:
