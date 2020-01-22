@@ -11,7 +11,6 @@ from matplotlib import pyplot as plt
 def plot_ht_dist(acc, regex, tag):
 	'''Given the accumulator and the dataset regex,
 	   plot the HT distribution.'''
-	ht_bins = [70, 100, 200, 400, 600, 800, 1200, 2500]
 	acc.load('lhe_ht')
 	h = acc['lhe_ht']
 
@@ -21,9 +20,6 @@ def plot_ht_dist(acc, regex, tag):
 
 	# Choose the relevant dataset(s)
 	h = h[re.compile(regex)]
-
-	new_ht_bins = hist.Bin('ht', r'$H_T\ (GeV)$', ht_bins)
-	#h = h.rebin('ht', new_ht_bins)
 	h = h.integrate('dataset')
 
 	# Plot the HT distribution
