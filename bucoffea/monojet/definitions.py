@@ -1,19 +1,17 @@
 import copy
+
+import coffea.processor as processor
+import numpy as np
 from coffea import hist
+from coffea.analysis_objects import JaggedCandidateArray
+
+from bucoffea.helpers import object_overlap
+from bucoffea.helpers.dataset import extract_year
 
 Hist = hist.Hist
 Bin = hist.Bin
 Cat = hist.Cat
 
-from coffea.analysis_objects import JaggedCandidateArray
-import coffea.processor as processor
-from awkward import JaggedArray
-import numpy as np
-from bucoffea.helpers import object_overlap
-from bucoffea.helpers.paths import bucoffea_path
-from bucoffea.helpers.gen import find_first_parent
-from bucoffea.helpers.dataset import extract_year
-from pprint import pprint
 
 def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
@@ -606,9 +604,17 @@ def fitfun(x, a, b, c):
 
 def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
     if df['is_lo_w']:
-        theory_weights = fitfun(gen_v_pt, 1.275, 2.495e-3, 0.531) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        if extract_year(df['dataset']) == 2016:
+            qcd_nlo = evaluator["qcd_nlo_w_2016"](gen_v_pt)
+        else:
+            qcd_nlo = fitfun(gen_v_pt, 1.275, 2.495e-3, 0.531)
+        theory_weights =  qcd_nlo * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
-        theory_weights = fitfun(gen_v_pt, 1.321, 2.465e-3, 0.561) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        if extract_year(df['dataset']) == 2016:
+            qcd_nlo = evaluator["qcd_nlo_z_2016"](gen_v_pt)
+        else:
+            qcd_nlo = fitfun(gen_v_pt, 1.321, 2.465e-3, 0.561)
+        theory_weights =  qcd_nlo * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_nlo_w']:
         theory_weights = evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_nlo_z']:
@@ -680,12 +686,14 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
 
     year = extract_year(df['dataset'])
-    if year in [2016,2017]:
+    if year == 2016:
+        csev_weight = evaluator["photon_csev"](photons.abseta, photons.pt).prod()
+    elif year == 2017:
         csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
-        weights.add("photon_csev", evaluator['photon_csev'](csev_sf_index).prod())
+        csev_weight = evaluator['photon_csev'](csev_sf_index).prod()
     elif year == 2018:
-        csev_weight = evaluator['photon_csev'](photons.pt, photons.eta).prod()
-        csev_weight[csev_weight==0] = 1
-        weights.add("photon_csev", csev_weight)
+        csev_weight = evaluator['photon_csev'](photons.pt, photons.abseta).prod()
+    csev_weight[csev_weight==0] = 1
+    weights.add("photon_csev", csev_weight)
 
     return weights
