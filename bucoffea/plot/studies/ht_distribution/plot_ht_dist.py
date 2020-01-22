@@ -22,6 +22,9 @@ def plot_ht_dist(acc, regex, tag):
 	h = h[re.compile(regex)]
 	h = h.integrate('dataset')
 
+	new_ht_bins = hist.Bin('ht', r'$H_T \ (GeV)$', 50, 0, 4000)
+	h = h.rebin('ht', new_ht_bins)
+
 	# Plot the HT distribution
 	fig, ax = plt.subplots(1,1)
 	hist.plot1d(h, ax=ax, overflow='all', binwnorm=True)
