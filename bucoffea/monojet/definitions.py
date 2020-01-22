@@ -606,15 +606,15 @@ def fitfun(x, a, b, c):
 
 def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
     if df['is_lo_w']:
-        theory_weights = fitfun(gen_v_pt, 1.024, 3.072e-3, 0.749) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        theory_weights = fitfun(gen_v_pt, 1.275, 2.495e-3, 0.531) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
-        theory_weights = fitfun(gen_v_pt, 1.423, 2.257e-3, 0.451) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        theory_weights = fitfun(gen_v_pt, 1.321, 2.465e-3, 0.561) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_nlo_w']:
         theory_weights = evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_nlo_z']:
         theory_weights = evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
-        theory_weights = fitfun(gen_v_pt, 1.036, 3.537e-3, 0.984) * evaluator["ewk_nlo_g"](gen_v_pt) *  evaluator["qcd_nnlo_g"](gen_v_pt)
+        theory_weights = fitfun(gen_v_pt, 0.921, 3.509e-3, 1.0) * evaluator["ewk_nlo_g"](gen_v_pt) *  evaluator["qcd_nnlo_g"](gen_v_pt)
     else:
         theory_weights = np.ones(df.size)
 
