@@ -20,14 +20,13 @@ def plot_ht_dist(acc, regex, tag):
 
 	# Choose the relevant dataset(s)
 	h = h[re.compile(regex)]
-	h = h.integrate('dataset')
 
 	new_ht_bins = hist.Bin('ht', r'$H_T \ (GeV)$', 50, 0, 4000)
 	h = h.rebin('ht', new_ht_bins)
 
 	# Plot the HT distribution
 	fig, ax = plt.subplots(1,1)
-	hist.plot1d(h, ax=ax, overflow='all', binwnorm=True)
+	hist.plot1d(h, ax=ax, overflow='all', binwnorm=True, overlay='dataset')
 	ax.set_yscale('log')
 	ax.set_ylim(1e-3, 1e6)
 
@@ -49,8 +48,8 @@ def main():
 	acc.load('sumw')
 	acc.load('sumw2')
 
-	plot_ht_dist(acc, regex='WJetsToLNu.*2017', tag='wjets')
-	plot_ht_dist(acc, regex='DYJets.*2017', tag='dy')
+	plot_ht_dist(acc, regex='WJetsToLNu.*(2017|2018)', tag='wjets')
+	plot_ht_dist(acc, regex='DYJets.*(2017|2018)', tag='dy')
 
 if __name__ == '__main__':
 	main()
