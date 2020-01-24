@@ -322,6 +322,10 @@ def setup_candidates(df, cfg):
     ak4 = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'],
         pt=df[f'Jet_pt{jes_suffix}'],
+        pt_jerup=df[f'Jet_pt_jerUp'],
+        pt_jerdown=df[f'Jet_pt_jerDown'],
+        pt_jesup=df[f'Jet_pt_jesTotalUp'],
+        pt_jesdown=df[f'Jet_pt_jesTotalDown'],
         eta=df['Jet_eta'],
         abseta=np.abs(df['Jet_eta']),
         phi=df['Jet_phi'],
@@ -403,6 +407,18 @@ def setup_candidates(df, cfg):
 
     met_pt = df[f'{met_branch}_pt{jes_suffix_met}']
     met_phi = df[f'{met_branch}_phi{jes_suffix_met}']
+
+    # JES/JER variations in MET
+    met_pt_jerup = df[f'{met_branch}_pt_jerUp']
+    met_pt_jerdown = df[f'{met_branch}_pt_jerDown']
+    met_pt_jesup = df[f'{met_branch}_pt_jesTotalUp']
+    met_pt_jesdown = df[f'{met_branch}_pt_jesTotalDown']
+
+    met_phi_jerup = df[f'{met_branch}_phi_jerUp']
+    met_phi_jerdown = df[f'{met_branch}_phi_jerDown']
+    met_phi_jesup = df[f'{met_branch}_phi_jesTotalUp']
+    met_phi_jesdown = df[f'{met_branch}_phi_jesTotalDown']
+
 
     return met_pt, met_phi, ak4, bjets, ak8, muons, electrons, taus, photons
 
