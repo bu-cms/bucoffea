@@ -214,7 +214,7 @@ def merge_datasets(histogram):
     # Some combinations are the same for all years
     yearly = {
         'GJets_HT_MLM_{year}' : 'GJets_HT-(\d+)To.*-MLM_{year}',
-        'GJets_DR-0p4_HT_MLM_{year}' : 'GJets_DR-0p4_HT-(\d+)To.*-MLM_{year}',
+        'GJets_DR-0p4_HT_MLM_{year}' : 'GJets_DR-0p4_HT-(\d+)To.*-MLM_.*{year}',
         'WJetsToQQ_HT_MLM_{year}' : 'WJetsToQQ_HT-?(\d+)(T|t)o.*-MLM_{year}',
         'DYJetsToLL_M-50_HT_MLM_{year}' : 'DYJetsToLL_M-50_HT-(\d+)to.*-MLM_{year}',
         'WJetsToLNu_HT_MLM_{year}' : 'WJetsToLNu_HT-(\d+)To.*-MLM_{year}',
