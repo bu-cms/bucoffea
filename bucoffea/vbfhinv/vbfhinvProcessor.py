@@ -187,6 +187,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         self._blind=blind
         self._configure()
         self._accumulator = vbfhinv_accumulator(cfg)
+        self._variations = ['', '_jerup', '_jerdown', '_jesup', '_jesdown']
 
     @property
     def accumulator(self):
@@ -242,12 +243,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt, met_phi, ak4, bjets, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
+        met_pt_dict, met_phi_dict, ak4, bjets, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
-        # Filtering ak4 jets according to pileup ID
-        ak4 = ak4[ak4.puid]
-        bjets = bjets[bjets.puid]
-
+        #################################
+        # First process the part which is 
+        # unrelated to JES/JER variations
+        #################################
+        
         # Muons
         df['is_tight_muon'] = muons.tightId \
                       & (muons.iso < cfg.MUON.CUTS.TIGHT.ISO) \
@@ -256,9 +258,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         dimuons = muons.distincts()
         dimuon_charge = dimuons.i0['charge'] + dimuons.i1['charge']
-
-        df['MT_mu'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
-
+        
         # Electrons
         df['is_tight_electron'] = electrons.tightId \
                             & (electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
@@ -266,22 +266,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
-
-        df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, met_pt, met_phi)).max()
-
-        # ak4
-        leadak4_index=ak4.pt.argmax()
-
-        elejet_pairs = ak4[:,:1].cross(electrons)
-        df['dREleJet'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
-        muonjet_pairs = ak4[:,:1].cross(muons)
-        df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
-
-        # Recoil
-        df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
-        df["dPFCalo"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
-        df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30, etamax=5.0)
-        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=5.0)
+        
         selection = processor.PackedSelection()
 
         # Triggers
@@ -298,16 +283,51 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('veto_tau', taus.counts==0)
         selection.add('at_least_one_tau', taus.counts>0)
         selection.add('veto_b', bjets.counts==0)
-        selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
-        selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
-        selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
-        selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
-        selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
 
         if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
             selection.add('hemveto', df['hemveto'])
         else:
             selection.add('hemveto', np.ones(df.size)==1)
+       
+        ############################
+        # Process for each variation
+        # listed in self._variations
+        ############################
+
+        for variation in self._variations:
+            # Choose the correct MET for each variation
+            met_pt = met_pt_dict[f'{variation}']
+            met_phi = met_phi_dict[f'{variation}']
+
+        # Filtering ak4 jets according to pileup ID
+            ak4_puid = getattr(ak4, f'puid{variation}')
+            bjets_puid = getattr(bjets, f'puid{variation}')
+            
+            ak4 = ak4[ak4_puid]
+            bjets = bjets[bjets_puid] # TODO: bjets needs to be checked, definition relies on pt
+        
+            df['MT_mu'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
+            df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, met_pt, met_phi)).max()
+
+        #############################
+
+        # ak4
+        leadak4_index=ak4.pt.argmax()
+
+        elejet_pairs = ak4[:,:1].cross(electrons)
+        df['dREleJet'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
+        muonjet_pairs = ak4[:,:1].cross(muons)
+        df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
+
+        # Recoil
+        df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
+        df["dPFCalo"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
+        df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30, etamax=5.0)
+        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=5.0)
+        
+        selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
+        selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
+        selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
 
         # AK4 dijet
         diak4 = ak4[:,:2].distincts()
