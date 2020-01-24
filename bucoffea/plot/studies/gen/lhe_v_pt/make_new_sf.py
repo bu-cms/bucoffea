@@ -238,8 +238,8 @@ def main():
     sf_1d(acc, tag='wjet', regex='WN?JetsToLNu.*',outputrootfile=outputrootfile)
     sf_1d(acc, tag='dy', regex='DYN?JetsToLL.*',outputrootfile=outputrootfile)
     # # outputrootfile = uproot.recreate(f'test.root')
-    sf_2d(acc, tag='wjet', regex='WN?JetsToLNu.*',pt_type='dress',outputrootfile=outputrootfile)
-    sf_2d(acc, tag='dy', regex='DYN?JetsToLL.*',pt_type='dress',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='wjet', regex='WN?JetsToLNu.*',pt_type='combined',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='dy', regex='DYN?JetsToLL.*',pt_type='combined',outputrootfile=outputrootfile)
 
     sf_1d(acc, tag='gjets', regex='G\d?Jet.*',outputrootfile=outputrootfile)
     # outputrootfile = uproot.recreate('test.root')
