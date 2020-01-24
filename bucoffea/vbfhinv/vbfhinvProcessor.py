@@ -211,7 +211,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             met_pt = met_pt_dict[f'{variation}']
             met_phi = met_phi_dict[f'{variation}']
 
-        # Filtering ak4 jets according to pileup ID
+            # Filtering ak4 jets according to pileup ID
             ak4_puid = getattr(ak4, f'puid{variation}')
             bjets_puid = getattr(bjets, f'puid{variation}')
             
