@@ -423,8 +423,23 @@ def setup_candidates(df, cfg):
     met_phi_jesup = df[f'{met_branch}_phi_jesTotalUp']
     met_phi_jesdown = df[f'{met_branch}_phi_jesTotalDown']
 
+    met_pt_dict = {
+        ''     : met_pt, # Nominal MET pt
+        '_jerup'   : met_pt_jerup,
+        '_jerdown' : met_pt_jerdown,
+        '_jesup'   : met_pt_jesup,
+        '_jesdown' : met_pt_jesdown
+    }
+    
+    met_phi_dict = {
+        ''     : met_phi, # Nominal MET phi
+        '_jerup'   : met_phi_jerup,
+        '_jerdown' : met_phi_jerdown,
+        '_jesup'   : met_phi_jesup,
+        '_jesdown' : met_phi_jesdown
+    }
 
-    return met_pt, met_phi, ak4, bjets, ak8, muons, electrons, taus, photons
+    return met_pt_dict, met_phi_dict, ak4, bjets, ak8, muons, electrons, taus, photons
 
 def monojet_regions(cfg):
     common_cuts = [
