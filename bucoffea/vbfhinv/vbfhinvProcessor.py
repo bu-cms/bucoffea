@@ -258,7 +258,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Initialize dictionary to hold 
         # jet information for each variation
-        ak4_dict = {}
+        var_dict = {}
 
         for var in self._variations:
             # Pick the relevant selection object
@@ -314,9 +314,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # Hold jet and dijet information 
             # for each variation
-            ak4_dict[f'{var}'] = {
-                'ak4'   : ak4,
-                'diak4' : diak4
+            var_dict[f'{var}'] = {
+                'ak4'     : ak4,
+                'diak4'   : diak4,
+                'met_pt'  : met_pt,
+                'met_phi' : met_phi
             }
 
             leadak4_pt_eta = (lead_jet_pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (np.abs(diak4.i0.eta) < cfg.SELECTION.SIGNAL.LEADAK4.ETA)
@@ -445,10 +447,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
             else:
                 var = ''
 
-            # Pick the right objects according to variation
+            # Pick the right objects/values according to variation
             selection = selection_dict[var]
-            ak4 = ak4_dict[var]['ak4']
-            diak4 = ak4_dict[var]['diak4']
+            ak4 = var_dict[var]['ak4']
+            diak4 = var_dict[var]['diak4']
+            met_pt = var_dict[var]['met_pt']
+            met_phi = var_dict[var]['met_phi']
 
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr", "tr"]):
@@ -498,32 +502,32 @@ class vbfhinvProcessor(processor.ProcessorABC):
             w_alljets = weight_shape(ak4[mask].eta, region_weights.weight()[mask])
             w_alljets_nopref = weight_shape(ak4[mask].eta, region_weights.partial_weight(exclude=['prefire'])[mask])
 
-            ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
-            ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
-            ezfill('ak4_pt',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets)
+            ezfill(f'ak4_eta{var}',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
+            ezfill(f'ak4_phi{var}',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
+            ezfill(f'ak4_pt{var}',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets)
 
-            ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
-            ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
-            ezfill('ak4_pt_nopref',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets_nopref)
+            ezfill(f'ak4_eta_nopref{var}',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
+            ezfill(f'ak4_phi_nopref{var}',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
+            ezfill(f'ak4_pt_nopref{var}',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets_nopref)
 
             # Leading ak4
-            w_diak4 = weight_shape(diak4.pt[mask], region_weights.weight()[mask])
-            ezfill('ak4_eta0',      jeteta=diak4.i0.eta[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_phi0',      jetphi=diak4.i0.phi[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_pt0',       jetpt=getattr(diak4.i0, f'pt{var}')[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_ptraw0',    jetpt=diak4.i0.ptraw[mask].flatten(),   weight=w_diak4)
-            ezfill('ak4_chf0',      frac=diak4.i0.chf[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nhf0',      frac=diak4.i0.nhf[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nconst0',   nconst=diak4.i0.nconst[mask].flatten(), weight=w_diak4)
+            w_diak4 = weight_shape(diak4.pt[mask], weights.weight()[mask])
+            ezfill(f'ak4_eta0{var}',      jeteta=diak4.i0.eta[mask].flatten(),    weight=w_diak4)
+            ezfill(f'ak4_phi0{var}',      jetphi=diak4.i0.phi[mask].flatten(),    weight=w_diak4)
+            ezfill(f'ak4_pt0{var}',       jetpt=getattr(diak4.i0, f'pt{var}')[mask].flatten(),      weight=w_diak4)
+            ezfill(f'ak4_ptraw0{var}',    jetpt=diak4.i0.ptraw[mask].flatten(),   weight=w_diak4)
+            ezfill(f'ak4_chf0{var}',      frac=diak4.i0.chf[mask].flatten(),      weight=w_diak4)
+            ezfill(f'ak4_nhf0{var}',      frac=diak4.i0.nhf[mask].flatten(),      weight=w_diak4)
+            ezfill(f'ak4_nconst0{var}',   nconst=diak4.i0.nconst[mask].flatten(), weight=w_diak4)
 
             # Trailing ak4
-            ezfill('ak4_eta1',      jeteta=diak4.i1.eta[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_phi1',      jetphi=diak4.i1.phi[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_pt1',       jetpt=getattr(diak4.i1, f'pt{var}')[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_ptraw1',    jetpt=diak4.i1.ptraw[mask].flatten(),   weight=w_diak4)
-            ezfill('ak4_chf1',      frac=diak4.i1.chf[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
+            ezfill(f'ak4_eta1{var}',      jeteta=diak4.i1.eta[mask].flatten(),    weight=w_diak4)
+            ezfill(f'ak4_phi1{var}',      jetphi=diak4.i1.phi[mask].flatten(),    weight=w_diak4)
+            ezfill(f'ak4_pt1{var}',       jetpt=getattr(diak4.i1, f'pt{var}')[mask].flatten(),      weight=w_diak4)
+            ezfill(f'ak4_ptraw1{var}',    jetpt=diak4.i1.ptraw[mask].flatten(),   weight=w_diak4)
+            ezfill(f'ak4_chf1{var}',      frac=diak4.i1.chf[mask].flatten(),      weight=w_diak4)
+            ezfill(f'ak4_nhf1{var}',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
+            ezfill(f'ak4_nconst1{var}',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
@@ -531,48 +535,27 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
             # MET
-            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=region_weights.weight()[mask] )
-            ezfill('met',                met=met_pt[mask],            weight=region_weights.weight()[mask] )
-            ezfill('met_phi',            phi=met_phi[mask],           weight=region_weights.weight()[mask] )
-            ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=region_weights.weight()[mask] )
-            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],        weight=region_weights.weight()[mask] )
-            ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.weight()[mask] )
-            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask], weight=region_weights.weight()[mask] )
+            ezfill(f'dpfcalo{var}',            dpfcalo=df[f"dPFCalo{var}"][mask],       weight=weights.weight()[mask] )
+            ezfill(f'met{var}',                met=met_pt[mask],            weight=weights.weight()[mask] )
+            ezfill(f'met_phi{var}',            phi=met_phi[mask],           weight=weights.weight()[mask] )
+            ezfill(f'recoil{var}',             recoil=df[f"recoil_pt{var}"][mask],      weight=weights.weight()[mask] )
+            ezfill(f'recoil_phi{var}',         phi=df[f"recoil_phi{var}"][mask],        weight=weights.weight()[mask] )
+            ezfill(f'dphijm{var}',             dphi=df[f"minDPhiJetMet{var}"][mask],    weight=weights.weight()[mask] )
+            ezfill(f'dphijr{var}',             dphi=df[f"minDPhiJetRecoil{var}"][mask], weight=weights.weight()[mask] )
 
-            ezfill('dphijj',             dphi=df["dphijj"][mask],   weight=region_weights.weight()[mask] )
-            ezfill('detajj',             deta=df["detajj"][mask],   weight=region_weights.weight()[mask] )
-            ezfill('mjj',                mjj=df["mjj"][mask],      weight=region_weights.weight()[mask] )
-
-            # Photon CR data-driven QCD estimate
-            if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
-                w_imp = photon_impurity_weights(photons[leadphoton_index].pt.max()[mask], df["year"])
-                output['mjj'].fill(
-                                    dataset=data_driven_qcd_dataset(dataset),
-                                    region=region,
-                                    mjj=df["mjj"][mask],
-                                    weight=region_weights.weight()[mask] * w_imp
-                                )
-
-            # Uncertainty variations
-            if df['is_lo_z'] or df['is_nlo_z'] or df['is_lo_z_ewk']:
-                theory_uncs = [x for x in cfg.SF.keys() if x.startswith('unc')]
-                for unc in theory_uncs:
-                    reweight = evaluator[unc](gen_v_pt)
-                    w = (region_weights.weight() * reweight)[mask]
-                    ezfill(
-                        'mjj_unc',
-                        mjj=df['mjj'][mask],
-                        uncertainty=unc,
-                        weight=w)
+            ezfill(f'dphijj{var}',             dphi=df[f"dphijj{var}"][mask],   weight=weights.weight()[mask] )
+            ezfill(f'detajj{var}',             deta=df[f"detajj{var}"][mask],   weight=weights.weight()[mask] )
+            ezfill(f'mjj{var}',                mjj=df[f"mjj{var}"][mask],      weight=weights.weight()[mask] )
 
             # Two dimensional
-            ezfill('recoil_mjj',         recoil=df["recoil_pt"][mask], mjj=df["mjj"][mask], weight=region_weights.weight()[mask] )
+            # Don't fill for now 
+            #ezfill('recoil_mjj',         recoil=df["recoil_pt"][mask], mjj=df["mjj"][mask], weight=weights.weight()[mask] )
 
             # Muons
             if '_1m_' in region or '_2m_' in region:
                 w_allmu = weight_shape(muons.pt[mask], region_weights.weight()[mask])
                 ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
-                ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=region_weights.weight()[mask])
+                ezfill(f'muon_mt{var}',   mt=df[f'MT_mu{var}'][mask],           weight=weights.weight()[mask])
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
 
@@ -593,7 +576,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             if '_1e_' in region or '_2e_' in region:
                 w_allel = weight_shape(electrons.pt[mask], region_weights.weight()[mask])
                 ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
-                ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=region_weights.weight()[mask])
+                ezfill(f'electron_mt{var}',   mt=df[f'MT_el{var}'][mask],               weight=weights.weight()[mask])
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
                 ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
 
@@ -616,8 +599,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
                 ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
-                ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
-                ezfill('photon_eta_phi',          eta=photons[leadphoton_index].eta[mask].flatten(), phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
+                #ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
+                #ezfill('photon_eta_phi',          eta=photons[leadphoton_index].eta[mask].flatten(), phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], region_weights.weight()[mask])
 
