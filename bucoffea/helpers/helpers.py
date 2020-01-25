@@ -8,7 +8,7 @@ def dphi(phi1, phi2):
     dphi = sign* x + ~sign * (2*np.pi - x)
     return dphi
 
-def min_dphi_jet_met(jets, met_phi, njet=4, ptmin=30, etamax=2.4):
+def min_dphi_jet_met(jets, met_phi, njet=4, ptmin=30, etamax=2.4, var=''):
     """Calculate minimal delta phi between jets and met
 
     :param jets: Jet candidates to use, must be sorted by pT
@@ -17,6 +17,8 @@ def min_dphi_jet_met(jets, met_phi, njet=4, ptmin=30, etamax=2.4):
     :type met_phi: array
     :param njet: Number of leading jets to consider, defaults to 4
     :type njet: int, optional
+    :param var: JES/JER variation, by default no variation is used.
+    :type var: str, optional
     """
 
     # Make sure that met_phi is not just a single float
@@ -25,7 +27,8 @@ def min_dphi_jet_met(jets, met_phi, njet=4, ptmin=30, etamax=2.4):
     assert(met_phi.shape!=())
 
     # Use the first njet jets with pT > ptmin
-    jets=jets[(jets.pt>ptmin)&(jets.abseta < etamax)]
+    jet_pt = getattr(jets, f'pt{var}')
+    jets=jets[(jet_pt>ptmin)&(jets.abseta < etamax)]
     jets = jets[:,:njet]
 
     return dphi(jets.phi, met_phi).min()
