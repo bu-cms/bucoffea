@@ -243,25 +243,25 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # listed in self._variations
         ############################
 
-        for variation in self._variations:
+        for var in self._variations:
             # Choose the correct MET for each variation
-            met_pt = met_pt_dict[f'{variation}']
-            met_phi = met_phi_dict[f'{variation}']
+            met_pt = met_pt_dict[f'{var}']
+            met_phi = met_phi_dict[f'{var}']
 
             # Filtering ak4 jets according to pileup ID
-            ak4_puid = getattr(ak4, f'puid{variation}')
-            bjets_puid = getattr(bjets, f'puid{variation}')
+            ak4_puid = getattr(ak4, f'puid{var}')
+            bjets_puid = getattr(bjets, f'puid{var}')
             
             ak4 = ak4[ak4_puid]
             bjets = bjets[bjets_puid] # TODO: bjets needs to be checked, definition relies on pt
         
-            df['MT_mu'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
-            selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
+            df[f'MT_mu{var}'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
+            selection.add(f'mt_mu{var}', df[f'MT_mu{var}'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
             
-            df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, met_pt, met_phi)).max()
-            selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
+            df[f'MT_el{var}'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, met_pt, met_phi)).max()
+            selection.add(f'mt_el{var}', df[f'MT_el{var}'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
-            selection.add('met_el', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
+            selection.add(f'met_el{var}', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
 
         #############################
 
