@@ -187,8 +187,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
         self._year=None
         self._blind=blind
         self._configure()
-        self._accumulator = vbfhinv_accumulator(cfg)
         self._variations = ['', '_jerup', '_jerdown', '_jesup', '_jesdown']
+        self._accumulator = vbfhinv_accumulator(cfg, variations=self._variations)
 
     @property
     def accumulator(self):
@@ -270,69 +270,84 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
-        
-        selection = processor.PackedSelection()
+ 
+        # Initiate dictionary containing selection
+        # pack objects for each variation
+        selection_dict = {
+            '' : processor.PackedSelection(),
+            '_jerup' : processor.PackedSelection(),
+            '_jerdown' : processor.PackedSelection(),
+            '_jesup' : processor.PackedSelection(),
+            '_jesdown' : processor.PackedSelection()
+        }
 
         # Triggers
         pass_all = np.ones(df.size)==1
-        selection.add('inclusive', pass_all)
-        selection = trigger_selection(selection, df, cfg)
-
-        selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
-
-        # Common selection
-        selection.add('veto_ele', electrons.counts==0)
-        selection.add('veto_muo', muons.counts==0)
-        selection.add('veto_photon', photons.counts==0)
-        selection.add('veto_tau', taus.counts==0)
-        selection.add('at_least_one_tau', taus.counts>0)
-        selection.add('veto_b', bjets.counts==0)
-
-        if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
-            selection.add('hemveto', df['hemveto'])
-        else:
-            selection.add('hemveto', np.ones(df.size)==1)
 
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()
-        selection.add('at_least_one_tight_mu', df['is_tight_muon'].any())
-        selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
-                                    & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
-        selection.add('dimuon_charge', (dimuon_charge==0).any())
-        selection.add('two_muons', muons.counts==2)
-
-        # Single muon CR
-        selection.add('one_muon', muons.counts==1)
 
         # Diele CR
         leadelectron_index=electrons.pt.argmax()
-
-        selection.add('one_electron', electrons.counts==1)
-        selection.add('two_electrons', electrons.counts==2)
-        selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
-
-        selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
-                                        & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
-        selection.add('dielectron_charge', (dielectron_charge==0).any())
-        selection.add('two_electrons', electrons.counts==2)
 
         # Photon CR
         leadphoton_index=photons.pt.argmax()
 
         df['is_tight_photon'] = photons.mediumId \
                          & (photons.abseta < cfg.PHOTON.CUTS.TIGHT.ETA)
+      
+        # Add common selections to each selection object
+        for selection in selection_dict.values():
+            selection.add('inclusive', pass_all)
+            selection = trigger_selection(selection, df, cfg)
 
-        selection.add('one_photon', photons.counts==1)
-        selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
-        selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
-        selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
-       
+            selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
+
+            # Common selection
+            selection.add('veto_ele', electrons.counts==0)
+            selection.add('veto_muo', muons.counts==0)
+            selection.add('veto_photon', photons.counts==0)
+            selection.add('veto_tau', taus.counts==0)
+            selection.add('veto_b', bjets.counts==0)
+
+            if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
+                selection.add('hemveto', df['hemveto'])
+            else:
+                selection.add('hemveto', np.ones(df.size)==1)
+            
+            selection.add('one_muon', muons.counts==1)
+            
+            selection.add('at_least_one_tight_mu', df['is_tight_muon'].any())
+            selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
+                                        & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
+            selection.add('dimuon_charge', (dimuon_charge==0).any())
+            selection.add('two_muons', muons.counts==2)
+
+            selection.add('one_electron', electrons.counts==1)
+            selection.add('two_electrons', electrons.counts==2)
+            selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
+
+            selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
+                                            & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
+            selection.add('dielectron_charge', (dielectron_charge==0).any())
+            selection.add('two_electrons', electrons.counts==2)
+
+            selection.add('one_photon', photons.counts==1)
+            selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
+            selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
+            selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
+
+
         ############################
         # Process for each variation
         # listed in self._variations
         ############################
 
         for var in self._variations:
+            # Pick the relevant selection object
+            # for each variation
+            selection = selection_dict[f'{var}']
+
             # Choose the correct MET for each variation
             met_pt = met_pt_dict[f'{var}']
             met_phi = met_phi_dict[f'{var}']
@@ -394,14 +409,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
 
             df[f'mjj{var}'] = mjj(diak4, var=f'{var}')
-            
-            ## Test
-            print(df[f'mjj{var}'])
-            print(df[f'mjj{var}'].shape)
-            print(diak4.mass.max())
-            print(diak4.mass.max().shape)
-            #######
-
             df[f'dphijj{var}'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
             df[f'detajj{var}'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
 
@@ -495,9 +502,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             output['sumw2'][dataset] +=  df['genEventSumw2']
             output['sumw_pileup'][dataset] +=  weights._weights['pileup'].sum()
 
-        regions = vbfhinv_regions(cfg)
-
         veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus)
+        regions = vbfhinv_regions(cfg, variations=self._variations)
+
         for region, cuts in regions.items():
             exclude = [None]
             region_weights = copy.deepcopy(weights)
@@ -537,6 +544,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # Blinding
             if(self._blind and df['is_data'] and region.startswith('sr')):
                 continue
+
+            # Get relevant variation for each region
+            if ('up' in region) or ('down' in region):
+                var = '_' + region.split('_')[-1]
+            else:
+                var = ''
+
+            # Pick the right selection object according to variation
+            selection = selection_dict[var]
 
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr", "tr"]):
