@@ -223,6 +223,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g'] | df['is_lo_w_ewk'] | df['is_lo_z_ewk']
         df['is_data'] = is_data(dataset)
 
+        if df['is_data']:
+            return self.accumulator.identity()
+
         gen_v_pt = None
         if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w'] or df['is_lo_z_ewk'] or df['is_lo_w_ewk']:
             gen = setup_gen_candidates(df)
