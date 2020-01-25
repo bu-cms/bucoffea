@@ -287,14 +287,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ak4 = ak4[ak4_pt.argsort()]
             ak4_pt = ak4_pt[ak4_pt.argsort()]
             leadak4_index=ak4_pt.argmax()
-
-            #### TEST
-            print(f'Variation: {var}')
-            #########
-
-            elejet_pairs = ak4[:,:1].cross(electrons)
-            df[f'dREleJet{var}'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
-            muonjet_pairs = ak4[:,:1].cross(muons)
             df['dRMuonJet{var}'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
 
             # Recoil
