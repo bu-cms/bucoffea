@@ -8,10 +8,11 @@ from bucoffea.helpers import (
                               bucoffea_path,
                               dphi,
                               evaluator_from_config,
-                              mask_and,
-                              mask_or,
+                              mask_and, 
+                              mask_or, 
                               min_dphi_jet_met,
-                              mt,
+                              mjj,
+                              mt, 
                               recoil,
                               weight_shape
                               )
@@ -351,50 +352,68 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             selection.add(f'met_el{var}', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
 
-        #############################
+            # ak4
+            ak4_pt = getattr(ak4, f'pt{var}')
 
-        # ak4
-        leadak4_index=ak4.pt.argmax()
+            # Sort the jets according to relevant pt
+            ak4 = ak4[ak4_pt.argsort()]
+            ak4_pt = ak4_pt[ak4_pt.argsort()]
+            leadak4_index=ak4_pt.argmax()
 
-        elejet_pairs = ak4[:,:1].cross(electrons)
-        df['dREleJet'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
-        muonjet_pairs = ak4[:,:1].cross(muons)
-        df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
+            #### TEST
+            print(f'Variation: {var}')
+            #########
 
-        # Recoil
-        df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
-        df["dPFCalo"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
-        df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30, etamax=5.0)
-        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=5.0)
+            elejet_pairs = ak4[:,:1].cross(electrons)
+            df[f'dREleJet{var}'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
+            muonjet_pairs = ak4[:,:1].cross(muons)
+            df['dRMuonJet{var}'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
+
+            # Recoil
+            df[f'recoil_pt{var}'], df[f'recoil_phi{var}'] = recoil(met_pt,met_phi, electrons, muons, photons)
+            df[f"dPFCalo{var}"] = (met_pt - df["CaloMET_pt"]) / df[f"recoil_pt{var}"]
+            df[f"minDPhiJetRecoil{var}"] = min_dphi_jet_met(ak4, df[f'recoil_phi{var}'], njet=4, ptmin=30, etamax=5.0, var=f'{var}')
+            df[f"minDPhiJetMet{var}"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=5.0, var=f'{var}')
         
-        selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
-        selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
-        selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
+            selection.add(f'mindphijr{var}',df[f'minDPhiJetRecoil{var}'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
+            selection.add(f'dpfcalo{var}',np.abs(df[f'dPFCalo{var}']) < cfg.SELECTION.SIGNAL.DPFCALO)
+            selection.add(f'recoil{var}', df[f'recoil_pt{var}']>cfg.SELECTION.SIGNAL.RECOIL)
 
-        # AK4 dijet
-        diak4 = ak4[:,:2].distincts()
-        leadak4_pt_eta = (diak4.i0.pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (np.abs(diak4.i0.eta) < cfg.SELECTION.SIGNAL.LEADAK4.ETA)
-        trailak4_pt_eta = (diak4.i1.pt > cfg.SELECTION.SIGNAL.TRAILAK4.PT) & (np.abs(diak4.i1.eta) < cfg.SELECTION.SIGNAL.TRAILAK4.ETA)
-        hemisphere = (diak4.i0.eta * diak4.i1.eta < 0).any()
-        has_track0 = np.abs(diak4.i0.eta) <= 2.5
-        has_track1 = np.abs(diak4.i1.eta) <= 2.5
+            # AK4 dijet
+            diak4 = ak4[:,:2].distincts()
+            lead_jet_pt = getattr(diak4.i0, f'pt{var}')
+            trail_jet_pt = getattr(diak4.i1, f'pt{var}')
 
-        leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
-        trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
+            leadak4_pt_eta = (lead_jet_pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (np.abs(diak4.i0.eta) < cfg.SELECTION.SIGNAL.LEADAK4.ETA)
+            trailak4_pt_eta = (trail_jet_pt > cfg.SELECTION.SIGNAL.TRAILAK4.PT) & (np.abs(diak4.i1.eta) < cfg.SELECTION.SIGNAL.TRAILAK4.ETA)
+            hemisphere = (diak4.i0.eta * diak4.i1.eta < 0).any()
+            has_track0 = np.abs(diak4.i0.eta) <= 2.5
+            has_track1 = np.abs(diak4.i1.eta) <= 2.5
 
-        df['mjj'] = diak4.mass.max()
-        df['dphijj'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
-        df['detajj'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
+            leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
+            trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
 
-        selection.add('two_jets', diak4.counts>0)
-        selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
-        selection.add('trailak4_pt_eta', trailak4_pt_eta.any())
-        selection.add('hemisphere', hemisphere)
-        selection.add('leadak4_id',leadak4_id.any())
-        selection.add('trailak4_id',trailak4_id.any())
-        selection.add('mjj', df['mjj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.MASS)
-        selection.add('dphijj', df['dphijj'] < cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DPHI)
-        selection.add('detajj', df['detajj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DETA)
+            df[f'mjj{var}'] = mjj(diak4, var=f'{var}')
+            
+            ## Test
+            print(df[f'mjj{var}'])
+            print(df[f'mjj{var}'].shape)
+            print(diak4.mass.max())
+            print(diak4.mass.max().shape)
+            #######
+
+            df[f'dphijj{var}'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
+            df[f'detajj{var}'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
+
+            selection.add(f'two_jets{var}', diak4.counts>0)
+            selection.add(f'leadak4_pt_eta{var}', leadak4_pt_eta.any())
+            selection.add(f'trailak4_pt_eta{var}', trailak4_pt_eta.any())
+            selection.add(f'hemisphere{var}', hemisphere)
+            selection.add(f'leadak4_id{var}',leadak4_id.any())
+            selection.add(f'trailak4_id{var}',trailak4_id.any())
+            selection.add(f'mjj{var}', df[f'mjj{var}'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.MASS)
+            selection.add(f'dphijj{var}', df[f'dphijj{var}'] < cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DPHI)
+            selection.add(f'detajj{var}', df[f'detajj{var}'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DETA)
 
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
