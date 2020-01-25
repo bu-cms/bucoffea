@@ -140,6 +140,9 @@ class monojetProcessor(processor.ProcessorABC):
         df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g']
         df['is_data'] = is_data(dataset)
 
+        if df['is_data']:
+            return self.accumulator.identity()
+
         gen_v_pt = None
         if not df['is_data']:
             gen = setup_gen_candidates(df)
