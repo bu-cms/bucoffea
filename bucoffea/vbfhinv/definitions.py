@@ -15,7 +15,7 @@ from bucoffea.helpers.gen import find_first_parent
 from bucoffea.monojet.definitions import accu_int
 from pprint import pprint
 
-def vbfhinv_accumulator(cfg):
+def vbfhinv_accumulator(cfg, variations):
     dataset_ax = Cat("dataset", "Primary dataset")
     unc_ax = Cat("uncertainty", "Uncertainty weight variation")
     variation_ax = Cat("variation", "Uncertainty weight variation")
@@ -169,7 +169,7 @@ def vbfhinv_accumulator(cfg):
     items["tau_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax_tau)
 
     # One cutflow counter per region
-    regions = vbfhinv_regions(cfg).keys()
+    regions = vbfhinv_regions(cfg, variations).keys()
     for region in regions:
         if region=="inclusive":
             continue
@@ -261,7 +261,7 @@ def vbfhinv_regions(cfg, variations):
         regions[f'cr_2e_vbf{var}'] = cr_2e_cuts 
 
         # Single electron CR
-        cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:]
+        cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo',f'met_el{var}'] + common_cuts[1:]
         # cr_1e_cuts.remove('veto_ele')
         regions[f'cr_1e_vbf{var}'] =  cr_1e_cuts
 
