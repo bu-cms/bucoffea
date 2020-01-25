@@ -288,6 +288,40 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('hemveto', df['hemveto'])
         else:
             selection.add('hemveto', np.ones(df.size)==1)
+
+        # Dimuon CR
+        leadmuon_index=muons.pt.argmax()
+        selection.add('at_least_one_tight_mu', df['is_tight_muon'].any())
+        selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
+                                    & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
+        selection.add('dimuon_charge', (dimuon_charge==0).any())
+        selection.add('two_muons', muons.counts==2)
+
+        # Single muon CR
+        selection.add('one_muon', muons.counts==1)
+
+        # Diele CR
+        leadelectron_index=electrons.pt.argmax()
+
+        selection.add('one_electron', electrons.counts==1)
+        selection.add('two_electrons', electrons.counts==2)
+        selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
+
+        selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
+                                        & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
+        selection.add('dielectron_charge', (dielectron_charge==0).any())
+        selection.add('two_electrons', electrons.counts==2)
+
+        # Photon CR
+        leadphoton_index=photons.pt.argmax()
+
+        df['is_tight_photon'] = photons.mediumId \
+                         & (photons.abseta < cfg.PHOTON.CUTS.TIGHT.ETA)
+
+        selection.add('one_photon', photons.counts==1)
+        selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
+        selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
+        selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
        
         ############################
         # Process for each variation
@@ -307,7 +341,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
             bjets = bjets[bjets_puid] # TODO: bjets needs to be checked, definition relies on pt
         
             df['MT_mu'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
+            selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
+            
             df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, met_pt, met_phi)).max()
+            selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
+
+            selection.add('met_el', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
 
         #############################
 
@@ -362,45 +401,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('two_central_jets', two_central_jets.any())
             selection.add('two_forward_jets', two_forward_jets.any())
             selection.add('one_jet_forward_one_jet_central', one_jet_forward_one_jet_central.any())
-
-        # Dimuon CR
-        leadmuon_index=muons.pt.argmax()
-        selection.add('at_least_one_tight_mu', df['is_tight_muon'].any())
-        selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
-                                    & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
-        selection.add('dimuon_charge', (dimuon_charge==0).any())
-        selection.add('two_muons', muons.counts==2)
-
-        # Single muon CR
-        selection.add('one_muon', muons.counts==1)
-        selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
-
-        # Diele CR
-        leadelectron_index=electrons.pt.argmax()
-
-
-        selection.add('one_electron', electrons.counts==1)
-        selection.add('two_electrons', electrons.counts==2)
-        selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
-
-        selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
-                                        & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
-        selection.add('dielectron_charge', (dielectron_charge==0).any())
-        selection.add('two_electrons', electrons.counts==2)
-
-        # Single Ele CR
-        selection.add('met_el', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
-        selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
-
-        # Photon CR
-        leadphoton_index=photons.pt.argmax()
-
-        df['is_tight_photon'] = photons.mediumId & photons.barrel
-
-        selection.add('one_photon', photons.counts==1)
-        selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
-        selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
-        selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
         # Fill histograms
         output = self.accumulator.identity()
