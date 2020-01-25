@@ -157,7 +157,10 @@ class monojetProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt, met_phi, ak4, bjets, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
+        met_pt_dict, met_phi_dict, ak4, bjets, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
+
+        met_pt = met_pt_dict['']
+        met_phi = met_phi_dict['']
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
