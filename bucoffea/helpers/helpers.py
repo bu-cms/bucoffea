@@ -13,7 +13,7 @@ def mjj(diak4, var=''):
     pt1 = getattr(lead_jet, f'pt{var}') 
     pt2 = getattr(trail_jet, f'pt{var}') 
     mjj_sq = 2*pt1*pt2*(np.cosh(lead_jet.eta-trail_jet.eta) - np.cos(lead_jet.phi-trail_jet.phi))
-    return np.sqrt(mjj_sq).flatten()
+    return np.sqrt(mjj_sq).max()
 
 def dphi(phi1, phi2):
     """Calculates delta phi between objects"""
