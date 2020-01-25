@@ -1,6 +1,20 @@
 from bucoffea.helpers.paths import bucoffea_path
 import numpy as np
 
+def mjj(diak4, var=''):
+    '''Calculates invariant mass of a jet pair
+    
+    :param diak4: Jet pair for the calculation of invariant mass
+    :type diak4: JaggedCandidateArray
+    :param var: The JES/JER variation, by default there is no variation
+    :type var: str
+    '''
+    lead_jet, trail_jet = diak4.i0, diak4.i1
+    pt1 = getattr(lead_jet, f'pt{var}') 
+    pt2 = getattr(trail_jet, f'pt{var}') 
+    mjj_sq = 2*pt1*pt2*(np.cosh(lead_jet.eta-trail_jet.eta) - np.cos(lead_jet.phi-trail_jet.phi))
+    return np.sqrt(mjj_sq).flatten()
+
 def dphi(phi1, phi2):
     """Calculates delta phi between objects"""
     x = np.abs(phi1 - phi2)
