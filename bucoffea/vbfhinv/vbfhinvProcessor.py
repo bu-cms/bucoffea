@@ -343,6 +343,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # listed in self._variations
         ############################
 
+        # Initialize dictionary to hold 
+        # jet information for each variation
+        ak4_dict = {}
+
         for var in self._variations:
             # Pick the relevant selection object
             # for each variation
@@ -394,6 +398,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
             diak4 = ak4[:,:2].distincts()
             lead_jet_pt = getattr(diak4.i0, f'pt{var}')
             trail_jet_pt = getattr(diak4.i1, f'pt{var}')
+
+            # Hold jet and dijet information 
+            # for each variation
+            ak4_dict[f'{var}'] = {
+                'ak4'   : ak4,
+                'diak4' : diak4
+            }
 
             leadak4_pt_eta = (lead_jet_pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (np.abs(diak4.i0.eta) < cfg.SELECTION.SIGNAL.LEADAK4.ETA)
             trailak4_pt_eta = (trail_jet_pt > cfg.SELECTION.SIGNAL.TRAILAK4.PT) & (np.abs(diak4.i1.eta) < cfg.SELECTION.SIGNAL.TRAILAK4.ETA)
@@ -547,8 +558,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
             else:
                 var = ''
 
-            # Pick the right selection object according to variation
+            # Pick the right objects according to variation
             selection = selection_dict[var]
+            ak4 = ak4_dict[var]['ak4']
+            diak4 = ak4_dict[var]['diak4']
 
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr", "tr"]):
@@ -557,7 +570,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['cutflow_' + region][dataset][cutname] += selection.all(*cuts[:icut+1]).sum()
 
             mask = selection.all(*cuts)
-
 
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
@@ -602,17 +614,17 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
-            ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
+            ezfill('ak4_pt',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets)
 
             ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
             ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
-            ezfill('ak4_pt_nopref',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets_nopref)
+            ezfill('ak4_pt_nopref',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets_nopref)
 
             # Leading ak4
             w_diak4 = weight_shape(diak4.pt[mask], rweight[mask])
             ezfill('ak4_eta0',      jeteta=diak4.i0.eta[mask].flatten(),    weight=w_diak4)
             ezfill('ak4_phi0',      jetphi=diak4.i0.phi[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_pt0',       jetpt=diak4.i0.pt[mask].flatten(),      weight=w_diak4)
+            ezfill('ak4_pt0',       jetpt=getattr(diak4.i0, f'pt{var}')[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_ptraw0',    jetpt=diak4.i0.ptraw[mask].flatten(),   weight=w_diak4)
             ezfill('ak4_chf0',      frac=diak4.i0.chf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nhf0',      frac=diak4.i0.nhf[mask].flatten(),      weight=w_diak4)
@@ -621,7 +633,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # Trailing ak4
             ezfill('ak4_eta1',      jeteta=diak4.i1.eta[mask].flatten(),    weight=w_diak4)
             ezfill('ak4_phi1',      jetphi=diak4.i1.phi[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_pt1',       jetpt=diak4.i1.pt[mask].flatten(),      weight=w_diak4)
+            ezfill('ak4_pt1',       jetpt=getattr(diak4.i1, f'pt{var}')[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_ptraw1',    jetpt=diak4.i1.ptraw[mask].flatten(),   weight=w_diak4)
             ezfill('ak4_chf1',      frac=diak4.i1.chf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
