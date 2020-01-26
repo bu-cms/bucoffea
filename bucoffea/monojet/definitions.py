@@ -214,7 +214,7 @@ class VarMap:
         self.diak4 = {}
         self.met_pt = {}
         self.met_phi = {}
-        self.selection_packer = {}
+        self.selection_packers = {}
     
     def fill_mapping(self, ak4, ak4_pt, bjets, met_pt, met_phi, sel, var):
         '''Fill the dictionaries for the relevant variation.'''
@@ -224,7 +224,7 @@ class VarMap:
         self.diak4[f'{var}'] = ak4[:,:2].distincts() # Leading jet pair 
         self.met_pt[f'{var}'] = met_pt
         self.met_phi[f'{var}'] = met_phi
-        self.selection_packer[f'{var}'] = sel
+        self.selection_packers[f'{var}'] = sel
    
     # Getter methods
     def get_ak4(self, var):
