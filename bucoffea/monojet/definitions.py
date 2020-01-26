@@ -204,8 +204,51 @@ def monojet_accumulator(cfg):
 
     return  processor.dict_accumulator(items)
 
+class VarMap:
+    '''An object holding relevant values/objects for each JES/JER variation.'''
+    def __init__(self, variations):
+        self._variations = variations
+        self.ak4 = {}
+        self.ak4_pt = {}
+        self.bjets = {}
+        self.diak4 = {}
+        self.met_pt = {}
+        self.met_phi = {}
+        self.selection_packer = {}
+    
+    def fill_mapping(self, ak4, ak4_pt, bjets, met_pt, met_phi, sel, var):
+        '''Fill the dictionaries for the relevant variation.'''
+        self.ak4[f'{var}'] = ak4 
+        self.ak4_pt[f'{var}'] = ak4_pt 
+        self.bjets[f'{var}'] = bjets 
+        self.diak4[f'{var}'] = ak4[:,:2].distincts() # Leading jet pair 
+        self.met_pt[f'{var}'] = met_pt
+        self.met_phi[f'{var}'] = met_phi
+        self.selection_packer[f'{var}'] = sel
+   
+    # Getter methods
+    def get_ak4(self, var):
+        return self.ak4[f'{var}']
+    
+    def get_ak4_pt(self, var):
+        return self.ak4_pt[f'{var}']
+    
+    def get_bjets(self, var):
+        return self.bjets[f'{var}']
+    
+    def get_diak4(self, var):
+        return self.diak4[f'{var}']
+    
+    def get_met_pt(self, var):
+        return self.met_pt[f'{var}']
+    
+    def get_met_phi(self, var):
+        return self.met_phi[f'{var}']
+    
+    def get_selection_packer(self, var):
+        return self.selection_packer[f'{var}']
 
-def setup_candidates(df, cfg):
+def setup_candidates(df, cfg, variations):
     if df['is_data'] and extract_year(df['dataset']) != 2018:
         # 2016, 2017 data
         jes_suffix = ''
@@ -360,29 +403,6 @@ def setup_candidates(df, cfg):
     # so deal with them before applying filtering to jets
     btag_discriminator = getattr(ak4, cfg.BTAG.algo)
     btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
-    bjets = ak4[
-        (ak4.looseId) \
-        & (ak4.pt > cfg.BTAG.PT) \
-        & (ak4.abseta < cfg.BTAG.ETA) \
-        & (btag_discriminator > btag_cut)
-    ]
-
-    if cfg.OVERLAP.BTAG.MUON.CLEAN:
-        bjets = bjets[object_overlap(bjets, muons, dr=cfg.OVERLAP.BTAG.MUON.DR)]
-    if cfg.OVERLAP.BTAG.ELECTRON.CLEAN:
-        bjets = bjets[object_overlap(bjets, electrons, dr=cfg.OVERLAP.BTAG.ELECTRON.DR)]
-    if cfg.OVERLAP.BTAG.PHOTON.CLEAN:
-        bjets = bjets[object_overlap(bjets, photons, dr=cfg.OVERLAP.BTAG.PHOTON.DR)]
-
-    ak4 = ak4[ak4.looseId]
-
-    if cfg.OVERLAP.AK4.MUON.CLEAN:
-        ak4 = ak4[object_overlap(ak4, muons, dr=cfg.OVERLAP.AK4.MUON.DR)]
-    if cfg.OVERLAP.AK4.ELECTRON.CLEAN:
-        ak4 = ak4[object_overlap(ak4, electrons, dr=cfg.OVERLAP.AK4.ELECTRON.DR)]
-    if cfg.OVERLAP.AK4.PHOTON.CLEAN:
-        ak4 = ak4[object_overlap(ak4, photons, dr=cfg.OVERLAP.AK4.PHOTON.DR)]
-
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
         df['nFatJet'],
@@ -438,8 +458,68 @@ def setup_candidates(df, cfg):
         '_jesup'   : met_phi_jesup,
         '_jesdown' : met_phi_jesdown
     }
+    
+    # Different sets of jets/b-jets/met for each 
+    # JES/JER variation
+    vmap = VarMap(variations=variations)
+    
+    bjet_dict = {}
+    ak4_dict = {}
+    for var in variations:
+        ak4_pt = getattr(ak4, f'pt{var}')
+        # Sort AK4 jets according to relevant pt
+        _ak4 = ak4[ak4_pt.argsort()]
+        ak4_pt = ak4_pt[ak4_pt.argsort()]
+        
+        # Choose relevant b-jets
+        _bjets = _ak4[
+              (_ak4.looseId) \
+              & (ak4_pt > cfg.BTAG.PT) \
+              & (_ak4.abseta < cfg.BTAG.ETA) \
+              & (btag_discriminator > btag_cut) 
+            ]
+        
+        # b-jet cleaning
+        if cfg.OVERLAP.BTAG.MUON.CLEAN:
+            _bjets = _bjets[object_overlap(_bjets, muons, dr=cfg.OVERLAP.BTAG.MUON.DR)]
+        if cfg.OVERLAP.BTAG.ELECTRON.CLEAN:
+            _bjets = _bjets[object_overlap(_bjets, electrons, dr=cfg.OVERLAP.BTAG.ELECTRON.DR)]
+        if cfg.OVERLAP.BTAG.PHOTON.CLEAN:
+            _bjets = _bjets[object_overlap(_bjets, photons, dr=cfg.OVERLAP.BTAG.PHOTON.DR)]
+        
+        # AK4 jets filtering/cleaning
+        _ak4 = _ak4[_ak4.looseId]
 
-    return met_pt_dict, met_phi_dict, ak4, bjets, ak8, muons, electrons, taus, photons
+        if cfg.OVERLAP.AK4.MUON.CLEAN:
+            _ak4 = _ak4[object_overlap(_ak4, muons, dr=cfg.OVERLAP.AK4.MUON.DR)]
+        if cfg.OVERLAP.AK4.ELECTRON.CLEAN:
+            _ak4 = _ak4[object_overlap(_ak4, electrons, dr=cfg.OVERLAP.AK4.ELECTRON.DR)]
+        if cfg.OVERLAP.AK4.PHOTON.CLEAN:
+            _ak4 = _ak4[object_overlap(_ak4, photons, dr=cfg.OVERLAP.AK4.PHOTON.DR)]
+        
+        # Choose relevant MET-pt/phi for each variation
+        met_pt = met_pt_dict[f'{var}']
+        met_phi = met_phi_dict[f'{var}']
+
+        # Initialize different selection packers for each variation
+        _sel = processor.PackedSelection()
+        
+        vmap.fill_mapping(  ak4=_ak4,
+                            ak4_pt=ak4_pt,
+                            bjets=_bjets,
+                            met_pt=met_pt,
+                            met_phi=met_phi,
+                            sel=_sel,
+                            var=var
+                            )
+
+    # Test
+    print(vmap.get_ak4(var=''))
+    print(vmap.get_ak4(var='_jerup'))
+    print(vmap.get_ak4_pt(var=''))
+    print(vmap.get_ak4_pt(var='_jerup'))
+
+    return vmap, ak8, muons, electrons, taus, photons
 
 def monojet_regions(cfg):
     common_cuts = [
