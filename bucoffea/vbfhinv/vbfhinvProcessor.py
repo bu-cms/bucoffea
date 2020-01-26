@@ -247,7 +247,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt_dict, met_phi_dict, ak4, bjets, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
+        vmap, _, muons, electrons, taus, photons = setup_candidates(df, cfg, variations=self._variations)
+
+        # vmap holds information about ak4, met and selection
+        # packers for each JES/JER variation 
+        # Check out monojet/definitions.py for the object definition
 
         #################################
         # First process the part which is 
@@ -270,16 +274,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
- 
-        # Initiate dictionary containing selection
-        # pack objects for each variation
-        selection_dict = {
-            '' : processor.PackedSelection(),
-            '_jerup' : processor.PackedSelection(),
-            '_jerdown' : processor.PackedSelection(),
-            '_jesup' : processor.PackedSelection(),
-            '_jesdown' : processor.PackedSelection()
-        }
 
         # Triggers
         pass_all = np.ones(df.size)==1
@@ -296,8 +290,18 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['is_tight_photon'] = photons.mediumId \
                          & (photons.abseta < cfg.PHOTON.CUTS.TIGHT.ETA)
       
-        # Add common selections to each selection object
-        for selection in selection_dict.values():
+        # Process for each JES/JER variation,
+        # add common selections to each selection packer
+        for var in self._variations:
+            # Get the correct objects/quantities for each variation
+            selection = vmap.get_selection_packer(f'{var}')
+            bjets = vmap.get_bjets(f'{var}')
+            ak4 = vmap.get_ak4(f'{var}') 
+            diak4 = vmap.get_diak4(f'{var}') 
+            ak4_pt = vmap.get_ak4_pt(f'{var}') 
+            met_pt = vmap.get_met_pt(f'{var}') 
+            met_phi = vmap.get_met_phi(f'{var}') 
+
             selection.add('inclusive', pass_all)
             selection = trigger_selection(selection, df, cfg)
 
@@ -308,6 +312,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('veto_muo', muons.counts==0)
             selection.add('veto_photon', photons.counts==0)
             selection.add('veto_tau', taus.counts==0)
+
             selection.add('veto_b', bjets.counts==0)
 
             if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
@@ -337,24 +342,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
             selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
-
-        ############################
-        # Process for each variation
-        # listed in self._variations
-        ############################
-
-        # Initialize dictionary to hold 
-        # jet information for each variation
-        var_dict = {}
-
-        for var in self._variations:
-            # Pick the relevant selection object
-            # for each variation
-            selection = selection_dict[f'{var}']
-
-            # Choose the correct MET for each variation
-            met_pt = met_pt_dict[f'{var}']
-            met_phi = met_phi_dict[f'{var}']
 
             # Filtering ak4 jets according to pileup ID
             ak4_puid = getattr(ak4, f'puid{var}')
@@ -395,18 +382,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add(f'recoil{var}', df[f'recoil_pt{var}']>cfg.SELECTION.SIGNAL.RECOIL)
 
             # AK4 dijet
-            diak4 = ak4[:,:2].distincts()
             lead_jet_pt = getattr(diak4.i0, f'pt{var}')
             trail_jet_pt = getattr(diak4.i1, f'pt{var}')
-
-            # Hold jet and dijet information 
-            # for each variation
-            var_dict[f'{var}'] = {
-                'ak4'     : ak4,
-                'diak4'   : diak4,
-                'met_pt'  : met_pt,
-                'met_phi' : met_phi
-            }
 
             leadak4_pt_eta = (lead_jet_pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (np.abs(diak4.i0.eta) < cfg.SELECTION.SIGNAL.LEADAK4.ETA)
             trailak4_pt_eta = (trail_jet_pt > cfg.SELECTION.SIGNAL.TRAILAK4.PT) & (np.abs(diak4.i1.eta) < cfg.SELECTION.SIGNAL.TRAILAK4.ETA)
@@ -560,12 +537,14 @@ class vbfhinvProcessor(processor.ProcessorABC):
             else:
                 var = ''
 
-            # Pick the right objects/values according to variation
-            selection = selection_dict[var]
-            ak4 = var_dict[var]['ak4']
-            diak4 = var_dict[var]['diak4']
-            met_pt = var_dict[var]['met_pt']
-            met_phi = var_dict[var]['met_phi']
+            # Get the correct objects/quantities for each variation
+            selection = vmap.get_selection_packer(f'{var}')
+            bjets = vmap.get_bjets(f'{var}')
+            ak4 = vmap.get_ak4(f'{var}') 
+            diak4 = vmap.get_diak4(f'{var}') 
+            ak4_pt = vmap.get_ak4_pt(f'{var}') 
+            met_pt = vmap.get_met_pt(f'{var}') 
+            met_phi = vmap.get_met_phi(f'{var}') 
 
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr", "tr"]):
