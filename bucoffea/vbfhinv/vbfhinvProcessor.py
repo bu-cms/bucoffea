@@ -313,7 +313,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('veto_photon', photons.counts==0)
             selection.add('veto_tau', taus.counts==0)
 
-            selection.add('veto_b', bjets.counts==0)
+            selection.add(f'veto_b{var}', bjets.counts==0)
 
             if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
                 selection.add('hemveto', df['hemveto'])
