@@ -246,7 +246,7 @@ class VarMap:
         return self.met_phi[f'{var}']
     
     def get_selection_packer(self, var):
-        return self.selection_packer[f'{var}']
+        return self.selection_packers[f'{var}']
 
 def setup_candidates(df, cfg, variations):
     if df['is_data'] and extract_year(df['dataset']) != 2018:
