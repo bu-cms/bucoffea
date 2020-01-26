@@ -529,12 +529,6 @@ def setup_candidates(df, cfg, variations):
                             var=var
                             )
 
-    # Test
-    print(vmap.get_ak4(var=''))
-    print(vmap.get_ak4(var='_jerup'))
-    print(vmap.get_ak4_pt(var=''))
-    print(vmap.get_ak4_pt(var='_jerup'))
-
     return vmap, ak8, muons, electrons, taus, photons
 
 def monojet_regions(cfg):
