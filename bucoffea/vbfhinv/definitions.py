@@ -199,7 +199,7 @@ def vbfhinv_regions(cfg, variations):
             'hemveto',
             'veto_photon',
             'veto_tau',
-            'veto_b',
+            f'veto_b{var}',
             f'mindphijr{var}',
             f'recoil{var}',
             f'two_jets{var}',
