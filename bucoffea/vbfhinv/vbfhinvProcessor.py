@@ -294,13 +294,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # add common selections to each selection packer
         for var in self._variations:
             # Get the correct objects/quantities for each variation
-            selection = vmap.get_selection_packer(f'{var}')
-            bjets = vmap.get_bjets(f'{var}')
-            ak4 = vmap.get_ak4(f'{var}') 
-            diak4 = vmap.get_diak4(f'{var}') 
-            ak4_pt = vmap.get_ak4_pt(f'{var}') 
-            met_pt = vmap.get_met_pt(f'{var}') 
-            met_phi = vmap.get_met_phi(f'{var}') 
+            selection = vmap.get_selection_packer(var)
+            bjets = vmap.get_bjets(var)
+            ak4 = vmap.get_ak4(var) 
+            diak4 = vmap.get_diak4(var) 
+            ak4_pt = vmap.get_ak4_pt(var) 
+            met_pt = vmap.get_met_pt(var) 
+            met_phi = vmap.get_met_phi(var) 
 
             selection.add('inclusive', pass_all)
             selection = trigger_selection(selection, df, cfg)
@@ -342,13 +342,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
             selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
-
             # Filtering ak4 jets according to pileup ID
             ak4_puid = getattr(ak4, f'puid{var}')
             bjets_puid = getattr(bjets, f'puid{var}')
             
             ak4 = ak4[ak4_puid]
-            bjets = bjets[bjets_puid] # TODO: bjets needs to be checked, definition relies on pt
+            bjets = bjets[bjets_puid] 
         
             df[f'MT_mu{var}'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
             selection.add(f'mt_mu{var}', df[f'MT_mu{var}'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
@@ -357,13 +356,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add(f'mt_el{var}', df[f'MT_el{var}'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
             selection.add(f'met_el{var}', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
-
-            # ak4
-            ak4_pt = getattr(ak4, f'pt{var}')
-
-            # Sort the jets according to relevant pt
-            ak4 = ak4[ak4_pt.argsort()]
-            ak4_pt = ak4_pt[ak4_pt.argsort()]
+           
+            # Leading jet
             leadak4_index=ak4_pt.argmax()
 
             elejet_pairs = ak4[:,:1].cross(electrons)
@@ -374,8 +368,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # Recoil
             df[f'recoil_pt{var}'], df[f'recoil_phi{var}'] = recoil(met_pt,met_phi, electrons, muons, photons)
             df[f"dPFCalo{var}"] = (met_pt - df["CaloMET_pt"]) / df[f"recoil_pt{var}"]
-            df[f"minDPhiJetRecoil{var}"] = min_dphi_jet_met(ak4, df[f'recoil_phi{var}'], njet=4, ptmin=30, etamax=5.0, var=f'{var}')
-            df[f"minDPhiJetMet{var}"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=5.0, var=f'{var}')
+            df[f"minDPhiJetRecoil{var}"] = min_dphi_jet_met(ak4, df[f'recoil_phi{var}'], njet=4, ptmin=30, etamax=5.0, var=var)
+            df[f"minDPhiJetMet{var}"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=5.0, var=var)
         
             selection.add(f'mindphijr{var}',df[f'minDPhiJetRecoil{var}'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
             selection.add(f'dpfcalo{var}',np.abs(df[f'dPFCalo{var}']) < cfg.SELECTION.SIGNAL.DPFCALO)
@@ -394,7 +388,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
             trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
 
-            df[f'mjj{var}'] = mjj(diak4, var=f'{var}')
+            df[f'mjj{var}'] = mjj(diak4, var=var)
             df[f'dphijj{var}'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
             df[f'detajj{var}'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
 
@@ -538,13 +532,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 var = ''
 
             # Get the correct objects/quantities for each variation
-            selection = vmap.get_selection_packer(f'{var}')
-            bjets = vmap.get_bjets(f'{var}')
-            ak4 = vmap.get_ak4(f'{var}') 
-            diak4 = vmap.get_diak4(f'{var}') 
-            ak4_pt = vmap.get_ak4_pt(f'{var}') 
-            met_pt = vmap.get_met_pt(f'{var}') 
-            met_phi = vmap.get_met_phi(f'{var}') 
+            selection = vmap.get_selection_packer(var)
+            bjets = vmap.get_bjets(var)
+            ak4 = vmap.get_ak4(var) 
+            diak4 = vmap.get_diak4(var) 
+            ak4_pt = vmap.get_ak4_pt(var) 
+            met_pt = vmap.get_met_pt(var) 
+            met_phi = vmap.get_met_phi(var) 
 
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr", "tr"]):
