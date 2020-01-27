@@ -2,6 +2,7 @@ import copy
 import coffea.processor as processor
 import re
 import numpy as np
+import copy
 from dynaconf import settings as cfg
 
 from bucoffea.helpers import (
@@ -275,26 +276,71 @@ class vbfhinvProcessor(processor.ProcessorABC):
         dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
 
+        # Selection packer for the nominal (no varition) case
+        selection_nom = processor.PackedSelection() 
+
         # Triggers
         pass_all = np.ones(df.size)==1
+        selection_nom.add('inclusive', pass_all)
+        selection_nom = trigger_selection(selection_nom, df, cfg)
+        
+        selection_nom.add('mu_pt_trig_safe', muons.pt.max() > 30)
+
+        # Common selection
+        selection_nom.add('veto_ele', electrons.counts==0)
+        selection_nom.add('veto_muo', muons.counts==0)
+        selection_nom.add('veto_photon', photons.counts==0)
+        selection_nom.add('veto_tau', taus.counts==0)
+
+        if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
+            selection_nom.add('hemveto', df['hemveto'])
+        else:
+            selection_nom.add('hemveto', np.ones(df.size)==1)
+            
+        selection_nom.add('one_muon', muons.counts==1)
 
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()
+        selection_nom.add('at_least_one_tight_mu', df['is_tight_muon'].any())
+        selection_nom.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
+                                    & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
+        selection_nom.add('dimuon_charge', (dimuon_charge==0).any())
+        selection_nom.add('two_muons', muons.counts==2)
 
         # Diele CR
         leadelectron_index=electrons.pt.argmax()
+        selection_nom.add('one_electron', electrons.counts==1)
+        selection_nom.add('two_electrons', electrons.counts==2)
+        selection_nom.add('at_least_one_tight_el', df['is_tight_electron'].any())
 
-        # Photon CR
-        leadphoton_index=photons.pt.argmax()
+        selection_nom.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
+                                        & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
+        selection_nom.add('dielectron_charge', (dielectron_charge==0).any())
+        selection_nom.add('two_electrons', electrons.counts==2)
 
         df['is_tight_photon'] = photons.mediumId \
                          & (photons.abseta < cfg.PHOTON.CUTS.TIGHT.ETA)
-      
-        # Process for each JES/JER variation,
-        # add common selections to each selection packer
+
+        # Photon CR
+        leadphoton_index=photons.pt.argmax()
+        selection_nom.add('one_photon', photons.counts==1)
+        selection_nom.add('at_least_one_tight_photon', df['is_tight_photon'].any())
+        selection_nom.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
+        selection_nom.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
+     
+        vmap.set_selection_packer(var='', sel=selection_nom)
+
+        # Process for each JES/JER variation
         for var in self._variations:
             # Get the correct objects/quantities for each variation
-            selection = vmap.get_selection_packer(var)
+            # For other variations, copy the common selections and
+            # add on top of those.
+            if var == '':
+                selection = vmap.get_selection_packer(var='')
+            else:
+                selection = copy.deepcopy(selection_nom) 
+                vmap.set_selection_packer(var=var, sel=selection)    
+
             bjets = vmap.get_bjets(var)
             ak4 = vmap.get_ak4(var) 
             diak4 = vmap.get_diak4(var) 
@@ -302,45 +348,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             met_pt = vmap.get_met_pt(var) 
             met_phi = vmap.get_met_phi(var) 
 
-            selection.add('inclusive', pass_all)
-            selection = trigger_selection(selection, df, cfg)
-
-            selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
-
-            # Common selection
-            selection.add('veto_ele', electrons.counts==0)
-            selection.add('veto_muo', muons.counts==0)
-            selection.add('veto_photon', photons.counts==0)
-            selection.add('veto_tau', taus.counts==0)
-
             selection.add(f'veto_b{var}', bjets.counts==0)
-
-            if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
-                selection.add('hemveto', df['hemveto'])
-            else:
-                selection.add('hemveto', np.ones(df.size)==1)
-            
-            selection.add('one_muon', muons.counts==1)
-            
-            selection.add('at_least_one_tight_mu', df['is_tight_muon'].any())
-            selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
-                                        & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
-            selection.add('dimuon_charge', (dimuon_charge==0).any())
-            selection.add('two_muons', muons.counts==2)
-
-            selection.add('one_electron', electrons.counts==1)
-            selection.add('two_electrons', electrons.counts==2)
-            selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
-
-            selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
-                                            & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
-            selection.add('dielectron_charge', (dielectron_charge==0).any())
-            selection.add('two_electrons', electrons.counts==2)
-
-            selection.add('one_photon', photons.counts==1)
-            selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
-            selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
-            selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
             # Filtering ak4 jets according to pileup ID
             ak4_puid = getattr(ak4, f'puid{var}')
