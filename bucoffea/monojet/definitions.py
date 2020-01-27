@@ -463,8 +463,6 @@ def setup_candidates(df, cfg, variations):
     # JES/JER variation
     vmap = VarMap(variations=variations)
     
-    bjet_dict = {}
-    ak4_dict = {}
     for var in variations:
         ak4_pt = getattr(ak4, f'pt{var}')
         # Sort AK4 jets according to relevant pt
