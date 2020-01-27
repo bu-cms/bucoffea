@@ -456,7 +456,9 @@ def setup_candidates(df, cfg, variations):
         phi_jerup=df[f'{met_branch}_phi_jerUp'],
         phi_jerdown=df[f'{met_branch}_phi_jerDown'],
         phi_jesup=df[f'{met_branch}_phi_jesTotalUp'],
-        phi_jesdown=df[f'{met_branch}_phi_jesTotalDown']
+        phi_jesdown=df[f'{met_branch}_phi_jesTotalDown'],
+        eta=np.zeros(df.size), # dummy
+        mass=np.zeros(df.size) # dummy
     )
     
     # Different sets of jets/b-jets/met for each 
@@ -497,12 +499,12 @@ def setup_candidates(df, cfg, variations):
 
         # Initialize different selection packers for each variation
         _sel = processor.PackedSelection()
-        
+       
         vmap.fill_mapping(  ak4=_ak4,
                             ak4_pt=ak4_pt,
                             bjets=_bjets,
-                            met_pt=getattr(met, f'pt{var}'),
-                            met_phi=getattr(met, f'phi{var}'),
+                            met_pt=getattr(met, f'pt{var}').flatten(),
+                            met_phi=getattr(met, f'phi{var}').flatten(),
                             sel=_sel,
                             var=var
                             )
