@@ -216,7 +216,7 @@ class VarMap:
         self.met_phi = {}
         self.selection_packers = {}
     
-    def fill_mapping(self, ak4, ak4_pt, bjets, met_pt, met_phi, sel, var):
+    def fill_mapping(self, ak4, ak4_pt, bjets, met_pt, met_phi, var):
         '''Fill the dictionaries for the relevant variation.'''
         self.ak4[f'{var}'] = ak4 
         self.ak4_pt[f'{var}'] = ak4_pt 
@@ -224,7 +224,6 @@ class VarMap:
         self.diak4[f'{var}'] = ak4[:,:2].distincts() # Leading jet pair 
         self.met_pt[f'{var}'] = met_pt
         self.met_phi[f'{var}'] = met_phi
-        self.selection_packers[f'{var}'] = sel
    
     # Getter methods
     def get_ak4(self, var):
@@ -247,6 +246,9 @@ class VarMap:
     
     def get_selection_packer(self, var):
         return self.selection_packers[f'{var}']
+    
+    def set_selection_packer(self, var, sel):
+        self.selection_packers[f'{var}'] = sel
 
 def setup_candidates(df, cfg, variations):
     if df['is_data'] and extract_year(df['dataset']) != 2018:
@@ -480,16 +482,12 @@ def setup_candidates(df, cfg, variations):
             _ak4 = _ak4[object_overlap(_ak4, electrons, dr=cfg.OVERLAP.AK4.ELECTRON.DR)]
         if cfg.OVERLAP.AK4.PHOTON.CLEAN:
             _ak4 = _ak4[object_overlap(_ak4, photons, dr=cfg.OVERLAP.AK4.PHOTON.DR)]
-
-        # Initialize different selection packers for each variation
-        _sel = processor.PackedSelection()
        
         vmap.fill_mapping(  ak4=_ak4,
                             ak4_pt=ak4_pt,
                             bjets=_bjets,
                             met_pt=getattr(met, f'pt{var}').flatten(),
                             met_phi=getattr(met, f'phi{var}').flatten(),
-                            sel=_sel,
                             var=var
                             )
 
