@@ -429,35 +429,19 @@ def setup_candidates(df, cfg, variations):
     else:
         met_branch = 'MET'
 
-    met_pt = df[f'{met_branch}_pt{jes_suffix_met}']
-    met_phi = df[f'{met_branch}_phi{jes_suffix_met}']
-
-    # JES/JER variations in MET
-    met_pt_jerup = df[f'{met_branch}_pt_jerUp']
-    met_pt_jerdown = df[f'{met_branch}_pt_jerDown']
-    met_pt_jesup = df[f'{met_branch}_pt_jesTotalUp']
-    met_pt_jesdown = df[f'{met_branch}_pt_jesTotalDown']
-
-    met_phi_jerup = df[f'{met_branch}_phi_jerUp']
-    met_phi_jerdown = df[f'{met_branch}_phi_jerDown']
-    met_phi_jesup = df[f'{met_branch}_phi_jesTotalUp']
-    met_phi_jesdown = df[f'{met_branch}_phi_jesTotalDown']
-
-    met_pt_dict = {
-        ''     : met_pt, # Nominal MET pt
-        '_jerup'   : met_pt_jerup,
-        '_jerdown' : met_pt_jerdown,
-        '_jesup'   : met_pt_jesup,
-        '_jesdown' : met_pt_jesdown
-    }
-    
-    met_phi_dict = {
-        ''     : met_phi, # Nominal MET phi
-        '_jerup'   : met_phi_jerup,
-        '_jerdown' : met_phi_jerdown,
-        '_jesup'   : met_phi_jesup,
-        '_jesdown' : met_phi_jesdown
-    }
+    met = JaggedCandidateArray.candidatesfromcounts(
+        np.ones(df.size),
+        pt=df[f'{met_branch}_pt{jes_suffix_met}'],
+        pt_jerup=df[f'{met_branch}_pt_jerUp'],
+        pt_jerdown=df[f'{met_branch}_pt_jerDown'],
+        pt_jesup=df[f'{met_branch}_pt_jesTotalUp'],
+        pt_jesdown=df[f'{met_branch}_pt_jesTotalDown'],
+        phi=df[f'{met_branch}_phi{jes_suffix_met}'],
+        phi_jerup=df[f'{met_branch}_phi_jerUp'],
+        phi_jerdown=df[f'{met_branch}_phi_jerDown'],
+        phi_jesup=df[f'{met_branch}_phi_jesTotalUp'],
+        phi_jesdown=df[f'{met_branch}_phi_jesTotalDown']
+    )
     
     # Different sets of jets/b-jets/met for each 
     # JES/JER variation
@@ -494,10 +478,6 @@ def setup_candidates(df, cfg, variations):
             _ak4 = _ak4[object_overlap(_ak4, electrons, dr=cfg.OVERLAP.AK4.ELECTRON.DR)]
         if cfg.OVERLAP.AK4.PHOTON.CLEAN:
             _ak4 = _ak4[object_overlap(_ak4, photons, dr=cfg.OVERLAP.AK4.PHOTON.DR)]
-        
-        # Choose relevant MET-pt/phi for each variation
-        met_pt = met_pt_dict[f'{var}']
-        met_phi = met_phi_dict[f'{var}']
 
         # Initialize different selection packers for each variation
         _sel = processor.PackedSelection()
@@ -505,8 +485,8 @@ def setup_candidates(df, cfg, variations):
         vmap.fill_mapping(  ak4=_ak4,
                             ak4_pt=ak4_pt,
                             bjets=_bjets,
-                            met_pt=met_pt,
-                            met_phi=met_phi,
+                            met_pt=getattr(met, f'pt{var}'),
+                            met_phi=getattr(met, f'phi{var}'),
                             sel=_sel,
                             var=var
                             )
