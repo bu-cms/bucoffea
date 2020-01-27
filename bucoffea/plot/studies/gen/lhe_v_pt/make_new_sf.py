@@ -46,7 +46,7 @@ def sf_1d(acc, tag, regex, outputrootfile):
     pt_types = ['stat1']
 
     if tag in ['dy','wjet']:
-        pt_types.append('dress')
+        pt_types.extend(['dress', 'combined'])
         new_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',list(range(100,800,100))+list(range(800,1200,200))+list(range(1200,2800,800)))
     else:
         new_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[200,250]+list(range(300,800,100))+list(range(800,1400,200)))
@@ -238,8 +238,8 @@ def main():
     sf_1d(acc, tag='wjet', regex='WN?JetsToLNu.*',outputrootfile=outputrootfile)
     sf_1d(acc, tag='dy', regex='DYN?JetsToLL.*',outputrootfile=outputrootfile)
     # # outputrootfile = uproot.recreate(f'test.root')
-    sf_2d(acc, tag='wjet', regex='WN?JetsToLNu.*',pt_type='dress',outputrootfile=outputrootfile)
-    sf_2d(acc, tag='dy', regex='DYN?JetsToLL.*',pt_type='dress',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='wjet', regex='WN?JetsToLNu.*',pt_type='combined',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='dy', regex='DYN?JetsToLL.*',pt_type='combined',outputrootfile=outputrootfile)
 
     sf_1d(acc, tag='gjets', regex='G\d?Jet.*',outputrootfile=outputrootfile)
     # outputrootfile = uproot.recreate('test.root')

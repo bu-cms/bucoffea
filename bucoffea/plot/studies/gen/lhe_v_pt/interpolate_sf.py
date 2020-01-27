@@ -20,7 +20,7 @@ for process in ['wjet','dy','gjets']:
 
     for selection in ['inclusive','monojet','vbf']:
         if process in ['wjet','dy']:
-            h = f[f'{process}_dress_{selection}']
+            h = f[f'{process}_combined_{selection}']
         elif process in ['gjets']:
             h = f[f'{process}_stat1_{selection}']
 
