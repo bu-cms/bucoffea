@@ -109,54 +109,13 @@ def vbfhinv_accumulator(cfg, variations):
     # Create histograms for each JES/JER variation
     for var in variations: 
         items[f"met{var}"] = Hist("Counts", dataset_ax, region_ax, met_ax)
-        items[f"met_phi{var}"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
         items[f"recoil{var}"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-        items[f"recoil_phi{var}"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
         items[f"mjj{var}"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
-        items[f"dphijj{var}"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
-        items[f"detajj{var}"] = Hist("Counts", dataset_ax, region_ax, deta_ax)
 
         items[f"ak4_pt0{var}"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-        items[f"ak4_ptraw0{var}"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-        items[f"ak4_eta0{var}"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-        items[f"ak4_phi0{var}"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-        items[f"ak4_chf0{var}"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-        items[f"ak4_nhf0{var}"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-        items[f"ak4_nconst0{var}"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
-        
         items[f"ak4_pt1{var}"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-        items[f"ak4_ptraw1{var}"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-        items[f"ak4_eta1{var}"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-        items[f"ak4_phi1{var}"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-        items[f"ak4_chf1{var}"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-        items[f"ak4_nhf1{var}"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-        items[f"ak4_nconst1{var}"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
-
-#    items["ak4_pt0_chf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
-#    items["ak4_pt0_nhf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
-#    items["ak4_pt0_nconst0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, nconst_ax)
-#    items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
-
         items[f"ak4_pt{var}"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-        items[f"ak4_eta{var}"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-        items[f"ak4_phi{var}"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-        items[f"ak4_pt_nopref{var}"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-        items[f"ak4_eta_nopref{var}"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-        items[f"ak4_phi_nopref{var}"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-        items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
-
-#    items["recoil_mjj"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, mjj_ax)
-#    items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
-
-        items[f"dpfcalo{var}"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
-        items[f"dphijm{var}"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
-        items[f"dphijr{var}"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
-        
-        items[f"muon_mt{var}"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
-        items[f"electron_mt{var}"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
-
-#    items['photon_pt0_recoil'] = Hist("Counts", dataset_ax, region_ax, pt_ax, recoil_ax)
 
     # One cutflow counter per region
     regions = vbfhinv_regions(cfg, variations).keys()
