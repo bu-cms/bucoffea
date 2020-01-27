@@ -226,7 +226,7 @@ def merge_datasets(histogram):
 
         'QCD_HT_{year}' : 'QCD_HT.*_{year}',
 
-        'EWK_V_{year}' : 'EWK.*_{year}',
+        'EWKW2Jets_WToLNu_M-50-mg_{year}' : 'EWKW(Plus|Minus)2Jets.*-mg_{year}',
         'Diboson_{year}' : '(WW|WZ|ZZ|WW).*_{year}',
 
     }

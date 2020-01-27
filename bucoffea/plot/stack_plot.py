@@ -26,7 +26,9 @@ np.seterr(divide='ignore', invalid='ignore')
 colors = {
     'WN*J.*' : '#feb24c',
     '.*DY.*' : '#ffffcc',
-    '.*EWK.*V.*' : '#c6dbef',
+    'EWKW.*' : '#c6dbef',
+    'EWKZ.*ZToLL.*' : '#d5bae2',
+    'EWKZ.*ZToNuNu.*' : '#c4cae2',
     '.*Diboson.*' : '#4292c6',
     '.*TT.*' : '#6a51a3',
     '.*ST.*' : '#9e9ac8',

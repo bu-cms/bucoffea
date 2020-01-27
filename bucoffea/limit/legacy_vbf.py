@@ -25,7 +25,7 @@ def datasets(year):
                     'sr_vbf' : f'nomatch',
                 }
     mc = {
-            'sr_vbf' : re.compile(f'W(minus|plus)H_.*|((VBF|GluGlu)_HToInvisible.*|ggZH.*|ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
+            'sr_vbf' : re.compile(f'W(minus|plus)H_.*|((VBF|GluGlu)_HToInvisible.*|ggZH.*|ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|DYJetsToLL.*|.*W.*HT.*).*{year}'),
             'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
             'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
             'cr_2m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
@@ -41,21 +41,20 @@ def datasets(year):
 
     return data, mc
 
-def legacy_dataset_name_vbf(dataset):
+def legacy_dataset_name_vbf(dataset): 
     patterns = {
-        '.*DY.*' : 'qcdzll',
-        'EWK_ZToLL.*' : 'ewkzll',
-        'EWK_ZToNuNu.*' : 'ewkzjets',
-        'EWK_W.*' : 'ewkwjets',
+        'EWKZ\d?Jets.*ZToLL.*' : 'ewkzll',
+        'EWKZ\d?Jets.*ZToNuNu.*' : 'ewkzjets',
+        'EWKW.*' : 'ewkwjets',
         'QCD.*' : 'qcd',
-        'TT.*' : 'top',
+        'TTJets.*' : 'top',
         'Diboson.*' : 'diboson',
         '(MET|EGamma).*' : 'data',
-        'WN?J.*' : 'qcdwjets',
-        'WJ.*' : 'qcdwlnu',
-        'ZJ.*' : 'qcdzjets',
-        'GJets.*HT' : 'qcdgjets',
-        'AGJets.*' : 'ewkgjets',
+        'WJetsToLNu.*' : 'qcdwjets',
+        'ZJetsToNuNu.*' : 'qcdzjets',
+        'DYJets.*' : 'qcdzll',
+        'GJets_HT.*' : 'qcdgjets',
+        'GJets_SM.*' : 'ewkgjets',
         'VBF_HToInv.*' : 'vbf',
         'GluGlu_HToInv.*' : 'ggh',
         'ggZH_.*' : 'zh',
@@ -111,6 +110,7 @@ def legacy_limit_input_vbf(acc, outdir='./output'):
         data, mc = datasets(year)
         for region in ['cr_2m_vbf','cr_1m_vbf','cr_2e_vbf','cr_1e_vbf','cr_g_vbf','sr_vbf']:
             print(f'Region {region}')
+            tag = region.split('_')[0]
             # Rebin
             h = copy.deepcopy(acc[distribution])
             
@@ -127,8 +127,15 @@ def legacy_limit_input_vbf(acc, outdir='./output'):
             
             for dataset in map(str, h.axis('dataset').identifiers()):
                 if not (data[region].match(dataset) or mc[region].match(dataset) or signal.match(dataset)):
-                    print(f"Skip dataset: {dataset}")
-                    continue
+                    # Insert dummy data for the signal region
+                    if region == 'sr_vbf' and re.match('ZJetsToNuNu.*', dataset):
+                        th1 = export1d(h.integrate('dataset', dataset))    
+                        histo_name = 'signal_data'
+                        f[histo_name] = th1
+                        continue
+                    else:
+                        print(f"Skip dataset: {dataset}")
+                        continue
                 print(f"   Dataset: {dataset}")
 
                 th1 = export1d(h.integrate('dataset', dataset))
