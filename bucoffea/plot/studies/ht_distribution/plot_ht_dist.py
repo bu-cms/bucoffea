@@ -29,6 +29,8 @@ def plot_ht_dist(acc, regex, tag):
 	hist.plot1d(h, ax=ax, overflow='all', binwnorm=True, overlay='dataset')
 	ax.set_yscale('log')
 	ax.set_ylim(1e-3, 1e6)
+	if 'gjets' in tag:
+		ax.plot([600, 600], [1e-3, 1e6])
 
 	if not os.path.exists('./output'):
 		os.mkdir('output')
@@ -50,7 +52,8 @@ def main():
 
 	plot_ht_dist(acc, regex='WJetsToLNu.*(2017|2018)', tag='wjets')
 	plot_ht_dist(acc, regex='DYJets.*(2017|2018)', tag='dy')
-	plot_ht_dist(acc, regex='GJets_HT.*(2017)', tag='gjets')
+	plot_ht_dist(acc, regex='GJets_HT.*(2017)', tag='gjets_17')
+	plot_ht_dist(acc, regex='GJets_DR-0p4.*(2017)', tag='gjets_dr_17')
 
 if __name__ == '__main__':
 	main()
