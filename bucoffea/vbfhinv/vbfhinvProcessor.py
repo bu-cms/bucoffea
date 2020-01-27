@@ -586,35 +586,17 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # All ak4
             # This is a workaround to create a weight array of the right dimension
-            w_alljets = weight_shape(ak4[mask].eta, rweight[mask])
-            w_alljets_nopref = weight_shape(ak4[mask].eta, region_weights.partial_weight(exclude=exclude+['prefire'])[mask])
-
-            ezfill(f'ak4_eta{var}',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
-            ezfill(f'ak4_phi{var}',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
+            w_alljets = weight_shape(ak4[mask].eta, weights.weight()[mask])
+            w_alljets_nopref = weight_shape(ak4[mask].eta, weights.partial_weight(exclude=['prefire'])[mask])
+            
             ezfill(f'ak4_pt{var}',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets)
-
-            ezfill(f'ak4_eta_nopref{var}',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
-            ezfill(f'ak4_phi_nopref{var}',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
-            ezfill(f'ak4_pt_nopref{var}',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets_nopref)
 
             # Leading ak4
             w_diak4 = weight_shape(diak4.pt[mask], weights.weight()[mask])
-            ezfill(f'ak4_eta0{var}',      jeteta=diak4.i0.eta[mask].flatten(),    weight=w_diak4)
-            ezfill(f'ak4_phi0{var}',      jetphi=diak4.i0.phi[mask].flatten(),    weight=w_diak4)
             ezfill(f'ak4_pt0{var}',       jetpt=getattr(diak4.i0, f'pt{var}')[mask].flatten(),      weight=w_diak4)
-            ezfill(f'ak4_ptraw0{var}',    jetpt=diak4.i0.ptraw[mask].flatten(),   weight=w_diak4)
-            ezfill(f'ak4_chf0{var}',      frac=diak4.i0.chf[mask].flatten(),      weight=w_diak4)
-            ezfill(f'ak4_nhf0{var}',      frac=diak4.i0.nhf[mask].flatten(),      weight=w_diak4)
-            ezfill(f'ak4_nconst0{var}',   nconst=diak4.i0.nconst[mask].flatten(), weight=w_diak4)
 
             # Trailing ak4
-            ezfill(f'ak4_eta1{var}',      jeteta=diak4.i1.eta[mask].flatten(),    weight=w_diak4)
-            ezfill(f'ak4_phi1{var}',      jetphi=diak4.i1.phi[mask].flatten(),    weight=w_diak4)
             ezfill(f'ak4_pt1{var}',       jetpt=getattr(diak4.i1, f'pt{var}')[mask].flatten(),      weight=w_diak4)
-            ezfill(f'ak4_ptraw1{var}',    jetpt=diak4.i1.ptraw[mask].flatten(),   weight=w_diak4)
-            ezfill(f'ak4_chf1{var}',      frac=diak4.i1.chf[mask].flatten(),      weight=w_diak4)
-            ezfill(f'ak4_nhf1{var}',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
-            ezfill(f'ak4_nconst1{var}',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
@@ -645,22 +627,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             ezfill(f'dpfcalo{var}',            dpfcalo=df[f"dPFCalo{var}"][mask],       weight=weights.weight()[mask] )
             ezfill(f'met{var}',                met=met_pt[mask],            weight=weights.weight()[mask] )
-            ezfill(f'met_phi{var}',            phi=met_phi[mask],           weight=weights.weight()[mask] )
             ezfill(f'recoil{var}',             recoil=df[f"recoil_pt{var}"][mask],      weight=weights.weight()[mask] )
-            ezfill(f'recoil_phi{var}',         phi=df[f"recoil_phi{var}"][mask],        weight=weights.weight()[mask] )
-            ezfill(f'dphijm{var}',             dphi=df[f"minDPhiJetMet{var}"][mask],    weight=weights.weight()[mask] )
-            ezfill(f'dphijr{var}',             dphi=df[f"minDPhiJetRecoil{var}"][mask], weight=weights.weight()[mask] )
-
-            ezfill(f'dphijj{var}',             dphi=df[f"dphijj{var}"][mask],   weight=weights.weight()[mask] )
-            ezfill(f'detajj{var}',             deta=df[f"detajj{var}"][mask],   weight=weights.weight()[mask] )
             ezfill(f'mjj{var}',                mjj=df[f"mjj{var}"][mask],      weight=weights.weight()[mask] )
 
             # Muons
             if '_1m_' in region or '_2m_' in region or 'no_veto' in region:
                 w_allmu = weight_shape(muons.pt[mask], rweight[mask])
                 ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
-                ezfill('muon_pt_abseta',pt=muons.pt[mask].flatten(),abseta=muons.eta[mask].flatten(),    weight=w_allmu )
-                ezfill(f'muon_mt{var}',   mt=df[f'MT_mu{var}'][mask],           weight=weights.weight()[mask])
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
 
@@ -681,8 +654,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             if '_1e_' in region or '_2e_' in region or 'no_veto' in region:
                 w_allel = weight_shape(electrons.pt[mask], rweight[mask])
                 ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
-                ezfill('electron_pt_eta',   pt=electrons.pt[mask].flatten(), eta=electrons.eta[mask].flatten(),    weight=w_allel)
-                ezfill(f'electron_mt{var}',   mt=df[f'MT_el{var}'][mask],               weight=weights.weight()[mask])
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
                 ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
 
