@@ -272,7 +272,7 @@ era2016:
       file: "data/sf/pileup/pileup.root"
     trigger_met:
         histogram: 120pfht_hltmu_1m_2017
-        file: data/sf/trigger/met_trigger_sf.root
+        file: data/sf/trigger/trig_sf_vbf.root
   filters:
     data:
       - Flag_goodVertices
@@ -383,7 +383,7 @@ era2017:
 
     trigger_met:
       histogram: 120pfht_hltmu_1m_2017
-      file: data/sf/trigger/met_trigger_sf.root
+      file: data/sf/trigger/trig_sf_vbf.root
 
 era2018:
   triggers:
@@ -496,4 +496,4 @@ era2018:
 
     trigger_met:
       histogram: 120pfht_hltmu_1m_2018
-      file: data/sf/trigger/met_trigger_sf.root
+      file: data/sf/trigger/trig_sf_vbf.root
