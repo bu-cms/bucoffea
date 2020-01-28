@@ -155,15 +155,6 @@ default:
     qcd_nlo_g_2017_2d: # 2D QCD k factor for QCD photon
       histogram: 2d_gjets_vbf
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
-    qcd_nnlo_g:
-      histogram: aj
-      file: data/sf/theory/lindert_qcd_nnlo_sf.root
-    qcd_nnlo_w:
-      histogram: evj
-      file: data/sf/theory/lindert_qcd_nnlo_sf.root
-    qcd_nnlo_z:
-      histogram: eej
-      file: data/sf/theory/lindert_qcd_nnlo_sf.root
     pileup:
       mode: nano
 
