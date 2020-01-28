@@ -262,7 +262,7 @@ era2016:
       histogram: "sf2017_down"
       file: "data/sf/pileup/pileup.root"
     trigger_met:
-        histogram: 120pfht_hltmu_1m_2017
+        histogram: 120pfht_mu_recoil_1m_2017
         file: data/sf/trigger/trig_sf_vbf.root
   filters:
     data:
@@ -373,7 +373,7 @@ era2017:
       file: "data/sf/pileup/pileup.root"
 
     trigger_met:
-      histogram: 120pfht_hltmu_1m_2017
+      histogram: 120pfht_mu_recoil_1m_2017
       file: data/sf/trigger/trig_sf_vbf.root
 
 era2018:
@@ -486,5 +486,5 @@ era2018:
       file: "data/sf/pileup/pileup.root"
 
     trigger_met:
-      histogram: 120pfht_hltmu_1m_2018
+      histogram: 120pfht_mu_recoil_1m_2018
       file: data/sf/trigger/trig_sf_vbf.root
