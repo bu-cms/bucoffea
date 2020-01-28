@@ -492,10 +492,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # Trailing ak4
             ezfill(f'ak4_pt1',       jetpt=getattr(diak4.i1, f'pt{var}')[mask].flatten(),      weight=w_diak4, var=var)
 
-            # B tag discriminator
-            btag = getattr(ak4, cfg.BTAG.ALGO)
-            w_btag = weight_shape(btag[mask], weights.weight()[mask])
-
             # MET
             ezfill(f'met',                met=met_pt[mask],            weight=weights.weight()[mask],   var=var )
             ezfill(f'recoil',             recoil=df[f"recoil_pt{var}"][mask],      weight=weights.weight()[mask], var=var )
