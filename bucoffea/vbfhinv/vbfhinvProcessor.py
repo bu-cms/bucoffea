@@ -483,23 +483,23 @@ class vbfhinvProcessor(processor.ProcessorABC):
             w_alljets = weight_shape(ak4[mask].eta, weights.weight()[mask])
             w_alljets_nopref = weight_shape(ak4[mask].eta, weights.partial_weight(exclude=['prefire'])[mask])
             
-            ezfill(f'ak4_pt{var}',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets)
+            ezfill(f'ak4_pt',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets, var=var)
 
             # Leading ak4
             w_diak4 = weight_shape(diak4.pt[mask], weights.weight()[mask])
-            ezfill(f'ak4_pt0{var}',       jetpt=getattr(diak4.i0, f'pt{var}')[mask].flatten(),      weight=w_diak4)
+            ezfill(f'ak4_pt0',       jetpt=getattr(diak4.i0, f'pt{var}')[mask].flatten(),      weight=w_diak4, var=var)
 
             # Trailing ak4
-            ezfill(f'ak4_pt1{var}',       jetpt=getattr(diak4.i1, f'pt{var}')[mask].flatten(),      weight=w_diak4)
+            ezfill(f'ak4_pt1',       jetpt=getattr(diak4.i1, f'pt{var}')[mask].flatten(),      weight=w_diak4, var=var)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
             w_btag = weight_shape(btag[mask], weights.weight()[mask])
 
             # MET
-            ezfill(f'met{var}',                met=met_pt[mask],            weight=weights.weight()[mask] )
-            ezfill(f'recoil{var}',             recoil=df[f"recoil_pt{var}"][mask],      weight=weights.weight()[mask] )
-            ezfill(f'mjj{var}',                mjj=df[f"mjj{var}"][mask],      weight=weights.weight()[mask] )
+            ezfill(f'met',                met=met_pt[mask],            weight=weights.weight()[mask],   var=var )
+            ezfill(f'recoil',             recoil=df[f"recoil_pt{var}"][mask],      weight=weights.weight()[mask], var=var )
+            ezfill(f'mjj',                mjj=df[f"mjj{var}"][mask],      weight=weights.weight()[mask], var=var )
 
             # Muons
             if '_1m_' in region or '_2m_' in region:

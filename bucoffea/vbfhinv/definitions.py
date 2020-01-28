@@ -20,6 +20,7 @@ def vbfhinv_accumulator(cfg, variations):
     unc_ax = Cat("uncertainty", "Uncertainty weight variation")
     region_ax = Cat("region", "Selection region")
     type_ax = Cat("type", "Type")
+    var_ax = Cat("var", "JES/JER variation type")
 
     vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 100, 0, 2000)
 
@@ -106,16 +107,13 @@ def vbfhinv_accumulator(cfg, variations):
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
-    # Create histograms for each JES/JER variation
-    for var in variations: 
-        items[f"met{var}"] = Hist("Counts", dataset_ax, region_ax, met_ax)
-        items[f"recoil{var}"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items[f"met"] = Hist("Counts", dataset_ax, region_ax, met_ax, var_ax)
+    items[f"recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, var_ax)
+    items[f"mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax, var_ax)
 
-        items[f"mjj{var}"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
-
-        items[f"ak4_pt0{var}"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-        items[f"ak4_pt1{var}"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-        items[f"ak4_pt{var}"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items[f"ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
+    items[f"ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
+    items[f"ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
 
     # One cutflow counter per region
     regions = vbfhinv_regions(cfg, variations).keys()
