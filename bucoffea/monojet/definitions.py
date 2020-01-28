@@ -608,19 +608,19 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
             qcd_nlo = evaluator["qcd_nlo_w_2016"](gen_v_pt)
         else:
             qcd_nlo = fitfun(gen_v_pt, 1.053, 3.163e-3, 0.746)
-        theory_weights =  qcd_nlo * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        theory_weights =  qcd_nlo * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
         if extract_year(df['dataset']) == 2016:
             qcd_nlo = evaluator["qcd_nlo_z_2016"](gen_v_pt)
         else:
             qcd_nlo = fitfun(gen_v_pt, 1.434, 2.210e-3, 0.443)
-        theory_weights =  qcd_nlo * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        theory_weights =  qcd_nlo * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_nlo_w']:
-        theory_weights = evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        theory_weights = evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_nlo_z']:
-        theory_weights = evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        theory_weights = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
-        theory_weights = fitfun(gen_v_pt, 1.159, 1.944e-3, 1.0) * evaluator["ewk_nlo_g"](gen_v_pt) *  evaluator["qcd_nnlo_g"](gen_v_pt)
+        theory_weights = fitfun(gen_v_pt, 1.159, 1.944e-3, 1.0) * evaluator["ewk_nlo_g"](gen_v_pt)
     else:
         theory_weights = np.ones(df.size)
 
