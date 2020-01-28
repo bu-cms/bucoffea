@@ -25,7 +25,6 @@ def monojet_accumulator(cfg):
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
-    jet_pt_ax_coarse = Bin("jetpt", r"$p_{T}$ (GeV)", 5, 0, 500)
     jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
     jet_eta_ax_coarse = Bin("jeteta", r"$\eta$", 10, -5, 5)
     jet_phi_ax = Bin("jetphi", r"$\phi$", 50,-np.pi, np.pi)
@@ -35,7 +34,6 @@ def monojet_accumulator(cfg):
     dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
-    nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
@@ -430,14 +428,6 @@ def monojet_regions(cfg):
         'leadak8_mass',
         'leadak8_tau21',
     ]
-    v_cuts_inclusive = [
-        'leadak8_pt_eta',
-        'leadak8_id',
-    ]
-    v_cuts_loose = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcd_loose']
-    v_cuts_tight = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcd_tight']
-    v_cuts_looseMD = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcdmd_loose']
-    v_cuts_tightMD = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcdmd_tight']
 
     regions = {}
 
