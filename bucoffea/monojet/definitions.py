@@ -25,7 +25,6 @@ def monojet_accumulator(cfg):
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
-    jet_pt_ax_coarse = Bin("jetpt", r"$p_{T}$ (GeV)", 5, 0, 500)
     jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
     jet_eta_ax_coarse = Bin("jeteta", r"$\eta$", 10, -5, 5)
     jet_phi_ax = Bin("jetphi", r"$\phi$", 50,-np.pi, np.pi)
@@ -35,7 +34,6 @@ def monojet_accumulator(cfg):
     dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
-    nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
@@ -430,14 +428,6 @@ def monojet_regions(cfg):
         'leadak8_mass',
         'leadak8_tau21',
     ]
-    v_cuts_inclusive = [
-        'leadak8_pt_eta',
-        'leadak8_id',
-    ]
-    v_cuts_loose = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcd_loose']
-    v_cuts_tight = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcd_tight']
-    v_cuts_looseMD = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcdmd_loose']
-    v_cuts_tightMD = v_cuts_inclusive + ['leadak8_mass', 'leadak8_wvsqcdmd_tight']
 
     regions = {}
 
@@ -608,19 +598,19 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
             qcd_nlo = evaluator["qcd_nlo_w_2016"](gen_v_pt)
         else:
             qcd_nlo = fitfun(gen_v_pt, 1.053, 3.163e-3, 0.746)
-        theory_weights =  qcd_nlo * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        theory_weights =  qcd_nlo * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
         if extract_year(df['dataset']) == 2016:
             qcd_nlo = evaluator["qcd_nlo_z_2016"](gen_v_pt)
         else:
             qcd_nlo = fitfun(gen_v_pt, 1.434, 2.210e-3, 0.443)
-        theory_weights =  qcd_nlo * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        theory_weights =  qcd_nlo * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_nlo_w']:
-        theory_weights = evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        theory_weights = evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_nlo_z']:
-        theory_weights = evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        theory_weights = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
-        theory_weights = fitfun(gen_v_pt, 1.159, 1.944e-3, 1.0) * evaluator["ewk_nlo_g"](gen_v_pt) *  evaluator["qcd_nnlo_g"](gen_v_pt)
+        theory_weights = fitfun(gen_v_pt, 1.159, 1.944e-3, 1.0) * evaluator["ewk_nlo_g"](gen_v_pt)
     else:
         theory_weights = np.ones(df.size)
 
