@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 import argparse
+import math
 import os
 import shutil
 from datetime import datetime
 from multiprocessing.pool import Pool
-from pathlib import Path
 import itertools
 import concurrent
 import uproot
-import cloudpickle
-import lz4.frame as lz4f
 from coffea import processor
 from coffea.util import save
 
@@ -42,6 +40,9 @@ def choose_processor(args):
     elif args.processor == 'purity':
         from bucoffea.photon_purity import photonPurityProcessor
         return photonPurityProcessor
+    elif args.processor == 'sumw':
+        from bucoffea.gen import mcSumwProcessor
+        return mcSumwProcessor
 
 def do_run(args):
     """Run the analysis locally."""
@@ -54,7 +55,7 @@ def do_run(args):
     print(fileset)
     for dataset, files in fileset.items():
         output = run_uproot_job_nanoaod({dataset:files},
-                                    treename='Events',
+                                    treename=args.tree,
                                     processor_instance=choose_processor(args)(),
                                     executor=processor.futures_executor,
                                     executor_args={'workers': args.jobs, 'flatten': True},
@@ -81,7 +82,7 @@ def do_worker(args):
     print(f"Running over {ndatasets} datasets with a total of {nfiles} files.")
 
     output = run_uproot_job_nanoaod(fileset,
-                                  treename='Events',
+                                  treename=args.tree,
                                   processor_instance=choose_processor(args)(),
                                   executor=processor.futures_executor,
                                   executor_args={'workers': args.jobs, 'flatten': True},
@@ -192,7 +193,7 @@ def do_submit(args):
         os.makedirs(proxydir)
     shutil.copy2(proxy, proxydir)
 
-    if args.async:
+    if args.asynchronous:
         jdl_to_submit = []
 
     input_files = []
@@ -204,7 +205,11 @@ def do_submit(args):
     for dataset, files in dataset_files.items():
         print(f"Writing submission files for dataset: {dataset}.")
 
-        chunks = chunk_by_events(files, chunksize=args.eventsperjob, workers=8)
+        if args.filesperjob:
+            nchunk = math.ceil(len(files)/args.filesperjob)
+            chunks = chunk_by_files(files, nchunk=int(nchunk))
+        else:
+            chunks = chunk_by_events(files, chunksize=args.eventsperjob, workers=8)
         for ichunk, chunk in enumerate(chunks):
             # Save input files to a txt file and send to job
             tmpfile = pjoin(subdir, filedir, f"input_{dataset}_{ichunk:03d}of{len(chunks):03d}.txt")
@@ -217,6 +222,7 @@ def do_submit(args):
                 args.processor,
                 f'--outpath .',
                 f'--jobs {args.jobs}',
+                f'--tree {args.tree}',
                 'worker',
                 f'--dataset {dataset}',
                 f'--filelist {os.path.basename(tmpfile)}',
@@ -270,12 +276,12 @@ def do_submit(args):
                 jobid = -1
                 print(f"Submitted job {jobid}")
             else:
-                if args.async:
+                if args.asynchronous:
                     jdl_to_submit.append(jdl)
                 else:
                     jobid = condor_submit(jdl)
                     print(f"Submitted job {jobid}")
-    if args.async:
+    if args.asynchronous:
         print('Starting asynchronous submission.')
         p = Pool(processes=8)
         res = p.map_async(condor_submit, jdl_to_submit)
@@ -288,10 +294,11 @@ def do_submit(args):
 
 def main():
     parser = argparse.ArgumentParser(prog='Execution wrapper for coffea analysis')
-    parser.add_argument('processor', type=str, help='Processor to run.', choices=['monojet','vbfhinv','pdfweight','lhev','purity'])
+    parser.add_argument('processor', type=str, help='Processor to run.', choices=['monojet','vbfhinv','pdfweight','lhev','purity','sumw'])
     parser.add_argument('--outpath', type=str, help='Path to save output under.')
     parser.add_argument('--jobs','-j', type=int, default=1, help='Number of cores to use / request.')
     parser.add_argument('--datasrc', type=str, default='eos', help='Source of data files.', choices=['eos','das','ac'])
+    parser.add_argument('--tree',type=str, default='Events', help='Name of the TTree in the input files.')
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
@@ -318,12 +325,15 @@ def main():
     parser_submit.add_argument('--dry', action="store_true", default=False, help='Do not trigger submission, just dry run.')
     parser_submit.add_argument('--test', action="store_true", default=False, help='Only run over one file per dataset for testing.')
     parser_submit.add_argument('--force', action="store_true", default=False, help='Overwrite existing submission folder with same tag.')
-    parser_submit.add_argument('--async', action="store_true", default=False, help='Submit asynchronously.')
+    parser_submit.add_argument('--asynchronous', action="store_true", default=False, help='Submit asynchronously.')
+    parser_submit.add_argument('--async', action="store_true", default=False, help='Deprecated. Use --asynchronous instead.')
     parser_submit.add_argument('--debug', action="store_true", default=False, help='Print debugging info.')
     parser_submit.add_argument('--memory',type=int, default=None, help='Memory to request (in MB). Default is 2100 * number of cores.')
     parser_submit.set_defaults(func=do_submit)
 
     args = parser.parse_args()
+    if getattr(args, 'async', False):
+        raise IOError('The --async option is deprecated. Use --asynchronous instead.')
 
     host = socket.gethostname()
     if 'lpc' in host:
@@ -333,9 +343,6 @@ def main():
         args.send_pack = True
         args.send_proxy = True
 
-    if hasattr(args, 'filesperjob'):
-        if args.filesperjob:
-            raise RuntimeError("The --filesperjob argument is deprecated. Use --eventsperjob instead!")
     args.func(args)
 
 

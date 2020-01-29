@@ -1,19 +1,17 @@
 import copy
+
+import coffea.processor as processor
+import numpy as np
 from coffea import hist
+from coffea.analysis_objects import JaggedCandidateArray
+
+from bucoffea.helpers import object_overlap
+from bucoffea.helpers.dataset import extract_year
 
 Hist = hist.Hist
 Bin = hist.Bin
 Cat = hist.Cat
 
-from coffea.analysis_objects import JaggedCandidateArray
-import coffea.processor as processor
-from awkward import JaggedArray
-import numpy as np
-from bucoffea.helpers import object_overlap
-from bucoffea.helpers.paths import bucoffea_path
-from bucoffea.helpers.gen import find_first_parent
-from bucoffea.helpers.dataset import extract_year
-from pprint import pprint
 
 def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
@@ -111,6 +109,7 @@ def monojet_accumulator(cfg):
     items["ak8_passtight_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
     items["ak8_passloosemd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
     items["ak8_passtightmd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+    items["ak8_Vmatched_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
 
     items["ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -271,6 +270,9 @@ def setup_candidates(df, cfg):
                                     & pass_dz
                                     ]
 
+    if cfg.OVERLAP.ELECTRON.MUON.CLEAN:
+        electrons = electrons[object_overlap(electrons, muons, dr=cfg.OVERLAP.ELECTRON.MUON.DR)]
+
 
     taus = JaggedCandidateArray.candidatesfromcounts(
         df['nTau'],
@@ -283,12 +285,15 @@ def setup_candidates(df, cfg):
         iso=df['Tau_idMVAoldDM2017v2'],
     )
 
-    taus = taus[ object_overlap(taus, muons) \
-                & object_overlap(taus, electrons) \
-                & (taus.decaymode) \
+    taus = taus[ (taus.decaymode) \
                 & (taus.pt > cfg.TAU.CUTS.PT)\
                 & (taus.abseta < cfg.TAU.CUTS.ETA) \
                 & ((taus.iso&2)==2)]
+
+    if cfg.OVERLAP.TAU.MUON.CLEAN:
+        taus = taus[object_overlap(taus, muons, dr=cfg.OVERLAP.TAU.MUON.DR)]
+    if cfg.OVERLAP.TAU.ELECTRON.CLEAN:
+        taus = taus[object_overlap(taus, electrons, dr=cfg.OVERLAP.TAU.ELECTRON.DR)]
 
     photons = JaggedCandidateArray.candidatesfromcounts(
         df['nPhoton'],
@@ -304,10 +309,13 @@ def setup_candidates(df, cfg):
     )
     photons = photons[photons.looseId \
               & (photons.pt > cfg.PHOTON.CUTS.LOOSE.pt) \
-              & (photons.abseta < cfg.PHOTON.CUTS.LOOSE.eta) \
-              & object_overlap(photons, muons, dr=0.5) \
-              & object_overlap(photons, electrons, dr=0.5)
+              & (photons.abseta < cfg.PHOTON.CUTS.LOOSE.eta)
               ]
+
+    if cfg.OVERLAP.PHOTON.MUON.CLEAN:
+        photons = photons[object_overlap(photons, muons, dr=cfg.OVERLAP.PHOTON.MUON.DR)]
+    if cfg.OVERLAP.PHOTON.ELECTRON.CLEAN:
+        photons = photons[object_overlap(photons, electrons, dr=cfg.OVERLAP.PHOTON.ELECTRON.DR)]
 
     ak4 = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'],
@@ -338,7 +346,33 @@ def setup_candidates(df, cfg):
         ]
     df['hemveto'] = hem_ak4.counts == 0
 
-    ak4 = ak4[ak4.looseId & object_overlap(ak4, muons) & object_overlap(ak4, electrons) & object_overlap(ak4, photons)]
+    # B jets have their own overlap cleaning,
+    # so deal with them before applying filtering to jets
+    btag_discriminator = getattr(ak4, cfg.BTAG.algo)
+    btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
+    bjets = ak4[
+        (ak4.looseId) \
+        & (ak4.pt > cfg.BTAG.PT) \
+        & (ak4.abseta < cfg.BTAG.ETA) \
+        & (btag_discriminator > btag_cut)
+    ]
+
+    if cfg.OVERLAP.BTAG.MUON.CLEAN:
+        bjets = bjets[object_overlap(bjets, muons, dr=cfg.OVERLAP.BTAG.MUON.DR)]
+    if cfg.OVERLAP.BTAG.ELECTRON.CLEAN:
+        bjets = bjets[object_overlap(bjets, electrons, dr=cfg.OVERLAP.BTAG.ELECTRON.DR)]
+    if cfg.OVERLAP.BTAG.PHOTON.CLEAN:
+        bjets = bjets[object_overlap(bjets, photons, dr=cfg.OVERLAP.BTAG.PHOTON.DR)]
+
+    ak4 = ak4[ak4.looseId]
+
+    if cfg.OVERLAP.AK4.MUON.CLEAN:
+        ak4 = ak4[object_overlap(ak4, muons, dr=cfg.OVERLAP.AK4.MUON.DR)]
+    if cfg.OVERLAP.AK4.ELECTRON.CLEAN:
+        ak4 = ak4[object_overlap(ak4, electrons, dr=cfg.OVERLAP.AK4.ELECTRON.DR)]
+    if cfg.OVERLAP.AK4.PHOTON.CLEAN:
+        ak4 = ak4[object_overlap(ak4, photons, dr=cfg.OVERLAP.AK4.PHOTON.DR)]
+
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
         df['nFatJet'],
@@ -368,8 +402,7 @@ def setup_candidates(df, cfg):
     met_pt = df[f'{met_branch}_pt{jes_suffix_met}']
     met_phi = df[f'{met_branch}_phi{jes_suffix_met}']
 
-    return met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons
-
+    return met_pt, met_phi, ak4, bjets, ak8, muons, electrons, taus, photons
 
 def monojet_regions(cfg):
     common_cuts = [
@@ -460,15 +493,19 @@ def monojet_regions(cfg):
             regions[newRegionName].remove('leadak8_tau21')
             if wp == 'inclusive':
                 regions[newRegionName].remove('leadak8_mass')
+
+                # add regions: cr_2m_hasmass_inclusive_v, cr_1m_hasmass_inclusive_v, cr_2e_hasmass_inclusive_v, cr_1e_hasmass_inclusive_v
+                # these are regions with mass cut but has no tagger cut
+                hasMassRegionName = region.replace('_v', '_hasmass_'+ wp + '_v')
+                regions[hasMassRegionName] = regions[newRegionName] + ['leadak8_mass']
+
             else:
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
+            # save a copy of the v-tagged regions but not applying mistag SFs, for the sake of measuring mistag SF later
+            if wp in ['loose','tight','loosemd','tightmd']:
+                noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
+                regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
 
-    # control regions with mass cut but no tagger cut
-    regions['cr_2m_hasmass_inclusive_v'] = regions['cr_2m_inclusive_v'] + ['leadak8_mass']
-    regions['cr_2e_hasmass_inclusive_v'] = regions['cr_2e_inclusive_v'] + ['leadak8_mass']
-    regions['cr_1m_hasmass_inclusive_v'] = regions['cr_1m_inclusive_v'] + ['leadak8_mass']
-    regions['cr_1e_hasmass_inclusive_v'] = regions['cr_1e_inclusive_v'] + ['leadak8_mass']
-    regions['cr_g_hasmass_inclusive_v']  = regions['cr_g_inclusive_v']  + ['leadak8_mass']
 
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
@@ -567,15 +604,23 @@ def fitfun(x, a, b, c):
 
 def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
     if df['is_lo_w']:
-        theory_weights = fitfun(gen_v_pt, 1.024, 3.072e-3, 0.749) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        if extract_year(df['dataset']) == 2016:
+            qcd_nlo = evaluator["qcd_nlo_w_2016"](gen_v_pt)
+        else:
+            qcd_nlo = fitfun(gen_v_pt, 1.053, 3.163e-3, 0.746)
+        theory_weights =  qcd_nlo * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
-        theory_weights = fitfun(gen_v_pt, 1.423, 2.257e-3, 0.451) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        if extract_year(df['dataset']) == 2016:
+            qcd_nlo = evaluator["qcd_nlo_z_2016"](gen_v_pt)
+        else:
+            qcd_nlo = fitfun(gen_v_pt, 1.434, 2.210e-3, 0.443)
+        theory_weights =  qcd_nlo * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_nlo_w']:
         theory_weights = evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_nlo_z']:
         theory_weights = evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
-        theory_weights = fitfun(gen_v_pt, 1.036, 3.537e-3, 0.984) * evaluator["ewk_nlo_g"](gen_v_pt) *  evaluator["qcd_nnlo_g"](gen_v_pt)
+        theory_weights = fitfun(gen_v_pt, 1.159, 1.944e-3, 1.0) * evaluator["ewk_nlo_g"](gen_v_pt) *  evaluator["qcd_nnlo_g"](gen_v_pt)
     else:
         theory_weights = np.ones(df.size)
 
@@ -588,19 +633,19 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
 
 def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
     if df['is_lo_w']:
-        theory_weights = evaluator["qcd_nlo_w_2017_2d"](mjj, gen_v_pt) * evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        theory_weights = evaluator["qcd_nlo_w_2017_2d"](mjj, gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_w_ewk']:
         theory_weights = evaluator["qcd_nlo_w_ewk"](gen_v_pt, mjj)
     elif df['is_lo_z']:
-        theory_weights = evaluator["qcd_nlo_z_2017_2d"](mjj, gen_v_pt) * evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        theory_weights = evaluator["qcd_nlo_z_2017_2d"](mjj, gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_z_ewk']:
         theory_weights = evaluator["qcd_nlo_z_ewk"](gen_v_pt, mjj)
     elif df['is_nlo_w']:
-        theory_weights = evaluator["qcd_nnlo_w"](gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        theory_weights = evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_nlo_z']:
-        theory_weights = evaluator["qcd_nnlo_z"](gen_v_pt) * evaluator["ewk_nlo_z"](gen_v_pt)
+        theory_weights = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
-        theory_weights = evaluator["qcd_nlo_g_2017_2d"](mjj, gen_v_pt) * evaluator["ewk_nlo_g"](gen_v_pt) * evaluator["qcd_nnlo_g"](gen_v_pt)
+        theory_weights = evaluator["qcd_nlo_g_2017_2d"](mjj, gen_v_pt) * evaluator["ewk_nlo_g"](gen_v_pt)
     else:
         theory_weights = np.ones(df.size)
 
@@ -641,12 +686,14 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
 
     year = extract_year(df['dataset'])
-    if year in [2016,2017]:
+    if year == 2016:
+        csev_weight = evaluator["photon_csev"](photons.abseta, photons.pt).prod()
+    elif year == 2017:
         csev_sf_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
-        weights.add("photon_csev", evaluator['photon_csev'](csev_sf_index).prod())
+        csev_weight = evaluator['photon_csev'](csev_sf_index).prod()
     elif year == 2018:
-        csev_weight = evaluator['photon_csev'](photons.pt, photons.eta).prod()
-        csev_weight[csev_weight==0] = 1
-        weights.add("photon_csev", csev_weight)
+        csev_weight = evaluator['photon_csev'](photons.pt, photons.abseta).prod()
+    csev_weight[csev_weight==0] = 1
+    weights.add("photon_csev", csev_weight)
 
     return weights

@@ -15,8 +15,8 @@ default:
       leadak4:
         pt: 80   # min
         eta: 5.0  # max
-        nhf: 0.8  # max
-        chf: 0.1  # min
+        nhf: 2  # max
+        chf: -1  # min
       trailak4:
         pt: 40   # min
         eta: 5.0  # max
@@ -40,7 +40,7 @@ default:
         met: 50
   tau:
     cuts:
-      pt: 18
+      pt: 20
       eta: 2.3
   photon:
     cuts:
@@ -79,7 +79,48 @@ default:
           endcap: 0.20
     branch:
       id: Electron_cutBased
-
+  btag:
+    pt: 20
+    eta: 2.4
+  overlap:
+    electron:
+      muon:
+        clean: true
+        dr: 0.3
+    photon:
+      muon:
+        clean: true
+        dr: 0.3
+      electron:
+        clean: true
+        dr: 0.3
+    tau:
+      muon:
+        clean: true
+        dr: 0.4
+      electron:
+        clean: true
+        dr: 0.4
+    ak4:
+      muon:
+        clean: true
+        dr: 0.4
+      electron:
+        clean: true
+        dr: 0.4
+      photon:
+        clean: true
+        dr: 0.4
+    btag:
+      muon:
+        clean: false
+        dr: 0.4
+      electron:
+        clean: false
+        dr: 0.4
+      photon:
+        clean: false
+        dr: 0.4
   mitigation:
     hem: True
 
@@ -114,15 +155,6 @@ default:
     qcd_nlo_g_2017_2d: # 2D QCD k factor for QCD photon
       histogram: 2d_gjets_vbf
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
-    qcd_nnlo_g:
-      histogram: aj
-      file: data/sf/theory/lindert_qcd_nnlo_sf.root
-    qcd_nnlo_w:
-      histogram: evj
-      file: data/sf/theory/lindert_qcd_nnlo_sf.root
-    qcd_nnlo_z:
-      histogram: eej
-      file: data/sf/theory/lindert_qcd_nnlo_sf.root
     unc_zoverw_nlo_muf_down:
       histogram: znlo1_over_wnlo1_facScaleDown
       file: data/sf/theory/unc/wtoz_unc.root
@@ -254,8 +286,8 @@ era2016:
       histogram: "sf2017_down"
       file: "data/sf/pileup/pileup.root"
     trigger_met:
-        histogram: 120pfht_hltmu_1m_2017
-        file: data/sf/trigger/met_trigger_sf.root
+        histogram: 120pfht_mu_recoil_1m_2017
+        file: data/sf/trigger/trig_sf_vbf.root
   filters:
     data:
       - Flag_goodVertices
@@ -365,8 +397,8 @@ era2017:
       file: "data/sf/pileup/pileup.root"
 
     trigger_met:
-      histogram: 120pfht_hltmu_1m_2017
-      file: data/sf/trigger/met_trigger_sf.root
+      histogram: 120pfht_mu_recoil_1m_2017
+      file: data/sf/trigger/trig_sf_vbf.root
 
 era2018:
   triggers:
@@ -478,5 +510,5 @@ era2018:
       file: "data/sf/pileup/pileup.root"
 
     trigger_met:
-      histogram: 120pfht_hltmu_1m_2018
-      file: data/sf/trigger/met_trigger_sf.root
+      histogram: 120pfht_mu_recoil_1m_2018
+      file: data/sf/trigger/trig_sf_vbf.root

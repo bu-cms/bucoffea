@@ -1,12 +1,9 @@
 import copy
-import os
 import re
 
 import numpy as np
 
-from coffea import hist
 import coffea.processor as processor
-
 
 from dynaconf import settings as cfg
 
@@ -41,7 +38,6 @@ from bucoffea.helpers.dataset import (
                                       extract_year
                                      )
 from bucoffea.helpers.gen import (
-                                  find_gen_dilepton,
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
                                   fill_gen_v_info
@@ -141,20 +137,20 @@ class monojetProcessor(processor.ProcessorABC):
         df['is_data'] = is_data(dataset)
 
         gen_v_pt = None
-        if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
+        if not df['is_data']:
             gen = setup_gen_candidates(df)
+        if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w']:
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
-            gen_v_pt = df['gen_v_pt_dress']
+            gen_v_pt = df['gen_v_pt_combined']
         elif df['is_lo_g']:
-            gen = setup_gen_candidates(df)
             gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
 
         # Candidates
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt, met_phi, ak4, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
+        met_pt, met_phi, ak4, bjets, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
@@ -185,14 +181,6 @@ class monojetProcessor(processor.ProcessorABC):
         muonjet_pairs = ak4[:,:1].cross(muons)
         df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
 
-        # B tagged ak4
-        btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
-        jet_btag_val = getattr(ak4, cfg.BTAG.algo)
-        jet_btagged = jet_btag_val > btag_cut
-        bjets = ak4[ (ak4.abseta<2.4) \
-                     & jet_btagged \
-                     & (ak4.pt>20) ]
-
         # Photons
         # Angular distance leading photon - leading jet
         phojet_pairs = ak4[:,:1].cross(photons[:,:1])
@@ -209,7 +197,6 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Triggers
         pass_all = np.ones(df.size)==1
-        pass_none = ~pass_all
         selection.add('inclusive', pass_all)
         selection = trigger_selection(selection, df, cfg)
         selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
@@ -342,12 +329,13 @@ class monojetProcessor(processor.ProcessorABC):
 
                 output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt.flatten()]
                 output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta.flatten()]
-                output['kinematics']['leadbtag'] += [jet_btag_val[(ak4.abseta<2.4) & (ak4.pt>20)][mask].max()]
+                output['kinematics']['leadbtag'] += [ak4.pt.max()<0][mask]
 
                 output['kinematics']['nLooseMu'] += [muons.counts[mask]]
                 output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask].flatten()]
                 output['kinematics']['mupt0'] += [muons[leadmuon_index][mask].pt.flatten()]
                 output['kinematics']['mueta0'] += [muons[leadmuon_index][mask].eta.flatten()]
+                output['kinematics']['muphi0'] += [muons[leadmuon_index][mask].phi.flatten()]
 
                 output['kinematics']['nLooseEl'] += [electrons.counts[mask]]
                 output['kinematics']['nTightEl'] += [electrons[df['is_tight_electron']].counts[mask].flatten()]
@@ -381,24 +369,21 @@ class monojetProcessor(processor.ProcessorABC):
                     region_weights.add('trigger', np.ones(df.size))
 
             if not df['is_data']:
-                if df['has_v_jet']:
-                    if re.match(r'.*_loose_v.*', region):
-                        region_weights.add('wtag_loose', evaluator['wtag_loose'](ak8.pt.max()))
-                    if re.match(r'.*_loosemd_v.*', region):
-                        region_weights.add('wtag_loosemd', evaluator['wtag_loosemd'](ak8.pt.max()))
-                    if re.match(r'.*_tight_v.*', region):
-                        region_weights.add('wtag_tight', evaluator['wtag_tight'](ak8.pt.max()))
-                    if re.match(r'.*_tightmd_v.*', region):
-                        region_weights.add('wtag_tightmd', evaluator['wtag_tightmd'](ak8.pt.max()))
-                else:
-                    if re.match(r'.*_loose_v.*', region):
-                        region_weights.add('wtag_mistag_loose', evaluator['wtag_mistag_loose'](ak8.pt.max()))
-                    if re.match(r'.*_loosemd_v.*', region):
-                        region_weights.add('wtag_mistag_loosemd', evaluator['wtag_mistag_loosemd'](ak8.pt.max()))
-                    if re.match(r'.*_tight_v.*', region):
-                        region_weights.add('wtag_mistag_tight', evaluator['wtag_mistag_tight'](ak8.pt.max()))
-                    if re.match(r'.*_tightmd_v.*', region):
-                        region_weights.add('wtag_mistag_tightmd', evaluator['wtag_mistag_tightmd'](ak8.pt.max()))
+                genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
+                leadak8 = ak8[ak8.pt.argmax()]
+                leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
+                matched_leadak8 = leadak8[leadak8_matched_mask]
+                unmatched_leadak8 = leadak8[~leadak8_matched_mask]
+                for wp in ['loose','loosemd','tight','tightmd']:
+                    if re.match(r'.*_{wp}_v.*', region):
+
+                        if (wp == 'tight') or ('nomistag' in region): # no mistag SF available for tight cut
+                            matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
+                        else:
+                            matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
+                                    * evaluator[f'wtag_mistag_{wp}'](unmatched_leadak8.pt).prod()
+
+                        region_weights.add('wtag_{wp}', matched_weights)
 
 
 
@@ -509,6 +494,13 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_wvsqcdmd0',  tagger=ak8[leadak8_index].wvsqcdmd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcd0',    tagger=ak8[leadak8_index].zvsqcd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcdmd0',  tagger=ak8[leadak8_index].zvsqcdmd[mask].flatten(),     weight=w_leadak8)
+
+                # histogram with only gen-matched lead ak8 pt
+                if not df['is_data']:
+                    w_matchedleadak8 = weight_shape(matched_leadak8.eta[mask], region_weights.weight()[mask])
+                    ezfill('ak8_Vmatched_pt0', jetpt=matched_leadak8.pt[mask].flatten(),      weight=w_matchedleadak8 )
+
+
                 # Dimuon specifically for deepak8 mistag rate measurement
                 if 'inclusive_v' in region:
                     ezfill('ak8_passloose_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
@@ -519,11 +511,6 @@ class monojetProcessor(processor.ProcessorABC):
                     ezfill('ak8_passtight_mass0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHT, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passloosemd_mass0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.LOOSEMD, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passtightmd_mass0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.TIGHTMD, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
-
-            # B tag discriminator
-            btag = getattr(ak4[ak4.abseta<2.4], cfg.BTAG.ALGO)
-            w_btag = weight_shape(btag[mask], region_weights.weight()[mask])
-            ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
             # MET
             ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=region_weights.weight()[mask] )

@@ -1,7 +1,8 @@
-coffea==0.6.17
+coffea==0.6.19
 htcondor
 dynaconf
 pyyaml
 gitpython
 tabulate
 klepto
+pycairo>=1.18.2

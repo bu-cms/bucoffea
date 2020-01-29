@@ -2,8 +2,10 @@
 from pprint import pprint
 import copy
 import os
+import sys
 import re
 import numpy as np
+import pickle
 from matplotlib import pyplot as plt
 
 from coffea import hist
@@ -11,6 +13,7 @@ from coffea import hist
 from bucoffea.plot.util import (acc_from_dir, merge_datasets, merge_extensions,
                                 scale_xs_lumi)
 from bucoffea.helpers.paths import bucoffea_path
+from klepto.archives import dir_archive
 import uproot
 pjoin = os.path.join
 
@@ -43,7 +46,7 @@ def sf_1d(acc, tag, regex, outputrootfile):
     pt_types = ['stat1']
 
     if tag in ['dy','wjet']:
-        pt_types.append('dress')
+        pt_types.extend(['dress', 'combined'])
         new_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',list(range(100,800,100))+list(range(800,1200,200))+list(range(1200,2800,800)))
     else:
         new_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[200,250]+list(range(300,800,100))+list(range(800,1400,200)))
@@ -52,6 +55,7 @@ def sf_1d(acc, tag, regex, outputrootfile):
     for pt_type in pt_types:
         for selection in ['inclusive','monojet','vbf']:
             dist = f'gen_vpt_{selection}_{pt_type}'
+            acc.load(dist)
             h = copy.deepcopy(acc[dist])
 
             h = h.rebin(h.axis('vpt'), new_ax)
@@ -119,15 +123,16 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile):
 
     if tag in ['dy', 'wjet']:
         vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0, 40, 80, 120, 160, 200, 240, 280, 320, 400, 520, 640, 760, 880,1200])
-        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200]+list(range(500,2500,500)))
+        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',list(range(0,2500,500)))
         clims = 0.5,1.5
     elif tag in ['gjets']:
-        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0, 40, 80, 120, 160, 200, 240, 280, 320, 400, 520, 640, 800])
-        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200,500,1000])
+        vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0, 40, 80, 120, 160, 200, 240, 280, 320, 400, 520, 640])
+        mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200,500,1000,1500])
         clims = 1.0, 1.5
 
     for selection in ['vbf']:
         dist = f'gen_vpt_{selection}_{pt_type}'
+        acc.load(dist)
         h = copy.deepcopy(acc[dist])
         print(h)
         h = h.rebin(h.axis('vpt'), vpt_ax)
@@ -151,10 +156,18 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile):
             np.sqrt(sumw2_nlo) / sumw_lo,
             sumw_nlo * np.sqrt(sumw2_lo) / (sumw_lo**2)
         )
+        data = (sf, dsf)
+        pkl_filename = f'{tag}_kfac.pkl'
+        with open(pkl_filename, 'wb') as f:
+            pickle.dump(data, f)
+
         xaxis = lo.axes()[0]
         yaxis = lo.axes()[1]
 
         im = ax.pcolormesh(xaxis.edges(overflow='over'), yaxis.edges(overflow='over'), sf.T)
+
+        with open(pkl_filename, 'ab') as f:
+            pickle.dump((xaxis.edges(overflow='over'), yaxis.edges(overflow='over')), f)
 
         x_centers = xaxis.centers(overflow='over')
         y_centers = yaxis.centers(overflow='over')
@@ -208,16 +221,26 @@ def pdfwgt_sf(vpt):
     return 1/(1.157 + 2.291e-4 * vpt + 6.0612e-7 * vpt**2)
 
 def main():
-    acc = acc_from_dir("./input/2019-10-07_das_lhevpt_dressed_v1")
+    inpath = sys.argv[1]
+    #acc = acc_from_dir("./input/2019-10-07_das_lhevpt_dressed_v1")
+    
+    acc = dir_archive(
+                      inpath,
+                      serialized=True,
+                      compression=0,
+                      memsize=1e3
+                      )
+    acc.load('sumw')
+    acc.load('sumw2')
+
 
     outputrootfile = uproot.recreate(f'2017_gen_v_pt_qcd_sf.root')
-    sf_1d(acc, tag='wjet', regex='W.*',outputrootfile=outputrootfile)
-    sf_1d(acc, tag='dy', regex='.*DY.*',outputrootfile=outputrootfile)
+    sf_1d(acc, tag='wjet', regex='WN?JetsToLNu.*',outputrootfile=outputrootfile)
+    sf_1d(acc, tag='dy', regex='DYN?JetsToLL.*',outputrootfile=outputrootfile)
     # # outputrootfile = uproot.recreate(f'test.root')
-    sf_2d(acc, tag='wjet', regex='W.*',pt_type='dress',outputrootfile=outputrootfile)
-    sf_2d(acc, tag='dy', regex='.*DY.*',pt_type='dress',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='wjet', regex='WN?JetsToLNu.*',pt_type='combined',outputrootfile=outputrootfile)
+    sf_2d(acc, tag='dy', regex='DYN?JetsToLL.*',pt_type='combined',outputrootfile=outputrootfile)
 
-    acc = acc_from_dir("./input/2019-10-29_photon_kfac_v0/")
     sf_1d(acc, tag='gjets', regex='G\d?Jet.*',outputrootfile=outputrootfile)
     # outputrootfile = uproot.recreate('test.root')
 
