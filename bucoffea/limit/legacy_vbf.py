@@ -53,7 +53,7 @@ def legacy_dataset_name_vbf(dataset):
         'WJetsToLNu.*' : 'qcdwjets',
         'ZJetsToNuNu.*' : 'qcdzjets',
         'DYJets.*' : 'qcdzll',
-        'GJets_HT.*' : 'qcdgjets',
+        'GJets_DR-0p4.*' : 'qcdgjets',
         'GJets_SM.*' : 'ewkgjets',
         'VBF_HToInv.*' : 'vbf',
         'GluGlu_HToInv.*' : 'ggh',
