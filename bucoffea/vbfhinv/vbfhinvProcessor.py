@@ -36,7 +36,8 @@ from bucoffea.monojet.definitions import (
                                           candidate_weights, 
                                           pileup_weights,
                                           setup_candidates, 
-                                          theory_weights_vbf
+                                          theory_weights_vbf,
+                                          photon_trigger_sf
                                           )
 from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator, 
@@ -365,11 +366,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
             region_weights = copy.deepcopy(weights)
             if not df['is_data']:
                 if re.match(r'cr_(\d+)e.*', region):
-                    region_weights.add('trigger', np.ones(df.size))
+                    region_weights.add('trigger_electron', np.ones(df.size))
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
-                    region_weights.add('trigger', evaluator["trigger_met"](df['recoil_pt']))
+                    region_weights.add('trigger_met', evaluator["trigger_met"](df['recoil_pt']))
                 elif re.match(r'cr_g.*', region):
-                    region_weights.add('trigger', np.ones(df.size))
+                    photon_trigger_sf(region_weights, photons, df)
 
             # Blinding
             if(self._blind and df['is_data'] and region.startswith('sr')):

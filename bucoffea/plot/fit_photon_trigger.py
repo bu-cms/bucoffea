@@ -5,10 +5,7 @@ import numpy as np
 from scipy.optimize import curve_fit, minimize
 pjoin = os.path.join
 from bucoffea.plot.util import fig_ratio, lumi
-
-def sigmoid(x,a,b,c,d):
-    return c + (d-c) / (1 + np.exp(-a * (x-b)))
-
+from bucoffea.helpers import sigmoid
 
 def load(tag, dataset, year):
     fname = f'output/gamma/table_g_{tag}_photon_pt0_{dataset}_{year}.txt'

@@ -13,7 +13,8 @@ from bucoffea.monojet.definitions import (
                                           monojet_regions,
                                           theory_weights_monojet,
                                           pileup_weights,
-                                          candidate_weights
+                                          candidate_weights,
+                                          photon_trigger_sf
                                          )
 from bucoffea.helpers import (
                               min_dphi_jet_met,
@@ -362,11 +363,11 @@ class monojetProcessor(processor.ProcessorABC):
             region_weights = copy.deepcopy(weights)
             if not df['is_data']:
                 if re.match(r'cr_(\d+)e.*', region):
-                    region_weights.add('trigger', np.ones(df.size))
+                    region_weights.add('trigger_electron', np.ones(df.size))
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
-                    region_weights.add('trigger', evaluator["trigger_met"](df['recoil_pt']))
+                    region_weights.add('trigger_met', evaluator["trigger_met"](df['recoil_pt']))
                 elif re.match(r'cr_g.*', region):
-                    region_weights.add('trigger', np.ones(df.size))
+                    photon_trigger_sf(region_weights, photons, df)
 
             if not df['is_data']:
                 genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
