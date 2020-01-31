@@ -33,8 +33,9 @@ colors = {
     '.*TT.*' : '#6a51a3',
     '.*ST.*' : '#9e9ac8',
     '.*QCD.*' : '#08306b',
-    '.*GJets_HT.*' : '#fc4e2a',
-    '.*GJets_SM.*' : '#a76b51',
+    'GJets_HT.*' : '#fc4e2a',
+    'GJets_DR-0p4.*' : '#fc4e2a',
+    'GJets_SM.*' : '#a76b51',
     'ZJetsToNuNu.*' : '#0050ec',
     'ZNuNuGJets_.*' : '#0050ec'
 }
