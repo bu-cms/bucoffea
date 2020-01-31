@@ -5,7 +5,7 @@ import numpy as np
 from coffea import hist
 from coffea.analysis_objects import JaggedCandidateArray
 
-from bucoffea.helpers import object_overlap
+from bucoffea.helpers import object_overlap, sigmoid
 from bucoffea.helpers.dataset import extract_year
 
 Hist = hist.Hist
@@ -656,7 +656,33 @@ def pileup_weights(weights, df, evaluator, cfg):
         raise RuntimeError(f"Unknown value for cfg.PILEUP.MODE: {cfg.PILEUP.MODE}.")
     return weights
 
+def photon_trigger_sf(weights, photons, df):
+    """MC-to-data photon trigger scale factor.
 
+    The scale factor is obtained by separately fitting the
+    trigger turn-on with a sigmoid function in data and MC.
+    The scale factor is then the ratio of the two sigmoid
+    functions as a function of the photon pt.
+
+    :param weights: Weights object to write information into
+    :type weights: WeightsContainer
+    :param photons: Photon candidates
+    :type photons: JaggedCandidateArray
+    :param df: Data frame
+    :type df: LazyDataFrame
+    """
+    year = extract_year(df['dataset'])
+    x = photons.pt.max()
+    if year == 2016:
+        sf =  np.ones(df.size)
+    elif year == 2017:
+        sf = sigmoid(x,0.335,217.91,0.065,0.996) / sigmoid(x,0.244,212.34,0.050,1.000)
+    elif year == 2018:
+        sf = sigmoid(x,1.022, 218.39, 0.086, 0.999) / sigmoid(x, 0.301,212.83,0.062,1.000)
+
+    sf[np.isnan(sf) | np.isinf(sf)] == 1
+
+    weights.add("trigger_photon", sf)
 
 def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     # Muon ID and Isolation for tight and loose WP
