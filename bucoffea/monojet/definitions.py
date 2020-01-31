@@ -5,7 +5,7 @@ import numpy as np
 from coffea import hist
 from coffea.analysis_objects import JaggedCandidateArray
 
-from bucoffea.helpers import object_overlap, sigmoid
+from bucoffea.helpers import object_overlap, sigmoid, exponential
 from bucoffea.helpers.dataset import extract_year
 
 Hist = hist.Hist
@@ -713,3 +713,33 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     weights.add("photon_csev", csev_weight)
 
     return weights
+
+def data_driven_qcd_dataset(dataset):
+    """Dataset name to use for data-driven QCD estimate"""
+    year = extract_year(dataset)
+    return f"QCD_data_{year}"
+
+def photon_impurity_weights(photon_pt, year):
+    """Photon impurity as a function of pt
+
+    :param photon_pt: Photon pt
+    :type photon_pt: 1D array
+    :param year: Data-taking year
+    :type year: int
+    :return: Weights
+    :rtype: 1Darray
+    """
+    if year == 2017:
+        a = 6.35
+        b = 4.61e-3
+        c = 1.05
+    elif year==2018:
+        a = 11.92
+        b = 8.28e-3
+        c = 1.55
+    elif year==2016:
+        return np.ones(photon_pt.size)
+
+    # Remember to multiply by 1e-2,
+    # because fit is done to percentages
+    return 1e-2*exponential(photon_pt, a, b, c)
