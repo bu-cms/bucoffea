@@ -536,7 +536,7 @@ class monojetProcessor(processor.ProcessorABC):
                 output['recoil'].fill(
                                     dataset=data_driven_qcd_dataset(dataset),
                                     region=region,
-                                    mjj=df["recoil_pt"][mask],
+                                    recoil=df["recoil_pt"][mask],
                                     weight=region_weights.weight()[mask] * w_imp[mask]
                                 )
 
