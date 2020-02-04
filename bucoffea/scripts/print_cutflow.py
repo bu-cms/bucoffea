@@ -3,4 +3,10 @@
 from bucoffea.helpers.cutflow import print_cutflow
 import sys
 from coffea.util import load
-print_cutflow(load(sys.argv[1]))
+
+acc = None
+for argument in sys.argv:
+    if argument.endswith('.coffea'):
+        tmp = load(argument)
+        acc = tmp if not acc else acc + tmp
+print_cutflow(acc)
