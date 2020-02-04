@@ -498,15 +498,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill(f'mjj',                mjj=df[f"mjj{var}"][mask],      weight=weights.weight()[mask], var=var )
 
             # Muons
-            if '_1m_' in region or '_2m_' in region:
-                w_allmu = weight_shape(muons.pt[mask], region_weights.weight()[mask])
+            if region in ['cr_1m_vbf', 'cr_2m_vbf']:
+                w_allmu = weight_shape(muons.pt[mask], weights.weight()[mask])
                 ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
 
             # Dimuon
-            if '_2m_' in region:
-                w_dimu = weight_shape(dimuons.pt[mask], region_weights.weight()[mask])
+            if region in ['cr_2m_vbf']:
+                w_dimu = weight_shape(dimuons.pt[mask], weights.weight()[mask])
                 ezfill('muon_pt0',      pt=dimuons.i0.pt[mask].flatten(),           weight=w_dimu)
                 ezfill('muon_pt1',      pt=dimuons.i1.pt[mask].flatten(),           weight=w_dimu)
                 ezfill('muon_eta0',     eta=dimuons.i0.eta[mask].flatten(),         weight=w_dimu)
@@ -518,15 +518,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
 
             # Electrons
-            if '_1e_' in region or '_2e_' in region:
-                w_allel = weight_shape(electrons.pt[mask], region_weights.weight()[mask])
+            if region in ['cr_1e_vbf', 'cr_2e_vbf']:
+                w_allel = weight_shape(electrons.pt[mask], weights.weight()[mask])
                 ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
                 ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
 
             # Dielectron
-            if '_2e_' in region:
-                w_diel = weight_shape(dielectrons.pt[mask], region_weights.weight()[mask])
+            if region in ['cr_2e_vbf']:
+                w_diel = weight_shape(dielectrons.pt[mask], weights.weight()[mask])
                 ezfill('electron_pt0',      pt=dielectrons.i0.pt[mask].flatten(),               weight=w_diel)
                 ezfill('electron_pt1',      pt=dielectrons.i1.pt[mask].flatten(),               weight=w_diel)
                 ezfill('electron_eta0',     eta=dielectrons.i0.eta[mask].flatten(),             weight=w_diel)
@@ -538,8 +538,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('dielectron_mass',   dilepton_mass=dielectrons.mass[mask].flatten(),     weight=w_diel)
 
             # Photon
-            if '_g_' in region:
-                w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],region_weights.weight()[mask]);
+            if region in ['cr_g_vbf']:
+                w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],weights.weight()[mask]);
                 ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
                 ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
@@ -550,16 +550,18 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
 
             # PV
-            ezfill('npv', nvtx=df['PV_npvs'][mask], weight=region_weights.weight()[mask])
-            ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=region_weights.weight()[mask])
+            if region in ['sr_vbf', 'cr_1m_vbf', 'cr_2m_vbf', 'cr_1e_vbf', 'cr_2e_vbf']:
+                ezfill('npv', nvtx=df['PV_npvs'][mask], weight=weights.weight()[mask])
+                ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=weights.weight()[mask])
 
-            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=region_weights.partial_weight(exclude=['pileup'])[mask])
-            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=region_weights.partial_weight(exclude=['pileup'])[mask])
+                ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=weights.partial_weight(exclude=['pileup'])[mask])
+                ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=weights.partial_weight(exclude=['pileup'])[mask])
 
-            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=region_weights.weight()[mask])
-            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=region_weights.weight()[mask])
-            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=region_weights.partial_weight(exclude=['pileup'])[mask])
-            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=region_weights.partial_weight(exclude=['pileup'])[mask])
+                ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=weights.weight()[mask])
+                ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weights.weight()[mask])
+                ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=weights.partial_weight(exclude=['pileup'])[mask])
+                ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=weights.partial_weight(exclude=['pileup'])[mask])
+        
         return output
 
     def postprocess(self, accumulator):
