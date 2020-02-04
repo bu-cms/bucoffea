@@ -14,7 +14,9 @@ from bucoffea.monojet.definitions import (
                                           theory_weights_monojet,
                                           pileup_weights,
                                           candidate_weights,
-                                          photon_trigger_sf
+                                          photon_trigger_sf,
+                                          photon_impurity_weights,
+                                          data_driven_qcd_dataset
                                          )
 from bucoffea.helpers import (
                               min_dphi_jet_met,
@@ -118,6 +120,7 @@ class monojetProcessor(processor.ProcessorABC):
         if df:
             dataset = df['dataset']
             self._year = extract_year(dataset)
+            df["year"] = self._year
             cfg.ENV_FOR_DYNACONF = f"era{self._year}"
         else:
             cfg.ENV_FOR_DYNACONF = f"default"
@@ -526,6 +529,16 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/df["recoil_pt"][mask],      weight=region_weights.weight()[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.weight()[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.weight()[mask] )
+
+            # Photon CR data-driven QCD estimate
+            if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
+                w_imp = photon_impurity_weights(photons[leadphoton_index].pt, df["year"])
+                output['recoil'].fill(
+                                    dataset=data_driven_qcd_dataset(dataset),
+                                    region=region,
+                                    recoil=df["recoil_pt"][mask],
+                                    weight=region_weights.weight()[mask] * w_imp[mask]
+                                )
 
             if 'noveto' in region:
                 continue

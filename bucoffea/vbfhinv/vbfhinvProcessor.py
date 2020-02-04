@@ -37,7 +37,9 @@ from bucoffea.monojet.definitions import (
                                           pileup_weights,
                                           setup_candidates, 
                                           theory_weights_vbf,
-                                          photon_trigger_sf
+                                          photon_trigger_sf,
+                                          photon_impurity_weights,
+                                          data_driven_qcd_dataset
                                           )
 from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator, 
@@ -112,6 +114,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         if df:
             dataset = df['dataset']
             self._year = extract_year(dataset)
+            df["year"] = self._year
             cfg.ENV_FOR_DYNACONF = f"era{self._year}"
         else:
             cfg.ENV_FOR_DYNACONF = f"default"
@@ -469,6 +472,16 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('dphijj',             dphi=df["dphijj"][mask],   weight=region_weights.weight()[mask] )
             ezfill('detajj',             deta=df["detajj"][mask],   weight=region_weights.weight()[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=region_weights.weight()[mask] )
+
+            # Photon CR data-driven QCD estimate
+            if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
+                w_imp = photon_impurity_weights(photons[leadphoton_index].pt, df["year"])
+                output['mjj'].fill(
+                                    dataset=data_driven_qcd_dataset(dataset),
+                                    region=region,
+                                    mjj=df["mjj"][mask],
+                                    weight=region_weights.weight()[mask] * w_imp[mask]
+                                )
 
             # Uncertainty variations
             if df['is_lo_z'] or df['is_nlo_z'] or df['is_lo_z_ewk']:
