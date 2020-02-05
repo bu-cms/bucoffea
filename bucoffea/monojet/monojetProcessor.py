@@ -532,12 +532,12 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Photon CR data-driven QCD estimate
             if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
-                w_imp = photon_impurity_weights(photons[leadphoton_index].pt, df["year"])
+                w_imp = photon_impurity_weights(photons[leadphoton_index].pt.max()[mask], df["year"])
                 output['recoil'].fill(
                                     dataset=data_driven_qcd_dataset(dataset),
                                     region=region,
                                     recoil=df["recoil_pt"][mask],
-                                    weight=region_weights.weight()[mask] * w_imp[mask]
+                                    weight=region_weights.weight()[mask] * w_imp
                                 )
 
             if 'noveto' in region:
