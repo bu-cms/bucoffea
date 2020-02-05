@@ -203,6 +203,7 @@ def vbfhinv_regions(cfg):
         'veto_photon',
         'veto_tau',
         'veto_b',
+        'dpfcalo'
     ]
 
     regions = {}
