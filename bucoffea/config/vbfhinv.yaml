@@ -15,13 +15,13 @@ default:
       leadak4:
         pt: 80   # min
         eta: 5.0  # max
-        nhf: 2  # max
-        chf: -1  # min
+        nhf: 0.8  # max
+        chf: 0.1  # min
       trailak4:
         pt: 40   # min
         eta: 5.0  # max
-        nhf: 999  # max
-        chf: -999  # min
+        nhf: 0.8  # max
+        chf: 0.1  # min
       mindphijr : 0.5 # min
       dpfcalo : 0.5 # max
     control:
