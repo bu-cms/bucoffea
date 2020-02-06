@@ -8,8 +8,38 @@ from klepto.archives import dir_archive
 from coffea import hist
 from matplotlib import pyplot as plt
 import mplhep as hep
+import numpy as np
 
 pjoin = os.path.join
+
+def dict_to_arr(d):
+    '''Given a dictionary containing different weights as
+       its values, concatenate the weights as a 2D numpy array.'''
+    shape = len(d), len(list(d.values())[0])
+    arr = np.zeros(shape)
+    for idx, weight_arr in enumerate(d.values()):
+        arr[idx] = weight_arr
+    return arr
+
+def get_unc(d, edges):
+    '''Given a dictionary containing different weights as
+       its values, calculate the uncertainty in each bin.'''
+    # Transform to 2D array
+    arr = dict_to_arr(d)
+    nom = arr[0] 
+    # Calculate uncertainty in each mjj bin
+    unc = np.zeros_like(nom)
+    for idx, entry in enumerate(nom):
+        bin_ = arr[:, idx]
+        rng = bin_.max() - bin_.min()
+        unc[idx] = rng/nom[idx]
+        
+    # Print the results
+    print('*'*20)
+    print('Combined Uncertainties')
+    print('*'*20)
+    for idx, sigma in enumerate(unc):
+        print(f'{edges[idx]:.0f} < mjj < {edges[idx+1]:.0f}: {sigma*100:.2f}%')
 
 def plot_jes_jer_var(acc, regex, tag, out_tag, dataset_name):
     '''Given the input accumulator and the regex
@@ -126,6 +156,10 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, tag, out_tag):
     fig.savefig(outpath)
 
     print(f'Histogram saved in: {outpath}')
+
+    # Calculate and print the uncertainties
+    # for each mjj bin
+    get_unc(ratios, mjj_edges)
 
 def main():
     inpath = sys.argv[1]
