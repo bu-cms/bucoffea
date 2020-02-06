@@ -110,7 +110,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, tag, out_tag):
                      histtype='step'
                      )
 
-    ax.set_xlim(200,3500)
+    ax.set_xlim(200,4000)
     ax.set_ylim(0,0.04)
     ax.set_xlabel(r'$M_{jj} \ (GeV)$')
     ax.set_ylabel(tag_to_ylabel[tag])
@@ -124,7 +124,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, tag, out_tag):
 
     outpath = pjoin(outdir, f'{tag}_jes_jer_variations.pdf')
     fig.savefig(outpath)
-    
+
     print(f'Histogram saved in: {outpath}')
 
 def main():
