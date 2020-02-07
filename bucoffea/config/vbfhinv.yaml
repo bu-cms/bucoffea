@@ -259,7 +259,7 @@ era2016:
 
     photon_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_PhotonsMedium.root
+      file: data/sf/egamma/2017_PhotonsMedium_capped.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
       histogram: Tight_ID
       file: data/sf/egamma/CSEV_ScaleFactors_2017.root
@@ -373,7 +373,7 @@ era2017:
 
     photon_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_PhotonsMedium.root
+      file: data/sf/egamma/2017_PhotonsMedium_capped.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
       histogram: Tight_ID
       file: data/sf/egamma/CSEV_ScaleFactors_2017.root
@@ -464,7 +464,7 @@ era2018:
 
     photon_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_PhotonsMedium.root
+      file: data/sf/egamma/2018_PhotonsMedium_capped.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
       histogram: Tight_ID
       file: data/sf/egamma/CSEV_ScaleFactors_2017.root # TODO: Update to 2018 when available!
