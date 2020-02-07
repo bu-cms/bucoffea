@@ -155,3 +155,12 @@ def evaluator_from_config(cfg):
 
     evaluator = ext.make_evaluator()
     return evaluator
+
+
+def sigmoid(x,a,b,c,d):
+    """Sigmoid function for trigger turn-on fits."""
+    return c + (d-c) / (1 + np.exp(-a * (x-b)))
+
+def exponential(x, a, b, c):
+    """Exponential function for scale factor fits."""
+    return a * np.exp(-b * x) + c

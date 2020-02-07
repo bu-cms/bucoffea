@@ -5,7 +5,7 @@ import numpy as np
 from coffea import hist
 from coffea.analysis_objects import JaggedCandidateArray
 
-from bucoffea.helpers import object_overlap
+from bucoffea.helpers import object_overlap, sigmoid, exponential
 from bucoffea.helpers.dataset import extract_year
 
 Hist = hist.Hist
@@ -656,7 +656,33 @@ def pileup_weights(weights, df, evaluator, cfg):
         raise RuntimeError(f"Unknown value for cfg.PILEUP.MODE: {cfg.PILEUP.MODE}.")
     return weights
 
+def photon_trigger_sf(weights, photons, df):
+    """MC-to-data photon trigger scale factor.
 
+    The scale factor is obtained by separately fitting the
+    trigger turn-on with a sigmoid function in data and MC.
+    The scale factor is then the ratio of the two sigmoid
+    functions as a function of the photon pt.
+
+    :param weights: Weights object to write information into
+    :type weights: WeightsContainer
+    :param photons: Photon candidates
+    :type photons: JaggedCandidateArray
+    :param df: Data frame
+    :type df: LazyDataFrame
+    """
+    year = extract_year(df['dataset'])
+    x = photons.pt.max()
+    if year == 2016:
+        sf =  np.ones(df.size)
+    elif year == 2017:
+        sf = sigmoid(x,0.335,217.91,0.065,0.996) / sigmoid(x,0.244,212.34,0.050,1.000)
+    elif year == 2018:
+        sf = sigmoid(x,1.022, 218.39, 0.086, 0.999) / sigmoid(x, 0.301,212.83,0.062,1.000)
+
+    sf[np.isnan(sf) | np.isinf(sf)] == 1
+
+    weights.add("trigger_photon", sf)
 
 def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     # Muon ID and Isolation for tight and loose WP
@@ -687,3 +713,33 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     weights.add("photon_csev", csev_weight)
 
     return weights
+
+def data_driven_qcd_dataset(dataset):
+    """Dataset name to use for data-driven QCD estimate"""
+    year = extract_year(dataset)
+    return f"QCD_data_{year}"
+
+def photon_impurity_weights(photon_pt, year):
+    """Photon impurity as a function of pt
+
+    :param photon_pt: Photon pt
+    :type photon_pt: 1D array
+    :param year: Data-taking year
+    :type year: int
+    :return: Weights
+    :rtype: 1Darray
+    """
+    if year == 2017:
+        a = 6.35
+        b = 4.61e-3
+        c = 1.05
+    elif year==2018:
+        a = 11.92
+        b = 8.28e-3
+        c = 1.55
+    elif year==2016:
+        return np.ones(photon_pt.size)
+
+    # Remember to multiply by 1e-2,
+    # because fit is done to percentages
+    return 1e-2*exponential(photon_pt, a, b, c)

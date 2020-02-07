@@ -13,7 +13,10 @@ from bucoffea.monojet.definitions import (
                                           monojet_regions,
                                           theory_weights_monojet,
                                           pileup_weights,
-                                          candidate_weights
+                                          candidate_weights,
+                                          photon_trigger_sf,
+                                          photon_impurity_weights,
+                                          data_driven_qcd_dataset
                                          )
 from bucoffea.helpers import (
                               min_dphi_jet_met,
@@ -117,6 +120,7 @@ class monojetProcessor(processor.ProcessorABC):
         if df:
             dataset = df['dataset']
             self._year = extract_year(dataset)
+            df["year"] = self._year
             cfg.ENV_FOR_DYNACONF = f"era{self._year}"
         else:
             cfg.ENV_FOR_DYNACONF = f"default"
@@ -364,9 +368,9 @@ class monojetProcessor(processor.ProcessorABC):
                 if re.match(r'cr_(\d+)e.*', region):
                     region_weights.add('trigger', evaluator["trigger_electron"](electrons[leadelectron_index].eta.max(),electrons[leadelectron_index].pt.max()))
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
-                    region_weights.add('trigger', evaluator["trigger_met"](df['recoil_pt']))
+                    region_weights.add('trigger_met', evaluator["trigger_met"](df['recoil_pt']))
                 elif re.match(r'cr_g.*', region):
-                    region_weights.add('trigger', np.ones(df.size))
+                    photon_trigger_sf(region_weights, photons, df)
 
             if not df['is_data']:
                 genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
@@ -525,6 +529,16 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/df["recoil_pt"][mask],      weight=region_weights.weight()[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.weight()[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.weight()[mask] )
+
+            # Photon CR data-driven QCD estimate
+            if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
+                w_imp = photon_impurity_weights(photons[leadphoton_index].pt.max()[mask], df["year"])
+                output['recoil'].fill(
+                                    dataset=data_driven_qcd_dataset(dataset),
+                                    region=region,
+                                    recoil=df["recoil_pt"][mask],
+                                    weight=region_weights.weight()[mask] * w_imp
+                                )
 
             if 'noveto' in region:
                 continue
