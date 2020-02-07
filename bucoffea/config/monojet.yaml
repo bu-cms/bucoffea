@@ -280,6 +280,9 @@ era2016:
     trigger_met:
         histogram: 120pfht_hltmu_1m_2017
         file: data/sf/trigger/met_trigger_sf.root
+    trigger_electron:
+      histogram: EGamma_SF2D
+      file: data/sf/trigger/electron_trigger_sf_2017.root
   filters:
     data:
       - Flag_goodVertices
@@ -420,6 +423,9 @@ era2017:
     trigger_met:
       histogram: 120pfht_hltmu_1m_2017
       file: data/sf/trigger/met_trigger_sf.root
+    trigger_electron:
+      histogram: EGamma_SF2D
+      file: data/sf/trigger/electron_trigger_sf_2017.root
 
 era2018:
   triggers:
@@ -564,3 +570,6 @@ era2018:
     trigger_met:
       histogram: 120pfht_hltmu_1m_2018
       file: data/sf/trigger/met_trigger_sf.root
+    trigger_electron:
+      histogram: EGamma_SF2D
+      file: data/sf/trigger/electron_trigger_sf_2018.root
