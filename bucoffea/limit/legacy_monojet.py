@@ -36,7 +36,7 @@ def datasets(year):
                 'cr_2m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_2e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_g_j' : re.compile(f'(GJets.*HT.*|QCD_HT.*|W.*HT.*).*{year}'),
-                'sr_j' : re.compile(f'(.*WJ.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
+                'sr_j' : re.compile(f'(.*WJ.*HT.*|.*ZJets.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
             }
     return data, mc
 
@@ -48,11 +48,16 @@ def legacy_dataset_name(dataset):
         'TT.*' : 'top',
         'Diboson.*' : 'diboson',
         '(MET|EGamma).*' : 'data',
-        'WN?J.*' : 'wjets',
-        'WJ.*' : 'wjets',
-        'ZJ.*' : 'zjets',
+        #'WN?J.*' : 'wjets',
+        'WJetsToLNu.*' : 'wjets',
+        'ZJetsToNuNu.*' : 'zvv',
+        'ZJetsToQQ.*' : 'zjets',
         'GJets.*HT' : 'gjets',
-        '.*HToInvisible.*' : 'signal',
+        #'.*(HToInvisible|Hinv).*' : 'signal',
+        'WH.*' : 'WH',
+        'ZH.*' : 'ZH',
+        'GluGlu.*' : 'ggH',
+        'ggZH.*' : 'ggZH',
     }
 
     for pat, ret in patterns.items():
@@ -95,7 +100,7 @@ def legacy_limit_input_monojet(acc, outdir='./output'):
         os.makedirs(outdir)
 
     for year in [2017,2018]:
-        signal = re.compile(f'GluGlu_HToInvisible.*{year}')
+        signal = re.compile(f'(GluGlu|WH|ZH|ggZH).*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_monojet_{year}.root'))
         data, mc = datasets(year)
         for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j','sr_j']:
@@ -123,6 +128,7 @@ def legacy_limit_input_monojet(acc, outdir='./output'):
                 th1 = export1d(h.integrate('dataset', dataset))
                 try:
                     histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name(dataset)}'
+                    print(dataset)
                 except:
                     print(f"Skipping {dataset}")
                     continue
