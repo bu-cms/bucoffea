@@ -345,11 +345,11 @@ era2017:
         loose : 0.1522
         medium: 0.4941
         tight: 0.8001
-  wtag: # https://indico.cern.ch/event/840827/contributions/3527925/attachments/1895214/3126510/DeepAK8_Top_W_SFs_2017_JMAR_PK.pdf
-      loose: 0.779
-      tight: 0.991
-      loosemd: 0.313
-      tightmd: 0.884
+  wtag: # https://www.dropbox.com/s/z1rnuaxrekmrvlu/DeepAK8_Top_W_SFs_V2_Training_FINAL_w_Tables.pdf?dl=0
+      loose: 0.467
+      tight: 0.964
+      loosemd: 0.258
+      tightmd: 0.838
   sf:
     ele_reco:
       histogram: EGamma_SF2D
@@ -381,7 +381,7 @@ era2017:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
       file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
 
-    wtag_loose: # https://indico.cern.ch/event/840827/contributions/3527925/attachments/1895214/3126510/DeepAK8_Top_W_SFs_2017_JMAR_PK.pdf
+    wtag_loose: #https://www.dropbox.com/s/z1rnuaxrekmrvlu/DeepAK8_Top_W_SFs_V2_Training_FINAL_w_Tables.pdf?dl=0
         histogram: WTag_2017_loose_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
     wtag_loosemd: 
@@ -465,12 +465,11 @@ era2018:
         loose : 0.1241
         medium: 0.4184
         tight: 0.7527
-  wtag: # https://indico.cern.ch/event/840827/contributions/3527925/attachments/1895214/3126510/DeepAK8_Top_W_SFs_2017_JMAR_PK.pdf
-      # No study for 2018 yet, using 2017 values
-      loose: 0.779
-      tight: 0.991
-      loosemd: 0.313
-      tightmd: 0.884
+  wtag: # https://www.dropbox.com/s/z1rnuaxrekmrvlu/DeepAK8_Top_W_SFs_V2_Training_FINAL_w_Tables.pdf?dl=0
+      loose: 0.458
+      tight: 0.961
+      loosemd: 0.245
+      tightmd: 0.806
   sf:
     ele_reco:
       histogram: EGamma_SF2D
@@ -526,7 +525,7 @@ era2018:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_syst
       file: data/sf/muon/2018_RunABCD_SF_ISO.root
 
-    wtag_loose: # https://indico.cern.ch/event/840827/contributions/3527925/attachments/1895214/3126510/DeepAK8_Top_W_SFs_2017_JMAR_PK.pdf
+    wtag_loose: #https://www.dropbox.com/s/z1rnuaxrekmrvlu/DeepAK8_Top_W_SFs_V2_Training_FINAL_w_Tables.pdf?dl=0
         histogram: WTag_2018_loose_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
     wtag_loosemd: 
