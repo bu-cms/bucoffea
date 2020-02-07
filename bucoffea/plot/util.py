@@ -149,7 +149,7 @@ def merge_extensions(histogram, acc, reweight_pu=True, noscale=False):
     histogram = histogram.group("dataset", hist.Cat("dataset", "Primary dataset"), mapping)
 
     if not noscale:
-        histogram.scale({k:1/v for k, v in sumw.items()}, axis='dataset')
+        histogram.scale({k:1/v for k, v in sumw.items() if not is_data(k)}, axis='dataset')
 
         if reweight_pu:
             pu_renorm = { k : nevents[k] / sumw_pileup[k] for k in sumw_pileup.keys()}
