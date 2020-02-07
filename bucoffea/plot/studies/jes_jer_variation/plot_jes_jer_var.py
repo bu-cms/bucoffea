@@ -79,7 +79,7 @@ def plot_jes_jer_var(acc, regex, tag, out_tag, dataset_name):
     
     print(f'Histogram saved in: {outpath}')
 
-def plot_jes_jer_var_ratio(acc, regex1, regex2, tag, out_tag):
+def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
     '''Given the input accumulator, plot ratio of two datasets
        for each JES/JER variation, on the same canvas.'''
     acc.load('mjj')
@@ -101,47 +101,52 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, tag, out_tag):
     h1 = h[re.compile(regex1)].integrate('dataset')
     h2 = h[re.compile(regex2)].integrate('dataset')
 
-    h1 = h1[re.compile('sr_vbf.*')].integrate('var')
-    h2 = h2[re.compile('sr_vbf.*')].integrate('var')
+    h1 = h1[re.compile(f'{region1}.*')].integrate('region')
+    h2 = h2[re.compile(f'{region2}.*')].integrate('region')
 
     # Calculate the ratios for each JES/JER variation
     ratios = {}
     h1_vals = h1.values(overflow='over')
     h2_vals = h2.values(overflow='over')
-    for region in h1_vals.keys():
-        h1_weights = h1_vals[region]
-        h2_weights = h2_vals[region]
-        region_name = region[0]
-        ratios[region_name] = h1_weights / h2_weights
+    
+    for var in h1_vals.keys():
+        ratios[var] = h1_vals[var] / h2_vals[var]
     
     # Plot the ratios for each variation
-    region_to_legend_label = {
-        'sr_vbf'         : 'Nominal',
-        'sr_vbf_jerup'   : 'JER up',
-        'sr_vbf_jerdown' : 'JER down',
-        'sr_vbf_jesup'   : 'JES up',
-        'sr_vbf_jesdown' : 'JES down'
+    var_to_legend_label = {
+        ''         : 'Nominal',
+        '_jerup'   : 'JER up',
+        '_jerdown' : 'JER down',
+        '_jesup'   : 'JES up',
+        '_jesdown' : 'JES down'
     }
 
     # The y-axis labels for each tag
     tag_to_ylabel = {
-        'z_over_w' : r'$Z\rightarrow \ell \ell$ / $W\rightarrow \ell \nu$'
+        'z_over_w17' : r'$Z\rightarrow \nu \nu$ SR / $W\rightarrow \ell \nu$ SR (2017)',
+        'z_over_w18' : r'$Z\rightarrow \nu \nu$ SR / $W\rightarrow \ell \nu$ SR (2018)'
     }
     
-    mjj_edges = h1.axes()[1].edges(overflow='over')
+    # Upper y-limits for each tag
+    tag_to_ylim = {
+        'z_over_w17' : 2.5, 
+        'z_over_w18' : 2.5, 
+    }
+   
+    mjj_edges = h1.axes()[0].edges(overflow='over')
     
     fig, ax = plt.subplots(1,1)
-    for region, ratio_arr in ratios.items():
+    for var, ratio_arr in ratios.items():
         hep.histplot(ratio_arr, 
                      mjj_edges, 
-                     label=region_to_legend_label[region],
+                     label=var_to_legend_label[var[0]],
                      ax=ax,
                      stack=True,
                      histtype='step'
                      )
 
     ax.set_xlim(200,4000)
-    ax.set_ylim(0,0.04)
+    ax.set_ylim(0,tag_to_ylim[tag])
     ax.set_xlabel(r'$M_{jj} \ (GeV)$')
     ax.set_ylabel(tag_to_ylabel[tag])
 
@@ -194,7 +199,8 @@ def main():
    #     dataset_tag, dataset_name = dataset
    #     plot_jes_jer_var(acc, regex=regex, dataset_name=dataset_name, tag=dataset_tag, out_tag=out_tag)
 
-    plot_jes_jer_var_ratio(acc, regex1='DYJetsToLL.*2017', regex2='WJetsToLNu.*2017', tag='z_over_w', out_tag=out_tag)
+    plot_jes_jer_var_ratio(acc, regex1='ZJetsToNuNu.*2017', regex2='WJetsToLNu.*2017', region1='sr_vbf', region2='sr_vbf', tag='z_over_w17', out_tag=out_tag)
+    plot_jes_jer_var_ratio(acc, regex1='ZJetsToNuNu.*2018', regex2='WJetsToLNu.*2018', region1='sr_vbf', region2='sr_vbf', tag='z_over_w18', out_tag=out_tag)
 
 if __name__ == '__main__':
     main()
