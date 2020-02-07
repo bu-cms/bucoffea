@@ -21,7 +21,7 @@ def dict_to_arr(d):
         arr[idx] = weight_arr
     return arr
 
-def get_unc(d, edges):
+def get_unc(d, edges, out_tag, tag):
     '''Given a dictionary containing different weights as
        its values, calculate the uncertainty in each bin.'''
     # Transform to 2D array
@@ -34,12 +34,19 @@ def get_unc(d, edges):
         rng = bin_.max() - bin_.min()
         unc[idx] = rng/nom[idx]
         
-    # Print the results
-    print('*'*20)
-    print('Combined Uncertainties')
-    print('*'*20)
-    for idx, sigma in enumerate(unc):
-        print(f'{edges[idx]:.0f} < mjj < {edges[idx+1]:.0f}: {sigma*100:.2f}%')
+    # Dump the results to a .txt file
+    outdir = f'./output/{out_tag}/txt'
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    outpath = pjoin(outdir, f'{tag}_jes_jer_unc.txt')
+    with open(outpath, 'w+') as f:
+        f.write('*'*20 + '\n')
+        f.write('Combined Uncertainties' + '\n')
+        f.write('*'*20 + '\n')
+        for idx, sigma in enumerate(unc):
+            f.write(f'{edges[idx]:.0f} < mjj < {edges[idx+1]:.0f}: {sigma*100:.2f}%\n')
+
+    print(f'File saved: {outpath}')
 
 def plot_jes_jer_var(acc, regex, tag, out_tag, dataset_name):
     '''Given the input accumulator and the regex
@@ -123,14 +130,30 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
 
     # The y-axis labels for each tag
     tag_to_ylabel = {
-        'z_over_w17' : r'$Z\rightarrow \nu \nu$ SR / $W\rightarrow \ell \nu$ SR (2017)',
-        'z_over_w18' : r'$Z\rightarrow \nu \nu$ SR / $W\rightarrow \ell \nu$ SR (2018)'
+        'znunu_over_wlnu17' : r'$Z\rightarrow \nu \nu$ SR / $W\rightarrow \ell \nu$ SR (2017)',
+        'znunu_over_wlnu18' : r'$Z\rightarrow \nu \nu$ SR / $W\rightarrow \ell \nu$ SR (2018)',
+        'znunu_over_zmumu17' : r'$Z\rightarrow \nu \nu$ SR / $Z\rightarrow \mu \mu$ CR (2017)',
+        'znunu_over_zmumu18' : r'$Z\rightarrow \nu \nu$ SR / $Z\rightarrow \mu \mu$ CR (2018)',
+        'znunu_over_zee17' : r'$Z\rightarrow \nu \nu$ SR / $Z\rightarrow ee$ CR (2017)',
+        'znunu_over_zee18' : r'$Z\rightarrow \nu \nu$ SR / $Z\rightarrow ee$ CR (2018)',
+        'wlnu_over_wenu17' : r'$W\rightarrow \ell \nu$ SR / $W\rightarrow e\nu$ CR (2017)',
+        'wlnu_over_wenu18' : r'$W\rightarrow \ell \nu$ SR / $W\rightarrow e\nu$ CR (2018)',
+        'wlnu_over_wmunu17' : r'$W\rightarrow \ell \nu$ SR / $W\rightarrow \mu \nu$ CR (2017)',
+        'wlnu_over_wmunu18' : r'$W\rightarrow \ell \nu$ SR / $W\rightarrow \mu \nu$ CR (2018)'
     }
     
     # Upper y-limits for each tag
     tag_to_ylim = {
-        'z_over_w17' : 2.5, 
-        'z_over_w18' : 2.5, 
+        'znunu_over_wlnu17' : 2.5, 
+        'znunu_over_wlnu18' : 2.5, 
+        'znunu_over_zmumu17' : 20,
+        'znunu_over_zmumu18' : 20,
+        'znunu_over_zee17' : 20,
+        'znunu_over_zee18' : 20,
+        'wlnu_over_wenu17' : 2,
+        'wlnu_over_wenu18' : 2,
+        'wlnu_over_wmunu17' : 2,
+        'wlnu_over_wmunu18' : 2,
     }
    
     mjj_edges = h1.axes()[0].edges(overflow='over')
@@ -164,7 +187,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
 
     # Calculate and print the uncertainties
     # for each mjj bin
-    get_unc(ratios, mjj_edges)
+    get_unc(ratios, mjj_edges, out_tag, tag)
 
 def main():
     inpath = sys.argv[1]
@@ -199,8 +222,62 @@ def main():
    #     dataset_tag, dataset_name = dataset
    #     plot_jes_jer_var(acc, regex=regex, dataset_name=dataset_name, tag=dataset_tag, out_tag=out_tag)
 
-    plot_jes_jer_var_ratio(acc, regex1='ZJetsToNuNu.*2017', regex2='WJetsToLNu.*2017', region1='sr_vbf', region2='sr_vbf', tag='z_over_w17', out_tag=out_tag)
-    plot_jes_jer_var_ratio(acc, regex1='ZJetsToNuNu.*2018', regex2='WJetsToLNu.*2018', region1='sr_vbf', region2='sr_vbf', tag='z_over_w18', out_tag=out_tag)
+    # Dict mapping tags to dataset pairs
+    # and corresponding regexps
+    tag_to_dataset_pairs = {
+        'znunu_over_wlnu17' : {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'}
+        },
+        'znunu_over_wlnu18' : {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'}
+        },
+        'znunu_over_zmumu17' : {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'DYJetsToLL.*2017', 'region' : 'cr_2m_vbf'},
+        },
+        'znunu_over_zmumu18' : {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'DYJetsToLL.*2018', 'region' : 'cr_2m_vbf'},
+        },
+        'znunu_over_zee17' : {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'DYJetsToLL.*2017', 'region' : 'cr_2e_vbf'},
+        },
+        'znunu_over_zee18' : {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'DYJetsToLL.*2018', 'region' : 'cr_2e_vbf'},
+        },
+        'wlnu_over_wenu17' : {
+            'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'cr_1e_vbf'},
+        },
+        'wlnu_over_wenu18' : {
+            'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'cr_1e_vbf'},
+        },
+        'wlnu_over_wmunu17' : {
+            'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'cr_1m_vbf'},
+        },
+        'wlnu_over_wmunu18' : {
+            'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'cr_1m_vbf'},
+        },
+
+    }
+
+    for tag, datapair_dict in tag_to_dataset_pairs.items():
+        data1_info = datapair_dict['dataset1']
+        data2_info = datapair_dict['dataset2']
+        plot_jes_jer_var_ratio( acc, 
+                                regex1=data1_info['regex'], 
+                                regex2=data2_info['regex'], 
+                                region1=data1_info['region'], 
+                                region2=data2_info['region'], 
+                                tag=tag, 
+                                out_tag=out_tag)
 
 if __name__ == '__main__':
     main()
