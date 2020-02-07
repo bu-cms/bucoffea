@@ -10,75 +10,10 @@ from coffea.hist.export import export1d
 
 import ROOT as r
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
+from legacy_monojet import legacy_dataset_name, datasets, legacy_region_name
 
 pjoin = os.path.join
 
-def datasets(year):
-    data = {
-                    'cr_1m_v' : f'MET_{year}',
-                    'cr_2m_v' : f'MET_{year}',
-                    'cr_1e_v' : f'EGamma_{year}',
-                    'cr_2e_v' : f'EGamma_{year}',
-                    'cr_g_v' : f'EGamma_{year}',
-                    # 'sr_v' : f'MET_{year}',
-                    'sr_v' : f'nomatch',
-                }
-    tmp = {}
-    for k, v in data.items():
-        tmp[k] = re.compile(v)
-    data.update(tmp)
-
-
- 
-    mc = {
-                'cr_1m_v' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
-                'cr_1e_v' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
-                'cr_2m_v' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_2e_v' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_g_v' : re.compile(f'(GJets.*HT.*|QCD_HT.*|W.*HT.*).*{year}'),
-                'sr_v' : re.compile(f'(.*WJ.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
-            }
-    return data, mc
-
-
-def legacy_dataset_name(dataset):
-    patterns = {
-        '.*DY.*' : 'zll',
-        'QCD_HT.*' : 'qcd',
-        'TTJets.*' : 'top',
-        'Diboson.*' : 'diboson',
-        '(MET|EGamma).*' : 'data',
-        #'WN?J.*' : 'wjets',
-        'WJetsToLNu_.*' : 'wjets',
-        'ZJetsToNuNu_.*' : 'zjets',
-        'GJets_HT' : 'gjets',
-        #'.*(Hinv|HToInvisible).*' : 'signal',
-        'WH.*Hinv.*' : 'wh',
-        'ZH.*HToInvisible.*' : 'zh',
-        'VBF.*HToInvisible.*' : 'vbf',
-        'GluGlu.*HToInvisible.*' : 'ggh',
-        'ggZH*HToInvisible.*' : 'ggzh',
-    }
-
-    for pat, ret in patterns.items():
-        if re.match(pat, dataset):
-            return ret
-    raise RuntimeError(f'Cannot find legacy region name for dataset :"{dataset}"')
-
-def legacy_region_name(region):
-    patterns = {
-        'cr_2m_.*' : 'Zmm',
-        'cr_2e_.*' : 'Zee',
-        'cr_1m_.*' : 'Wmn',
-        'cr_1e_.*' : 'Wen',
-        'cr_g_.*' : 'gjets',
-        'sr_.*' : 'signal',
-    }
-
-    for pat, ret in patterns.items():
-        if re.match(pat, region):
-            return ret
-    raise RuntimeError(f'Cannot find legacy region name for region :"{region}"')
 def recoil_bins_2016():
     return [250,300,350,400,500,600,750,1000]
 
