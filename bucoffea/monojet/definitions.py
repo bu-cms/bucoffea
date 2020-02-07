@@ -567,15 +567,6 @@ def monojet_regions(cfg):
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
 
-    for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
-        for cut in ['veto_ele', 'veto_muo', 'veto_photon', 'veto_tau', 'veto_b']:
-            if cut in regions[region]:
-                regions[f'{region}_no{cut}'] = copy.deepcopy(regions[region])
-                regions[f'{region}_no{cut}'].remove(cut)
-        regions[f'{region}_loose'] = copy.deepcopy(regions[region])
-        regions[f'{region}_loose'].remove('mindphijr')
-        regions[f'{region}_loose'].remove('dpfcalo')
-
     if not cfg.RUN.MONOV:
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_v') or '_v_' in x]
         for key in keys_to_remove:
