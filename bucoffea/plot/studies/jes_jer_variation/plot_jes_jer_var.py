@@ -3,14 +3,18 @@
 import os
 import sys
 import re
-from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
+from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi, fig_ratio
 from klepto.archives import dir_archive
 from coffea import hist
 from matplotlib import pyplot as plt
+import matplotlib.ticker
 import mplhep as hep
 import numpy as np
 
 pjoin = os.path.join
+
+# Plot aesthetics
+colors = plt.rcParams['axes.prop_cycle'].by_key()['color'][:5]
 
 def dict_to_arr(d):
     '''Given a dictionary containing different weights as
@@ -117,9 +121,9 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
     h2_vals = h2.values(overflow='over')
     
     for var in h1_vals.keys():
-        ratios[var] = h1_vals[var] / h2_vals[var]
-    
-    # Plot the ratios for each variation
+        ratios[var[0]] = h1_vals[var] / h2_vals[var]
+
+    # Legend labels for each variation
     var_to_legend_label = {
         ''         : 'Nominal',
         '_jerup'   : 'JER up',
@@ -157,23 +161,39 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
     }
    
     mjj_edges = h1.axes()[0].edges(overflow='over')
-    
-    fig, ax = plt.subplots(1,1)
-    for var, ratio_arr in ratios.items():
+    mjj_centers = ((mjj_edges + np.roll(mjj_edges, -1))/2)[:-1]
+
+    # Plot the ratios for each variation
+    fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 2)}, sharex=True)
+    for idx, (var, ratio_arr) in enumerate(ratios.items()):
         hep.histplot(ratio_arr, 
                      mjj_edges, 
-                     label=var_to_legend_label[var[0]],
+                     label=var_to_legend_label[var],
                      ax=ax,
                      stack=True,
                      histtype='step'
                      )
 
+        h1_ = h1.integrate('var', var)
+        h2_ = h2.integrate('var', var)
+
+        if var != '':
+            r = ratios[var] / ratios['']
+            rax.plot(mjj_centers, r, 'o', label=var_to_legend_label[var], c=colors[idx])
+
+    # Aesthetics
     ax.set_xlim(200,4000)
     ax.set_ylim(0,tag_to_ylim[tag])
-    ax.set_xlabel(r'$M_{jj} \ (GeV)$')
     ax.set_ylabel(tag_to_ylabel[tag])
+    ax.legend()
 
-    plt.legend()
+    rax.set_ylim(0., 2.)
+    loc = matplotlib.ticker.MultipleLocator(base=0.2)
+    rax.yaxis.set_major_locator(loc)
+    rax.set_ylabel('Varied / Nominal')
+    rax.set_xlabel(r'$M_{jj} \ (GeV)$')
+    rax.legend(ncol=2)
+    rax.grid(True)
 
     # Save the figure
     outdir = f'./output/{out_tag}'
