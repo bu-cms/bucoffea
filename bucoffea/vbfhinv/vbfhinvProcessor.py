@@ -365,7 +365,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             region_weights = copy.deepcopy(weights)
             if not df['is_data']:
                 if re.match(r'cr_(\d+)e.*', region):
-                    region_weights.add('trigger', evaluator["trigger_electron"](electrons[leadelectron_index].eta,electrons[leadelectron_index].pt))
+                    region_weights.add('trigger', evaluator["trigger_electron"](electrons[leadelectron_index].eta.max(),electrons[leadelectron_index].pt.max()))
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
                     region_weights.add('trigger', evaluator["trigger_met"](df['recoil_pt']))
                 elif re.match(r'cr_g.*', region):
