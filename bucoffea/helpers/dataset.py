@@ -37,6 +37,8 @@ def is_data(dataset):
     tags = ['EGamma','MET','SingleElectron','SingleMuon','SinglePhoton','JetHT']
     if any([dataset.startswith(itag) for itag in tags ]):
         return True
+    if re.match('QCD_data_(\d)+',dataset):
+        return True
     return False
 
 

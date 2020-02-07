@@ -31,12 +31,12 @@ def datasets(year):
 
  
     mc = {
-                'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
-                'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJet.*HT.*).*{year}'),
+                'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
+                'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
                 'cr_2m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_2e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_g_j' : re.compile(f'(GJets.*HT.*|QCD_HT.*|W.*HT.*).*{year}'),
-                'sr_j' : re.compile(f'(.*WJ.*HT.*|.*ZJets.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
+                'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
+                'sr_v' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
             }
     return data, mc
 
@@ -44,20 +44,18 @@ def datasets(year):
 def legacy_dataset_name(dataset):
     patterns = {
         '.*DY.*' : 'zll',
-        'QCD.*' : 'qcd',
-        'TT.*' : 'top',
+        'QCD_HT.*' : 'qcd',
+        'TTJets.*' : 'top',
         'Diboson.*' : 'diboson',
         '(MET|EGamma).*' : 'data',
-        #'WN?J.*' : 'wjets',
         'WJetsToLNu.*' : 'wjets',
-        'ZJetsToNuNu.*' : 'zvv',
-        'ZJetsToQQ.*' : 'zjets',
-        'GJets.*HT' : 'gjets',
-        #'.*(HToInvisible|Hinv).*' : 'signal',
-        'WH.*' : 'WH',
-        'ZH.*' : 'ZH',
-        'GluGlu.*' : 'ggH',
-        'ggZH.*' : 'ggZH',
+        'ZJetsToNuNu.*' : 'zjets',
+        'GJets_DR-0p4.*HT.*' : 'gjets',
+        'WH.*Hinv.*' : 'wh',
+        'ZH.*HToInvisible.*' : 'zh',
+        'VBF.*HToInvisible.*' : 'vbf',
+        'GluGlu.*HToInvisible.*' : 'ggh',
+        'ggZH*HToInvisible.*' : 'ggzh',
     }
 
     for pat, ret in patterns.items():
