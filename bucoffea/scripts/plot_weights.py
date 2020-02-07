@@ -30,12 +30,13 @@ def main():
         'edgecolor': (0,0,0,0.3),
         'alpha': 0.8
     }
-    fig, ax, _ = hist.plot1d(
+    ax = hist.plot1d(
         h.integrate('dataset').integrate("region", args.region)[re.compile(args.regex)],
         overlay='weight_type',
         overflow='all',
         fill_opts=fill_opts
         )
+    fig = ax.figure
     fig.suptitle("Weights")
     # ax.set_xscale('log')
     ax.set_yscale('log')
