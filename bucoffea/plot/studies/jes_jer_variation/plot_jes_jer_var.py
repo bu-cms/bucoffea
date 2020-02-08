@@ -35,7 +35,7 @@ def dict_to_arr(d):
         arr[idx] = weight_arr
     return arr
 
-def get_unc(d, edges, out_tag, tag):
+def get_unc(d, edges, out_tag, tag, sample_type):
     '''Given a dictionary containing different weights as
        its values, calculate the uncertainty in each bin.'''
     # Transform to 2D array
@@ -52,7 +52,7 @@ def get_unc(d, edges, out_tag, tag):
     outdir = f'./output/{out_tag}/txt'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    outpath = pjoin(outdir, f'{tag}_jes_jer_unc.txt')
+    outpath = pjoin(outdir, f'{tag}_{sample_type}_jes_jer_unc.txt')
     with open(outpath, 'w+') as f:
         f.write('*'*20 + '\n')
         f.write('Combined Uncertainties' + '\n')
@@ -145,7 +145,7 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, title, sample_type):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    outpath = pjoin(outdir, f'{tag}_jes_jer_variations.pdf')
+    outpath = pjoin(outdir, f'{tag}_{sample_type}_jes_jer_variations.pdf')
     fig.savefig(outpath)
     plt.close()
     
