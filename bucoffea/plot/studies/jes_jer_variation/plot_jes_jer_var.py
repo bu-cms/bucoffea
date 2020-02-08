@@ -279,7 +279,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
 
     # Calculate and print the uncertainties
     # for each mjj bin
-    get_unc(ratios, mjj_edges, out_tag, tag)
+    get_unc(ratios, mjj_edges, out_tag, tag, sample_type)
 
 def main():
     inpath, sample_type = sys.argv[1:]
