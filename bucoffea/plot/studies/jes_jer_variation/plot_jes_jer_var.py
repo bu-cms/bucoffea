@@ -16,6 +16,71 @@ pjoin = os.path.join
 # Plot aesthetics
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color'][:5]
 
+# Legend labels for each variation
+var_to_legend_label = {
+    ''         : 'Nominal',
+    '_jerup'   : 'JER up',
+    '_jerdown' : 'JER down',
+    '_jesup'   : 'JES up',
+    '_jesdown' : 'JES down'
+}
+
+# Dict mapping tags to dataset pairs
+# and corresponding regexps
+tag_to_dataset_pairs = {
+    'znunu_over_wlnu17' : {
+        'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
+        'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'}
+    },
+    'znunu_over_wlnu18' : {
+        'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
+        'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'}
+    },
+    'znunu_over_zmumu17' : {
+        'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
+        'dataset2' : {'regex' : 'DYJetsToLL.*2017', 'region' : 'cr_2m_vbf'},
+    },
+    'znunu_over_zmumu18' : {
+        'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
+        'dataset2' : {'regex' : 'DYJetsToLL.*2018', 'region' : 'cr_2m_vbf'},
+    },
+    'znunu_over_zee17' : {
+        'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
+        'dataset2' : {'regex' : 'DYJetsToLL.*2017', 'region' : 'cr_2e_vbf'},
+    },
+    'znunu_over_zee18' : {
+        'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
+        'dataset2' : {'regex' : 'DYJetsToLL.*2018', 'region' : 'cr_2e_vbf'},
+    },
+    'wlnu_over_wenu17' : {
+        'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
+        'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'cr_1e_vbf'},
+    },
+    'wlnu_over_wenu18' : {
+        'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
+        'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'cr_1e_vbf'},
+    },
+    'wlnu_over_wmunu17' : {
+        'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
+        'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'cr_1m_vbf'},
+    },
+    'wlnu_over_wmunu18' : {
+        'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
+        'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'cr_1m_vbf'},
+    },
+}
+
+# Dict mappping dataset names to 
+# corresponding regexps
+dataset_regex = {
+    'wlnu17'  : {'dataset_name': 'WJetsToLNu_HT_2017', 'regex': 'WJetsToLNu.*2017', 'region': 'sr_vbf'},
+    'wlnu18'  : {'dataset_name': 'WJetsToLNu_HT_2018', 'regex': 'WJetsToLNu.*2018', 'region': 'sr_vbf'},
+    'zmumu17' : {'dataset_name': 'DYJetsToLL_HT_2017', 'regex': 'DYJetsToLL.*2017', 'region': 'cr_2m_vbf'},
+    'zmumu18' : {'dataset_name': 'DYJetsToLL_HT_2018', 'regex': 'DYJetsToLL.*2018', 'region': 'cr_2m_vbf'},
+    'znunu17' : {'dataset_name': 'ZJetsToNuNu_HT_2017', 'regex': 'ZJetsToNuNu.*2017', 'region': 'sr_vbf'},
+    'znunu18' : {'dataset_name': 'ZJetsToNuNu_HT_2018', 'regex': 'ZJetsToNuNu.*2018', 'region': 'sr_vbf'},
+}
+
 def dict_to_arr(d):
     '''Given a dictionary containing different weights as
        its values, concatenate the weights as a 2D numpy array.'''
@@ -52,7 +117,7 @@ def get_unc(d, edges, out_tag, tag):
 
     print(f'File saved: {outpath}')
 
-def plot_jes_jer_var(acc, regex, tag, out_tag, dataset_name):
+def plot_jes_jer_var(acc, regex, region, tag, out_tag, dataset_name):
     '''Given the input accumulator and the regex
        describing the dataset, plot the mjj distribution
        with different JES/JER variations in the same canvas.'''
@@ -72,13 +137,47 @@ def plot_jes_jer_var(acc, regex, tag, out_tag, dataset_name):
     mjj_bins = hist.Bin('mjj', r'$M_{jj}$ (GeV)', list(range(200,800,300)) + list(range(800,2000,400)) + [2000, 2750, 3500])
     h = h.rebin('mjj', mjj_bins)
 
-    h = h[re.compile('sr_vbf.*')].integrate('var')
+    h = h[re.compile(f'{region}')].integrate('region')
 
-    # Plot the variation
-    fig, ax = plt.subplots(1,1)
-    hist.plot1d(h, ax=ax, overlay='region', binwnorm=True)
+    # Calculate the ratios of each variation
+    # with respect to nominal counts
+    h_nom = h.integrate('var', '').values(overflow='over')[()]
+    ratios = {}
+    for variation in h.identifiers('var'):
+        ratios[variation.name] = h.integrate('var', variation).values(overflow='over')[()] / h_nom
+
+    mjj_edges = h.axes()[0].edges(overflow='over')
+    mjj_centers = ((mjj_edges + np.roll(mjj_edges, -1))/2)[:-1]
+    
+    # Plot the variation + ratio pad
+    fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 2)}, sharex=True)
+    for idx, (var, ratio_arr) in enumerate(ratios.items()):
+        h_var = h.integrate('var', var).values(overflow='over')[()]
+        hep.histplot(h_var, 
+                     mjj_edges, 
+                     label=var_to_legend_label[var],
+                     ax=ax,
+                     stack=True,
+                     histtype='step'
+                     )
+
+        if var != '':
+            r = h_var / h_nom
+            rax.plot(mjj_centers, r, 'o', label=var_to_legend_label[var], c=colors[idx])
+
+    # Aesthetics
+    ax.set_xlim(200,4000)
     ax.set_ylabel('Counts / Bin Width')
     ax.set_title(dataset_name)
+    ax.legend()
+
+    rax.set_ylim(0., 2.)
+    loc = matplotlib.ticker.MultipleLocator(base=0.2)
+    rax.yaxis.set_major_locator(loc)
+    rax.set_ylabel('Varied / Nominal')
+    rax.set_xlabel(r'$M_{jj} \ (GeV)$')
+    rax.legend(ncol=2)
+    rax.grid(True)
 
     # Save figure
     outdir = f'./output/{out_tag}'
@@ -123,14 +222,6 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
     for var in h1_vals.keys():
         ratios[var[0]] = h1_vals[var] / h2_vals[var]
 
-    # Legend labels for each variation
-    var_to_legend_label = {
-        ''         : 'Nominal',
-        '_jerup'   : 'JER up',
-        '_jerdown' : 'JER down',
-        '_jesup'   : 'JES up',
-        '_jesdown' : 'JES down'
-    }
 
     # The y-axis labels for each tag
     tag_to_ylabel = {
@@ -227,77 +318,22 @@ def main():
     else:
         out_tag = inpath.split('/')[-1]
     
-    # Dict mappping dataset names to 
-    # corresponding regexps
-    dataset_regex = {
-        ('wjet17', 'WJetsToLNu_HT_2017') : 'WJetsToLNu.*2017',
-        ('wjet18', 'WJetsToLNu_HT_2018') : 'WJetsToLNu.*2018',
-        ('dy17', 'DYJetsToLL_HT_2017') : 'DYJetsToLL.*2017',
-        ('dy18', 'DYJetsToLL_HT_2018') : 'DYJetsToLL.*2018',
-        ('znunu17', 'ZJetsToNuNu_HT_2017') : 'ZJetsToNuNu.*2017',
-        ('znunu18', 'ZJetsToNuNu_HT_2018') : 'ZJetsToNuNu.*2018'
-    }
 
-   # for dataset, regex in dataset_regex.items():
-   #     dataset_tag, dataset_name = dataset
-   #     plot_jes_jer_var(acc, regex=regex, dataset_name=dataset_name, tag=dataset_tag, out_tag=out_tag)
+    for tag, data_dict in dataset_regex.items():
+        dataset_name, regex, region = data_dict.values()
+        plot_jes_jer_var(acc, regex=regex, dataset_name=dataset_name, tag=tag, out_tag=out_tag, region=region)
 
-    # Dict mapping tags to dataset pairs
-    # and corresponding regexps
-    tag_to_dataset_pairs = {
-        'znunu_over_wlnu17' : {
-            'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'}
-        },
-        'znunu_over_wlnu18' : {
-            'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'}
-        },
-        'znunu_over_zmumu17' : {
-            'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'DYJetsToLL.*2017', 'region' : 'cr_2m_vbf'},
-        },
-        'znunu_over_zmumu18' : {
-            'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'DYJetsToLL.*2018', 'region' : 'cr_2m_vbf'},
-        },
-        'znunu_over_zee17' : {
-            'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'DYJetsToLL.*2017', 'region' : 'cr_2e_vbf'},
-        },
-        'znunu_over_zee18' : {
-            'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'DYJetsToLL.*2018', 'region' : 'cr_2e_vbf'},
-        },
-        'wlnu_over_wenu17' : {
-            'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'cr_1e_vbf'},
-        },
-        'wlnu_over_wenu18' : {
-            'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'cr_1e_vbf'},
-        },
-        'wlnu_over_wmunu17' : {
-            'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'cr_1m_vbf'},
-        },
-        'wlnu_over_wmunu18' : {
-            'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'cr_1m_vbf'},
-        },
 
-    }
-
-    for tag, datapair_dict in tag_to_dataset_pairs.items():
-        data1_info = datapair_dict['dataset1']
-        data2_info = datapair_dict['dataset2']
-        plot_jes_jer_var_ratio( acc, 
-                                regex1=data1_info['regex'], 
-                                regex2=data2_info['regex'], 
-                                region1=data1_info['region'], 
-                                region2=data2_info['region'], 
-                                tag=tag, 
-                                out_tag=out_tag)
+#    for tag, datapair_dict in tag_to_dataset_pairs.items():
+#        data1_info = datapair_dict['dataset1']
+#        data2_info = datapair_dict['dataset2']
+#        plot_jes_jer_var_ratio( acc, 
+#                                regex1=data1_info['regex'], 
+#                                regex2=data2_info['regex'], 
+#                                region1=data1_info['region'], 
+#                                region2=data2_info['region'], 
+#                                tag=tag, 
+#                                out_tag=out_tag)
 
 if __name__ == '__main__':
     main()
