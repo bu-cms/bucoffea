@@ -133,12 +133,58 @@ tag_to_dataset_pairs = {
 # Dict mappping dataset names to 
 # corresponding regexps
 dataset_regex = {
-    'wlnu17'  : {'dataset_name': 'WJetsToLNu_HT_2017', 'regex': 'WJetsToLNu.*2017', 'region': 'sr_vbf'},
-    'wlnu18'  : {'dataset_name': 'WJetsToLNu_HT_2018', 'regex': 'WJetsToLNu.*2018', 'region': 'sr_vbf'},
-    'zmumu17' : {'dataset_name': 'DYJetsToLL_HT_2017', 'regex': 'DYJetsToLL.*2017', 'region': 'cr_2m_vbf'},
-    'zmumu18' : {'dataset_name': 'DYJetsToLL_HT_2018', 'regex': 'DYJetsToLL.*2018', 'region': 'cr_2m_vbf'},
-    'znunu17' : {'dataset_name': 'ZJetsToNuNu_HT_2017', 'regex': 'ZJetsToNuNu.*2017', 'region': 'sr_vbf'},
-    'znunu18' : {'dataset_name': 'ZJetsToNuNu_HT_2018', 'regex': 'ZJetsToNuNu.*2018', 'region': 'sr_vbf'},
+    ### W processes 
+    'wlnu17'  : {
+        'qcd' : {'title': r'QCD $W\rightarrow \ell \nu$', 'regex': 'WJetsToLNu.*2017', 'region': 'sr_vbf'},
+        'ewk' : {'title': r'EWK $W\rightarrow \ell \nu$', 'regex': 'EWKW2Jets_WToLNu.*2017', 'region': 'sr_vbf'}
+    },
+    'wlnu18'  : {
+        'qcd' : {'title': r'QCD $W\rightarrow \ell \nu$', 'regex': 'WJetsToLNu.*2018', 'region': 'sr_vbf'},
+        'ewk' : {'title': r'EWK $W\rightarrow \ell \nu$', 'regex': 'EWKW2Jets_WToLNu.*2018', 'region': 'sr_vbf'}
+    },
+    'wenu17'  : {
+        'qcd' : {'title': r'QCD $W\rightarrow e \nu$', 'regex': 'WJetsToLNu.*2017', 'region': 'cr_1e_vbf'},
+        'ewk' : {'title': r'EWK $W\rightarrow e \nu$', 'regex': 'EWKW2Jets_WToLNu.*2017', 'region': 'cr_1e_vbf'}
+    },
+    'wenu18'  : {
+        'qcd' : {'title': r'QCD $W\rightarrow e \nu$', 'regex': 'WJetsToLNu.*2018', 'region': 'cr_1e_vbf'},
+        'ewk' : {'title': r'EWK $W\rightarrow e \nu$', 'regex': 'EWKW2Jets_WToLNu.*2018', 'region': 'cr_1e_vbf'}
+    },
+    'wmunu17'  : {
+        'qcd' : {'title': r'QCD $W\rightarrow \mu \nu$', 'regex': 'WJetsToLNu.*2017', 'region': 'cr_1m_vbf'},
+        'ewk' : {'title': r'EWK $W\rightarrow \mu \nu$', 'regex': 'EWKW2Jets_WToLNu.*2017', 'region': 'cr_1m_vbf'}
+    },
+    'wmunu18'  : {
+        'qcd' : {'title': r'QCD $W\rightarrow \mu \nu$', 'regex': 'WJetsToLNu.*2018', 'region': 'cr_1m_vbf'},
+        'ewk' : {'title': r'EWK $W\rightarrow \mu \nu$', 'regex': 'EWKW2Jets_WToLNu.*2018', 'region': 'cr_1m_vbf'}
+    },
+    ### Z processes
+    'zmumu17'  : {
+        'qcd' : {'title': r'QCD $Z\rightarrow \mu \mu$', 'regex': 'DYJetsToLL.*2017', 'region': 'cr_2m_vbf'},
+        'ewk' : {'title': r'EWK $Z\rightarrow \mu \mu$', 'regex': 'EWKZ2Jets_ZToLL.*2017', 'region': 'cr_2m_vbf'}
+    },
+    'zmumu18'  : {
+        'qcd' : {'title': r'QCD $Z\rightarrow \mu \mu$', 'regex': 'DYJetsToLL.*2018', 'region': 'cr_2m_vbf'},
+        'ewk' : {'title': r'EWK $Z\rightarrow \mu \mu$', 'regex': 'EWKZ2Jets_ZToLL.*2018', 'region': 'cr_2m_vbf'}
+    },
+    'zee17'  : {
+        'qcd' : {'title': r'QCD $Z\rightarrow ee$', 'regex': 'DYJetsToLL.*2017', 'region': 'cr_2e_vbf'},
+        'ewk' : {'title': r'EWK $Z\rightarrow ee$', 'regex': 'EWKZ2Jets_ZToLL.*2017', 'region': 'cr_2e_vbf'}
+    },
+    'zee18'  : {
+        'qcd' : {'title': r'QCD $Z\rightarrow ee$', 'regex': 'DYJetsToLL.*2018', 'region': 'cr_2e_vbf'},
+        'ewk' : {'title': r'EWK $Z\rightarrow ee$', 'regex': 'EWKZ2Jets_ZToLL.*2018', 'region': 'cr_2e_vbf'}
+    },
+    'znunu17'  : {
+        'qcd' : {'title': r'QCD $Z\rightarrow \nu \nu$', 'regex': 'ZJetsToNuNu.*2017', 'region': 'sr_vbf'},
+        'ewk' : {'title': r'EWK $Z\rightarrow \nu \nu$', 'regex': 'EWKZ2Jets_ZToNuNu.*2017', 'region': 'sr_vbf'}
+    },
+    'znunu18'  : {
+        'qcd' : {'title': r'QCD $Z\rightarrow \nu \nu$', 'regex': 'ZJetsToNuNu.*2018', 'region': 'sr_vbf'},
+        'ewk' : {'title': r'EWK $Z\rightarrow \nu \nu$', 'regex': 'EWKZ2Jets_ZToNuNu.*2018', 'region': 'sr_vbf'}
+    },
+    
+    
 }
 
 def dict_to_arr(d):
@@ -177,7 +223,7 @@ def get_unc(d, edges, out_tag, tag):
 
     print(f'File saved: {outpath}')
 
-def plot_jes_jer_var(acc, regex, region, tag, out_tag, dataset_name, sample_type):
+def plot_jes_jer_var(acc, regex, region, tag, out_tag, title, sample_type):
     '''Given the input accumulator and the regex
        describing the dataset, plot the mjj distribution
        with different JES/JER variations in the same canvas.'''
@@ -228,8 +274,24 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, dataset_name, sample_type
     # Aesthetics
     ax.set_xlim(200,4000)
     ax.set_ylabel('Counts / Bin Width')
-    ax.set_title(dataset_name)
+    ax.set_title(title)
     ax.legend()
+    
+    if '17' in tag:
+        ax.text(1., 1., '2017',
+                fontsize=12,
+                horizontalalignment='right',
+                verticalalignment='bottom',
+                transform=ax.transAxes
+                )
+    
+    elif '18' in tag:
+        ax.text(1., 1., '2018',
+                fontsize=12,
+                horizontalalignment='right',
+                verticalalignment='bottom',
+                transform=ax.transAxes
+                )
 
     rax.set_ylim(0., 2.)
     loc = matplotlib.ticker.MultipleLocator(base=0.2)
@@ -246,6 +308,7 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, dataset_name, sample_type
 
     outpath = pjoin(outdir, f'{tag}_jes_jer_variations.pdf')
     fig.savefig(outpath)
+    plt.close()
     
     print(f'Histogram saved in: {outpath}')
 
@@ -371,6 +434,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
 
     outpath = pjoin(outdir, f'{tag}_{sample_type}_jes_jer_variations.pdf')
     fig.savefig(outpath)
+    plt.close()
 
     print(f'Histogram saved in: {outpath}')
 
@@ -398,8 +462,8 @@ def main():
     
 
     for tag, data_dict in dataset_regex.items():
-        dataset_name, regex, region = data_dict.values()
-        plot_jes_jer_var(acc, regex=regex, dataset_name=dataset_name, tag=tag, out_tag=out_tag, region=region, sample_type=sample_type)
+        title, regex, region = data_dict[sample_type].values()
+        plot_jes_jer_var(acc, regex=regex, title=title, tag=tag, out_tag=out_tag, region=region, sample_type=sample_type)
 
 
     for tag, data_dict in tag_to_dataset_pairs.items():
