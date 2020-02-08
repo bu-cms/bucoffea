@@ -324,16 +324,16 @@ def main():
         plot_jes_jer_var(acc, regex=regex, dataset_name=dataset_name, tag=tag, out_tag=out_tag, region=region)
 
 
-#    for tag, datapair_dict in tag_to_dataset_pairs.items():
-#        data1_info = datapair_dict['dataset1']
-#        data2_info = datapair_dict['dataset2']
-#        plot_jes_jer_var_ratio( acc, 
-#                                regex1=data1_info['regex'], 
-#                                regex2=data2_info['regex'], 
-#                                region1=data1_info['region'], 
-#                                region2=data2_info['region'], 
-#                                tag=tag, 
-#                                out_tag=out_tag)
+    for tag, datapair_dict in tag_to_dataset_pairs.items():
+        data1_info = datapair_dict['dataset1']
+        data2_info = datapair_dict['dataset2']
+        plot_jes_jer_var_ratio( acc, 
+                                regex1=data1_info['regex'], 
+                                regex2=data2_info['regex'], 
+                                region1=data1_info['region'], 
+                                region2=data2_info['region'], 
+                                tag=tag, 
+                                out_tag=out_tag)
 
 if __name__ == '__main__':
     main()
