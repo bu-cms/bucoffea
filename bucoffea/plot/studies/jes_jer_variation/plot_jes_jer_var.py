@@ -29,44 +29,104 @@ var_to_legend_label = {
 # and corresponding regexps
 tag_to_dataset_pairs = {
     'znunu_over_wlnu17' : {
-        'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
-        'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'}
+        'qcd' : {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'}
+        },
+        'ewk' : {
+            'dataset1' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'EWKW2Jets_WToLNu.*2017', 'region' : 'sr_vbf'}
+        },
     },
     'znunu_over_wlnu18' : {
-        'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
-        'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'}
+        'qcd' : {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'}
+        },
+        'ewk' : {
+            'dataset1' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'EWKW2Jets_WToLNu.*2018', 'region' : 'sr_vbf'}
+        },
     },
     'znunu_over_zmumu17' : {
-        'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
-        'dataset2' : {'regex' : 'DYJetsToLL.*2017', 'region' : 'cr_2m_vbf'},
+        'qcd': {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'DYJetsToLL.*2017', 'region' : 'cr_2m_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'EWKZ2Jets_ZToLL.*2017', 'region' : 'cr_2m_vbf'},
+        },
     },
     'znunu_over_zmumu18' : {
-        'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
-        'dataset2' : {'regex' : 'DYJetsToLL.*2018', 'region' : 'cr_2m_vbf'},
+        'qcd': {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'DYJetsToLL.*2018', 'region' : 'cr_2m_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'EWKZ2Jets_ZToLL.*2018', 'region' : 'cr_2m_vbf'},
+        },
     },
     'znunu_over_zee17' : {
-        'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
-        'dataset2' : {'regex' : 'DYJetsToLL.*2017', 'region' : 'cr_2e_vbf'},
+        'qcd': {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'DYJetsToLL.*2017', 'region' : 'cr_2e_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'EWKZ2Jets_ZToLL.*2017', 'region' : 'cr_2e_vbf'},
+        },
     },
     'znunu_over_zee18' : {
-        'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
-        'dataset2' : {'regex' : 'DYJetsToLL.*2018', 'region' : 'cr_2e_vbf'},
+        'qcd': {
+            'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'DYJetsToLL.*2018', 'region' : 'cr_2e_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'EWKZ2Jets_ZToLL.*2018', 'region' : 'cr_2e_vbf'},
+        },
     },
     'wlnu_over_wenu17' : {
-        'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
-        'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'cr_1e_vbf'},
+        'qcd': {
+            'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'cr_1e_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKW2Jets_WToLNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'EWKW2Jets_WToLNu.*2017', 'region' : 'cr_1e_vbf'},
+        },
     },
     'wlnu_over_wenu18' : {
-        'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
-        'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'cr_1e_vbf'},
+        'qcd': {
+            'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'cr_1e_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKW2Jets_WToLNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'EWKW2Jets_WToLNu.*2018', 'region' : 'cr_1e_vbf'},
+        },
     },
     'wlnu_over_wmunu17' : {
-        'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
-        'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'cr_1m_vbf'},
+        'qcd': {
+            'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'cr_1m_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKW2Jets_WToLNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'EWKW2Jets_WToLNu.*2017', 'region' : 'cr_1m_vbf'},
+        },
     },
     'wlnu_over_wmunu18' : {
-        'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
-        'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'cr_1m_vbf'},
+        'qcd': {
+            'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'cr_1m_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKW2Jets_WToLNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'EWKW2Jets_WToLNu.*2018', 'region' : 'cr_1m_vbf'},
+        },
     },
 }
 
@@ -117,14 +177,14 @@ def get_unc(d, edges, out_tag, tag):
 
     print(f'File saved: {outpath}')
 
-def plot_jes_jer_var(acc, regex, region, tag, out_tag, dataset_name):
+def plot_jes_jer_var(acc, regex, region, tag, out_tag, dataset_name, sample_type):
     '''Given the input accumulator and the regex
        describing the dataset, plot the mjj distribution
        with different JES/JER variations in the same canvas.'''
     acc.load('mjj')
     h = acc['mjj']
 
-    print(f'Working on: {tag}')
+    print(f'Working on: {tag}, {sample_type}')
 
     h = merge_extensions(h, acc, reweight_pu=False)
     scale_xs_lumi(h)
@@ -189,13 +249,13 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, dataset_name):
     
     print(f'Histogram saved in: {outpath}')
 
-def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
+def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, sample_type):
     '''Given the input accumulator, plot ratio of two datasets
        for each JES/JER variation, on the same canvas.'''
     acc.load('mjj')
     h = acc['mjj']
 
-    print(f'Working on: {tag}')
+    print(f'Working on: {tag}, {sample_type}')
 
     h = merge_extensions(h, acc, reweight_pu=False)
     scale_xs_lumi(h)
@@ -222,19 +282,21 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
     for var in h1_vals.keys():
         ratios[var[0]] = h1_vals[var] / h2_vals[var]
 
+    # Set y-label for either QCD or EWK samples
+    sample_label = sample_type.upper()
 
     # The y-axis labels for each tag
     tag_to_ylabel = {
-        'znunu_over_wlnu17' : r'$Z\rightarrow \nu \nu$ SR / $W\rightarrow \ell \nu$ SR (2017)',
-        'znunu_over_wlnu18' : r'$Z\rightarrow \nu \nu$ SR / $W\rightarrow \ell \nu$ SR (2018)',
-        'znunu_over_zmumu17' : r'$Z\rightarrow \nu \nu$ SR / $Z\rightarrow \mu \mu$ CR (2017)',
-        'znunu_over_zmumu18' : r'$Z\rightarrow \nu \nu$ SR / $Z\rightarrow \mu \mu$ CR (2018)',
-        'znunu_over_zee17' : r'$Z\rightarrow \nu \nu$ SR / $Z\rightarrow ee$ CR (2017)',
-        'znunu_over_zee18' : r'$Z\rightarrow \nu \nu$ SR / $Z\rightarrow ee$ CR (2018)',
-        'wlnu_over_wenu17' : r'$W\rightarrow \ell \nu$ SR / $W\rightarrow e\nu$ CR (2017)',
-        'wlnu_over_wenu18' : r'$W\rightarrow \ell \nu$ SR / $W\rightarrow e\nu$ CR (2018)',
-        'wlnu_over_wmunu17' : r'$W\rightarrow \ell \nu$ SR / $W\rightarrow \mu \nu$ CR (2017)',
-        'wlnu_over_wmunu18' : r'$W\rightarrow \ell \nu$ SR / $W\rightarrow \mu \nu$ CR (2018)'
+        'znunu_over_wlnu17' : r'{} $Z\rightarrow \nu \nu$ SR / {} $W\rightarrow \ell \nu$ SR'.format(sample_label, sample_label),
+        'znunu_over_wlnu18' : r'{} $Z\rightarrow \nu \nu$ SR / {} $W\rightarrow \ell \nu$ SR'.format(sample_label, sample_label),
+        'znunu_over_zmumu17' : r'{} $Z\rightarrow \nu \nu$ SR / {} $Z\rightarrow \mu \mu$ CR'.format(sample_label, sample_label),
+        'znunu_over_zmumu18' : r'{} $Z\rightarrow \nu \nu$ SR / {} $Z\rightarrow \mu \mu$ CR'.format(sample_label, sample_label),
+        'znunu_over_zee17' : r'{} $Z\rightarrow \nu \nu$ SR / {} $Z\rightarrow ee$ CR'.format(sample_label, sample_label),
+        'znunu_over_zee18' : r'{} $Z\rightarrow \nu \nu$ SR / {} $Z\rightarrow ee$ CR'.format(sample_label, sample_label),
+        'wlnu_over_wenu17' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow e\nu$ CR'.format(sample_label, sample_label),
+        'wlnu_over_wenu18' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow e\nu$ CR'.format(sample_label, sample_label),
+        'wlnu_over_wmunu17' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow \mu \nu$ CR'.format(sample_label, sample_label),
+        'wlnu_over_wmunu18' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow \mu \nu$ CR'.format(sample_label, sample_label)
     }
     
     # Upper y-limits for each tag
@@ -278,6 +340,22 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
     ax.set_ylabel(tag_to_ylabel[tag])
     ax.legend()
 
+    if '17' in tag:
+        ax.text(1., 1., '2017',
+                fontsize=12,
+                horizontalalignment='right',
+                verticalalignment='bottom',
+                transform=ax.transAxes
+                )
+    
+    elif '18' in tag:
+        ax.text(1., 1., '2018',
+                fontsize=12,
+                horizontalalignment='right',
+                verticalalignment='bottom',
+                transform=ax.transAxes
+                )
+
     rax.set_ylim(0., 2.)
     loc = matplotlib.ticker.MultipleLocator(base=0.2)
     rax.yaxis.set_major_locator(loc)
@@ -291,7 +369,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    outpath = pjoin(outdir, f'{tag}_jes_jer_variations.pdf')
+    outpath = pjoin(outdir, f'{tag}_{sample_type}_jes_jer_variations.pdf')
     fig.savefig(outpath)
 
     print(f'Histogram saved in: {outpath}')
@@ -301,7 +379,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag):
     get_unc(ratios, mjj_edges, out_tag, tag)
 
 def main():
-    inpath = sys.argv[1]
+    inpath, sample_type = sys.argv[1:]
 
     acc = dir_archive(
                          inpath,
@@ -321,10 +399,12 @@ def main():
 
     for tag, data_dict in dataset_regex.items():
         dataset_name, regex, region = data_dict.values()
-        plot_jes_jer_var(acc, regex=regex, dataset_name=dataset_name, tag=tag, out_tag=out_tag, region=region)
+        plot_jes_jer_var(acc, regex=regex, dataset_name=dataset_name, tag=tag, out_tag=out_tag, region=region, sample_type=sample_type)
 
 
-    for tag, datapair_dict in tag_to_dataset_pairs.items():
+    for tag, data_dict in tag_to_dataset_pairs.items():
+        # Choose QCD or EWK
+        datapair_dict = data_dict[sample_type] 
         data1_info = datapair_dict['dataset1']
         data2_info = datapair_dict['dataset2']
         plot_jes_jer_var_ratio( acc, 
@@ -333,7 +413,8 @@ def main():
                                 region1=data1_info['region'], 
                                 region2=data2_info['region'], 
                                 tag=tag, 
-                                out_tag=out_tag)
+                                out_tag=out_tag,
+                                sample_type=sample_type)
 
 if __name__ == '__main__':
     main()
