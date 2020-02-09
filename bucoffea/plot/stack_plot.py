@@ -22,7 +22,14 @@ from bucoffea.plot import style
 pjoin = os.path.join
 #suppress true_divide warnings
 np.seterr(divide='ignore', invalid='ignore')
-
+import matplotlib.pylab as pylab
+params = {'legend.fontsize': 'medium',
+        #   'figure.figsize': (15, 5),
+         'axes.labelsize': 'x-large',
+         'axes.titlesize':'x-large',
+         'xtick.labelsize':'x-large',
+         'ytick.labelsize':'x-large'}
+pylab.rcParams.update(params)
 colors = {
     'WN*J.*' : '#feb24c',
     '.*DY.*' : '#ffffcc',
@@ -106,7 +113,13 @@ class Style():
             return self.binnings[region][distribution]
         else:
             return self.binnings['default'][distribution]
-
+def channel_name(region):
+    if '_vbf' in region:
+        return 'VBF'
+    if '_j' in region:
+        return 'Monojet'
+    if '_v' in region:
+        return 'Mono-V'
 
 def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf', ratio=True):
     """Creates a data vs MC comparison plot
@@ -229,15 +242,16 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
                 verticalalignment='bottom',
                 transform=ax.transAxes
                )
-    fig.text(1., 1., f'{lumi(year)} fb$^{{-1}}$ ({year})',
-                fontsize=14,
-                horizontalalignment='right',
-                verticalalignment='bottom',
-                transform=ax.transAxes
-               )
     fig.text(0., 1., '$\\bf{CMS}$ internal',
                 fontsize=14,
                 horizontalalignment='left',
+                verticalalignment='bottom',
+                transform=ax.transAxes
+               )
+
+    fig.text(1., 1., f'{channel_name(region)}, {lumi(year)} fb$^{{-1}}$ ({year})',
+                fontsize=14,
+                horizontalalignment='right',
                 verticalalignment='bottom',
                 transform=ax.transAxes
                )
@@ -265,7 +279,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         if rylim:
             rax.set_ylim(*rylim)
         else:
-            rax.set_ylim(0.75,1.25)
+            rax.set_ylim(0.5,1.5)
         loc1 = matplotlib.ticker.MultipleLocator(base=0.2)
         loc2 = matplotlib.ticker.MultipleLocator(base=0.1)
         rax.yaxis.set_major_locator(loc1)
