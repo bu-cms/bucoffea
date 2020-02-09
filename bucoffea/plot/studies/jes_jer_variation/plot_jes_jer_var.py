@@ -195,10 +195,14 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
         'znunu_over_zmumu18' : r'{} $Z\rightarrow \nu \nu$ SR / {} $Z\rightarrow \mu \mu$ CR'.format(sample_label, sample_label),
         'znunu_over_zee17' : r'{} $Z\rightarrow \nu \nu$ SR / {} $Z\rightarrow ee$ CR'.format(sample_label, sample_label),
         'znunu_over_zee18' : r'{} $Z\rightarrow \nu \nu$ SR / {} $Z\rightarrow ee$ CR'.format(sample_label, sample_label),
+        'znunu_over_gjets17' : r'{} $Z\rightarrow \nu \nu$ SR / {} $\gamma$ + jets CR'.format(sample_label, sample_label),
+        'znunu_over_gjets18' : r'{} $Z\rightarrow \nu \nu$ SR / {} $\gamma$ + jets CR'.format(sample_label, sample_label),
         'wlnu_over_wenu17' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow e\nu$ CR'.format(sample_label, sample_label),
         'wlnu_over_wenu18' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow e\nu$ CR'.format(sample_label, sample_label),
         'wlnu_over_wmunu17' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow \mu \nu$ CR'.format(sample_label, sample_label),
-        'wlnu_over_wmunu18' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow \mu \nu$ CR'.format(sample_label, sample_label)
+        'wlnu_over_wmunu18' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow \mu \nu$ CR'.format(sample_label, sample_label),
+        'wlnu_over_gjets17' : r'{} $W\rightarrow \ell \nu$ SR / {} $\gamma$ + jets CR'.format(sample_label, sample_label),
+        'wlnu_over_gjets18' : r'{} $W\rightarrow \ell \nu$ SR / {} $\gamma$ + jets CR'.format(sample_label, sample_label),
     }
     
     # Upper y-limits for each tag
@@ -209,10 +213,14 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
         'znunu_over_zmumu18' : 20,
         'znunu_over_zee17' : 20,
         'znunu_over_zee18' : 20,
+        'znunu_over_gjets17' : 20,
+        'znunu_over_gjets18' : 20,
         'wlnu_over_wenu17' : 2,
         'wlnu_over_wenu18' : 2,
         'wlnu_over_wmunu17' : 2,
         'wlnu_over_wmunu18' : 2,
+        'wlnu_over_gjets17' : 2,
+        'wlnu_over_gjets18' : 2,
     }
    
     mjj_edges = h1.axes()[0].edges(overflow='over')
@@ -282,7 +290,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
     get_unc(ratios, mjj_edges, out_tag, tag, sample_type)
 
 def main():
-    inpath, sample_type = sys.argv[1:]
+    inpath = sys.argv[1]
 
     acc = dir_archive(
                          inpath,
@@ -298,26 +306,33 @@ def main():
         out_tag = inpath.split('/')[-2]
     else:
         out_tag = inpath.split('/')[-1]
-    
+
+    sample_types = ['qcd', 'ewk']
 
     for tag, data_dict in dataset_regex.items():
-        title, regex, region = data_dict[sample_type].values()
-        plot_jes_jer_var(acc, regex=regex, title=title, tag=tag, out_tag=out_tag, region=region, sample_type=sample_type)
-
+        for sample_type in sample_types:
+            try:
+                title, regex, region = data_dict[sample_type].values()
+                plot_jes_jer_var(acc, regex=regex, title=title, tag=tag, out_tag=out_tag, region=region, sample_type=sample_type)
+            except KeyError:
+                continue
 
     for tag, data_dict in tag_to_dataset_pairs.items():
-        # Choose QCD or EWK
-        datapair_dict = data_dict[sample_type] 
-        data1_info = datapair_dict['dataset1']
-        data2_info = datapair_dict['dataset2']
-        plot_jes_jer_var_ratio( acc, 
-                                regex1=data1_info['regex'], 
-                                regex2=data2_info['regex'], 
-                                region1=data1_info['region'], 
-                                region2=data2_info['region'], 
-                                tag=tag, 
-                                out_tag=out_tag,
-                                sample_type=sample_type)
+        for sample_type in sample_types:
+            try:
+                datapair_dict = data_dict[sample_type] 
+                data1_info = datapair_dict['dataset1']
+                data2_info = datapair_dict['dataset2']
+                plot_jes_jer_var_ratio( acc, 
+                                        regex1=data1_info['regex'], 
+                                        regex2=data2_info['regex'], 
+                                        region1=data1_info['region'], 
+                                        region2=data2_info['region'], 
+                                        tag=tag, 
+                                        out_tag=out_tag,
+                                        sample_type=sample_type)
+            except KeyError:
+                continue
 
 if __name__ == '__main__':
     main()
