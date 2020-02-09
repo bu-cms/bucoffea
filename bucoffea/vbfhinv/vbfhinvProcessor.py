@@ -356,7 +356,34 @@ class vbfhinvProcessor(processor.ProcessorABC):
             
             ak4 = ak4[ak4_puid]
             bjets = bjets[bjets_puid] 
-        
+
+            #########################
+            # Test
+            #########################
+
+            # Compare njets in events for each variation
+            if var != '':
+                ak4_nom = vmap.get_ak4(var='')
+                puid_nom = ak4_nom.puid
+                ak4_nom = ak4_nom[puid_nom]
+                njets_nom = np.array(
+                                        list(map(np.shape, ak4_nom))
+                                    )
+                njets_var = np.array(
+                                        list(map(np.shape, ak4))
+                                    )
+
+                print(var)
+
+                num_common_el = np.sum(np.equal(njets_nom, njets_var))
+                num_total_el = np.multiply(*njets_nom.shape)
+                per = num_common_el * 100 / num_total_el
+                print(f'Nominal vs. {var} % similarity in njets after PUID selection: {per:.2f}') 
+
+            # Compare the leading jet pair for each variation (to be implemented here)
+
+            ##########################
+
             df[f'MT_mu{var}'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
             selection.add(f'mt_mu{var}', df[f'MT_mu{var}'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
             
