@@ -279,8 +279,8 @@ def setup_candidates(df, cfg):
         abseta=np.abs(df['Tau_eta']),
         phi=df['Tau_phi'],
         mass=0 * df['Tau_pt'],
-        decaymode=df['Tau_idDecayMode'],
-        iso=df['Tau_idMVAoldDM2017v2'],
+        decaymode=df[cfg.TAU.BRANCH.ID],
+        iso=df[cfg.TAU.BRANCH.ISO],
     )
 
     taus = taus[ (taus.decaymode) \

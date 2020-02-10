@@ -35,6 +35,9 @@ default:
     cuts:
       pt: 18
       eta: 2.3
+    branch:
+      id: Tau_idDecayMode
+      iso: Tau_idMVAoldDM2017v2
   photon:
     cuts:
       loose:
@@ -227,10 +230,14 @@ era2016:
       tightmd: 0.759
   electron:
     branch:
-      id: Electron_cutBased
+      id: Electron_cutBased_Sum16
   photon:
     branch:
       id: Photon_cutBased
+  tau:
+    branch:
+      id: Tau_idDecayMode
+      iso: Tau_idMVAoldDM
   sf:
     qcd_nlo_w_2016: # QCD k factor for QCD W
       histogram: kfactor_monojet_qcd
@@ -335,7 +342,6 @@ era2017:
       - Flag_EcalDeadCellTriggerPrimitiveFilter
       - Flag_BadPFMuonFilter
       - Flag_ecalBadCalibFilterV2
-
   btag:
     algo: deepcsv
     wp: medium
