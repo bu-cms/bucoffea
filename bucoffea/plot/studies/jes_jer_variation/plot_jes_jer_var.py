@@ -80,7 +80,9 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, title, sample_type):
 
     # Rebin mjj
     mjj_bins = hist.Bin('mjj', r'$M_{jj}$ (GeV)', list(range(200,800,300)) + list(range(800,2000,400)) + [2000, 2750, 3500])
-    h = h.rebin('mjj', mjj_bins)
+    mjj_bins_coarse = hist.Bin('mjj', r'$M_{jj}$ (GeV)', list(range(0,4000,1000))) 
+    mjj_bins_very_coarse = hist.Bin('mjj', r'$M_{jj}$ (GeV)', [0,4000]) 
+    h = h.rebin('mjj', mjj_bins_very_coarse)
 
     h = h[re.compile(f'{region}')].integrate('region')
 
@@ -168,7 +170,9 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
     
     # Rebin mjj
     mjj_bins = hist.Bin('mjj', r'$M_{jj}$ (GeV)', list(range(200,800,300)) + list(range(800,2000,400)) + [2000, 2750, 3500])
-    h = h.rebin('mjj', mjj_bins)
+    mjj_bins_coarse = hist.Bin('mjj', r'$M_{jj}$ (GeV)', list(range(0,4000,1000))) 
+    mjj_bins_very_coarse = hist.Bin('mjj', r'$M_{jj}$ (GeV)', [0,4000]) 
+    h = h.rebin('mjj', mjj_bins_very_coarse)
 
     h1 = h[re.compile(regex1)].integrate('dataset')
     h2 = h[re.compile(regex2)].integrate('dataset')
@@ -176,13 +180,20 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
     h1 = h1[re.compile(f'{region1}.*')].integrate('region')
     h2 = h2[re.compile(f'{region2}.*')].integrate('region')
 
-    # Calculate the ratios for each JES/JER variation
+    # Calculate the ratios and errors in ratios 
+    # for each JES/JER variation
     ratios = {}
-    h1_vals = h1.values(overflow='over')
-    h2_vals = h2.values(overflow='over')
+    err = {}
+    h1_vals = h1.values(overflow='over', sumw2=True)
+    h2_vals = h2.values(overflow='over', sumw2=True)
     
     for var in h1_vals.keys():
-        ratios[var[0]] = h1_vals[var] / h2_vals[var]
+        h1_sumw, h1_sumw2 = h1_vals[var]
+        h2_sumw, h2_sumw2 = h2_vals[var]
+        ratios[var[0]] = h1_sumw / h2_sumw 
+        # Gaussian error propagation
+        gaus_error = np.sqrt((h2_sumw*np.sqrt(h1_sumw2))**2 + (h1_sumw*np.sqrt(h2_sumw2))**2)/h2_sumw**2
+        err[var[0]] = gaus_error
 
     # Set y-label for either QCD or EWK samples
     sample_label = sample_type.upper()
@@ -205,22 +216,22 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
         'wlnu_over_gjets18' : r'{} $W\rightarrow \ell \nu$ SR / {} $\gamma$ + jets CR'.format(sample_label, sample_label),
     }
     
-    # Upper y-limits for each tag
+    # Lower + upper y-limits for each tag
     tag_to_ylim = {
-        'znunu_over_wlnu17' : 2.5, 
-        'znunu_over_wlnu18' : 2.5, 
-        'znunu_over_zmumu17' : 20,
-        'znunu_over_zmumu18' : 20,
-        'znunu_over_zee17' : 20,
-        'znunu_over_zee18' : 20,
-        'znunu_over_gjets17' : 3,
-        'znunu_over_gjets18' : 3,
-        'wlnu_over_wenu17' : 2,
-        'wlnu_over_wenu18' : 2,
-        'wlnu_over_wmunu17' : 2,
-        'wlnu_over_wmunu18' : 2,
-        'wlnu_over_gjets17' : 2,
-        'wlnu_over_gjets18' : 2,
+        'znunu_over_wlnu17' : {'qcd' : (1.9, 2.1), 'ewk' : (1.95, 2.15)}, 
+        'znunu_over_wlnu18' : {'qcd' : (1.95, 2.15), 'ewk' : (1.95, 2.15)}, 
+        'znunu_over_zmumu17' : {'qcd' : (8, 9.5), 'ewk' : (7.6, 8.6)},
+        'znunu_over_zmumu18' : {'qcd' : (8, 9.5), 'ewk' : (7.4, 8.8)},
+        'znunu_over_zee17' : {'qcd' : (10.5, 11.1), 'ewk' : (0,10)},
+        'znunu_over_zee18' : {'qcd' : (10, 10.8), 'ewk' : (0,10)},
+        'znunu_over_gjets17' : {'qcd' : (0.65,0.75), 'ewk' : (0,10)},
+        'znunu_over_gjets18' : {'qcd' : (0.6,0.68), 'ewk' : (0,10)},
+        'wlnu_over_wenu17' : {'qcd' : (0.75,0.85), 'ewk' : (0.15, 0.35)},
+        'wlnu_over_wenu18' : {'qcd' : (0.65,0.75), 'ewk' : (0.43, 0.47)},
+        'wlnu_over_wmunu17' : {'qcd' : (0.45,0.55), 'ewk' : (0.27, 0.32)},
+        'wlnu_over_wmunu18' : {'qcd' : (0.45,0.55), 'ewk' : (0.28, 0.33)},
+        'wlnu_over_gjets17' : {'qcd' : (0.3,0.4), 'ewk' : (0.6, 0.8)},
+        'wlnu_over_gjets18' : {'qcd' : (0.3,0.4), 'ewk' : (0.95, 1.15)}
     }
    
     mjj_edges = h1.axes()[0].edges(overflow='over')
@@ -234,7 +245,8 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
                      label=var_to_legend_label[var],
                      ax=ax,
                      stack=True,
-                     histtype='step'
+                     histtype='step',
+                     yerr=err[var]
                      )
 
         h1_ = h1.integrate('var', var)
@@ -246,7 +258,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
 
     # Aesthetics
     ax.set_xlim(200,4000)
-    ax.set_ylim(0,tag_to_ylim[tag])
+    ax.set_ylim(tag_to_ylim[tag][sample_type][0], tag_to_ylim[tag][sample_type][1])
     ax.set_ylabel(tag_to_ylabel[tag])
     ax.legend()
 
@@ -266,8 +278,8 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
                 transform=ax.transAxes
                 )
 
-    rax.set_ylim(0., 2.)
-    loc = matplotlib.ticker.MultipleLocator(base=0.2)
+    rax.set_ylim(0.94, 1.06)
+    loc = matplotlib.ticker.MultipleLocator(base=0.02)
     rax.yaxis.set_major_locator(loc)
     rax.set_ylabel('Varied / Nominal')
     rax.set_xlabel(r'$M_{jj} \ (GeV)$')
