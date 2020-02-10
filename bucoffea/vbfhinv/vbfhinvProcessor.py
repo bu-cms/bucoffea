@@ -377,7 +377,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     photon_trigger_sf(region_weights, photons, df)
 
                 if "no_veto_all" in region:
-                    region_weights.add("veto_weight_ele", (1 - evaluator["ele_id_loose"](electrons.eta, electrons.pt)).prod())
+                    region_weights.add(
+                                       "veto_weight_ele", 
+                                       (1 - evaluator["ele_id_loose"](electrons.eta, electrons.pt)*evaluator['ele_reco'](electrons.eta, electrons.pt)).prod()
+                                       )
                     region_weights.add(
                                         "veto_weight_muon", 
                                         (1 - evaluator["muon_id_loose"](muons.pt, muons.abseta)*evaluator["muon_iso_loose"](muons.pt, muons.abseta)).prod()
