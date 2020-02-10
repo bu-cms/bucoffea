@@ -209,17 +209,15 @@ class VarMap:
     def __init__(self, variations):
         self._variations = variations
         self.ak4 = {}
-        self.ak4_pt = {}
         self.bjets = {}
         self.diak4 = {}
         self.met_pt = {}
         self.met_phi = {}
         self.selection_packers = {}
     
-    def fill_mapping(self, ak4, ak4_pt, bjets, met_pt, met_phi, var):
+    def fill_mapping(self, ak4, bjets, met_pt, met_phi, var):
         '''Fill the dictionaries for the relevant variation.'''
         self.ak4[f'{var}'] = ak4 
-        self.ak4_pt[f'{var}'] = ak4_pt 
         self.bjets[f'{var}'] = bjets 
         self.diak4[f'{var}'] = ak4[:,:2].distincts() # Leading jet pair 
         self.met_pt[f'{var}'] = met_pt
@@ -228,9 +226,6 @@ class VarMap:
     # Getter methods
     def get_ak4(self, var):
         return self.ak4[f'{var}']
-    
-    def get_ak4_pt(self, var):
-        return self.ak4_pt[f'{var}']
     
     def get_bjets(self, var):
         return self.bjets[f'{var}']
@@ -456,7 +451,9 @@ def setup_candidates(df, cfg, variations):
         # Sort AK4 jets according to relevant pt
         _ak4 = ak4[ak4_pt.argsort()]
         ak4_pt = ak4_pt[ak4_pt.argsort()]
-        
+        print(f'Before object and PUID cleaning: {var}')
+        print(_ak4)
+        print(ak4_pt)
         # Choose relevant b-jets
         _bjets = _ak4[
               (_ak4.looseId) \
@@ -484,7 +481,6 @@ def setup_candidates(df, cfg, variations):
             _ak4 = _ak4[object_overlap(_ak4, photons, dr=cfg.OVERLAP.AK4.PHOTON.DR)]
        
         vmap.fill_mapping(  ak4=_ak4,
-                            ak4_pt=ak4_pt,
                             bjets=_bjets,
                             met_pt=getattr(met, f'pt{var}').flatten(),
                             met_phi=getattr(met, f'phi{var}').flatten(),
