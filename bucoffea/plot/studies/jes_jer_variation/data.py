@@ -63,12 +63,20 @@ tag_to_dataset_pairs = {
         'qcd': {
             'dataset1' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
             'dataset2' : {'regex' : 'GJets_DR-0p4.*2017', 'region' : 'cr_g_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'GJets_SM_5f_EWK.*2017', 'region' : 'cr_g_vbf'},
         }
     },
     'znunu_over_gjets18' : {
         'qcd': {
             'dataset1' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
             'dataset2' : {'regex' : 'GJets_DR-0p4.*2018', 'region' : 'cr_g_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'GJets_SM_5f_EWK.*2018', 'region' : 'cr_g_vbf'},
         }
     },
     'znunu_over_zee18' : {
@@ -125,12 +133,20 @@ tag_to_dataset_pairs = {
         'qcd': {
             'dataset1' : {'regex' : 'WJetsToLNu.*2017', 'region' : 'sr_vbf'},
             'dataset2' : {'regex' : 'GJets_DR-0p4.*2017', 'region' : 'cr_g_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKW2Jets_WToLNu.*2017', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'GJets_SM_5f_EWK.*2017', 'region' : 'cr_g_vbf'},
         }
     },
     'wlnu_over_gjets18' : {
         'qcd': {
             'dataset1' : {'regex' : 'WJetsToLNu.*2018', 'region' : 'sr_vbf'},
             'dataset2' : {'regex' : 'GJets_DR-0p4.*2018', 'region' : 'cr_g_vbf'},
+        },
+        'ewk': {
+            'dataset1' : {'regex' : 'EWKW2Jets_WToLNu.*2018', 'region' : 'sr_vbf'},
+            'dataset2' : {'regex' : 'GJets_SM_5f_EWK.*2018', 'region' : 'cr_g_vbf'},
         }
     },
 }
@@ -190,10 +206,12 @@ dataset_regex = {
     },
     ### Photon processes
     'gjets17' : {
-        'qcd' : {'title' : r'QCD $\gamma$ + jets', 'regex' : 'GJets_DR-0p4.*2017', 'region' : 'cr_g_vbf'}
+        'qcd' : {'title' : r'QCD $\gamma$ + jets', 'regex' : 'GJets_DR-0p4.*2017', 'region' : 'cr_g_vbf'},
+        'ewk' : {'title' : r'EWK $\gamma$ + jets', 'regex' : 'GJets_SM_5f_EWK.*2017', 'region' : 'cr_g_vbf'}
     },
     'gjets18' : {
-        'qcd' : {'title' : r'QCD $\gamma$ + jets', 'regex' : 'GJets_DR-0p4.*2018', 'region' : 'cr_g_vbf'}
+        'qcd' : {'title' : r'QCD $\gamma$ + jets', 'regex' : 'GJets_DR-0p4.*2018', 'region' : 'cr_g_vbf'},
+        'ewk' : {'title' : r'EWK $\gamma$ + jets', 'regex' : 'GJets_SM_5f_EWK.*2018', 'region' : 'cr_g_vbf'}
     }
     
 }
