@@ -45,11 +45,12 @@ def vbfhinv_accumulator(cfg):
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     pt_ax_mu = Bin("pt", r"$p_{T}$ (GeV)", [20,25,30,40,50,60,120])
     pt_ax_el = Bin("pt", r"$p_{T}$ (GeV)", [10,20,35,50,100,200,500])
+    pt_ax_tau = Bin("pt", r"$p_{T}$ (GeV)", [18,20,25,30,35,40,500,1000])
 
     ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 100, 0, 4000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
-    eta_ax_ele = Bin("eta", r"$\eta$", [-2.5, -2.0, -1.56, -1.44, -0.8, 0, 0.8, 1.44,1.56,2.0,2.5])
+    eta_ax_el = Bin("eta", r"$\eta$", [-2.5, -2.0, -1.56, -1.44, -0.8, 0, 0.8, 1.44,1.56,2.0,2.5])
     abseta_ax_mu = Bin("abseta", r"$|\eta|$", [0,0.9,1.2,2.1,2.4])
 
     eta_ax_coarse = Bin("eta", r"$\eta$", 25, -5, 5)
@@ -141,7 +142,7 @@ def vbfhinv_accumulator(cfg):
     items["dimuon_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
 
     items["electron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["electron_pt_eta"] = Hist("Counts", dataset_ax, region_ax, pt_ax_ele, eta_ax_ele)
+    items["electron_pt_eta"] = Hist("Counts", dataset_ax, region_ax, pt_ax_el, eta_ax_el)
     items["electron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["electron_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["electron_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
@@ -161,6 +162,8 @@ def vbfhinv_accumulator(cfg):
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
     items['photon_pt0_recoil'] = Hist("Counts", dataset_ax, region_ax, pt_ax, recoil_ax)
+
+    items["tau_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax_tau)
 
     # One cutflow counter per region
     regions = vbfhinv_regions(cfg).keys()
@@ -283,21 +286,30 @@ def vbfhinv_regions(cfg):
                                         'detajj',
                                         ]
 
-        tmp = {}
-        for region in regions.keys():
-            if not region.startswith("sr_")
-                continue
+    tmp = {}
+    for region in regions.keys():
+        if not region.startswith("sr_"):
+            continue
 
+        new_region = f"{region}_no_veto_ele"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].remove("veto_ele")
 
-            new_region = f"{region}_no_veto_ele"
-            tmp[new_region] = copy.deepcopy(regions[region])
-            tmp[new_region].remove("veto_ele")
+        new_region = f"{region}_no_veto_tau"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].remove("veto_tau")
 
-            new_region = f"{region}_no_veto_tau"
-            tmp[new_region] = copy.deepcopy(regions[region])
-            tmp[new_region].remove("veto_tau")
+        new_region = f"{region}_no_veto_muon"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].remove("veto_muo")
+        
+        new_region = f"{region}_no_veto_all"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].remove("veto_muo")
+        tmp[new_region].remove("veto_tau")
+        tmp[new_region].remove("veto_ele")
 
-        regions.update(tmp)
+    regions.update(tmp)
 
 
 
