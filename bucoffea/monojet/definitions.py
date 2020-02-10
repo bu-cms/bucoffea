@@ -467,9 +467,7 @@ def setup_candidates(df, cfg, variations):
         # Sort AK4 jets according to relevant pt
         _ak4 = ak4[ak4_pt.argsort()]
         ak4_pt = ak4_pt[ak4_pt.argsort()]
-        print(f'Before object and PUID cleaning: {var}')
-        print(_ak4)
-        print(ak4_pt)
+        
         # Choose relevant b-jets
         _bjets = _ak4[
               (_ak4.looseId) \
