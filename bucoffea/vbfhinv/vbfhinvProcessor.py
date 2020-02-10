@@ -209,6 +209,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('veto_muo', muons.counts==0)
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', taus.counts==0)
+        selection.add('at_least_one_tau', taus.counts>0)
         selection.add('veto_b', bjets.counts==0)
         selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
@@ -499,9 +500,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('recoil_mjj',         recoil=df["recoil_pt"][mask], mjj=df["mjj"][mask], weight=region_weights.weight()[mask] )
 
             # Muons
-            if '_1m_' in region or '_2m_' in region:
+            if '_1m_' in region or '_2m_' in region or 'noveto' in region:
                 w_allmu = weight_shape(muons.pt[mask], region_weights.weight()[mask])
                 ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
+                ezfill('muon_pt_abseta',pt=muons.pt[mask].flatten(),abseta=muons.eta[mask].flatten(),    weight=w_allmu )
                 ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=region_weights.weight()[mask])
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
@@ -520,9 +522,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
 
             # Electrons
-            if '_1e_' in region or '_2e_' in region:
+            if '_1e_' in region or '_2e_' in region or 'noveto' in region:
                 w_allel = weight_shape(electrons.pt[mask], region_weights.weight()[mask])
                 ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
+                ezfill('electron_pt_eta',   pt=electrons.pt[mask].flatten(), eta=electrons.eta[mask].flatten(),    weight=w_allel)
                 ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=region_weights.weight()[mask])
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
                 ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
@@ -551,6 +554,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], region_weights.weight()[mask])
 
+            # Tau
+            if 'noveto' in region
+                w_all_taus = weight_shape(taus.pt[mask], region_weights.weights()[mask])
+                ezfill("tau_pt", pt=taus.pt[mask].flatten() weight=w_all_taus)
 
             # PV
             ezfill('npv', nvtx=df['PV_npvs'][mask], weight=region_weights.weight()[mask])
