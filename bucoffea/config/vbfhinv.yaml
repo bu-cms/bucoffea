@@ -42,6 +42,9 @@ default:
     cuts:
       pt: 20
       eta: 2.3
+    branch:
+      id: Tau_idDecayMode
+      iso: Tau_idMVAoldDM2017v2
   photon:
     cuts:
       loose:
@@ -246,6 +249,10 @@ era2016:
   photon:
     branch:
       id: Photon_cutBased17Bitmap
+  tau:
+    branch:
+      id: Tau_idDecayMode
+      iso: Tau_idMVAoldDM
   sf:
     ele_reco:
       histogram: EGamma_SF2D
