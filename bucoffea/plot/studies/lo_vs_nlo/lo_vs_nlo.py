@@ -74,7 +74,6 @@ def plot(inpath):
 
             for key in list(map(str,mc_lo.keys())):
                 mc_lo[f'{key}_loose'] = mc_lo[key]
-                mc_nlo[f'{key}_loose'] = mc_nlo[key]
                 settings[f'{key}_loose'] = settings[key]
 
 
