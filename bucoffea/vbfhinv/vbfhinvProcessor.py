@@ -394,11 +394,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     veto_weight_muo = (1 - evaluator["muon_id_loose"](muons.pt, muons.abseta)*evaluator["muon_iso_loose"](muons.pt, muons.abseta)).prod()
                     veto_weight_tau = (1-evaluator["tau_id"](taus.pt)).prod()
 
-                if re.match('.*no_veto_(all|ele).*' region):
+                if re.match('.*no_veto_(all|ele).*', region):
                     region_weights.add("veto_weight_ele", veto_weight_ele)
-                if re.match('.*no_veto_(all|muon).*' region):
+                if re.match('.*no_veto_(all|muon).*', region):
                     region_weights.add("veto_weight_muon", veto_weight_muo)
-                if re.match('.*no_veto_(all|tau).*' region):
+                if re.match('.*no_veto_(all|tau).*', region):
                     region_weights.add("veto_weight_tau", veto_weight_tau)
 
             # Blinding
