@@ -380,7 +380,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 elif re.match(r'cr_g.*', region):
                     photon_trigger_sf(region_weights, photons, df)
 
-                if "no_veto_all" in region:
+                if "no_veto" in region:
                     exclude = [
                         "muon_id_tight",
                         "muon_iso_tight",
@@ -390,18 +390,16 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         "ele_id_tight",
                         "ele_id_loose"
                     ]
-                    region_weights.add(
-                                       "veto_weight_ele", 
-                                       (1 - evaluator["ele_id_loose"](electrons.eta, electrons.pt)*evaluator['ele_reco'](electrons.eta, electrons.pt)).prod()
-                                       )
-                    region_weights.add(
-                                        "veto_weight_muon", 
-                                        (1 - evaluator["muon_id_loose"](muons.pt, muons.abseta)*evaluator["muon_iso_loose"](muons.pt, muons.abseta)).prod()
-                                        )
-                    region_weights.add(
-                                        "veto_weight_tau", 
-                                       (1-evaluator["tau_id"](taus.pt)).prod()
-                                       )
+                    veto_weight_ele = (1 - evaluator["ele_id_loose"](electrons.eta, electrons.pt)*evaluator['ele_reco'](electrons.eta, electrons.pt)).prod()
+                    veto_weight_muo = (1 - evaluator["muon_id_loose"](muons.pt, muons.abseta)*evaluator["muon_iso_loose"](muons.pt, muons.abseta)).prod()
+                    veto_weight_tau = (1-evaluator["tau_id"](taus.pt)).prod()
+
+                if re.match('.*no_veto_(all|ele).*' region):
+                    region_weights.add("veto_weight_ele", veto_weight_ele)
+                if re.match('.*no_veto_(all|muon).*' region):
+                    region_weights.add("veto_weight_muon", veto_weight_muo)
+                if re.match('.*no_veto_(all|tau).*' region):
+                    region_weights.add("veto_weight_tau", veto_weight_tau)
 
             # Blinding
             if(self._blind and df['is_data'] and region.startswith('sr')):
