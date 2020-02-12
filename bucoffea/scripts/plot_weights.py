@@ -45,8 +45,8 @@ def main():
         os.makedirs(args.outpath)
     except FileExistsError:
         pass
-    fig.savefig(pjoin(args.outpath, "weights.pdf"))
-    plt.close(fig)
+    ax.figure.savefig(pjoin(args.outpath, "weights.pdf"))
+    plt.close(ax.figure)
 
 if __name__ == "__main__":
     main()
