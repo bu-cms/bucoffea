@@ -10,7 +10,7 @@ from bucoffea.plot.style import plot_settings
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
 
 
-def plot(inpath,plot_nlo=False):
+def plot(inpath):
         indir=os.path.abspath(inpath)
 
         # The processor output is stored in an
@@ -64,18 +64,6 @@ def plot(inpath,plot_nlo=False):
                 'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_HT.*|WJetsToLNu.*HT.*).*{year}'),
             }
 
-            # Want to compare LO and NLO,
-            # so do same thing for NLO V samples
-            # All non-V samples remain the same
-            mc_nlo = {
-                    'sr_vbf' : re.compile(f'(ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*FXFX.*).*{year}'),
-                    'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*WJetsToLNu.*FXFX.*).*{year}'),
-                    'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*WJetsToLNu.*FXFX.*).*{year}'),
-                    'cr_2m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
-                    'cr_2e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
-                    'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_HT.*|W.*FXFX.*).*{year}'),
-            }
-
             # Load ingredients from cache
             acc.load('sumw')
             acc.load('sumw_pileup')
@@ -122,24 +110,6 @@ def plot(inpath,plot_nlo=False):
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
                                 output_format='pdf',
                                 ratio=ratio)
-
-                        # And then we also call it for the NLO MC
-                        # The output files will be named according to the 'tag'
-                        # argument, so we  will be able to tell them apart.
-                        if plot_nlo:
-                            make_plot(acc,
-                                    region=region,
-                                    distribution=distribution,
-                                    year=year,
-                                    data=data[region],
-                                    mc=mc_nlo[region],
-                                    ylim=plotset[distribution].get('ylim',None),
-                                    xlim=plotset[distribution].get('xlim',None),
-                                    tag = 'nlo',
-                                    outdir=f'./output/{os.path.basename(indir)}/{region}',
-                                    output_format='pdf',
-                                    ratio=ratio)
-                   
                     except KeyError:
                         continue
 
