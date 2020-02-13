@@ -121,12 +121,15 @@ def plot(inpath,plot_nlo=False):
                     try:
                         # The heavy lifting of making a plot is hidden
                         # in make_plot. We call it once using the LO MC
+                        imc = mc_lo[region]
+                        if "cr_g" in region and distribution!="recoil":
+                            imc = re.compile(imc.pattern.replace('QCD_data','QCD.*HT'))
                         make_plot(acc,
                                 region=region,
                                 distribution=distribution,
                                 year=year,
                                 data=data[region],
-                                mc=mc_lo[region],
+                                mc=imc,
                                 ylim=plotset[distribution].get('ylim',None),
                                 xlim=plotset[distribution].get('xlim',None),
                                 tag = 'losf',
