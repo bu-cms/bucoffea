@@ -1,17 +1,14 @@
 #!/usr/bin/env python
-import matplotlib as mpl
-mpl.use('Agg')
 import os
 import re
 import sys
-from pprint import pprint
-from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
-from bucoffea.plot.stack_plot import Style, make_plot
-from bucoffea.plot.cr_ratio_plot import cr_ratio_plot
-from bucoffea.plot.style import plot_settings
 
-from collections import defaultdict
 from klepto.archives import dir_archive
+
+from bucoffea.plot.stack_plot import make_plot
+from bucoffea.plot.style import plot_settings
+from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
+
 
 def plot(inpath):
         indir=os.path.abspath(inpath)
@@ -71,16 +68,6 @@ def plot(inpath):
                 'cr_2e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_g_j' : re.compile(f'(GJets_DR.*HT.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
             }
-
-            for key in list(map(str,mc_lo.keys())):
-                mc_lo[f'{key}_loose'] = mc_lo[key]
-                settings[f'{key}_loose'] = settings[key]
-
-
-            # Make control region ratio plots for both
-            # LO and NLO. Can be skipped if you only
-            # want data / MC agreement plots.
-            outdir = f'./output/{os.path.basename(indir)}/ratios'
 
             # Load ingredients from cache
             acc.load('sumw')

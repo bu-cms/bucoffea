@@ -1,16 +1,14 @@
 #!/usr/bin/env python
-
 import os
 import re
 import sys
-from pprint import pprint
-from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi 
-from bucoffea.plot.stack_plot import Style, make_plot
-from bucoffea.plot.cr_ratio_plot import cr_ratio_plot
-from bucoffea.plot.style import plot_settings
 
-from collections import defaultdict
 from klepto.archives import dir_archive
+
+from bucoffea.plot.stack_plot import make_plot
+from bucoffea.plot.style import plot_settings
+from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
+
 
 def plot(inpath,plot_nlo=False):
         indir=os.path.abspath(inpath)
@@ -78,22 +76,10 @@ def plot(inpath,plot_nlo=False):
                     'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_HT.*|W.*FXFX.*).*{year}'),
             }
 
-            regions = list(mc_lo.keys())
-            # Remove signal region, no need in ratio plots
-            regions.remove('sr_vbf')
-
-            # Make control region ratio plots for both
-            # LO and NLO. Can be skipped if you only
-            # want data / MC agreement plots.
-            outdir = f'./output/{os.path.basename(indir)}/ratios'
-
             # Load ingredients from cache
-            acc.load('mjj')
             acc.load('sumw')
             acc.load('sumw_pileup')
             acc.load('nevents')
-            cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo, regions=regions, distribution='mjj')
-            cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo, regions=regions, distribution='mjj')
 
             # Data / MC plots are made here
             # Loop over all regions
