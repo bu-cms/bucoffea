@@ -1,17 +1,14 @@
 #!/usr/bin/env python
-import matplotlib as mpl
-mpl.use('Agg')
 import os
 import re
 import sys
-from pprint import pprint
-from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
-from bucoffea.plot.stack_plot import Style, make_plot
-from bucoffea.plot.cr_ratio_plot import cr_ratio_plot
-from bucoffea.plot.style import plot_settings
 
-from collections import defaultdict
 from klepto.archives import dir_archive
+
+from bucoffea.plot.stack_plot import make_plot
+from bucoffea.plot.style import plot_settings
+from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
+
 
 def plot(inpath):
         indir=os.path.abspath(inpath)
@@ -72,16 +69,6 @@ def plot(inpath):
                 'cr_g_j' : re.compile(f'(GJets_DR.*HT.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
             }
 
-            for key in list(map(str,mc_lo.keys())):
-                mc_lo[f'{key}_loose'] = mc_lo[key]
-                settings[f'{key}_loose'] = settings[key]
-
-
-            # Make control region ratio plots for both
-            # LO and NLO. Can be skipped if you only
-            # want data / MC agreement plots.
-            outdir = f'./output/{os.path.basename(indir)}/ratios'
-
             # Load ingredients from cache
             acc.load('sumw')
             acc.load('sumw_pileup')
@@ -112,12 +99,16 @@ def plot(inpath):
                     try:
                         # The heavy lifting of making a plot is hidden
                         # in make_plot. We call it once using the LO MC
+
+                        imc = mc_lo[region]
+                        if "cr_g" in region and distribution!="recoil":
+                            imc = re.compile(imc.pattern.replace('QCD_data','QCD.*HT'))
                         make_plot(acc,
                                 region=region,
                                 distribution=distribution,
                                 year=year,
                                 data=data[region],
-                                mc=mc_lo[region],
+                                mc=imc,
                                 ylim=plotset[distribution].get('ylim',None),
                                 xlim=plotset[distribution].get('xlim',None),
                                 tag = 'losf',

@@ -1,18 +1,16 @@
 #!/usr/bin/env python
-
 import os
 import re
 import sys
-from pprint import pprint
-from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi 
-from bucoffea.plot.stack_plot import Style, make_plot
-from bucoffea.plot.cr_ratio_plot import cr_ratio_plot
-from bucoffea.plot.style import plot_settings
 
-from collections import defaultdict
 from klepto.archives import dir_archive
 
-def plot(inpath,plot_nlo=False):
+from bucoffea.plot.stack_plot import make_plot
+from bucoffea.plot.style import plot_settings
+from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
+
+
+def plot(inpath):
         indir=os.path.abspath(inpath)
 
         # The processor output is stored in an
@@ -66,34 +64,10 @@ def plot(inpath,plot_nlo=False):
                 'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_HT.*|WJetsToLNu.*HT.*).*{year}'),
             }
 
-            # Want to compare LO and NLO,
-            # so do same thing for NLO V samples
-            # All non-V samples remain the same
-            mc_nlo = {
-                    'sr_vbf' : re.compile(f'(ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*FXFX.*).*{year}'),
-                    'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*WJetsToLNu.*FXFX.*).*{year}'),
-                    'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*|.*WJetsToLNu.*FXFX.*).*{year}'),
-                    'cr_2m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
-                    'cr_2e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DY.*FXFX.*).*{year}'),
-                    'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_HT.*|W.*FXFX.*).*{year}'),
-            }
-
-            regions = list(mc_lo.keys())
-            # Remove signal region, no need in ratio plots
-            regions.remove('sr_vbf')
-
-            # Make control region ratio plots for both
-            # LO and NLO. Can be skipped if you only
-            # want data / MC agreement plots.
-            outdir = f'./output/{os.path.basename(indir)}/ratios'
-
             # Load ingredients from cache
-            acc.load('mjj')
             acc.load('sumw')
             acc.load('sumw_pileup')
             acc.load('nevents')
-            cr_ratio_plot(acc, year=year,tag='losf',outdir=outdir, mc=mc_lo, regions=regions, distribution='mjj')
-            cr_ratio_plot(acc, year=year,tag='nlo',outdir=outdir, mc=mc_nlo, regions=regions, distribution='mjj')
 
             # Data / MC plots are made here
             # Loop over all regions
@@ -121,36 +95,21 @@ def plot(inpath,plot_nlo=False):
                     try:
                         # The heavy lifting of making a plot is hidden
                         # in make_plot. We call it once using the LO MC
+                        imc = mc_lo[region]
+                        if "cr_g" in region and distribution!="recoil":
+                            imc = re.compile(imc.pattern.replace('QCD_data','QCD.*HT'))
                         make_plot(acc,
                                 region=region,
                                 distribution=distribution,
                                 year=year,
                                 data=data[region],
-                                mc=mc_lo[region],
+                                mc=imc,
                                 ylim=plotset[distribution].get('ylim',None),
                                 xlim=plotset[distribution].get('xlim',None),
                                 tag = 'losf',
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
                                 output_format='pdf',
                                 ratio=ratio)
-
-                        # And then we also call it for the NLO MC
-                        # The output files will be named according to the 'tag'
-                        # argument, so we  will be able to tell them apart.
-                        if plot_nlo:
-                            make_plot(acc,
-                                    region=region,
-                                    distribution=distribution,
-                                    year=year,
-                                    data=data[region],
-                                    mc=mc_nlo[region],
-                                    ylim=plotset[distribution].get('ylim',None),
-                                    xlim=plotset[distribution].get('xlim',None),
-                                    tag = 'nlo',
-                                    outdir=f'./output/{os.path.basename(indir)}/{region}',
-                                    output_format='pdf',
-                                    ratio=ratio)
-                   
                     except KeyError:
                         continue
 
