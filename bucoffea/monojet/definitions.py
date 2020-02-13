@@ -246,7 +246,7 @@ def setup_candidates(df, cfg):
         eta=df['Electron_eta'],
         abseta=np.abs(df['Electron_eta']),
         etasc=df['Electron_eta']+df['Electron_deltaEtaSC'],
-        absetasc=df['Electron_eta']+df['Electron_deltaEtaSC'],
+        absetasc=np.abs(df['Electron_eta']+df['Electron_deltaEtaSC']),
         phi=df['Electron_phi'],
         mass=0 * df['Electron_pt'],
         charge=df['Electron_charge'],
