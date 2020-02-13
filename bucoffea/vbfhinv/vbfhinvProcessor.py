@@ -392,11 +392,17 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     ]
                     if extract_year(df['dataset']) == 2017:
                         high_et = electrons.pt>20
-                        ele_reco_sf = evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et]).prod()
-                        ele_reco_sf *= evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et]).prod()
+                        ele_reco_sf_low = evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et])
+                        ele_id_sf_low = evaluator["ele_id_loose"](electrons.etasc[~high_et], electrons.pt[~high_et])
+
+                        ele_reco_sf_high = evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et])
+                        ele_id_sf_high = evaluator["ele_id_loose"](electrons.etasc[high_et], electrons.pt[high_et])
+
+                        veto_weight_ele = (1 - ele_reco_sf_low*ele_id_sf_low).prod() * (1-ele_reco_sf_high*ele_id_sf_high).prod()
                     else:
-                        ele_reco_sf = evaluator['ele_reco'](electrons.etasc, electrons.pt).prod()
-                    veto_weight_ele = (1 - evaluator["ele_id_loose"](electrons.etasc, electrons.pt)*ele_reco_sf).prod()
+                        ele_reco_sf = evaluator['ele_reco'](electrons.etasc, electrons.pt)
+                        ele_id_sf = evaluator["ele_id_loose"](electrons.etasc, electrons.pt)
+                        veto_weight_ele = (1 - ele_id_sf*ele_reco_sf).prod()
                     veto_weight_muo = (1 - evaluator["muon_id_loose"](muons.pt, muons.abseta)*evaluator["muon_iso_loose"](muons.pt, muons.abseta)).prod()
                     veto_weight_tau = (1-evaluator["tau_id"](taus.pt)).prod()
 
