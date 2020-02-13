@@ -392,12 +392,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     ]
                     if extract_year(df['dataset']) == 2017:
                         high_et = electrons.pt>20
-                        ele_reco_sf_low = evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et])
+
+                        # Low pt
+                        ele_reco_sf_low = evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et])
                         ele_id_sf_low = evaluator["ele_id_loose"](electrons.etasc[~high_et], electrons.pt[~high_et])
 
-                        ele_reco_sf_high = evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et])
+                        # High pt
+                        ele_reco_sf_high = evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et])
                         ele_id_sf_high = evaluator["ele_id_loose"](electrons.etasc[high_et], electrons.pt[high_et])
-
+                        
                         veto_weight_ele = (1 - ele_reco_sf_low*ele_id_sf_low).prod() * (1-ele_reco_sf_high*ele_id_sf_high).prod()
                     else:
                         ele_reco_sf = evaluator['ele_reco'](electrons.etasc, electrons.pt)
