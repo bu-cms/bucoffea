@@ -363,6 +363,9 @@ era2017:
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
+    ele_reco_pt_lt_20:
+      histogram: EGamma_SF2D
+      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO_lowEt.root
     ele_id_loose:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2.root

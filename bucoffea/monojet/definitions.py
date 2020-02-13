@@ -245,6 +245,8 @@ def setup_candidates(df, cfg):
         pt=df['Electron_pt'],
         eta=df['Electron_eta'],
         abseta=np.abs(df['Electron_eta']),
+        etasc=df['Electron_eta']+df['Electron_deltaEtaSC'],
+        absetasc=df['Electron_eta']+df['Electron_deltaEtaSC'],
         phi=df['Electron_phi'],
         mass=0 * df['Electron_pt'],
         charge=df['Electron_charge'],
@@ -676,6 +678,7 @@ def photon_trigger_sf(weights, photons, df):
     weights.add("trigger_photon", sf)
 
 def candidate_weights(weights, df, evaluator, muons, electrons, photons):
+    year = extract_year(df['dataset'])
     # Muon ID and Isolation for tight and loose WP
     # Function of pT, eta (Order!)
     weights.add("muon_id_tight", evaluator['muon_id_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod())
@@ -685,14 +688,22 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
 
     # Electron ID and reco
     # Function of eta, pT (Other way round relative to muons!)
-    weights.add("ele_reco", evaluator['ele_reco'](electrons.eta, electrons.pt).prod())
-    weights.add("ele_id_tight", evaluator['ele_id_tight'](electrons[df['is_tight_electron']].eta, electrons[df['is_tight_electron']].pt).prod())
-    weights.add("ele_id_loose", evaluator['ele_id_loose'](electrons[~df['is_tight_electron']].eta, electrons[~df['is_tight_electron']].pt).prod())
+
+    # For 2017, the reco SF is split below/above 20 GeV
+    if year == 2017:
+        high_et = electrons.pt>20
+        ele_reco_sf = evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et]).prod()
+        ele_reco_sf *= evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et]).prod()
+    else:
+        ele_reco_sf = evaluator['ele_reco_pt'](electrons.etasc, electrons.pt).prod()
+    weights.add("ele_reco", ele_reco_sf)
+    # ID/iso SF is not split
+    weights.add("ele_id_tight", evaluator['ele_id_tight'](electrons[df['is_tight_electron']].etasc, electrons[df['is_tight_electron']].pt).prod())
+    weights.add("ele_id_loose", evaluator['ele_id_loose'](electrons[~df['is_tight_electron']].etasc, electrons[~df['is_tight_electron']].pt).prod())
 
     # Photon ID and electron veto
     weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
 
-    year = extract_year(df['dataset'])
     if year == 2016:
         csev_weight = evaluator["photon_csev"](photons.abseta, photons.pt).prod()
     elif year == 2017:
