@@ -695,7 +695,7 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
         ele_reco_sf = evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et]).prod()
         ele_reco_sf *= evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et]).prod()
     else:
-        ele_reco_sf = evaluator['ele_reco_pt'](electrons.etasc, electrons.pt).prod()
+        ele_reco_sf = evaluator['ele_reco'](electrons.etasc, electrons.pt).prod()
     weights.add("ele_reco", ele_reco_sf)
     # ID/iso SF is not split
     weights.add("ele_id_tight", evaluator['ele_id_tight'](electrons[df['is_tight_electron']].etasc, electrons[df['is_tight_electron']].pt).prod())
