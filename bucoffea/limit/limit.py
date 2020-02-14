@@ -5,6 +5,7 @@ import sys
 from bucoffea.plot.util import acc_from_dir
 from klepto.archives import dir_archive
 import argparse
+pjoin = os.path.join
 
 def parse_commandline():
     parser = argparse.ArgumentParser()
@@ -31,15 +32,17 @@ def main():
     else:
         acc = acc_from_dir(args.inpath)
 
+    outdir = pjoin('./output/',os.path.basename(args.inpath))
+
     if args.channel == 'monojet':
         from legacy_monojet import legacy_limit_input_monojet
-        legacy_limit_input_monojet(acc)
+        legacy_limit_input_monojet(acc, outdir=outdir)
     elif args.channel == 'monov':
         from legacy_monov import legacy_limit_input_monov
-        legacy_limit_input_monov(acc)
+        legacy_limit_input_monov(acc, outdir=outdir)
     elif args.channel == 'vbfhinv':
         from legacy_vbf import legacy_limit_input_vbf
-        legacy_limit_input_vbf(acc)
+        legacy_limit_input_vbf(acc, outdir=outdir)
 
 
 if __name__ == "__main__":
