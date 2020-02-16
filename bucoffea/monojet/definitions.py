@@ -254,7 +254,7 @@ def setup_candidates(df, cfg):
         tightId=(df[cfg.ELECTRON.BRANCH.ID]==4),
         dxy=np.abs(df['Electron_dxy']),
         dz=np.abs(df['Electron_dz']),
-        barrel=np.abs(df['Electron_eta']) <= 1.479
+        barrel=np.abs(df['Electron_eta']+df['Electron_deltaEtaSC']) <= 1.4442
     )
     # All electrons must be at least loose
     pass_dxy = (electrons.barrel & (np.abs(electrons.dxy) < cfg.ELECTRON.CUTS.LOOSE.DXY.BARREL)) \
@@ -305,7 +305,7 @@ def setup_candidates(df, cfg):
         looseId=(df[cfg.PHOTON.BRANCH.ID]>=1) & df['Photon_electronVeto'],
         mediumId=(df[cfg.PHOTON.BRANCH.ID]>=2) & df['Photon_electronVeto'],
         r9=df['Photon_r9'],
-        barrel=np.abs(df['Photon_eta']) < 1.479,
+        barrel=df['Photon_isScEtaEB'],
     )
     photons = photons[photons.looseId \
               & (photons.pt > cfg.PHOTON.CUTS.LOOSE.pt) \

@@ -43,10 +43,9 @@ default:
       loose:
         pt: 15
         eta: 2.5
-      tight:
+      tight: # No eta cut here bc we use "isScEtaEB"
         pt: 230
         pttrig: 230
-        eta: 1.4442
     branch:
       id: Photon_cutBasedBitmap
   muon:

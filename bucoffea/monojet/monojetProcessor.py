@@ -284,8 +284,7 @@ class monojetProcessor(processor.ProcessorABC):
         # Photon CR
         leadphoton_index=photons.pt.argmax()
 
-        df['is_tight_photon'] = photons.mediumId \
-                         & (photons.abseta < cfg.PHOTON.CUTS.TIGHT.ETA)
+        df['is_tight_photon'] = photons.mediumId & photons.barrel
 
         selection.add('one_photon', photons.counts==1)
         selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
