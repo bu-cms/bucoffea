@@ -175,7 +175,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Electrons
         df['is_tight_electron'] = electrons.tightId \
                             & (electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
-                            & (electrons.abseta < cfg.ELECTRON.CUTS.TIGHT.ETA)
+                            & (electrons.absetasc < cfg.ELECTRON.CUTS.TIGHT.ETA)
 
         dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
@@ -285,8 +285,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Photon CR
         leadphoton_index=photons.pt.argmax()
 
-        df['is_tight_photon'] = photons.mediumId \
-                         & (photons.abseta < cfg.PHOTON.CUTS.TIGHT.ETA)
+        df['is_tight_photon'] = photons.mediumId & photons.barrel
 
         selection.add('one_photon', photons.counts==1)
         selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
