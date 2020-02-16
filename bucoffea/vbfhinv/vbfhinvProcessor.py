@@ -175,7 +175,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Electrons
         df['is_tight_electron'] = electrons.tightId \
                             & (electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
-                            & (electrons.abseta < cfg.ELECTRON.CUTS.TIGHT.ETA)
+                            & (electrons.absetasc < cfg.ELECTRON.CUTS.TIGHT.ETA)
 
         dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']

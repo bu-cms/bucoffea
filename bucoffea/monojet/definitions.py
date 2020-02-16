@@ -265,7 +265,7 @@ def setup_candidates(df, cfg):
 
     electrons = electrons[electrons.looseId \
                                     & (electrons.pt>cfg.ELECTRON.CUTS.LOOSE.PT) \
-                                    & (electrons.abseta<cfg.ELECTRON.CUTS.LOOSE.ETA) \
+                                    & (electrons.absetasc<cfg.ELECTRON.CUTS.LOOSE.ETA) \
                                     & pass_dxy \
                                     & pass_dz
                                     ]
