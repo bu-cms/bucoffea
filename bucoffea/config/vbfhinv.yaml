@@ -374,15 +374,42 @@ era2017:
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
+    ele_reco_up:
+      histogram: EGamma_SF2D_up
+      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO_varied.root
+    ele_reco_dn:
+      histogram: EGamma_SF2D_dn
+      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO_varied.root
+
     ele_reco_pt_lt_20:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO_lowEt.root
+    ele_reco_pt_lt_20_up:
+      histogram: EGamma_SF2D_up
+      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO_lowEt_varied.root
+    ele_reco_pt_lt_20_dn:
+      histogram: EGamma_SF2D_dn
+      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO_lowEt_varied.root
+
     ele_id_loose:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2.root
+    ele_id_loose_up:
+      histogram: EGamma_SF2D_up
+      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2_varied.root
+    ele_id_loose_dn:
+      histogram: EGamma_SF2D_dn
+      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2_varied.root
+
     ele_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_ElectronTight.root
+    ele_id_tight_up:
+      histogram: EGamma_SF2D_up
+      file: data/sf/egamma/2017_ElectronTight_varied.root
+    ele_id_tight_dn:
+      histogram: EGamma_SF2D_dn
+      file: data/sf/egamma/2017_ElectronTight_varied.root
 
     photon_id_tight:
       histogram: EGamma_SF2D
@@ -472,12 +499,33 @@ era2018:
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_egammaEffi_txt_EGM2D_updatedAll.root
+    ele_reco_up:
+      histogram: EGamma_SF2D_up
+      file: data/sf/egamma/2018_egammaEffi_txt_EGM2D_updatedAll_varied.root
+    ele_reco_dn:
+      histogram: EGamma_SF2D_dn
+      file: data/sf/egamma/2018_egammaEffi_txt_EGM2D_updatedAll_varied.root
+
     ele_id_loose:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_ElectronWPVeto_Fall17V2.root
+
+    ele_id_loose_up:
+      histogram: EGamma_SF2D_up
+      file: data/sf/egamma/2018_ElectronWPVeto_Fall17V2_varied.root
+    ele_id_loose_dn:
+      histogram: EGamma_SF2D_dn
+      file: data/sf/egamma/2018_ElectronWPVeto_Fall17V2_varied.root
+
     ele_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_ElectronTight.root
+    ele_id_tight_up:
+      histogram: EGamma_SF2D_up
+      file: data/sf/egamma/2018_ElectronTight_varied.root
+    ele_id_tight_dn:
+      histogram: EGamma_SF2D_dn
+      file: data/sf/egamma/2018_ElectronTight_varied.root
 
     photon_id_tight:
       histogram: EGamma_SF2D

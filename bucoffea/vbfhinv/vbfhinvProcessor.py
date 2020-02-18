@@ -5,13 +5,13 @@ import numpy as np
 from dynaconf import settings as cfg
 
 from bucoffea.helpers import (
-                              bucoffea_path, 
-                              dphi, 
+                              bucoffea_path,
+                              dphi,
                               evaluator_from_config,
-                              mask_and, 
-                              mask_or, 
-                              min_dphi_jet_met, 
-                              mt, 
+                              mask_and,
+                              mask_or,
+                              min_dphi_jet_met,
+                              mt,
                               recoil,
                               weight_shape
                               )
@@ -33,16 +33,16 @@ from bucoffea.helpers.gen import (
                                   fill_gen_v_info
                                  )
 from bucoffea.monojet.definitions import (
-                                          candidate_weights, 
+                                          candidate_weights,
                                           pileup_weights,
-                                          setup_candidates, 
+                                          setup_candidates,
                                           theory_weights_vbf,
                                           photon_trigger_sf,
                                           photon_impurity_weights,
                                           data_driven_qcd_dataset
                                           )
 from bucoffea.vbfhinv.definitions import (
-                                           vbfhinv_accumulator, 
+                                           vbfhinv_accumulator,
                                            vbfhinv_regions
                                          )
 
@@ -395,22 +395,49 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                         # Low pt
                         ele_reco_sf_low = evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et])
+                        ele_reco_sf_low_up = evaluator['ele_reco_pt_lt_20_up'](electrons.etasc[~high_et], electrons.pt[~high_et])
+                        ele_reco_sf_low_dn = evaluator['ele_reco_pt_lt_20_dn'](electrons.etasc[~high_et], electrons.pt[~high_et])
+
                         ele_id_sf_low = evaluator["ele_id_loose"](electrons.etasc[~high_et], electrons.pt[~high_et])
+                        ele_id_sf_low_up = evaluator["ele_id_loose_up"](electrons.etasc[~high_et], electrons.pt[~high_et])
+                        ele_id_sf_low_dn = evaluator["ele_id_loose_dn"](electrons.etasc[~high_et], electrons.pt[~high_et])
 
                         # High pt
                         ele_reco_sf_high = evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et])
+                        ele_reco_sf_high_up = evaluator['ele_reco_up'](electrons.etasc[high_et], electrons.pt[high_et])
+                        ele_reco_sf_high_dn = evaluator['ele_reco_dn'](electrons.etasc[high_et], electrons.pt[high_et])
+
                         ele_id_sf_high = evaluator["ele_id_loose"](electrons.etasc[high_et], electrons.pt[high_et])
-                        
+                        ele_id_sf_high_up = evaluator["ele_id_loose_up"](electrons.etasc[high_et], electrons.pt[high_et])
+                        ele_id_sf_high_dn = evaluator["ele_id_loose_dn"](electrons.etasc[high_et], electrons.pt[high_et])
+
                         veto_weight_ele = (1 - ele_reco_sf_low*ele_id_sf_low).prod() * (1-ele_reco_sf_high*ele_id_sf_high).prod()
+                        veto_weight_ele_up = (1 - ele_reco_sf_low_up*ele_id_sf_low_up).prod() * (1-ele_reco_sf_high_up*ele_id_sf_high_up).prod()
+                        veto_weight_ele_dn = (1 - ele_reco_sf_low_dn*ele_id_sf_low_dn).prod() * (1-ele_reco_sf_high_dn*ele_id_sf_high_dn).prod()
                     else:
                         ele_reco_sf = evaluator['ele_reco'](electrons.etasc, electrons.pt)
+                        ele_reco_sf_up = evaluator['ele_reco_up'](electrons.etasc, electrons.pt)
+                        ele_reco_sf_dn = evaluator['ele_reco_dn'](electrons.etasc, electrons.pt)
+
                         ele_id_sf = evaluator["ele_id_loose"](electrons.etasc, electrons.pt)
+                        ele_id_sf_up = evaluator["ele_id_loose_up"](electrons.etasc, electrons.pt)
+                        ele_id_sf_dn = evaluator["ele_id_loose_dn"](electrons.etasc, electrons.pt)
+
                         veto_weight_ele = (1 - ele_id_sf*ele_reco_sf).prod()
+                        veto_weight_ele_up = (1 - ele_id_sf_up*ele_reco_sf_up).prod()
+                        veto_weight_ele_dn = (1 - ele_id_sf_dn*ele_reco_sf_dn).prod()
+
                     veto_weight_muo = (1 - evaluator["muon_id_loose"](muons.pt, muons.abseta)*evaluator["muon_iso_loose"](muons.pt, muons.abseta)).prod()
                     veto_weight_tau = (1-evaluator["tau_id"](taus.pt)).prod()
 
                 if re.match('.*no_veto_(all|ele).*', region):
-                    region_weights.add("veto_weight_ele", veto_weight_ele)
+                    if '_eleup' in region:
+                        region_weights.add("veto_weight_ele_up", veto_weight_ele)
+                    elif '_eledn' in region:
+                        region_weights.add("veto_weight_ele_dn", veto_weight_ele)
+                    else:
+                        region_weights.add("veto_weight_ele", veto_weight_ele)
+
                 if re.match('.*no_veto_(all|muon).*', region):
                     region_weights.add("veto_weight_muon", veto_weight_muo)
                 if re.match('.*no_veto_(all|tau).*', region):

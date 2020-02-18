@@ -327,7 +327,10 @@ def vbfhinv_regions(cfg):
 
     regions.update(tmp)
 
-
+    regions['sr_vbf_no_veto_ele_eleup'] = copy.deepcopy(regions['sr_vbf_no_veto_ele'])
+    regions['sr_vbf_no_veto_ele_eledn'] = copy.deepcopy(regions['sr_vbf_no_veto_ele'])
+    regions['sr_vbf_no_veto_all_eleup'] = copy.deepcopy(regions['sr_vbf_no_veto_all'])
+    regions['sr_vbf_no_veto_all_eledn'] = copy.deepcopy(regions['sr_vbf_no_veto_all'])
 
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
