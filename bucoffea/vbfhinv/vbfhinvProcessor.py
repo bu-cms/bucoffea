@@ -432,9 +432,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                 if re.match('.*no_veto_(all|ele).*', region):
                     if '_eleup' in region:
-                        region_weights.add("veto_weight_ele_up", veto_weight_ele)
+                        region_weights.add("veto_weight_ele_up", veto_weight_ele_up)
                     elif '_eledn' in region:
-                        region_weights.add("veto_weight_ele_dn", veto_weight_ele)
+                        region_weights.add("veto_weight_ele_dn", veto_weight_ele_dn)
                     else:
                         region_weights.add("veto_weight_ele", veto_weight_ele)
 
