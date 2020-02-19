@@ -117,7 +117,7 @@ def get_veto_weights(df, evaluator, electrons, muons, taus):
 
             # If this variation is unrelated to the SF at hand,
             # pass through as well
-            if not (sfname in re.sub('_(up|down)', '', variation)):
+            if not (re.sub('_(up|down)', '', variation) in sfname):
                 return evaluator[sfname](*args)
 
 
@@ -164,7 +164,7 @@ def get_veto_weights(df, evaluator, electrons, muons, taus):
             tau_sf_name = f"tau_id_{direction}"
         else:
             tau_sf_name = "tau_id"
-            veto_weight_tau = (1 - varied_weight(tau_sf_name, taus.pt)).prod()
+        veto_weight_tau = (1 - varied_weight(tau_sf_name, taus.pt)).prod()
 
         ### Combine
         veto_weights.add(variation, veto_weight_ele * veto_weight_muo * veto_weight_tau)
@@ -507,12 +507,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                                   )
 
             # Veto weights
-            ezfill(
-                    'mjj_veto_weight',
-                    mjj=df["mjj"][mask],
-                    weight=region_weights.weight()[mask],
-                    variation='nominal'
-                    )
             if re.match('.*no_veto.*', region):
                 exclude = [
                         "muon_id_tight",
