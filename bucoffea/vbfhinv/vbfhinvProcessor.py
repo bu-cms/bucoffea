@@ -117,9 +117,8 @@ def get_veto_weights(df, evaluator, electrons, muons, taus):
 
             # If this variation is unrelated to the SF at hand,
             # pass through as well
-            if not (re.sub('_(up|down)', '', variation) in sfname):
+            if not (re.sub('_(up|dn)', '', variation) in sfname):
                 return evaluator[sfname](*args)
-
 
             # Direction of variation
             sgn = 1 if variation.endswith("up") else -1
