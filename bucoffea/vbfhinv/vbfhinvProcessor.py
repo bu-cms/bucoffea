@@ -163,7 +163,7 @@ def get_veto_weights(df, evaluator, electrons, muons, taus):
             tau_sf_name = f"tau_id_{direction}"
         else:
             tau_sf_name = "tau_id"
-        veto_weight_tau = (1 - varied_weight(tau_sf_name, taus.pt)).prod()
+        veto_weight_tau = (1 - evaluator[tau_sf_name](taus.pt)).prod()
 
         ### Combine
         veto_weights.add(variation, veto_weight_ele * veto_weight_muo * veto_weight_tau)
