@@ -7,7 +7,6 @@ import uproot
 import numpy as np
 
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
-from bucoffea.helpers.paths import bucoffea_path
 from coffea import hist
 from klepto.archives import dir_archive
 from matplotlib import pyplot as plt
