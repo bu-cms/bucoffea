@@ -19,11 +19,8 @@ def get_old_kfac(tag):
     f = uproot.open(bucoffea_path('data/sf/theory/2017_gen_v_pt_qcd_sf.root'))
     return f[f'2d_{tag}_vbf'].values
 
-def get_scale_variations(acc, regex, tag, scale_var, scale_var_type, outputrootfile):
-    '''Calculate the new k-factors with a scale weight variation.
-       Dumps the ratio: 
-       --- New k-factors with variation / Old (nominal) k-factors
-       into the given output ROOT file.'''
+def get_scale_variations(acc, regex, tag, scale_var, scale_var_type):
+    '''Calculate the new k-factors with a scale weight variation.'''
 
     print(f'Working on: {tag}, {scale_var}')
 
@@ -90,11 +87,6 @@ def get_scale_variations(acc, regex, tag, scale_var, scale_var_type, outputrootf
     sumw_nlo_nom = nlo_nom.values(overflow='over')[()]
 
     sf_nom = sumw_nlo_nom / sumw_lo 
-
-    tup = (var_ratio, yaxis.edges(overflow='over'))
- 
-    # Save to the ROOT file
-    outputrootfile[f'{tag}_vbf_{scale_var_type}'] = tup
 
     # Return tuple containing the SF ratios and
     # NLO weights with and without variation
@@ -433,7 +425,6 @@ def main():
                                                                            tag=tag    ,
                                                                            scale_var=scale_var,
                                                                            scale_var_type=scale_var_type,
-                                                                           outputrootfile=outputrootfile
                                                                           )        
 
                 tup_combined.append(tup)
