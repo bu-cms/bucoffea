@@ -81,7 +81,7 @@ def calculate_pdf_unc(nom, var, tag):
     # Return uncertainty and percent uncertainty
     return unc, unc/nom 
 
-def get_pdf_uncertainty(acc, regex, tag, outputrootfile, nominal='pdf_0'):
+def get_pdf_uncertainty(acc, regex, tag, nominal='pdf_0'):
     '''Given the input accumulator, calculate the
        PDF uncertainty from all PDF variations.'''
     # Define rebinning
@@ -158,9 +158,6 @@ def get_pdf_uncertainty(acc, regex, tag, outputrootfile, nominal='pdf_0'):
     
     outpath = pjoin(outdir, f'{tag}_pdf_unc.pdf')
     fig.savefig(outpath)
-
-    # Save the uncertainties as a ROOT histogram
-    outputrootfile[f'{tag}_pdf_unc'] = (percent_unc, vpt_ax.edges(overflow='over'))
     
     # Return nominal weights and uncertainty
     return nlo_nom, unc, vpt_edges, vpt_centers
@@ -253,15 +250,20 @@ def main():
 
     # Create the output ROOT file to save the 
     # PDF uncertainties as a function of v-pt
-    outputrootfile = uproot.recreate('vbf_pdf_var.root')
+    outputrootpath = './output/theory_variations/rootfiles'
+    if not os.path.exists(outputrootpath):
+        os.makedirs(outputrootpath)
+    
+    outputrootfile_z_over_w = uproot.recreate( pjoin(outputrootpath, 'zoverw_pdf_unc.root') )
+    outputrootfile_g_over_z = uproot.recreate( pjoin(outputrootpath, 'goverz_pdf_unc.root') )
 
-    w_nom, w_unc, vpt_edges, vpt_centers = get_pdf_uncertainty(acc, regex='WNJetsToLNu.*', tag='wjet', outputrootfile=outputrootfile)
-    dy_nom, dy_unc, vpt_edges, vpt_centers = get_pdf_uncertainty(acc, regex='DYNJetsToLL.*', tag='dy', outputrootfile=outputrootfile)
-    gjets_nom, gjets_unc, vpt_edges, vpt_centers = get_pdf_uncertainty(acc, regex='G1Jet.*', tag='gjets', outputrootfile=outputrootfile)
+    w_nom, w_unc, vpt_edges, vpt_centers = get_pdf_uncertainty(acc, regex='WNJetsToLNu.*', tag='wjet')
+    dy_nom, dy_unc, vpt_edges, vpt_centers = get_pdf_uncertainty(acc, regex='DYNJetsToLL.*', tag='dy')
+    gjets_nom, gjets_unc, vpt_edges, vpt_centers = get_pdf_uncertainty(acc, regex='G1Jet.*', tag='gjets')
 
     data_for_ratio = {
-        'z_over_w' : {'noms' : (dy_nom, w_nom), 'uncs' : (dy_unc, w_unc)},
-        'g_over_z' : {'noms' : (gjets_nom, dy_nom), 'uncs' : (gjets_unc, dy_unc)},
+        'z_over_w' : {'noms' : (dy_nom, w_nom), 'uncs' : (dy_unc, w_unc), 'rootfile' : outputrootfile_z_over_w},
+        'g_over_z' : {'noms' : (gjets_nom, dy_nom), 'uncs' : (gjets_unc, dy_unc), 'rootfile' : outputrootfile_g_over_z},
     }
     
     for tag, entry in data_for_ratio.items():
@@ -272,7 +274,8 @@ def main():
                    tag=tag,
                    vpt_edges=vpt_edges,
                    vpt_centers=vpt_centers,
-                   outputrootfile=outputrootfile)
+                   outputrootfile=entry['rootfile']
+                  )
 
 if __name__ == '__main__':
     main()

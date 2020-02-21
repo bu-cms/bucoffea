@@ -220,7 +220,7 @@ def get_ratios(sumw_var, tag, var):
     # Return the varied and nominal ratios
     return (ratio_var1, ratio_var2), ratio_nom 
 
-def plot_ratio(sumw_var, tag, xedges, outputrootfile, varied='num'):
+def plot_ratio(sumw_var, tag, xedges, varied='num'):
     '''Plot ratio for two processes, for all variations.
        Specify which process is to be varied (num or denom).'''
     # List of all variations
@@ -264,10 +264,6 @@ def plot_ratio(sumw_var, tag, xedges, outputrootfile, varied='num'):
         ax.plot(xcenters, dratio, marker='o', label=var_to_label[var])
         
         dratios[var] = dratio
-
-        # Save the double ratios in ROOT file
-        tup = (dratio, xedges)
-        outputrootfile[f'{tag}_{var}'] = tup 
     
     ax.set_xlabel(r'$p_T (V)\ (GeV)$')
     ax.set_ylabel(tag_to_ylabel[tag])
@@ -295,7 +291,7 @@ def plot_ratio(sumw_var, tag, xedges, outputrootfile, varied='num'):
 
     return dratios
 
-def plot_combined_scale_uncs(dratio_dict, xedges):
+def plot_combined_scale_uncs(dratio_dict, xedges, outputrootfiles):
     '''Plot combined scale variations for Z/W and photon/W ratios.
        Combined var: (var_num**2 + var_denom**2)**0.5'''
     to_be_combined = [('zvar_over_w', 'z_over_wvar'), ('gvar_over_z', 'g_over_zvar')]
@@ -312,6 +308,12 @@ def plot_combined_scale_uncs(dratio_dict, xedges):
         'mu_f_down' : r'$\mu_{F,1}$',
         'mu_f_up' : r'$\mu_{F,2}$',
     }
+    var_to_roothistname = {
+        'mu_r_down' : 'renScaleDown',
+        'mu_r_up' : 'renScaleUp',
+        'mu_f_down' : 'facScaleDown',
+        'mu_f_up' : 'facScaleUp',
+    }
     tag_to_ylabel = {
         'z_over_w' : r'Combined Scale Unc: $Z\rightarrow \ell \ell$ / $W\rightarrow \ell \nu$',
         'g_over_z' : r'Combined Scale Unc: $\gamma$ + jets / $Z\rightarrow \ell \ell$',
@@ -325,6 +327,10 @@ def plot_combined_scale_uncs(dratio_dict, xedges):
         for var_pair in var_pairs:
             combined_dratio_unc = 1 + np.sign(1-dratios_num[var_pair[0]]) * np.sqrt( (1-dratios_num[var_pair[0]] )**2 + ( 1-dratios_denom[var_pair[1]] )**2)
             ax.plot(xcenters, combined_dratio_unc, marker='o', label=var_to_label[var_pair[0]])
+            # Save to output ROOT file
+            tup = (combined_dratio_unc, xedges)
+            outputrootfile = outputrootfiles[tags[idx]]
+            outputrootfile[f'{tags[idx]}_{var_to_roothistname[var_pair[0]]}'] = tup
         ax.legend()
         ax.set_xlabel(r'$p_T(V)\ (GeV)$')
         ax.set_ylabel(tag_to_ylabel[tags[idx]])
@@ -352,8 +358,20 @@ def main():
 
     acc.load('sumw')
     acc.load('sumw2')
+
+    # Create the output ROOT file to save the 
+    # PDF uncertainties as a function of v-pt
+    outputrootpath = './output/theory_variations/rootfiles'
+    if not os.path.exists(outputrootpath):
+        os.makedirs(outputrootpath)
     
-    outputrootfile = uproot.recreate('vbf_scale_var.root')
+    outputrootfile_z_over_w = uproot.recreate( pjoin(outputrootpath, 'zoverw_scale_unc.root') )
+    outputrootfile_g_over_z = uproot.recreate( pjoin(outputrootpath, 'goverz_scale_unc.root') )
+
+    outputrootfiles = {
+        'z_over_w' : outputrootfile_z_over_w,
+        'g_over_z' : outputrootfile_g_over_z
+    }
 
     scale_var_dict = {
         'gjets' : [
@@ -394,12 +412,12 @@ def main():
             sumw_var = pickle.load(f)
 
         xedges = tup[1]
-        dratio_dict['zvar_over_w'] = plot_ratio(sumw_var, tag='zvar_over_w', xedges=xedges, varied='num', outputrootfile=outputrootfile)
-        dratio_dict['z_over_wvar'] = plot_ratio(sumw_var, tag='z_over_wvar', xedges=xedges, varied='denom', outputrootfile=outputrootfile)
-        dratio_dict['gvar_over_z'] = plot_ratio(sumw_var, tag='gvar_over_z', xedges=xedges, varied='num', outputrootfile=outputrootfile)
-        dratio_dict['g_over_zvar'] = plot_ratio(sumw_var, tag='g_over_zvar', xedges=xedges, varied='denom', outputrootfile=outputrootfile)
+        dratio_dict['zvar_over_w'] = plot_ratio(sumw_var, tag='zvar_over_w', xedges=xedges, varied='num')
+        dratio_dict['z_over_wvar'] = plot_ratio(sumw_var, tag='z_over_wvar', xedges=xedges, varied='denom')
+        dratio_dict['gvar_over_z'] = plot_ratio(sumw_var, tag='gvar_over_z', xedges=xedges, varied='num')
+        dratio_dict['g_over_zvar'] = plot_ratio(sumw_var, tag='g_over_zvar', xedges=xedges, varied='denom')
 
-        plot_combined_scale_uncs(dratio_dict, xedges)
+        plot_combined_scale_uncs(dratio_dict, xedges, outputrootfiles=outputrootfiles)
 
     else:
         sumw_var = {}
