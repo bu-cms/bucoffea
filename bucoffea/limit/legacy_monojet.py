@@ -36,7 +36,9 @@ def datasets(year):
                 'cr_2m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_2e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
-                'sr_v' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
+                # 'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
+                'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
+                # 'sr_v' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
             }
     return data, mc
 
@@ -44,7 +46,7 @@ def datasets(year):
 def legacy_dataset_name(dataset):
     patterns = {
         '.*DY.*' : 'zll',
-        'QCD_HT.*' : 'qcd',
+        'QCD.*' : 'qcd',
         'TTJets.*' : 'top',
         'Diboson.*' : 'diboson',
         '(MET|EGamma).*' : 'data',
@@ -98,7 +100,7 @@ def legacy_limit_input_monojet(acc, outdir='./output'):
         os.makedirs(outdir)
 
     for year in [2017,2018]:
-        signal = re.compile(f'(GluGlu|WH|ZH|ggZH).*{year}')
+        signal = re.compile(f'(GluGlu|WH|ZH|ggZH|VBF).*(I|i)inv.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_monojet_{year}.root'))
         data, mc = datasets(year)
         for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j','sr_j']:
