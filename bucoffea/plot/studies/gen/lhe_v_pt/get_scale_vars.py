@@ -214,13 +214,32 @@ def get_ratios(sumw_var, tag, var):
     # Return the varied and nominal ratios
     return (ratio_var1, ratio_var2), ratio_nom 
 
-def plot_ratio(sumw_var, tag, xedges, varied='num'):
+def get_ratio_arbitrary(sumw_var, tag, var1, var2):
+    '''Get ratio of two processes, such that:
+       - Process 1 is varied with var1
+       - Process 2 is varied with var2'''
+    if re.match('z.*_over_w.*', tag):
+        tag1 = 'dy'
+        tag2 = 'wjet'
+    elif re.match('g.*_over_z.*', tag):
+        tag1 = 'gjets'
+        tag2 = 'dy'
+
+    sumw1_var, sumw1_nom = sumw_var[tag1][var1]
+    sumw2_var, sumw2_nom = sumw_var[tag2][var2]
+
+    ratio_var = sumw1_var / sumw2_var
+    ratio_nom = sumw1_nom / sumw2_nom
+
+    return ratio_var, ratio_nom
+    
+def plot_ratio(sumw_var, tag, xedges, varied='all', var1=None, var2=None):
     '''Plot ratio for two processes, for all variations.
        Specify which process is to be varied (num or denom).'''
     # List of all variations
     varlist = sumw_var['wjet'].keys()
 
-    xcenters = ((xedges + np.roll(xedges,0))/2)[:-1]
+    xcenters = ((xedges + np.roll(xedges,-1))/2)[:-1]
     
     tag_to_ylabel = {
         'zvar_over_w' : r'$Z\rightarrow \ell \ell$ / $W\rightarrow \ell \nu$ (Var / Nom)',
@@ -249,8 +268,6 @@ def plot_ratio(sumw_var, tag, xedges, varied='num'):
             ratio_var = ratios_var[0]
         elif varied == 'denom':
             ratio_var = ratios_var[1]
-        else:
-            raise ValueError('Invalid value for varied argument: Use num or denom.')
 
         # Calculate the ratio of ratios!
         dratio = ratio_var / ratio_nom
@@ -312,7 +329,7 @@ def plot_combined_scale_uncs(dratio_dict, xedges, outputrootfiles):
         'z_over_w' : r'Combined Scale Unc: $Z\rightarrow \ell \ell$ / $W\rightarrow \ell \nu$',
         'g_over_z' : r'Combined Scale Unc: $\gamma$ + jets / $Z\rightarrow \ell \ell$',
     }
-    xcenters = ((xedges + np.roll(xedges,0))/2)[:-1]
+    xcenters = ((xedges + np.roll(xedges,-1))/2)[:-1]
     for idx, pair in enumerate(to_be_combined):
         dratios_num = dratio_dict[pair[0]]
         dratios_denom = dratio_dict[pair[1]]
