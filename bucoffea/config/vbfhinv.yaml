@@ -158,23 +158,23 @@ default:
       histogram: 2d_gjets_vbf
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
     unc_zoverw_nlo_muf_down:
-      histogram: znlo1_over_wnlo1_facScaleDown
-      file: data/sf/theory/unc/wtoz_unc.root
+      histogram: z_over_w_facScaleDown 
+      file: data/sf/theory/unc/zoverw_scale_unc.root
     unc_zoverw_nlo_muf_up:
-      histogram: znlo1_over_wnlo1_facScaleUp
-      file: data/sf/theory/unc/wtoz_unc.root
+      histogram: z_over_w_facScaleUp
+      file: data/sf/theory/unc/zoverw_scale_unc.root
     unc_zoverw_nlo_mur_down:
-      histogram: znlo1_over_wnlo1_renScaleDown
-      file: data/sf/theory/unc/wtoz_unc.root
+      histogram: z_over_w_renScaleDown
+      file: data/sf/theory/unc/zoverw_scale_unc.root
     unc_zoverw_nlo_mur_up:
-      histogram: znlo1_over_wnlo1_renScaleUp
-      file: data/sf/theory/unc/wtoz_unc.root
+      histogram: z_over_w_renScaleUp
+      file: data/sf/theory/unc/zoverw_scale_unc.root
     unc_zoverw_nlo_pdf_down:
-      histogram: znlo1_over_wnlo1_pdfDown
-      file: data/sf/theory/unc/wtoz_unc.root
+      histogram: z_over_w_pdfDown 
+      file: data/sf/theory/unc/zoverw_pdf_unc.root
     unc_zoverw_nlo_pdf_up:
-      histogram: znlo1_over_wnlo1_pdfUp
-      file: data/sf/theory/unc/wtoz_unc.root
+      histogram: z_over_w_pdfUp 
+      file: data/sf/theory/unc/zoverw_pdf_unc.root
     unc_w_ewkcorr_overz_common_up:
       histogram: w_ewkcorr_overz_Upcommon
       file: data/sf/theory/unc/wtoz_unc.root
