@@ -232,8 +232,8 @@ def plot_ratio(noms, uncs, tag, vpt_edges, vpt_centers, outputrootfile):
     fig.savefig(filepath)
 
     # Save into root file
-    outputrootfile[f'{tag}_var_over_nom_pdfup'] = (dratio_up, vpt_edges)
-    outputrootfile[f'{tag}_var_over_nom_pdfdown'] = (dratio_down, vpt_edges)
+    outputrootfile[f'{tag}_pdfUp'] = (dratio_up, vpt_edges)
+    outputrootfile[f'{tag}_pdfDown'] = (dratio_down, vpt_edges)
 
 def main():
     inpath = sys.argv[1]
