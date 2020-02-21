@@ -233,7 +233,7 @@ def get_ratio_arbitrary(sumw_var, tag, var1, var2):
 
     return ratio_var, ratio_nom
     
-def plot_ratio(sumw_var, tag, xedges, varied='all', var1=None, var2=None):
+def plot_ratio(sumw_var, tag, xedges, varied='num'):
     '''Plot ratio for two processes, for all variations.
        Specify which process is to be varied (num or denom).'''
     # List of all variations
@@ -292,6 +292,58 @@ def plot_ratio(sumw_var, tag, xedges, varied='all', var1=None, var2=None):
 
     # Save figure
     outdir = './output/theory_variations/scale/ratioplots'
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    
+    outpath = pjoin(outdir, f'{tag}_scaleunc_ratio.pdf')
+    fig.savefig(outpath)
+
+    print(f'Saved file in {outpath}')
+
+    return dratios
+
+def plot_ratio_anticorr(sumw_var, tag, xedges):
+    '''Plot ratio for two processes, for all anti-correlated variations.'''
+    xcenters = ((xedges + np.roll(xedges,-1))/2)[:-1]
+    
+    tag_to_ylabel = {
+        'z_over_w' : r'$Z\rightarrow \ell \ell$ / $W\rightarrow \ell \nu$',
+        'g_over_z' : r'$\gamma$ + jets / $Z\rightarrow \ell \ell$',
+    }
+
+    var_to_label = {
+        ('mu_r_up', 'mu_r_down') : r'$\mu_R$ up (Z), $\mu_R$ down (W)',
+        ('mu_r_down', 'mu_r_up') : r'$\mu_R$ down (Z), $\mu_R$ up (W)',
+        ('mu_f_up', 'mu_f_down') : r'$\mu_F$ up (Z), $\mu_F$ down (W)',
+        ('mu_f_down', 'mu_f_up') : r'$\mu_F$ down (Z), $\mu_F$ up (W)'
+    }
+
+    # Construct the plot
+    fig, ax = plt.subplots(1,1)
+
+    # Store double ratios in a dict
+    dratios = {}
+
+    for var1, var2 in var_to_label.keys():
+        ratio_var, ratio_nom = get_ratio_arbitrary(sumw_var, tag, var1, var2)
+
+        # Calculate the ratio of ratios!
+        dratio = ratio_var / ratio_nom
+
+        ax.plot(xcenters, dratio, marker='o', label=var_to_label[(var1, var2)])
+        
+        dratios[(var1, var2)] = dratio
+    
+    ax.set_xlabel(r'$p_T (V)\ (GeV)$')
+    ax.set_ylabel(tag_to_ylabel[tag])
+    ax.set_ylim(0.8, 1.2)
+    ax.legend()
+    ax.grid(True)
+
+    ax.plot([200,200], [0.8,1.2], 'k')
+
+    # Save figure
+    outdir = './output/theory_variations/scale/ratioplots/anticorr'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     
@@ -427,6 +479,8 @@ def main():
         dratio_dict['z_over_wvar'] = plot_ratio(sumw_var, tag='z_over_wvar', xedges=xedges, varied='denom')
         dratio_dict['gvar_over_z'] = plot_ratio(sumw_var, tag='gvar_over_z', xedges=xedges, varied='num')
         dratio_dict['g_over_zvar'] = plot_ratio(sumw_var, tag='g_over_zvar', xedges=xedges, varied='denom')
+
+        dratio_dict['z_over_w'] = plot_ratio_anticorr(sumw_var, tag='z_over_w', xedges=xedges)
 
         plot_combined_scale_uncs(dratio_dict, xedges, outputrootfiles=outputrootfiles)
 
