@@ -88,7 +88,7 @@ def get_scale_variations(acc, regex, tag, scale_var, scale_var_type):
 
     sf_nom = sumw_nlo_nom / sumw_lo 
 
-    tup = (var_ratio, xaxis.edges(overflow='over') )
+    tup = (var_ratio, h.axis('vpt').edges(overflow='over') )
 
     # Return tuple containing the SF ratios and
     # NLO weights with and without variation
@@ -98,9 +98,9 @@ def plot_ratio_vpt(tup, var, tag):
     '''Given the tuple contatining the SF ratio (variational/nominal) and 
        bin edges, plot ratios in each mjj bin as a function of v-pt.'''
     ratio, x_edges = tup
-    vpt_centers = ((x_edges + np.roll(x_edges,0))/2)[:-1]
+    vpt_centers = ((x_edges + np.roll(x_edges,-1))/2)[:-1]
     fig, ax = plt.subplots(1,1)
-
+    
     # Figure out the variation and the relevant title
     var_title = {
         'gjets' : {
@@ -146,7 +146,7 @@ def plot_ratio_vpt_combined(tup_combined, tag):
        bin edges for all variations for a given process, 
        plot ratios in each mjj bin as a function of v-pt.'''
     ratio_combined, x_edges = tup_combined[:,0], tup_combined[0,1]
-    vpt_centers = ((x_edges + np.roll(x_edges,0))/2)[:-1]
+    vpt_centers = ((x_edges + np.roll(x_edges,-1))/2)[:-1]
     fig, ax = plt.subplots(1,1)
 
     # Figure out the variation and the relevant title, and label for the legend
