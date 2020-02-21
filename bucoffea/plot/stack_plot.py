@@ -184,7 +184,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
             binwnorm=True)
 
     if signal:
-        fig, ax, _ = hist.plot1d(
+        hist.plot1d(
             h[signal],
             overlay='dataset',
             error_opts=signal_err_opts,

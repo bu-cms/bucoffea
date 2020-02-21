@@ -24,8 +24,10 @@ def datasets(year):
                     'sr_j' : f'nomatch',
                 }
     tmp = {}
-    for k, v in data.items():
+    for k, v in list(data.items()):
         tmp[k] = re.compile(v)
+        k1=k.replace('_j','_v')
+        tmp[k1] = re.compile(v)
     data.update(tmp)
 
 
@@ -36,10 +38,11 @@ def datasets(year):
                 'cr_2m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_2e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
-                # 'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
                 'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
-                # 'sr_v' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
             }
+    for key in list(mc.keys()):
+        new_key = key.replace('_j','_v')
+        mc[new_key]=mc[key]
     return data, mc
 
 
