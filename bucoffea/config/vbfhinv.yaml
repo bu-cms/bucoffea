@@ -175,6 +175,24 @@ default:
     unc_zoverw_nlo_pdf_up:
       histogram: z_over_w_pdfUp 
       file: data/sf/theory/unc/zoverw_pdf_unc.root
+    unc_goverz_nlo_muf_down:
+      histogram: g_over_z_facScaleDown 
+      file: data/sf/theory/unc/goverz_scale_unc.root
+    unc_goverz_nlo_muf_up:
+      histogram: g_over_z_facScaleUp
+      file: data/sf/theory/unc/goverz_scale_unc.root
+    unc_goverz_nlo_mur_down:
+      histogram: g_over_z_renScaleDown
+      file: data/sf/theory/unc/goverz_scale_unc.root
+    unc_goverz_nlo_mur_up:
+      histogram: g_over_z_renScaleUp
+      file: data/sf/theory/unc/goverz_scale_unc.root
+    unc_goverz_nlo_pdf_down:
+      histogram: g_over_z_pdfDown 
+      file: data/sf/theory/unc/goverz_pdf_unc.root
+    unc_goverz_nlo_pdf_up:
+      histogram: g_over_z_pdfUp 
+      file: data/sf/theory/unc/goverz_pdf_unc.root
     unc_w_ewkcorr_overz_common_up:
       histogram: w_ewkcorr_overz_Upcommon
       file: data/sf/theory/unc/wtoz_unc.root
