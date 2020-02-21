@@ -88,6 +88,8 @@ def get_scale_variations(acc, regex, tag, scale_var, scale_var_type):
 
     sf_nom = sumw_nlo_nom / sumw_lo 
 
+    tup = (var_ratio, xaxis.edges(overflow='over') )
+
     # Return tuple containing the SF ratios and
     # NLO weights with and without variation
     return tup, (sumw_nlo_var_1d, sumw_nlo_nom_1d)
