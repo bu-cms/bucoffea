@@ -12,6 +12,9 @@ Hist = hist.Hist
 Bin = hist.Bin
 Cat = hist.Cat
 
+def empty_column_accumulator_int():
+    return processor.column_accumulator(np.array([],dtype=np.uint64))
+
 
 def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
@@ -182,7 +185,7 @@ def monojet_accumulator(cfg):
     items['sumw2'] = processor.defaultdict_accumulator(float)
     items['sumw_pileup'] = processor.defaultdict_accumulator(float)
 
-    items['selected_events'] = processor.defaultdict_accumulator(list)
+    items['selected_events'] = processor.defaultdict_accumulator(empty_column_accumulator_int)
     items['kinematics'] = processor.defaultdict_accumulator(list)
 
     for region in ['sr_j','cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
