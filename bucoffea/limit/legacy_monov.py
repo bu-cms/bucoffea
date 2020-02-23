@@ -32,44 +32,44 @@ def legacy_limit_input_monov(acc, outdir='./output'):
         os.makedirs(outdir)
 
     for wp in ['tau21','loosemd','tightmd','loose','tight']:
-        year = 2017
-        signal = re.compile(f'.*(Hinv|HToInvisible).*{year}')
-        f = uproot.recreate(pjoin(outdir, f'legacy_limit_monov_{wp}_{year}.root'))
-        data, mc = datasets(year)
-        for region in ['cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','sr_v']:
-            if wp == 'tau21':
-                monov_region_name = region
-            else:
-                monov_region_name = region.replace('_v',f'_{wp}_v')
-            print(f'Region {region}')
-            # Rebin
-            h = copy.deepcopy(acc[distribution])
-            
-            newax = hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016())
+        for year in [2017,2018]:
+            signal = re.compile(f'.*(Hinv|HToInvisible).*{year}')
+            f = uproot.recreate(pjoin(outdir, f'legacy_limit_monov_{wp}_{year}.root'))
+            data, mc = datasets(year)
+            for region in ['cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','sr_v']:
+                if wp == 'tau21':
+                    monov_region_name = region
+                else:
+                    monov_region_name = region.replace('_v',f'_{wp}_v')
+                print(f'Region {region}')
+                # Rebin
+                h = copy.deepcopy(acc[distribution])
+                
+                newax = hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016())
 
-            h = h.rebin(h.axis(newax.name), newax)
+                h = h.rebin(h.axis(newax.name), newax)
 
-            h = merge_extensions(h, acc)
-            scale_xs_lumi(h)
+                h = merge_extensions(h, acc)
+                scale_xs_lumi(h)
 
-            h = merge_datasets(h)
+                h = merge_datasets(h)
 
-            h = h.integrate(h.axis('region'),monov_region_name)
-            
-            for dataset in map(str, h.axis('dataset').identifiers()):
-                if not (data[region].match(dataset) or mc[region].match(dataset) or signal.match(dataset)):
-                    print(f"Skip dataset: {dataset}")
-                    continue
-                print(f"   Dataset: {dataset}")
+                h = h.integrate(h.axis('region'),monov_region_name)
+                
+                for dataset in map(str, h.axis('dataset').identifiers()):
+                    if not (data[region].match(dataset) or mc[region].match(dataset) or signal.match(dataset)):
+                        print(f"Skip dataset: {dataset}")
+                        continue
+                    print(f"   Dataset: {dataset}")
 
-                th1 = export1d(h.integrate('dataset', dataset))
-                try:
-                    histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name(dataset)}'
-                except:
-                    print(f"Skipping {dataset}")
-                    continue
-                f[histo_name] = th1
-        f[f'{legacy_region_name("sr_v")}_data'] = f[f'{legacy_region_name("sr_v")}_zjets']
+                    th1 = export1d(h.integrate('dataset', dataset))
+                    try:
+                        histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name(dataset)}'
+                    except:
+                        print(f"Skipping {dataset}")
+                        continue
+                    f[histo_name] = th1
+            f[f'{legacy_region_name("sr_v")}_data'] = f[f'{legacy_region_name("sr_v")}_zjets']
     merge_legacy_inputs(outdir)
 
 
