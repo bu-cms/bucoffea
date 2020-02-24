@@ -231,8 +231,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection_nom.add('dielectron_charge', (dielectron_charge==0).any())
         selection_nom.add('two_electrons', electrons.counts==2)
 
-        df['is_tight_photon'] = photons.mediumId \
-                         & (photons.abseta < cfg.PHOTON.CUTS.TIGHT.ETA)
+        df['is_tight_photon'] = photons.mediumId & photons.barrel
 
         # Photon CR
         leadphoton_index=photons.pt.argmax()
