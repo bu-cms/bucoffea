@@ -422,7 +422,9 @@ class monojetProcessor(processor.ProcessorABC):
                         fill_tree('gen_v_pt', -1 * np.ones(sum(mask)))
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
-                output['selected_events'][region] += list(df['event'][mask])
+                # Save only every Nth event
+                save_mask = mask & ((df['event']%cfg.RUN.SAVE.PRESCALE)== 0)
+                output['selected_events'][region] += processor.column_accumulator(df['event'][save_mask].astype(np.uint64))
 
 
             # Multiplicities
