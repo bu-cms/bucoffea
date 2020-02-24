@@ -221,7 +221,7 @@ def merge_datasets(histogram):
         'WJetsToLNu_HT_MLM_{year}' : 'WJetsToLNu_HT-(\d+)To.*-MLM_{year}',
 
         'Top_FXFX_{year}' : '(TTJets-amcatnloFXFX|ST.*)_{year}',
-        'Top_MLM_{year}' : '(TTJets-amcatnloFXFX|ST.*)_{year}',
+        'Top_MLM_{year}' : '(TTJets.*MLM.*|ST.*)_{year}',
         'TT_pow_{year}' : '(TTTo.*pow|ST).*{year}',
 
         'QCD_HT_{year}' : 'QCD_HT.*_{year}',
