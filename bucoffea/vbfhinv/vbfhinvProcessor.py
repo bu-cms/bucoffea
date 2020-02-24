@@ -484,9 +484,21 @@ class vbfhinvProcessor(processor.ProcessorABC):
                                     weight=region_weights.weight()[mask] * w_imp
                                 )
 
-            # Uncertainty variations
+            # Uncertainty variations for Z
             if df['is_lo_z'] or df['is_nlo_z'] or df['is_lo_z_ewk']:
-                theory_uncs = [x for x in cfg.SF.keys() if x.startswith('unc')]
+                theory_uncs = [x for x in cfg.SF.keys() if x.startswith('unc') and 'goverz' not in x]
+                for unc in theory_uncs:
+                    reweight = evaluator[unc](gen_v_pt)
+                    w = (region_weights.weight() * reweight)[mask]
+                    ezfill(
+                        'mjj_unc',
+                        mjj=df['mjj'][mask],
+                        uncertainty=unc,
+                        weight=w)
+
+            # Uncertainty variations for photons
+            if df['is_lo_g'] or df['is_nlo_g'] or df['is_lo_g_ewk']:
+                theory_uncs = [x for x in cfg.SF.keys() if x.startswith('unc') and 'zoverw' not in x]
                 for unc in theory_uncs:
                     reweight = evaluator[unc](gen_v_pt)
                     w = (region_weights.weight() * reweight)[mask]
