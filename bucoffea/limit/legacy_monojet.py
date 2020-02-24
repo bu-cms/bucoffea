@@ -24,28 +24,33 @@ def datasets(year):
                     'sr_j' : f'nomatch',
                 }
     tmp = {}
-    for k, v in data.items():
+    for k, v in list(data.items()):
         tmp[k] = re.compile(v)
+        k1=k.replace('_j','_v')
+        tmp[k1] = re.compile(v)
     data.update(tmp)
 
 
  
     mc = {
-                'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_2m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_2e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+                'cr_1m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
+                'cr_1e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
+                'cr_2m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+                'cr_2e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
-                'sr_v' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
+                'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
             }
+    for key in list(mc.keys()):
+        new_key = key.replace('_j','_v')
+        mc[new_key]=mc[key]
     return data, mc
 
 
 def legacy_dataset_name(dataset):
     patterns = {
         '.*DY.*' : 'zll',
-        'QCD_HT.*' : 'qcd',
-        'TTJets.*' : 'top',
+        'QCD.*' : 'qcd',
+        '(Top).*' : 'top',
         'Diboson.*' : 'diboson',
         '(MET|EGamma).*' : 'data',
         'WJetsToLNu.*' : 'wjets',
@@ -98,7 +103,7 @@ def legacy_limit_input_monojet(acc, outdir='./output'):
         os.makedirs(outdir)
 
     for year in [2017,2018]:
-        signal = re.compile(f'(GluGlu|WH|ZH|ggZH).*{year}')
+        signal = re.compile(f'(GluGlu|WH|ZH|ggZH|VBF).*(I|i)inv.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_monojet_{year}.root'))
         data, mc = datasets(year)
         for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j','sr_j']:

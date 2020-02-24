@@ -32,7 +32,7 @@ def main():
     else:
         acc = acc_from_dir(args.inpath)
 
-    outdir = pjoin('./output/',os.path.basename(args.inpath))
+    outdir = pjoin('./output/',list(filter(lambda x:x,args.inpath.split('/')))[-1])
 
     if args.channel == 'monojet':
         from legacy_monojet import legacy_limit_input_monojet

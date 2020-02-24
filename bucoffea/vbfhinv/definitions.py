@@ -12,6 +12,7 @@ import numpy as np
 from bucoffea.helpers import object_overlap
 from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.helpers.gen import find_first_parent
+from bucoffea.monojet.definitions import accu_int
 from pprint import pprint
 
 def vbfhinv_accumulator(cfg):
@@ -159,7 +160,7 @@ def vbfhinv_accumulator(cfg):
     for region in regions:
         if region=="inclusive":
             continue
-        items[f'cutflow_{region}']  = processor.defaultdict_accumulator(int)
+        items[f'cutflow_{region}']  = processor.defaultdict_accumulator(accu_int)
 
     items['nevents'] = processor.defaultdict_accumulator(float)
     items['sumw'] = processor.defaultdict_accumulator(float)

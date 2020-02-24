@@ -382,9 +382,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr", "tr"]):
-                output['cutflow_' + region]['all']+=df.size
+                output['cutflow_' + region][dataset]['all']+=df.size
                 for icut, cutname in enumerate(cuts):
-                    output['cutflow_' + region][cutname] += selection.all(*cuts[:icut+1]).sum()
+                    output['cutflow_' + region][dataset][cutname] += selection.all(*cuts[:icut+1]).sum()
 
             mask = selection.all(*cuts)
 
@@ -486,10 +486,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # Uncertainty variations
             if df['is_lo_z'] or df['is_nlo_z'] or df['is_lo_z_ewk']:
-                theory_uncs = [x.replace('_unc','') for x in cfg.SF.keys() if x.startswith('unc')]
+                theory_uncs = [x for x in cfg.SF.keys() if x.startswith('unc')]
                 for unc in theory_uncs:
                     reweight = evaluator[unc](gen_v_pt)
-                    w = (weights.weight() * reweight)[mask]
+                    w = (region_weights.weight() * reweight)[mask]
                     ezfill(
                         'mjj_unc',
                         mjj=df['mjj'][mask],

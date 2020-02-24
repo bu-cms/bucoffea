@@ -1392,7 +1392,7 @@ def plot_settings():
                 },
                 'ak8_eta0' : {
                     'xlim' : (-3,3),
-                    'ylim' : (1e-3,1e3)
+                    'ylim' : (1e-2,1e4)
                 },
                 'ak8_wvsqcd0' : {
                     'xlim' : (0,1)

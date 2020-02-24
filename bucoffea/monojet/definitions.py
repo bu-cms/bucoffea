@@ -15,6 +15,8 @@ Cat = hist.Cat
 def empty_column_accumulator_int():
     return processor.column_accumulator(np.array([],dtype=np.uint64))
 
+def accu_int():
+    return processor.defaultdict_accumulator(int)
 
 def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
@@ -178,7 +180,7 @@ def monojet_accumulator(cfg):
     for region in regions:
         if region=="inclusive":
             continue
-        items[f'cutflow_{region}']  = processor.defaultdict_accumulator(int)
+        items[f'cutflow_{region}']  = processor.defaultdict_accumulator(accu_int)
 
     items['nevents'] = processor.defaultdict_accumulator(float)
     items['sumw'] = processor.defaultdict_accumulator(float)
