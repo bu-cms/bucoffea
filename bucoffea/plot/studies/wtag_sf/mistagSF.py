@@ -88,8 +88,8 @@ for lepton_flag in ['1m','2m','1e','2e']:
             region_all = f'cr_{lepton_flag}_hasmass_inclusive_v'
             region_pass= f'cr_{lepton_flag}_nomistag_{wp}_v'
             mc_Real  = re.compile(f'(ST_|TTJets-MLM_|Diboson_){year}')
-            mc_False = re.compile(f'(VDY.*HT.*|QCD.*|W.*HT.*|GJets.*HT.*|ZJetsToNuNu.*){year}')
-            mc_All = re.compile(f'(VDY.*HT.*|QCD.*|W.*HT.*|ST_|TTJets-MLM_|Diboson_|GJets.*HT.*|ZJetsToNuNu.*){year}')
+            mc_False = re.compile(f'(DY.*HT.*|QCD.*|W.*HT.*|GJets_HT.*|ZJetsToNuNu.*){year}')
+            mc_All = re.compile(f'(DY.*HT.*|QCD.*|W.*HT.*|ST_|TTJets-MLM_|Diboson_|GJets.*HT.*|ZJetsToNuNu.*){year}')
             if lepton_flag=='1e' or lepton_flag=='2e':
                 data = re.compile(f'EGamma_{year}')
             else:
