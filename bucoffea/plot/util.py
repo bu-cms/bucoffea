@@ -146,6 +146,7 @@ def merge_extensions(histogram, acc, reweight_pu=True, noscale=False):
             if reweight_pu:
                 sumw_pileup[base] += acc['sumw_pileup'][d]
                 nevents[base] += acc['nevents'][d]
+
     histogram = histogram.group("dataset", hist.Cat("dataset", "Primary dataset"), mapping)
 
     if not noscale:
@@ -219,10 +220,9 @@ def merge_datasets(histogram):
         'DYJetsToLL_M-50_HT_MLM_{year}' : 'DYJetsToLL_M-50_HT-(\d+)to.*-MLM_{year}',
         'WJetsToLNu_HT_MLM_{year}' : 'WJetsToLNu_HT-(\d+)To.*-MLM_{year}',
 
-        'TTJets-FXFX_{year}' : 'TTJets-amcatnloFXFX_{year}',
-        'TTJets-MLM_{year}' : 'TTJets-MLM_{year}',
-        'TT_pow_{year}' : 'TTTo.*pow.*{year}',
-        'ST_{year}' : 'ST.*{year}',
+        'Top_FXFX_{year}' : '(TTJets-amcatnloFXFX|ST.*)_{year}',
+        'Top_MLM_{year}' : '(TTJets-amcatnloFXFX|ST.*)_{year}',
+        'TT_pow_{year}' : '(TTTo.*pow|ST).*{year}',
 
         'QCD_HT_{year}' : 'QCD_HT.*_{year}',
 
