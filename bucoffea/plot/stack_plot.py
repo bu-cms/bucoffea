@@ -37,6 +37,7 @@ colors = {
     'EWKZ.*ZToLL.*' : '#d5bae2',
     'EWKZ.*ZToNuNu.*' : '#c4cae2',
     '.*Diboson.*' : '#4292c6',
+    'Top.*' : '#6a51a3',
     '.*TT.*' : '#6a51a3',
     '.*ST.*' : '#9e9ac8',
     '.*QCD.*' : '#08306b',
@@ -95,8 +96,8 @@ class Style():
                     'muon_pt0' : hist.Bin('pt',r'Leading muon $p_{T}$ (GeV)',list(range(0,600,20))),
                     'muon_pt1' : hist.Bin('pt',r'Trailing muon $p_{T}$ (GeV)',list(range(0,600,20))),
                     'muon_pt' : hist.Bin('pt',r'All muon $p_{T}$ (GeV)',list(range(0,600,20))),
-                    'dielectron_pt' : hist.Bin('pt',r'Dielectron $p_{T}$ (GeV)',list(range(0,400,25)) + list(range(400,800,50)) + list(range(800,1100,100))),
-                    'dimuon_pt' : hist.Bin('pt',r'Dimuon $p_{T}$ (GeV)',list(range(0,400,25)) + list(range(400,800,50)) + list(range(800,1100,100))),
+                    'dielectron_pt' : hist.Bin('pt',r'Dielectron $p_{T}$ (GeV)',list(range(0,400,20)) + list(range(400,800,40)) + list(range(800,1100,100))),
+                    'dimuon_pt' : hist.Bin('pt',r'Dimuon $p_{T}$ (GeV)',list(range(0,400,20)) + list(range(400,800,40)) + list(range(800,1100,100))),
                     'mjj' : hist.Bin('mjj', r'$M_{jj}$ (GeV)', list(range(200,800,300)) + list(range(800,2000,400)) + [2000, 2750, 3500])
                     }
         }
