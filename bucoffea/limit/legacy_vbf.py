@@ -25,11 +25,11 @@ def datasets(year):
                     'sr_vbf' : f'nomatch',
                 }
     mc = {
-            'sr_vbf' : re.compile(f'W(minus|plus)H_.*|((VBF|GluGlu)_HToInvisible.*|ggZH.*|ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|DYJetsToLL.*|.*W.*HT.*).*{year}'),
-            'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
-            'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
-            'cr_2m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-            'cr_2e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+            'sr_vbf' : re.compile(f'W(minus|plus)H_.*|((VBF|GluGlu)_HToInvisible.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_1m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_1e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+            'cr_2e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
           }
         
@@ -47,7 +47,7 @@ def legacy_dataset_name_vbf(dataset):
         'EWKZ\d?Jets.*ZToNuNu.*' : 'ewkzjets',
         'EWKW.*' : 'ewkwjets',
         'QCD.*' : 'qcd',
-        'TTJets.*' : 'top',
+        'Top.*' : 'top',
         'Diboson.*' : 'diboson',
         '(MET|EGamma).*' : 'data',
         'WJetsToLNu.*' : 'qcdwjets',
