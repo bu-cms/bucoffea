@@ -4,7 +4,6 @@ import os
 import sys
 import re
 import numpy as np
-from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
 from klepto.archives import dir_archive
 from tabulate import tabulate
 from pprint import pprint
