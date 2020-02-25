@@ -49,11 +49,25 @@ def from_coffea(inpath, outfile):
         h_w = acc['mjj'][re.compile(f'W.*HT.*{year}')].integrate('dataset')
         f[f'w_qcd_mjj_nominal_{year}'] = export1d(h_w)
 
-        # QCD Variations
+        h_ph = acc['mjj'][re.compile(f'GJ.*HT.*{year}')].integrate('dataset')
+        f[f'gjets_qcd_mjj_nominal_{year}'] = export1d(h_ph)
+        print(h_ph.values())
+
+        # QCD Variations for Z
         h_z_unc = acc['mjj_unc'][re.compile(f'ZJ.*HT.*{year}')].integrate('dataset')
         for unc in map(str, h_z_unc.axis('uncertainty').identifiers()):
+            if 'goverz' in unc:
+                continue
             h = h_z_unc.integrate(h_z_unc.axis('uncertainty'), unc)
             f[f'z_qcd_mjj_{unc}_{year}'] = export1d(h)
+
+        # QCD Variations for photons
+        h_ph_unc = acc['mjj_unc'][re.compile(f'GJ.*HT.*{year}')].integrate('dataset')
+        for unc in map(str, h_ph_unc.axis('uncertainty').identifiers()):
+            if 'zoverw' in unc:
+                continue
+            h = h_ph_unc.integrate(h_ph_unc.axis('uncertainty'), unc)
+            f[f'gjets_qcd_mjj_{unc}_{year}'] = export1d(h)
 
         # EWK V
         h_z = acc['mjj'][re.compile(f'.*EWKZ.*{year}')].integrate('dataset')
@@ -62,17 +76,31 @@ def from_coffea(inpath, outfile):
         h_w = acc['mjj'][re.compile(f'.*EWKW.*{year}')].integrate('dataset')
         f[f'w_ewk_mjj_nominal_{year}'] = export1d(h_w)
 
-        # EWK Variations
+        h_ph = acc['mjj'][re.compile(f'GJets_SM_5f_EWK.*{year}')].integrate('dataset')
+        f[f'gjets_ewk_mjj_nominal_{year}'] = export1d(h_ph)
+
+        # EWK Variations for Z
         h_z_unc = acc['mjj_unc'][re.compile(f'.*EWKZ.*{year}')].integrate('dataset')
         for unc in map(str, h_z_unc.axis('uncertainty').identifiers()):
+            if 'goverz' in unc:
+                continue
             h = h_z_unc.integrate(h_z_unc.axis('uncertainty'), unc)
             f[f'z_ewk_mjj_{unc}_{year}'] = export1d(h)
+
+        # EWK Variations for photons
+        h_ph_unc = acc['mjj_unc'][re.compile(f'GJets_SM.*{year}')].integrate('dataset')
+        for unc in map(str, h_ph_unc.axis('uncertainty').identifiers()):
+            if 'zoverw' in unc:
+                continue
+            h = h_ph_unc.integrate(h_ph_unc.axis('uncertainty'), unc)
+            f[f'gjets_ewk_mjj_{unc}_{year}'] = export1d(h)
 
 def make_ratios(infile):
     f = r.TFile(infile)
     of = r.TFile(infile.replace('.root','_ratio.root'),'RECREATE')
     of.cd()
 
+    # Z / W ratios
     for source in ['ewk','qcd']:
         for year in [2017,2018]:
             denominator = f.Get(f'w_{source}_mjj_nominal_{year}')
@@ -85,12 +113,30 @@ def make_ratios(infile):
                 ratio.Divide(denominator)
                 ratio.SetDirectory(of)
                 ratio.Write()
+    
+    # GJets / Z ratios    
+    for source in ['ewk','qcd']:
+        for year in [2017,2018]:
+            denominator = f.Get(f'z_{source}_mjj_nominal_{year}')
+            for name in map(lambda x:x.GetName(), f.GetListOfKeys()):
+                if not name.startswith(f'gjets_{source}'):
+                    continue
+                if not f"{year}" in name:
+                    continue
+                ratio = f.Get(name).Clone(f'ratio_{name}')
+                ratio.Divide(denominator)
+                ratio.SetDirectory(of)
+                ratio.Write()
+
     of.Close()
     return str(of.GetName())
+
 def make_uncertainties(infile):
     f = r.TFile(infile)
     of = r.TFile(infile.replace('_ratio','_ratio_unc'),'RECREATE')
     of.cd()
+
+    # Uncertainty in Z / W ratios
     for source in ['ewk','qcd']:
         for year in [2017,2018]:
             nominal = f.Get(f'ratio_z_{source}_mjj_nominal_{year}')
@@ -113,6 +159,31 @@ def make_uncertainties(infile):
                 
                 ratio.SetDirectory(of)
                 ratio.Write()
+    
+    # Uncertainty in GJets / Z ratios
+    for source in ['ewk','qcd']:
+        for year in [2017,2018]:
+            nominal = f.Get(f'ratio_gjets_{source}_mjj_nominal_{year}')
+            for name in map(lambda x:x.GetName(), f.GetListOfKeys()):
+                m = re.match(f'.*gjets_{source}_mjj_unc_(.*)_{year}', name)
+                if not m:
+                    continue
+                variation_name = m.groups()[0]
+                ratio = f.Get(name)
+                variation = ratio.Clone(f'uncertainty_{name}')
+
+                # New = variation / nominal -1
+                variation.Divide(nominal)
+                for i in range(1,variation.GetNbinsX()+1):
+                    content = variation.GetBinContent(i)
+                    variation.SetBinContent(i, content-1)
+
+                variation.SetDirectory(of)
+                variation.Write()
+                
+                ratio.SetDirectory(of)
+                ratio.Write()
+
     of.Close()
     return str(of.GetName())
 import os
@@ -122,7 +193,7 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     inpath = sys.argv[1] 
-    outfile = pjoin(outdir, f'vbf_z_w_theory_unc.root')
+    outfile = pjoin(outdir, f'vbf_z_w_gjets_theory_unc.root')
     from_coffea(inpath, outfile)
     outfile = make_ratios(outfile)
     make_uncertainties(outfile)
