@@ -407,8 +407,8 @@ def setup_candidates(df, cfg):
         zvsqcdmd=df['FatJet_deepTagMD_ZvsQCD'],
         tvsqcd=df['FatJet_deepTag_TvsQCD'],
         tvsqcdmd=df['FatJet_deepTagMD_TvsQCD'],
-        wvstqcd=df['FatJet_deepTag_WvsQCD']/(df['FatJet_deepTag_TvsQCD']+1),
-        wvstqcdmd=df['FatJet_deepTagMD_WvsQCD']/(df['FatJet_deepTagMD_TvsQCD']+1),
+        wvstqcd=df['FatJet_deepTag_WvsQCD']*(1-df['FatJet_deepTag_TvsQCD'])/(1-df['FatJet_deepTag_WvsQCD']*df['FatJet_deepTag_TvsQCD']),
+        wvstqcdmd=df['FatJet_deepTagMD_WvsQCD']*(1-df['FatJet_deepTagMD_TvsQCD'])/(1-df['FatJet_deepTagMD_WvsQCD']*df['FatJet_deepTagMD_TvsQCD']),
     )
     ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
