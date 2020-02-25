@@ -134,7 +134,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['is_lo_g_ewk'] = is_lo_g_ewk(dataset)
         df['is_nlo_z'] = is_nlo_z(dataset)
         df['is_nlo_w'] = is_nlo_w(dataset)
-        df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g'] | df['is_lo_w_ewk'] | df['is_lo_z_ewk']
+        df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g'] | df['is_lo_w_ewk'] | df['is_lo_z_ewk'] | df['is_lo_g_ewk']
         df['is_data'] = is_data(dataset)
 
         gen_v_pt = None
@@ -143,7 +143,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
             gen_v_pt = df['gen_v_pt_combined']
-        elif df['is_lo_g']:
+        elif df['is_lo_g'] or df['is_lo_g_ewk']:
             gen = setup_gen_candidates(df)
             gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
 
