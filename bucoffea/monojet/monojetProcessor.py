@@ -502,6 +502,10 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_wvsqcdmd0',  tagger=ak8[leadak8_index].wvsqcdmd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcd0',    tagger=ak8[leadak8_index].zvsqcd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcdmd0',  tagger=ak8[leadak8_index].zvsqcdmd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_tvsqcd0',    tagger=ak8[leadak8_index].tvsqcd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_tvsqcdmd0',    tagger=ak8[leadak8_index].tvsqcdmd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_wvstqcd0',    tagger=ak8[leadak8_index].wvstqcd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_wvstqcdmd0',    tagger=ak8[leadak8_index].wvstqcdmd[mask].flatten(),     weight=w_leadak8)
 
                 # histogram with only gen-matched lead ak8 pt
                 if not df['is_data']:

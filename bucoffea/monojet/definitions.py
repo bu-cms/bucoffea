@@ -110,6 +110,10 @@ def monojet_accumulator(cfg):
     items["ak8_wvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_zvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_zvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_tvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_tvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_wvstqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_wvstqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
     items["ak8_passtight_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
     items["ak8_passloosemd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
@@ -400,7 +404,11 @@ def setup_candidates(df, cfg):
         wvsqcd=df['FatJet_deepTag_WvsQCD'],
         wvsqcdmd=df['FatJet_deepTagMD_WvsQCD'],
         zvsqcd=df['FatJet_deepTag_ZvsQCD'],
-        zvsqcdmd=df['FatJet_deepTagMD_ZvsQCD']
+        zvsqcdmd=df['FatJet_deepTagMD_ZvsQCD'],
+        tvsqcd=df['FatJet_deepTag_TvsQCD'],
+        tvsqcdmd=df['FatJet_deepTagMD_TvsQCD'],
+        wvstqcd=df['FatJet_deepTag_WvsQCD']/(df['FatJet_deepTag_TvsQCD']+1),
+        wvstqcdmd=df['FatJet_deepTagMD_WvsQCD']/(df['FatJet_deepTagMD_TvsQCD']+1),
     )
     ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
