@@ -550,8 +550,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr", "tr"]):
                 output['cutflow_' + region][dataset]['all']+=df.size
+                # Get weighted cutflow
                 for icut, cutname in enumerate(cuts):
-                    output['cutflow_' + region][dataset][cutname] += selection.all(*cuts[:icut+1]).sum()
+                    output['cutflow_' + region][dataset][cutname] += np.nansum(region_weights.weight() *  selection.all(*cuts[:icut+1]) )
 
             mask = selection.all(*cuts)
 
