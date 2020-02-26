@@ -7,6 +7,7 @@ import numpy as np
 from klepto.archives import dir_archive
 from tabulate import tabulate
 from pprint import pprint
+from bucoffea.plot.util import load_xs, lumi
 
 pjoin = os.path.join
 
@@ -19,32 +20,73 @@ region_headers = {
 	'cr_g_vbf' : 'Photon CR'
 }	
 
+def get_weighted_cutflow(acc, dataset, region, var, year):
+	tag = f'cutflow_{region}{var}'
+	acc.load(tag)
+	c = acc[tag]
+	r = re.compile(f'{dataset}.*{year}')
+	datasets = list(filter(r.match, c.keys()))
+
+	# Get cut names
+	cutnames = c[datasets[0]].keys()
+
+	def get_cutflow(dataset):
+		return np.array(list(c[dataset].values() ), dtype=float)
+	
+	def get_sumw(dataset):
+		return acc['sumw'][dataset]
+
+	mapped = {d: {'cutflow' : get_cutflow(d), 'sumw' : get_sumw(d)} for d in datasets} 
+
+	# Merge extensions
+	exts = [
+		'.*(_ext\d+).*',
+		'.*(_new_+pmx).*',
+		'.*(_PSweights).*'
+	]
+	
+	def merge_exts(_mapped, _exts):
+		for dataset in datasets:
+			for regex in _exts:
+				m = re.match(regex, dataset)
+				if m:
+					dataset_new = dataset.replace(m.groups()[0], '')
+					to_be_merged = _mapped.pop(dataset) 
+					_mapped[dataset_new]['cutflow'] += to_be_merged['cutflow'] 
+					_mapped[dataset_new]['sumw'] += to_be_merged['sumw'] 
+
+		return _mapped
+
+	merged_map = merge_exts(mapped, exts)
+
+	# Reweight w.r.t. x-sec and lumi
+	xs = load_xs()
+
+	for d in merged_map.keys():
+		reweight = 1e3*xs[d]*lumi(year) / merged_map[d]['sumw']
+		merged_map[d]['cutflow'] *= reweight
+	
+	# Merge bins and get the final cutflow
+	cutflow_list = [] 
+	for d in merged_map.keys():
+		cutflow_list.append(merged_map[d]['cutflow'])
+
+	cutflow_arr = np.sum(cutflow_list, axis=0)
+
+	return cutnames, cutflow_arr
+
 def dump_cutflows(acc, region, dataset, year):
 	'''Dump cutflows for all variations in a given region and dataset.'''
 	cutflow_dict = {}
 	variations = ['', '_jesup', '_jesdown', '_jerup', '_jerdown']
 
-	ncuts = None
-	dataset_name = None
-
+	# Get cutflows for each variation
 	for var in variations:
-		tag = f'cutflow_{region}{var}'
-		acc.load(tag)
-		c = acc[tag]
-
-		nevents = []
-
-		for data in c.keys():
-			if data.startswith(dataset) and year in data:
-				cutflow = c[data]
-				if not ncuts:
-					ncuts = len(cutflow.values())
-				if not dataset_name:
-					dataset_name = data
-				nevents.append( list(cutflow.values()) )
-			
-		sum_nevents = np.sum(nevents, axis=0)
-		cutflow_dict[f'{region}{var}'] = sum_nevents
+		cutnames, cutflow_dict[f'{region}{var}'] = get_weighted_cutflow(acc,
+														   dataset=dataset,
+														   region=region,
+														   var=var,
+														   year=year)
 
 	# Calculate % differences w.r.t. nominal
 	diffs = {}
@@ -55,17 +97,26 @@ def dump_cutflows(acc, region, dataset, year):
 		percent_diff = abs_diff*100 / np.array( list(cutflow_dict[region]) )
 		diffs[f'{var.strip("_")}_nom'] = percent_diff
 
-	# List of cut names
-	cut_names = acc['cutflow_sr_vbf'][dataset_name].keys()
-
 	headers = ['Nominal', 'JES up', 'JES down', 'JER up', 'JER down', 'JES Up-Nom (%)', 'JES Down-Nom (%)', 'JER Up-Nom (%)', 'JER Down-Nom (%)']
 	
 	# Merge the two dicts
 	cutflow_dict.update(diffs)
 
+	# Clean cut names 
+	def clean_cutname(cutname):
+		clean_regex = '.*_(jes|jer)(up|down)'
+		m = re.match(clean_regex, cutname)
+		if m:
+			toreplace = '_' + ''.join(m.groups())
+			cutname = cutname.replace(toreplace, '')
+
+		return cutname
+
+	cutnames = list(map(clean_cutname, cutnames))
+
 	# Create table
-	table = tabulate(cutflow_dict, headers=headers, showindex=cut_names, floatfmt=['.0f']*6 + ['.3f']*4, numalign='right')
-	
+	table = tabulate(cutflow_dict, headers=headers, showindex=cutnames, floatfmt=['.0f']*6 + ['.3f']*4, numalign='right')
+
 	# Dump as output
 	outdir = './output/cutflow_comparisons'
 	if not os.path.exists(outdir):
@@ -79,7 +130,7 @@ def dump_cutflows(acc, region, dataset, year):
 
 	print(f'File saved: {outfile}')
 
-	return cutflow_dict, cut_names
+	return cutflow_dict, cutnames
 
 def dump_cutflows_ratio(cutflows, datasets, year, region, tag, cut_names):
 	'''Dump cutflow as a ratio of two datasets (e.g. Z/W)'''
@@ -123,7 +174,6 @@ def dump_cutflows_ratio(cutflows, datasets, year, region, tag, cut_names):
 
 	print(f'File saved: {outfile}')
 	
-
 def main():
 	inpath = sys.argv[1]
 	acc = dir_archive(
@@ -137,7 +187,7 @@ def main():
 	acc.load('sumw2')
 
 	datasets = ['ZJetsToNuNu', 'WJetsToLNu']
-	years = ['2017', '2018']
+	years = [2017, 2018]
 
 	cutflows = {}
 
@@ -145,8 +195,8 @@ def main():
 		for year in years:
 			cutflows[f'{dataset}_{year}'], cut_names = dump_cutflows(acc, region='sr_vbf', dataset=dataset, year=year)
 
-
 	dump_cutflows_ratio(cutflows, datasets, year=2017, region='sr_vbf', tag='zoverw', cut_names=cut_names)
+	dump_cutflows_ratio(cutflows, datasets, year=2018, region='sr_vbf', tag='zoverw', cut_names=cut_names)
 
 
 if __name__ == '__main__':
