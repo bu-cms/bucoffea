@@ -367,7 +367,9 @@ class monojetProcessor(processor.ProcessorABC):
                 if re.match(r'cr_(\d+)e.*', region):
                     p_pass_data = 1 - (1-evaluator["trigger_electron_eff_data"](electrons.etasc, electrons.pt)).prod()
                     p_pass_mc   = 1 - (1-evaluator["trigger_electron_eff_mc"](electrons.etasc, electrons.pt)).prod()
-                    region_weights.add('trigger', p_pass_data/p_pass_mc)
+                    trigger_weight = p_pass_data/p_pass_mc
+                    trigger_weight[np.isnan(trigger_weight)] = 1
+                    region_weights.add('trigger', trigger_weight)
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
                     region_weights.add('trigger_met', evaluator["trigger_met"](df['recoil_pt']))
                 elif re.match(r'cr_g.*', region):
