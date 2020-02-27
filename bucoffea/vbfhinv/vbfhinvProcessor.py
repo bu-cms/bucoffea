@@ -5,13 +5,13 @@ import numpy as np
 from dynaconf import settings as cfg
 
 from bucoffea.helpers import (
-                              bucoffea_path, 
-                              dphi, 
+                              bucoffea_path,
+                              dphi,
                               evaluator_from_config,
-                              mask_and, 
-                              mask_or, 
-                              min_dphi_jet_met, 
-                              mt, 
+                              mask_and,
+                              mask_or,
+                              min_dphi_jet_met,
+                              mt,
                               recoil,
                               weight_shape
                               )
@@ -33,16 +33,16 @@ from bucoffea.helpers.gen import (
                                   fill_gen_v_info
                                  )
 from bucoffea.monojet.definitions import (
-                                          candidate_weights, 
+                                          candidate_weights,
                                           pileup_weights,
-                                          setup_candidates, 
+                                          setup_candidates,
                                           theory_weights_vbf,
                                           photon_trigger_sf,
                                           photon_impurity_weights,
                                           data_driven_qcd_dataset
                                           )
 from bucoffea.vbfhinv.definitions import (
-                                           vbfhinv_accumulator, 
+                                           vbfhinv_accumulator,
                                            vbfhinv_regions
                                          )
 
@@ -92,6 +92,93 @@ def trigger_selection(selection, df, cfg):
     selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
 
     return selection
+
+
+
+
+def get_veto_weights(df, evaluator, electrons, muons, taus):
+    """
+    Calculate veto weights for SR W
+
+    The weights are effectively:
+
+        w = product(1-SF)
+
+    where the product runs overveto-able e, mu, tau.
+    """
+    veto_weights = processor.Weights(size=df.size, storeIndividual=True)
+
+    for variation in [
+                      'nominal',
+                    #   'ele_reco_up','ele_reco_dn',
+                    #   'ele_id_up','ele_id_dn',
+                    #   'muon_id_up','muon_id_dn',
+                    #   'muon_iso_up','muon_iso_dn',
+                    #   'tau_id_up','tau_id_dn'
+                      ]:
+
+        def varied_weight(sfname, *args):
+            '''Helper function to easily get the correct weights for a given variation'''
+
+            # For the nominal variation, just pass through
+            if 'nominal' in variation:
+                return evaluator[sfname](*args)
+
+            # If this variation is unrelated to the SF at hand,
+            # pass through as well
+            if not (re.sub('_(up|dn)', '', variation) in sfname):
+                return evaluator[sfname](*args)
+
+            # Direction of variation
+            sgn = 1 if variation.endswith("up") else -1
+            return evaluator[sfname](*args) + sgn * evaluator[f"{sfname}_error"](*args)
+
+
+        ### Electrons
+        if extract_year(df['dataset']) == 2017:
+            high_et = electrons.pt>20
+
+            # Low pt SFs
+            low_pt_args = (electrons.etasc[~high_et], electrons.pt[~high_et])
+            ele_reco_sf_low = varied_weight('ele_reco_pt_lt_20', *low_pt_args)
+            ele_id_sf_low = varied_weight("ele_id_loose", *low_pt_args)
+
+            # High pt SFs
+            high_pt_args = (electrons.etasc[high_et], electrons.pt[high_et])
+
+            ele_reco_sf_high = varied_weight("ele_reco", *high_pt_args)
+            ele_id_sf_high = varied_weight("ele_id_loose", *high_pt_args)
+
+            # Combine
+            veto_weight_ele = (1 - ele_reco_sf_low*ele_id_sf_low).prod() * (1-ele_reco_sf_high*ele_id_sf_high).prod()
+        else:
+            # No split for 2018
+            args = (electrons.etasc, electrons.pt)
+            ele_reco_sf = varied_weight("ele_reco", *args)
+            ele_id_sf = varied_weight("ele_id_loose", *args)
+
+            # Combine
+            veto_weight_ele = (1 - ele_id_sf*ele_reco_sf).prod()
+
+        ### Muons
+        args = (muons.pt, muons.abseta)
+        veto_weight_muo = (1 - varied_weight("muon_id_loose", *args)*varied_weight("muon_iso_loose", *args)).prod()
+
+        ### Taus
+        # Taus have their variations saves as separate histograms,
+        # so our cool trick from above is replaced by the pedestrian way
+        if "tau_id" in variation:
+            direction = variation.split("_")[-1]
+            tau_sf_name = f"tau_id_{direction}"
+        else:
+            tau_sf_name = "tau_id"
+        veto_weight_tau = (1 - evaluator[tau_sf_name](taus.pt)).prod()
+
+        ### Combine
+        veto_weights.add(variation, veto_weight_ele * veto_weight_muo * veto_weight_tau)
+
+    return veto_weights
+
 
 
 class vbfhinvProcessor(processor.ProcessorABC):
@@ -209,10 +296,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('veto_muo', muons.counts==0)
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', taus.counts==0)
+        selection.add('at_least_one_tau', taus.counts>0)
         selection.add('veto_b', bjets.counts==0)
         selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
+        selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
+        selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
 
         if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
             selection.add('hemveto', df['hemveto'])
@@ -364,9 +454,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
             output['sumw_pileup'][dataset] +=  weights._weights['pileup'].sum()
 
         regions = vbfhinv_regions(cfg)
+
+        veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus)
         for region, cuts in regions.items():
+            exclude = [None]
             region_weights = copy.deepcopy(weights)
+
             if not df['is_data']:
+
+                ### Trigger weights
                 if re.match(r'cr_(\d+)e.*', region):
                     p_pass_data = 1 - (1-evaluator["trigger_electron_eff_data"](electrons.etasc, electrons.pt)).prod()
                     p_pass_mc   = 1 - (1-evaluator["trigger_electron_eff_mc"](electrons.etasc, electrons.pt)).prod()
@@ -377,6 +473,24 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     region_weights.add('trigger_met', evaluator["trigger_met"](df['recoil_pt']))
                 elif re.match(r'cr_g.*', region):
                     photon_trigger_sf(region_weights, photons, df)
+
+                # Veto weights
+                if re.match('.*no_veto.*', region):
+                    exclude = [
+                            "muon_id_tight",
+                            "muon_iso_tight",
+                            "muon_id_loose",
+                            "muon_iso_loose",
+                            "ele_reco",
+                            "ele_id_tight",
+                            "ele_id_loose",
+                            "tau_id"
+                        ]
+                    region_weights.add("veto",veto_weights.partial_weight(include=["nominal"]))
+
+
+            # This is the default weight for this region
+            rweight = region_weights.partial_weight(exclude=exclude)
 
             # Blinding
             if(self._blind and df['is_data'] and region.startswith('sr')):
@@ -402,7 +516,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                                   dataset=dataset,
                                   region=region,
                                   multiplicity=candidates[mask].counts,
-                                  weight=region_weights.weight()[mask]
+                                  weight=rweight[mask]
                                   )
 
             fill_mult('ak4_mult', ak4)
@@ -421,6 +535,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                                   region=region,
                                   **kwargs
                                   )
+
             # Monitor weights
             for wname, wvalue in region_weights._weights.items():
                 ezfill("weights", weight_type=wname, weight_value=wvalue[mask])
@@ -428,8 +543,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # All ak4
             # This is a workaround to create a weight array of the right dimension
-            w_alljets = weight_shape(ak4[mask].eta, region_weights.weight()[mask])
-            w_alljets_nopref = weight_shape(ak4[mask].eta, region_weights.partial_weight(exclude=['prefire'])[mask])
+            w_alljets = weight_shape(ak4[mask].eta, rweight[mask])
+            w_alljets_nopref = weight_shape(ak4[mask].eta, region_weights.partial_weight(exclude=exclude+['prefire'])[mask])
 
             ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
@@ -440,7 +555,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_pt_nopref',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets_nopref)
 
             # Leading ak4
-            w_diak4 = weight_shape(diak4.pt[mask], region_weights.weight()[mask])
+            w_diak4 = weight_shape(diak4.pt[mask], rweight[mask])
             ezfill('ak4_eta0',      jeteta=diak4.i0.eta[mask].flatten(),    weight=w_diak4)
             ezfill('ak4_phi0',      jetphi=diak4.i0.phi[mask].flatten(),    weight=w_diak4)
             ezfill('ak4_pt0',       jetpt=diak4.i0.pt[mask].flatten(),      weight=w_diak4)
@@ -460,21 +575,23 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
-            w_btag = weight_shape(btag[mask], region_weights.weight()[mask])
+            w_btag = weight_shape(btag[mask], rweight[mask])
             ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
             # MET
-            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=region_weights.weight()[mask] )
-            ezfill('met',                met=met_pt[mask],            weight=region_weights.weight()[mask] )
-            ezfill('met_phi',            phi=met_phi[mask],           weight=region_weights.weight()[mask] )
-            ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=region_weights.weight()[mask] )
-            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],        weight=region_weights.weight()[mask] )
-            ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.weight()[mask] )
-            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask], weight=region_weights.weight()[mask] )
+            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=rweight[mask] )
+            ezfill('met',                met=met_pt[mask],            weight=rweight[mask] )
+            ezfill('met_phi',            phi=met_phi[mask],           weight=rweight[mask] )
+            ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=rweight[mask] )
+            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],        weight=rweight[mask] )
+            ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=rweight[mask] )
+            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask], weight=rweight[mask] )
 
-            ezfill('dphijj',             dphi=df["dphijj"][mask],   weight=region_weights.weight()[mask] )
-            ezfill('detajj',             deta=df["detajj"][mask],   weight=region_weights.weight()[mask] )
-            ezfill('mjj',                mjj=df["mjj"][mask],      weight=region_weights.weight()[mask] )
+            ezfill('dphijj',             dphi=df["dphijj"][mask],   weight=rweight[mask] )
+            ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
+            ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
+
+
 
             # Photon CR data-driven QCD estimate
             if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
@@ -483,7 +600,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                                     dataset=data_driven_qcd_dataset(dataset),
                                     region=region,
                                     mjj=df["mjj"][mask],
-                                    weight=region_weights.weight()[mask] * w_imp
+                                    weight=rweight[mask] * w_imp
                                 )
 
             # Uncertainty variations
@@ -499,19 +616,20 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         weight=w)
 
             # Two dimensional
-            ezfill('recoil_mjj',         recoil=df["recoil_pt"][mask], mjj=df["mjj"][mask], weight=region_weights.weight()[mask] )
+            ezfill('recoil_mjj',         recoil=df["recoil_pt"][mask], mjj=df["mjj"][mask], weight=rweight[mask] )
 
             # Muons
-            if '_1m_' in region or '_2m_' in region:
-                w_allmu = weight_shape(muons.pt[mask], region_weights.weight()[mask])
+            if '_1m_' in region or '_2m_' in region or 'no_veto' in region:
+                w_allmu = weight_shape(muons.pt[mask], rweight[mask])
                 ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
-                ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=region_weights.weight()[mask])
+                ezfill('muon_pt_abseta',pt=muons.pt[mask].flatten(),abseta=muons.eta[mask].flatten(),    weight=w_allmu )
+                ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=rweight[mask])
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
 
             # Dimuon
             if '_2m_' in region:
-                w_dimu = weight_shape(dimuons.pt[mask], region_weights.weight()[mask])
+                w_dimu = weight_shape(dimuons.pt[mask], rweight[mask])
                 ezfill('muon_pt0',      pt=dimuons.i0.pt[mask].flatten(),           weight=w_dimu)
                 ezfill('muon_pt1',      pt=dimuons.i1.pt[mask].flatten(),           weight=w_dimu)
                 ezfill('muon_eta0',     eta=dimuons.i0.eta[mask].flatten(),         weight=w_dimu)
@@ -523,16 +641,17 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
 
             # Electrons
-            if '_1e_' in region or '_2e_' in region:
-                w_allel = weight_shape(electrons.pt[mask], region_weights.weight()[mask])
+            if '_1e_' in region or '_2e_' in region or 'no_veto' in region:
+                w_allel = weight_shape(electrons.pt[mask], rweight[mask])
                 ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
-                ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=region_weights.weight()[mask])
+                ezfill('electron_pt_eta',   pt=electrons.pt[mask].flatten(), eta=electrons.eta[mask].flatten(),    weight=w_allel)
+                ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=rweight[mask])
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
                 ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
 
             # Dielectron
             if '_2e_' in region:
-                w_diel = weight_shape(dielectrons.pt[mask], region_weights.weight()[mask])
+                w_diel = weight_shape(dielectrons.pt[mask], rweight[mask])
                 ezfill('electron_pt0',      pt=dielectrons.i0.pt[mask].flatten(),               weight=w_diel)
                 ezfill('electron_pt1',      pt=dielectrons.i1.pt[mask].flatten(),               weight=w_diel)
                 ezfill('electron_eta0',     eta=dielectrons.i0.eta[mask].flatten(),             weight=w_diel)
@@ -545,27 +664,31 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # Photon
             if '_g_' in region:
-                w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],region_weights.weight()[mask]);
+                w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],rweight[mask]);
                 ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
                 ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
                 ezfill('photon_eta_phi',          eta=photons[leadphoton_index].eta[mask].flatten(), phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
 
-                # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], region_weights.weight()[mask])
+                # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], rweight[mask])
 
+            # Tau
+            if 'no_veto' in region:
+                w_all_taus = weight_shape(taus.pt[mask], rweight[mask])
+                ezfill("tau_pt", pt=taus.pt[mask].flatten(), weight=w_all_taus)
 
             # PV
-            ezfill('npv', nvtx=df['PV_npvs'][mask], weight=region_weights.weight()[mask])
-            ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=region_weights.weight()[mask])
+            ezfill('npv', nvtx=df['PV_npvs'][mask], weight=rweight[mask])
+            ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=rweight[mask])
 
-            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=region_weights.partial_weight(exclude=['pileup'])[mask])
-            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=region_weights.partial_weight(exclude=['pileup'])[mask])
+            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=region_weights.partial_weight(exclude=exclude+['pileup'])[mask])
+            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=region_weights.partial_weight(exclude=exclude+['pileup'])[mask])
 
-            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=region_weights.weight()[mask])
-            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=region_weights.weight()[mask])
-            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=region_weights.partial_weight(exclude=['pileup'])[mask])
-            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=region_weights.partial_weight(exclude=['pileup'])[mask])
+            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=region_weights.partial_weight(exclude=exclude)[mask])
+            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=region_weights.partial_weight(exclude=exclude)[mask])
+            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=region_weights.partial_weight(exclude=exclude+['pileup'])[mask])
+            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=region_weights.partial_weight(exclude=exclude+['pileup'])[mask])
         return output
 
     def postprocess(self, accumulator):
