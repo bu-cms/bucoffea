@@ -75,7 +75,7 @@ def get_weighted_cutflow(acc, dataset, region, var, year):
 
 	return cutnames, cutflow_arr
 
-def dump_cutflows(acc, region, dataset, year):
+def dump_cutflows(acc, region, dataset, year, out_tag):
 	'''Dump cutflows for all variations in a given region and dataset.'''
 	cutflow_dict = {}
 	variations = ['', '_jesup', '_jesdown', '_jerup', '_jerdown']
@@ -118,7 +118,7 @@ def dump_cutflows(acc, region, dataset, year):
 	table = tabulate(cutflow_dict, headers=headers, showindex=cutnames, floatfmt=['.0f']*6 + ['.3f']*4, numalign='right')
 
 	# Dump as output
-	outdir = './output/cutflow_comparisons'
+	outdir = f'./output/{out_tag}/cutflow_comparisons'
 	if not os.path.exists(outdir):
 		os.makedirs(outdir)
 	
@@ -132,7 +132,7 @@ def dump_cutflows(acc, region, dataset, year):
 
 	return cutflow_dict, cutnames
 
-def dump_cutflows_ratio(cutflows, datasets, year, region, tag, cut_names):
+def dump_cutflows_ratio(cutflows, datasets, year, region, tag, cut_names, out_tag):
 	'''Dump cutflow as a ratio of two datasets (e.g. Z/W)'''
 	variations = ['', '_jesup', '_jesdown', '_jerup', '_jerdown']
 	ratios = {}
@@ -161,7 +161,7 @@ def dump_cutflows_ratio(cutflows, datasets, year, region, tag, cut_names):
 	# Create table
 	table = tabulate(ratios, headers=headers, showindex=cut_names, floatfmt='.3f', numalign='right')
 
-	outdir='./output/cutflow_comparisons/ratios'
+	outdir=f'./output/{out_tag}/cutflow_comparisons/ratios'
 	if not os.path.exists(outdir):
 		os.makedirs(outdir)
 	
@@ -186,6 +186,11 @@ def main():
 	acc.load('sumw')
 	acc.load('sumw2')
 
+	if inpath.endswith('/'):
+		out_tag = inpath.split('/')[-2]
+	else:
+		out_tag = inpath.split('/')[-1]
+
 	datasets = ['ZJetsToNuNu', 'WJetsToLNu']
 	years = [2017, 2018]
 
@@ -193,10 +198,10 @@ def main():
 
 	for dataset in datasets:
 		for year in years:
-			cutflows[f'{dataset}_{year}'], cut_names = dump_cutflows(acc, region='sr_vbf', dataset=dataset, year=year)
+			cutflows[f'{dataset}_{year}'], cut_names = dump_cutflows(acc, region='sr_vbf', dataset=dataset, year=year, out_tag=out_tag)
 
-	dump_cutflows_ratio(cutflows, datasets, year=2017, region='sr_vbf', tag='zoverw', cut_names=cut_names)
-	dump_cutflows_ratio(cutflows, datasets, year=2018, region='sr_vbf', tag='zoverw', cut_names=cut_names)
+	dump_cutflows_ratio(cutflows, datasets, year=2017, region='sr_vbf', tag='zoverw', cut_names=cut_names, out_tag=out_tag)
+	dump_cutflows_ratio(cutflows, datasets, year=2018, region='sr_vbf', tag='zoverw', cut_names=cut_names, out_tag=out_tag)
 
 
 if __name__ == '__main__':
