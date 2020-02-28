@@ -22,10 +22,10 @@ def datasets(year):
                     'cr_2e_vbf' : f'EGamma_{year}',
                     'cr_g_vbf' : f'EGamma_{year}',
                     # 'sr_vbf' : f'MET_{year}',
-                    'sr_vbf' : f'nomatch',
+                    'sr_vbf_no_veto_all' : f'nomatch',
                 }
     mc = {
-            'sr_vbf' : re.compile(f'W(minus|plus)H_.*|((VBF|GluGlu)_HToInvisible.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
+            'sr_vbf_no_veto_all' : re.compile(f'W(minus|plus)H_.*|((VBF|GluGlu)_HToInvisible.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
@@ -108,7 +108,7 @@ def legacy_limit_input_vbf(acc, outdir='./output'):
         signal = re.compile(f'VBF_HToInvisible.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_vbf_{year}.root'))
         data, mc = datasets(year)
-        for region in ['cr_2m_vbf','cr_1m_vbf','cr_2e_vbf','cr_1e_vbf','cr_g_vbf','sr_vbf']:
+        for region in ['cr_2m_vbf','cr_1m_vbf','cr_2e_vbf','cr_1e_vbf','cr_g_vbf','sr_vbf_no_veto_all']:
             print(f'Region {region}')
             tag = region.split('_')[0]
             # Rebin
@@ -122,7 +122,7 @@ def legacy_limit_input_vbf(acc, outdir='./output'):
             scale_xs_lumi(h)
 
             h = merge_datasets(h)
-
+        
             h = h.integrate(h.axis('region'),region)
             
             for dataset in map(str, h.axis('dataset').identifiers()):
