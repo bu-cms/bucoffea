@@ -323,6 +323,21 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add(f'dphijj{var}', df[f'dphijj{var}'] < cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DPHI)
             selection.add(f'detajj{var}', df[f'detajj{var}'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DETA)
 
+            # Calculate ratios: Varied / Nominal
+            if var != '':
+                df[f'mjj{var}_over_nom'] = df[f'mjj{var}']/df['mjj'] - 1 
+                df[f'detajj{var}_over_nom'] = df[f'detajj{var}']/df['detajj'] - 1 
+                df[f'dphijj{var}_over_nom'] = df[f'dphijj{var}']/df['dphijj'] - 1 
+                df[f'recoil_pt{var}_over_nom'] = df[f'recoil_pt{var}']/df['recoil_pt'] - 1 
+                
+                # Get nominal leading and trailing jet pt
+                diak4_nom = vmap.get_diak4(var='') 
+                lead_jetpt_nom = diak4_nom.i0.pt 
+                trail_jetpt_nom = diak4_nom.i1.pt 
+
+                df[f'ak4_pt0{var}_over_nom'] = (lead_jet_pt / lead_jetpt_nom - 1).flatten()
+                df[f'ak4_pt1{var}_over_nom'] = (trail_jet_pt / trail_jetpt_nom - 1).flatten()
+
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
             two_central_jets = (np.abs(diak4.i0.eta) <= 2.4) & (np.abs(diak4.i1.eta) <= 2.4)
@@ -439,7 +454,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 output['cutflow_' + region][dataset]['all']+=df.size
                 # Get weighted cutflow
                 for icut, cutname in enumerate(cuts):
-                    output['cutflow_' + region][dataset][cutname] += np.nansum(region_weights.weight() *  selection.all(*cuts[:icut+1]) )
+                    output['cutflow_' + region][dataset][cutname] += np.nansum(region_weights.weight()[selection.all(*cuts[:icut+1])] )
 
             mask = selection.all(*cuts)
 
@@ -547,6 +562,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 #ezfill('photon_eta_phi',          eta=photons[leadphoton_index].eta[mask].flatten(), phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], region_weights.weight()[mask])
+
+            # Variation / Nominal ratio plots for signal region
+            if region.startswith('sr') and var != '':
+                   ezfill('recoil_varovernom',       ratio=df[f'recoil_pt{var}_over_nom'][mask], weight=weights.weight()[mask], var=var)             
+                   ezfill('mjj_varovernom',          ratio=df[f'mjj{var}_over_nom'][mask],    weight=weights.weight()[mask], var=var)             
+                   ezfill('detajj_varovernom',       ratio=df[f'detajj{var}_over_nom'][mask], weight=weights.weight()[mask], var=var)             
+                   ezfill('dphijj_varovernom',       ratio=df[f'dphijj{var}_over_nom'][mask], weight=weights.weight()[mask], var=var)             
 
 
             # PV
