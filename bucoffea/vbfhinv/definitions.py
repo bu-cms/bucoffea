@@ -27,7 +27,7 @@ def vbfhinv_accumulator(cfg, variations):
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 200, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
 
-    ratio_ax = Bin("ratio", "Var/Nom - 1", 50, -1, 1)
+    ratio_ax = Bin("ratio", "Var/Nom - 1", 50, -0.2, 0.2)
 
     mjj_ax = Bin("mjj", r"$M_{jj}$ (GeV)", 150, 0, 7500)
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
