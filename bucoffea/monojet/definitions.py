@@ -15,8 +15,14 @@ Cat = hist.Cat
 def empty_column_accumulator_int():
     return processor.column_accumulator(np.array([],dtype=np.uint64))
 
+def empty_column_accumulator_float():
+    return processor.column_accumulator(np.array([],dtype=np.float64))
+
 def accu_int():
     return processor.defaultdict_accumulator(int)
+
+def defaultdict_accumulator_of_empty_column_accumulator_float():
+    return processor.defaultdict_accumulator(empty_column_accumulator_float)
 
 def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
@@ -190,9 +196,8 @@ def monojet_accumulator(cfg):
     items['selected_events'] = processor.defaultdict_accumulator(empty_column_accumulator_int)
     items['kinematics'] = processor.defaultdict_accumulator(list)
 
-    for region in ['sr_j','cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
-        for variable in ['recoil','weight','gen_v_pt']:
-            items[f'tree_{region}_{variable}'] = processor.dict_accumulator()
+
+    items['tree'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_float)
 
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
     items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
