@@ -19,8 +19,23 @@ def get_old_kfac(tag):
     f = uproot.open(bucoffea_path('data/sf/theory/2017_gen_v_pt_qcd_sf.root'))
     return f[f'2d_{tag}_vbf'].values
 
-def get_scale_variations(acc, regex, tag, scale_var, scale_var_type):
-    '''Calculate the new k-factors with a scale weight variation.'''
+def get_scale_variations(acc, regex, tag, scale_var):
+    '''With the given scale variation, get the ratio between the varied k-factors
+    and nominal k-factors, for the specified dataset. 
+    Returns two tuples:
+    1. A tuple containing this ratio as a function of V-pt,
+    and an array containing V-pt histogram edges. 
+    2. A tuple containing sum of NLO weights for varied case and nominal case.
+    ==============
+    PARAMETERS:
+    ==============
+    acc   : The coffea accumulator containing all the input histograms.
+    regex : The regular expression matching the dataset name to be considered.
+    tag   : The tag for the dataset being used.
+    scale_var      :  Tag for which scale variation is going to be considered. 
+                      Used to get the relevant scale variated inputs from the coffea file.
+                      These are in the from of "scale_idx" (e.g. scale_01)
+    '''
 
     print(f'Working on: {tag}, {scale_var}')
 
@@ -36,25 +51,25 @@ def get_scale_variations(acc, regex, tag, scale_var, scale_var_type):
         vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)', vpt_ax_coarse)
         mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200,500,1000,1500])
 
-    # Set the correct pt type
+    # Get the correct pt type from coffea input
     pt_tag = 'combined' if tag != 'gjets' else 'stat1'
     acc.load(f'gen_vpt_vbf_{pt_tag}')
     h = acc[f'gen_vpt_vbf_{pt_tag}']
 
+    # Rebin
     h = h.rebin('vpt', vpt_ax)
     h = h.rebin('mjj', mjj_ax)
 
+    # Merging extensions/datasets, scaling w.r.t xs and lumi 
     h = merge_extensions(h, acc, reweight_pu=False)
     scale_xs_lumi(h)
     h = merge_datasets(h)
     h = h[re.compile(regex)]
 
+    # Get LO and NLO inputs, to calculate the scale factors later
     lo = h[re.compile('.*HT.*')].integrate('dataset')
     nlo = h[re.compile('.*(LHE|amcat).*')].integrate('dataset')
     
-    xaxis = lo.axes()[0]
-    yaxis = lo.axes()[1]
-
     # Print choose the relevant scale variation (relevant to NLO only)
     # For LO, choose the nominal (i.e. no variation)
     lo = lo.integrate('var', 'nominal')
@@ -66,13 +81,13 @@ def get_scale_variations(acc, regex, tag, scale_var, scale_var_type):
         mjj_slice = slice(200,2000)
     elif tag in ['gjets']:
         mjj_slice = slice(200,1500)
-    lo_1d = lo.integrate('mjj', mjj_slice, overflow='over')
-    nlo_var_1d = nlo_var.integrate('mjj', mjj_slice, overflow='over')
-    nlo_nom_1d = nlo_nom.integrate('mjj', mjj_slice, overflow='over')
+    lo_1d = lo.integrate('mjj', mjj_slice)
+    nlo_var_1d = nlo_var.integrate('mjj', mjj_slice)
+    nlo_nom_1d = nlo_nom.integrate('mjj', mjj_slice)
     
-    sumw_lo_1d = lo_1d.values(overflow='over')[()]
-    sumw_nlo_var_1d = nlo_var_1d.values(overflow='over')[()]
-    sumw_nlo_nom_1d = nlo_nom_1d.values(overflow='over')[()]
+    sumw_lo_1d = lo_1d.values()[()]
+    sumw_nlo_var_1d = nlo_var_1d.values()[()]
+    sumw_nlo_nom_1d = nlo_nom_1d.values()[()]
 
     # Calculate 1D scale factors, nominal and varied
     # as a function of V-pt
@@ -82,21 +97,16 @@ def get_scale_variations(acc, regex, tag, scale_var, scale_var_type):
     # Calculate 1D variation ratio, as a function of V-pt
     var_ratio = sf_var_1d / sf_nom_1d
     
-    # Calculate nominal 2D scale factor 
-    sumw_lo = lo.values(overflow='over')[()]
-    sumw_nlo_nom = nlo_nom.values(overflow='over')[()]
-
-    sf_nom = sumw_nlo_nom / sumw_lo 
-
-    tup = (var_ratio, h.axis('vpt').edges(overflow='over') )
-
+    tup1 = (var_ratio, h.axis('vpt').edges() )
+    tup2 = (sumw_nlo_var_1d, sumw_nlo_nom_1d)
     # Return tuple containing the SF ratios and
     # NLO weights with and without variation
-    return tup, (sumw_nlo_var_1d, sumw_nlo_nom_1d)
+    return tup1, tup2
 
 def plot_ratio_vpt(tup, var, tag, outtag):
     '''Given the tuple contatining the SF ratio (variational/nominal) and 
-       bin edges, plot ratios in each mjj bin as a function of v-pt.'''
+    bin edges, plot ratios in each mjj bin as a function of v-pt.
+    Plot is made ONLY for one scale variation.'''
     ratio, x_edges = tup
     vpt_centers = ((x_edges + np.roll(x_edges,-1))/2)[:-1]
     fig, ax = plt.subplots(1,1)
@@ -143,8 +153,10 @@ def plot_ratio_vpt(tup, var, tag, outtag):
 
 def plot_ratio_vpt_combined(tup_combined, tag, outtag):
     '''Given the tup_combined contatining the SF ratio (variational/nominal) and 
-       bin edges for all variations for a given process, 
-       plot ratios in each mjj bin as a function of v-pt.'''
+    bin edges for all variations for a given process, 
+    plot ratios in each mjj bin as a function of v-pt.
+    
+    Plot is made for ALL scale variations that are present in tup_combined.'''
     ratio_combined, x_edges = tup_combined[:,0], tup_combined[0,1]
     vpt_centers = ((x_edges + np.roll(x_edges,-1))/2)[:-1]
     fig, ax = plt.subplots(1,1)
@@ -510,9 +522,8 @@ def main():
             for scale_var, scale_var_type in scale_var_list:
                 tup, sumw_var[tag][scale_var_type] = get_scale_variations( acc=acc,
                                                                            regex=regex,
-                                                                           tag=tag    ,
+                                                                           tag=tag,
                                                                            scale_var=scale_var,
-                                                                           scale_var_type=scale_var_type
                                                                           )        
 
                 tup_combined.append(tup)
