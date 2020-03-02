@@ -109,8 +109,7 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, title, sample_type):
                      )
 
         if var != '':
-            r = h_var / h_nom
-            rax.plot(mjj_centers, r, 'o', label=var_to_legend_label[var], c=colors[idx])
+            rax.plot(mjj_centers, ratio_arr, 'o', label=var_to_legend_label[var], c=colors[idx])
 
     # Aesthetics
     ax.set_xlim(200,4000)
@@ -248,9 +247,6 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
                      histtype='step',
                      yerr=err[var]
                      )
-
-        h1_ = h1.integrate('var', var)
-        h2_ = h2.integrate('var', var)
 
         if var != '':
             r = ratios[var] / ratios['']
