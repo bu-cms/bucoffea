@@ -21,7 +21,6 @@ def get_sams_variations(sam_rootfile):
 	
 	# Store the values of TH1 histograms in numpy arrays
 	histvals = [histdir[histname].numpy() for histname in histnames]
-	print(histvals[0])
 	# Main container 
 	histos = list(zip(histnames, histvals)) 
 
@@ -63,10 +62,8 @@ def plot_comparison(sam_var, bu_var):
 		label = ' '.join(labeltokens)
 		sam_val = sam_histvals[idx]
 		bu_val = bu_histvals[idx]
-		print(centers)
 		# Plot Sam's points
 		ax.plot(centers, sam_val, label=f'{label} (IC)', marker='*')
-		print(sam_val)
 		# Plot BU points
 		ax.plot(centers, bu_val, 'o', label=f'{label} (BU)', c=plotcolors[idx])
 		# Calculate and plot the ratio between the two
@@ -97,8 +94,7 @@ def plot_comparison(sam_var, bu_var):
 	if not os.path.exists(outpath):
 		os.makedirs(outpath)
 	outfile = pjoin(outpath, f'scale_var_comp.pdf')
-	#fig.savefig(outfile)
-	fig.savefig('test.pdf')
+	fig.savefig(outfile)
 
 
 def main():
