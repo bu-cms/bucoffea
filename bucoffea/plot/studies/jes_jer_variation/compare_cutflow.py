@@ -21,10 +21,17 @@ region_headers = {
 }	
 
 def get_weighted_cutflow(acc, dataset, region, var, year):
+	'''For a specified scale variation (var), get the cutflow from 
+	the input coffea files (acc).
+	Cutflow for the given dataset, region and year will be considered.
+	RETURNS:
+	List containing the cut names and an array containing the cutflow.
+	'''
 	tag = f'cutflow_{region}{var}'
 	acc.load(tag)
 	c = acc[tag]
 	r = re.compile(f'{dataset}.*{year}')
+	# Get the relevant dataset names
 	datasets = list(filter(r.match, c.keys()))
 
 	# Get cut names
