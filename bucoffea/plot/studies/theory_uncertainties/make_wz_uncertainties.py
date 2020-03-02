@@ -11,6 +11,7 @@ import sys
 from coffea.hist.export import export1d
 from coffea import hist
 import ROOT as r
+from pprint import pprint
 def from_coffea(inpath, outfile):
 
     acc = dir_archive(
@@ -34,27 +35,25 @@ def from_coffea(inpath, outfile):
                                             )
         scale_xs_lumi(acc[distribution])
         acc[distribution] = merge_datasets(acc[distribution])
-        acc[distribution] = acc[distribution].integrate(acc[distribution].axis('region'),'sr_vbf')
         acc[distribution] = acc[distribution].rebin(acc[distribution].axis('mjj'), mjj_ax)
 
-    print(acc[distribution].axis('dataset').identifiers())
+    pprint(acc[distribution].axis('dataset').identifiers())
     histos = {}
     f = uproot.recreate(outfile)
     for year in [2017,2018]:
-        
         # QCD V
-        h_z = acc['mjj'][re.compile(f'ZJ.*HT.*{year}')].integrate('dataset')
+        h_z = acc['mjj'][re.compile(f'ZJetsToNuNu.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
         f[f'z_qcd_mjj_nominal_{year}'] = export1d(h_z)
 
-        h_w = acc['mjj'][re.compile(f'W.*HT.*{year}')].integrate('dataset')
+        h_w = acc['mjj'][re.compile(f'WJetsToLNu.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
         f[f'w_qcd_mjj_nominal_{year}'] = export1d(h_w)
 
-        h_ph = acc['mjj'][re.compile(f'GJ.*HT.*{year}')].integrate('dataset')
+        h_ph = acc['mjj'][re.compile(f'GJets_DR-0p4.*HT.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
         f[f'gjets_qcd_mjj_nominal_{year}'] = export1d(h_ph)
         print(h_ph.values())
 
-        # QCD Variations for Z
-        h_z_unc = acc['mjj_unc'][re.compile(f'ZJ.*HT.*{year}')].integrate('dataset')
+        # QCD Variations for Z 
+        h_z_unc = acc['mjj_unc'][re.compile(f'ZJ.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
         for unc in map(str, h_z_unc.axis('uncertainty').identifiers()):
             if 'goverz' in unc:
                 continue
@@ -62,7 +61,7 @@ def from_coffea(inpath, outfile):
             f[f'z_qcd_mjj_{unc}_{year}'] = export1d(h)
 
         # QCD Variations for photons
-        h_ph_unc = acc['mjj_unc'][re.compile(f'GJ.*HT.*{year}')].integrate('dataset')
+        h_ph_unc = acc['mjj_unc'][re.compile(f'GJets_DR-0p4.*HT.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
         for unc in map(str, h_ph_unc.axis('uncertainty').identifiers()):
             if 'zoverw' in unc:
                 continue
@@ -70,17 +69,18 @@ def from_coffea(inpath, outfile):
             f[f'gjets_qcd_mjj_{unc}_{year}'] = export1d(h)
 
         # EWK V
-        h_z = acc['mjj'][re.compile(f'.*EWKZ.*{year}')].integrate('dataset')
+        h_z = acc['mjj'][re.compile(f'.*EWKZ.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
         f[f'z_ewk_mjj_nominal_{year}'] = export1d(h_z)
 
-        h_w = acc['mjj'][re.compile(f'.*EWKW.*{year}')].integrate('dataset')
+        h_w = acc['mjj'][re.compile(f'.*EWKW.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
         f[f'w_ewk_mjj_nominal_{year}'] = export1d(h_w)
 
-        h_ph = acc['mjj'][re.compile(f'GJets_SM_5f_EWK.*{year}')].integrate('dataset')
+        h_ph = acc['mjj'][re.compile(f'GJets_SM_5f_EWK.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
         f[f'gjets_ewk_mjj_nominal_{year}'] = export1d(h_ph)
+        print(h_ph.values())
 
         # EWK Variations for Z
-        h_z_unc = acc['mjj_unc'][re.compile(f'.*EWKZ.*{year}')].integrate('dataset')
+        h_z_unc = acc['mjj_unc'][re.compile(f'.*EWKZ.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
         for unc in map(str, h_z_unc.axis('uncertainty').identifiers()):
             if 'goverz' in unc:
                 continue
@@ -88,7 +88,7 @@ def from_coffea(inpath, outfile):
             f[f'z_ewk_mjj_{unc}_{year}'] = export1d(h)
 
         # EWK Variations for photons
-        h_ph_unc = acc['mjj_unc'][re.compile(f'GJets_SM.*{year}')].integrate('dataset')
+        h_ph_unc = acc['mjj_unc'][re.compile(f'GJets_SM.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
         for unc in map(str, h_ph_unc.axis('uncertainty').identifiers()):
             if 'zoverw' in unc:
                 continue
