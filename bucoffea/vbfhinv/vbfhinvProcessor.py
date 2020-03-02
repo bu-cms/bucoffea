@@ -96,7 +96,7 @@ def trigger_selection(selection, df, cfg):
 
 
 
-def get_veto_weights(df, evaluator, electrons, muons, taus):
+def get_veto_weights(df, evaluator, electrons, muons, taus, gen):
     veto_weights = processor.Weights(size=df.size, storeIndividual=True)
 
     for variation in [
@@ -125,10 +125,20 @@ def get_veto_weights(df, evaluator, electrons, muons, taus):
             return evaluator[sfname](*args) + sgn * evaluator[f"{sfname}_error"](*args)
 
 
+        gen_eles = gen[(gen.status==1) & np.abs(gen.pdg==11)]
+        nomatch_ele = ~electrons.match(gen_eles,deltaRCut=0.4, deltaPtCut=0.5)
+
+        gen_mus = gen[(gen.status==1) & np.abs(gen.pdg==13)]
+        nomatch_mu = ~muons.match(gen_mus, deltaRCut=0.4, deltaPtCut=0.5)
+
+        gen_taus = gen[(gen.status==2) & np.abs(gen.pdg==15)]
+        nomatch_tau = ~taus.match(gen_taus, deltaRCut=0.4, deltaPtCut=0.5)
+
         ### Electrons
         if extract_year(df['dataset']) == 2017:
+            # Reco SFs are split
             high_et = electrons.pt>20
-
+        
             # Low pt SFs
             low_pt_args = (electrons.etasc[~high_et], electrons.pt[~high_et])
             ele_reco_sf_low = varied_weight('ele_reco_pt_lt_20', *low_pt_args)
@@ -136,11 +146,16 @@ def get_veto_weights(df, evaluator, electrons, muons, taus):
 
             # High pt SFs
             high_pt_args = (electrons.etasc[high_et], electrons.pt[high_et])
-
             ele_reco_sf_high = varied_weight("ele_reco", *high_pt_args)
             ele_id_sf_high = varied_weight("ele_id_loose", *high_pt_args)
 
-            # Combine
+            # Gen match
+            ele_reco_sf_low[nomatch_ele[~high_et]] = 1
+            ele_id_sf_low[nomatch_ele[~high_et]] = 1
+            ele_reco_sf_high[nomatch_ele[high_et]] = 1
+            ele_id_sf_high[nomatch_ele[high_et]] = 1
+
+            # Combine electrons
             veto_weight_ele = (1 - ele_reco_sf_low*ele_id_sf_low).prod() * (1-ele_reco_sf_high*ele_id_sf_high).prod()
         else:
             # No split for 2018
@@ -148,12 +163,24 @@ def get_veto_weights(df, evaluator, electrons, muons, taus):
             ele_reco_sf = varied_weight("ele_reco", *args)
             ele_id_sf = varied_weight("ele_id_loose", *args)
 
-            # Combine
+            # Gen match
+            ele_reco_sf[nomatch_ele] = 1
+            ele_id_sf[nomatch_ele] = 1
+
+            # Combine electrons
             veto_weight_ele = (1 - ele_id_sf*ele_reco_sf).prod()
 
         ### Muons
         args = (muons.pt, muons.abseta)
-        veto_weight_muo = (1 - varied_weight("muon_id_loose", *args)*varied_weight("muon_iso_loose", *args)).prod()
+        muo_id_sf = varied_weight("muon_id_loose", *args)
+        muo_iso_sf = varied_weight("muon_iso_loose", *args)
+        
+        # Gen match
+        muo_id_sf[nomatch_mu] = 1
+        muo_iso_sf[nomatch_mu] = 1
+        
+        # Combine muons
+        veto_weight_muo = (1 - muo_id_sf*muo_iso_sf).prod()
 
         ### Taus
         # Taus have their variations saves as separate histograms,
@@ -163,7 +190,13 @@ def get_veto_weights(df, evaluator, electrons, muons, taus):
             tau_sf_name = f"tau_id_{direction}"
         else:
             tau_sf_name = "tau_id"
-        veto_weight_tau = (1 - evaluator[tau_sf_name](taus.pt)).prod()
+        tau_id_sf = evaluator[tau_sf_name](taus.pt)
+        
+        # Gen match
+        tau_id_sf[nomatch_tau] = 1
+
+        # Combine taus
+        veto_weight_tau = (1 - tau_id_sf).prod()
 
         ### Combine
         veto_weights.add(variation, veto_weight_ele * veto_weight_muo * veto_weight_tau)
@@ -214,13 +247,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['is_data'] = is_data(dataset)
 
         gen_v_pt = None
+        gen = setup_gen_candidates(df)
         if df['is_lo_w'] or df['is_lo_z'] or df['is_nlo_z'] or df['is_nlo_w'] or df['is_lo_z_ewk'] or df['is_lo_w_ewk']:
-            gen = setup_gen_candidates(df)
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
             gen_v_pt = df['gen_v_pt_combined']
         elif df['is_lo_g']:
-            gen = setup_gen_candidates(df)
             gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
 
         # Generator-level leading dijet mass
@@ -447,7 +479,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         regions = vbfhinv_regions(cfg)
 
-        veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus)
+        veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus, gen)
         for region, cuts in regions.items():
             exclude = [None]
             region_weights = copy.deepcopy(weights)
