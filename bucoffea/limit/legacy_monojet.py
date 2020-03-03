@@ -33,12 +33,12 @@ def datasets(year):
 
  
     mc = {
-                'cr_1m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_1e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_2m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_2e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
-                'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
+            'cr_1m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
+            'cr_1e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*|GJets_DR-0p4.*).*{year}'),
+            'cr_2m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+            'cr_2e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+            'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
+            'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
             }
     for key in list(mc.keys()):
         new_key = key.replace('_j','_v')
