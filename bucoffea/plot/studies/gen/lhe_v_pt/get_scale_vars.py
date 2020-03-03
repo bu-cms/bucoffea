@@ -70,7 +70,7 @@ def get_scale_variations(acc, regex, tag, scale_var):
     lo = h[re.compile('.*HT.*')].integrate('dataset')
     nlo = h[re.compile('.*(LHE|amcat).*')].integrate('dataset')
     
-    # Print choose the relevant scale variation (relevant to NLO only)
+    # Choose the relevant scale variation (relevant to NLO only)
     # For LO, choose the nominal (i.e. no variation)
     lo = lo.integrate('var', 'nominal')
     nlo_var = nlo.integrate('var', scale_var)
@@ -373,9 +373,30 @@ def plot_ratio_anticorr(sumw_var, tag, xedges):
 
 def plot_combined_scale_uncs(dratio_dict, xedges, outputrootfiles, outtag):
     '''Plot combined scale variations for Z/W and photon/W ratios.
-       Combined var: (var_num**2 + var_denom**2)**0.5'''
+       Combined var: (var_num**2 + var_denom**2)**0.5
+       ==============
+       PARAMETERS:
+       ==============
+       dratio_dict: Dictionary containing the double ratios (varied ratio / nominal ratio) 
+                    for each ratio variation type (e.g. zvar_over_w or z_over_wvar) 
+                    and scale variation type (e.g. mu_r_down or mu_r_up). 
+       xedges:      The V-pt bin edges in the histogram.
+       outputrootfiles: The list of output ROOT files that are to be saved. 
+                        The combined uncertainties for each ratio (W/Z or gamma/Z) is saved into a separate ROOT file,
+                        that are specified in the list.    
+        outtag:     The tag used to create the output directory, named after the submission that is being used.    
+       '''
+    # Pairs to be combined, this list contain tuples such that:
+    # Tuple[0] is the tag for varied num / nominal denom
+    # Tuple[1] is the tag for nominal num / varied denom
     to_be_combined = [('zvar_over_w', 'z_over_wvar'), ('wvar_over_z', 'w_over_zvar'), ('gvar_over_z', 'g_over_zvar')]
     tags = ['z_over_w', 'w_over_z', 'g_over_z']
+    
+    # Combination works as follows:
+    # The opposite scale variations are combined
+    # As an example, when combining zvar_over_w and z_over_wvar, we take the following variations and combine them:
+    # zvar_over_w --> mu_r_down AND z_over_wvar --> mu_r_up
+    # And the final naming of the histogram in the ROOT file is chosen according to the FIRST ONE (mu_r_down in this case). 
     var_pairs = [
         ('mu_r_down', 'mu_r_up'),
         ('mu_r_up', 'mu_r_down'),
