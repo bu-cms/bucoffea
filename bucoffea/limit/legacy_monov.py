@@ -84,12 +84,14 @@ def merge_legacy_inputs(outdir):
         if not m:
             continue
         wp, year = m.groups()
-        files[year][wp] = pjoin(outdir, fname)
+        files[wp][year] = pjoin(outdir, fname)
 
-    for year, ifiles in files.items():
-        for wp, file in ifiles.items():
-            outfile = r.TFile(pjoin(outdir, f'merged_legacy_limit_monov_{wp}_{year}.root'),'RECREATE')
-            subdir = outfile.mkdir(f'category_monov')
+    outfile_nominal = r.TFile(pjoin(outdir, f'merged_legacy_limit_nominal_monov.root'),'RECREATE')
+    outfile_MD = r.TFile(pjoin(outdir, f'merged_legacy_limit_MD_monov.root'),'RECREATE')
+    for wp, ifiles in files.items():
+        outfile = r.TFile(pjoin(outdir, f'merged_legacy_limit_monov_{wp}.root'),'RECREATE')
+        for year, file in ifiles.items():
+            subdir = outfile.mkdir(f'category_monov_{year}')
             infile = r.TFile(file)
             for key in infile.GetListOfKeys():
                 print(key)
@@ -99,18 +101,15 @@ def merge_legacy_inputs(outdir):
                 h.GetXaxis().SetTitle('met')
                 # h.Write()
                 subdir.Write()
-        # produce a combined version
-        outfile_nominal = r.TFile(pjoin(outdir, f'merged_legacy_limit_nominal_monov_{year}.root'),'RECREATE')
-        outfile_MD = r.TFile(pjoin(outdir, f'merged_legacy_limit_MD_monov_{year}.root'),'RECREATE')
-        for wp, file in ifiles.items():
+
             if wp == 'tau21':
                 continue
             elif 'md' in wp:
                 outfile_MD.cd()
-                subdir = outfile_MD.mkdir('category_monov'+(wp.replace('md','')))
+                subdir = outfile_MD.mkdir(f'category_monov{wp.replace("md","")}_{year}')
             else:
                 outfile_nominal.cd()
-                subdir = outfile_nominal.mkdir('category_monov'+wp)
+                subdir = outfile_nominal.mkdir(f'category_monov{wp}_{year}')
             infile = r.TFile(file)
             for key in infile.GetListOfKeys():
                 print(key)
