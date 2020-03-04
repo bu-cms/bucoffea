@@ -64,8 +64,20 @@ def get_unc(d, edges, out_tag, tag, sample_type):
 
 def plot_jes_jer_var(acc, regex, region, tag, out_tag, title, sample_type):
     '''Given the input accumulator and the regex
-       describing the dataset, plot the mjj distribution
-       with different JES/JER variations in the same canvas.'''
+    describing the dataset, plot the mjj distribution
+    with different JES/JER variations in the same canvas.
+    =============
+    PARAMETERS:
+    =============
+    acc         : The input accumulator containing the histograms.
+    regex       : Regular expression matching the dataset name.
+    region      : The region from which the event yields will be taken.
+    tag         : Tag representing the process. (e.g. "wjet")
+    out_tag     : Out-tag for output directory naming. The output files are going to be saved
+                  under this directory.
+    title       : Histogram title for plotting.
+    sample_type : QCD ("qcd") or EWK ("ewk") sample.
+    '''
     acc.load('mjj')
     h = acc['mjj']
 
@@ -154,7 +166,19 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, title, sample_type):
 
 def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, sample_type):
     '''Given the input accumulator, plot ratio of two datasets
-       for each JES/JER variation, on the same canvas.'''
+    for each JES/JER variation, on the same canvas.
+    ==============
+    PARAMETERS:
+    ==============
+    acc         : Input accumulator containing the histograms.
+    regex1      : Regular expression matching the dataset name in the numerator of the ratio.
+    regex2      : Regular expression matching the dataset name in the denominator of the ratio.
+    region1     : The region from which the data for the numerator is going to be taken from.
+    region2     : The region from which the data for the denominator is going to be taken from.
+    tag         : Tag for the process name. (e.g "wjet")
+    out_tag     : Out-tag for naming output directory, output files are going to be saved under this directory.
+    sample_type : QCD ("qcd") or EWK ("ewk") sample. 
+    '''
     acc.load('mjj')
     h = acc['mjj']
 
@@ -164,7 +188,9 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
     scale_xs_lumi(h)
     h = merge_datasets(h)
     
-    # Pick the relevant dataset
+    # Pick the relevant datasets 
+    # Regex 1 matches the dataset for the numerator
+    # Regex 2 matches the dataset for the denominator
     h = h[re.compile(f'{regex1}|{regex2}')]
     
     # Rebin mjj
@@ -173,6 +199,8 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
     mjj_bins_very_coarse = hist.Bin('mjj', r'$M_{jj}$ (GeV)', [0,4000]) 
     h = h.rebin('mjj', mjj_bins_very_coarse)
 
+    # h1: Histogram for the numerator
+    # h2: Histogram for the denominator
     h1 = h[re.compile(regex1)].integrate('dataset')
     h2 = h[re.compile(regex2)].integrate('dataset')
 
@@ -189,10 +217,12 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
     for var in h1_vals.keys():
         h1_sumw, h1_sumw2 = h1_vals[var]
         h2_sumw, h2_sumw2 = h2_vals[var]
-        ratios[var[0]] = h1_sumw / h2_sumw 
+        # Name of the variation is contained in the first element of the tuple
+        varname = var[0]
+        ratios[varname] = h1_sumw / h2_sumw 
         # Gaussian error propagation
         gaus_error = np.sqrt((h2_sumw*np.sqrt(h1_sumw2))**2 + (h1_sumw*np.sqrt(h2_sumw2))**2)/h2_sumw**2
-        err[var[0]] = gaus_error
+        err[varname] = gaus_error
 
     # Set y-label for either QCD or EWK samples
     sample_label = sample_type.upper()
