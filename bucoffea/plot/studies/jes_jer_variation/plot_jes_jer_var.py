@@ -100,18 +100,21 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, title, sample_type):
 
     # Calculate the ratios of each variation
     # with respect to nominal counts
-    h_nom = h.integrate('var', '').values(overflow='over')[()]
+    h_nom = h.integrate('var', '').values()[()]
     ratios = {}
     for variation in h.identifiers('var'):
-        ratios[variation.name] = h.integrate('var', variation).values(overflow='over')[()] / h_nom
+        ratios[variation.name] = h.integrate('var', variation).values()[()] / h_nom
 
-    mjj_edges = h.axes()[0].edges(overflow='over')
+    mjj_edges = h.axes()[0].edges()
     mjj_centers = ((mjj_edges + np.roll(mjj_edges, -1))/2)[:-1]
     
+    # Store counts with all variations
+    counts = []
+
     # Plot the variation + ratio pad
     fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 2)}, sharex=True)
     for idx, (var, ratio_arr) in enumerate(ratios.items()):
-        h_var = h.integrate('var', var).values(overflow='over')[()]
+        h_var = h.integrate('var', var).values()[()]
         hep.histplot(h_var, 
                      mjj_edges, 
                      label=var_to_legend_label[var],
@@ -119,6 +122,8 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, title, sample_type):
                      stack=True,
                      histtype='step'
                      )
+
+        counts.append(h_var)
 
         if var != '':
             rax.plot(mjj_centers, ratio_arr, 'o', label=var_to_legend_label[var], c=colors[idx])
@@ -129,6 +134,12 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, title, sample_type):
     ax.set_title(title)
     ax.legend()
     
+    # Handle y-limit dynamically
+    min_count, max_count = min(counts), max(counts)
+    lower_ylim = 0.8 * min_count
+    upper_ylim = 1.2 * max_count
+    ax.set_ylim(lower_ylim, upper_ylim)
+
     if '17' in tag:
         ax.text(1., 1., '2017',
                 fontsize=12,
