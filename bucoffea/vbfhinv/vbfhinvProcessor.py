@@ -510,6 +510,14 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         uncertainty=unc,
                         weight=w)
 
+            # Fill mjj distribution without EWK corrections for LO Z, W and photon samples
+            if df['is_lo_z'] or df['is_lo_w'] or df['is_lo_g']:
+                w_noewk = region_weights.partial_weight(exclude=['theory_ewk']) 
+                ezfill(
+                    'mjj_noewk',
+                    mjj=df['mjj'][mask]
+                    weight=w_noewk)
+
             # Two dimensional
             ezfill('recoil_mjj',         recoil=df["recoil_pt"][mask], mjj=df["mjj"][mask], weight=region_weights.weight()[mask] )
 
