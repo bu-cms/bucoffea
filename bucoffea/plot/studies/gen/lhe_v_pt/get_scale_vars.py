@@ -248,7 +248,7 @@ def get_ratio_arbitrary(sumw_var, tag, var1, var2):
 
     return ratio_var, ratio_nom
     
-def plot_ratio(sumw_var, tag, xedges, outtag, varied='num'):
+def plot_ratio(sumw_var, tag, xedges, outtag, outputrootfile, varied='num'):
     '''Plot ratio for two processes, for all variations.
        Specify which process is to be varied (num or denom).'''
     # List of all variations
@@ -272,6 +272,14 @@ def plot_ratio(sumw_var, tag, xedges, outtag, varied='num'):
         'mu_f_up' : r'$\mu_R = 1.0$, $\mu_F = 2.0$',
     }
 
+    # Map from variation tag to ROOT histogram name
+    var_to_roothistname = {
+        'mu_r_down' : 'renScaleDown',
+        'mu_r_up' : 'renScaleUp',
+        'mu_f_down' : 'facScaleDown',
+        'mu_f_up' : 'facScaleUp',
+    }
+
     # Construct the plot
     fig, ax = plt.subplots(1,1)
 
@@ -293,6 +301,10 @@ def plot_ratio(sumw_var, tag, xedges, outtag, varied='num'):
         
         dratios[var] = dratio
     
+        # Save to output ROOT file
+        tup = (dratio, xedges)
+        outputrootfile[f'{tag}_{var_to_roothistname[var]}'] = tup
+
     ax.set_xlabel(r'$p_T (V)\ (GeV)$')
     ax.set_ylabel(tag_to_ylabel[tag])
     ax.set_ylim(0.9, 1.1)
@@ -521,12 +533,24 @@ def main():
             sumw_var = pickle.load(f)
 
         xedges = tup[1]
-        dratio_dict['zvar_over_w'] = plot_ratio(sumw_var, tag='zvar_over_w', xedges=xedges, varied='num', outtag=outtag)
-        dratio_dict['z_over_wvar'] = plot_ratio(sumw_var, tag='z_over_wvar', xedges=xedges, varied='denom', outtag=outtag)
-        dratio_dict['wvar_over_z'] = plot_ratio(sumw_var, tag='wvar_over_z', xedges=xedges, varied='num', outtag=outtag)
-        dratio_dict['w_over_zvar'] = plot_ratio(sumw_var, tag='w_over_zvar', xedges=xedges, varied='denom', outtag=outtag)
-        dratio_dict['gvar_over_z'] = plot_ratio(sumw_var, tag='gvar_over_z', xedges=xedges, varied='num', outtag=outtag)
-        dratio_dict['g_over_zvar'] = plot_ratio(sumw_var, tag='g_over_zvar', xedges=xedges, varied='denom', outtag=outtag)
+        dratio_dict['zvar_over_w'] = plot_ratio(sumw_var, tag='zvar_over_w', 
+                                                xedges=xedges, varied='num', 
+                                                outtag=outtag, outputrootfile=outputrootfiles['z_over_w'])
+        dratio_dict['z_over_wvar'] = plot_ratio(sumw_var, tag='z_over_wvar', 
+                                                xedges=xedges, varied='denom', 
+                                                outtag=outtag, outputrootfile=outputrootfiles['z_over_w'])
+        dratio_dict['wvar_over_z'] = plot_ratio(sumw_var, tag='wvar_over_z', 
+                                                xedges=xedges, varied='num', 
+                                                outtag=outtag, outputrootfile=outputrootfiles['w_over_z'])
+        dratio_dict['w_over_zvar'] = plot_ratio(sumw_var, tag='w_over_zvar', 
+                                                xedges=xedges, varied='denom', 
+                                                outtag=outtag, outputrootfile=outputrootfiles['w_over_z'])
+        dratio_dict['gvar_over_z'] = plot_ratio(sumw_var, tag='gvar_over_z', 
+                                                xedges=xedges, varied='num', 
+                                                outtag=outtag, outputrootfile=outputrootfiles['g_over_z'])
+        dratio_dict['g_over_zvar'] = plot_ratio(sumw_var, tag='g_over_zvar', 
+                                                xedges=xedges, varied='denom', 
+                                                outtag=outtag, outputrootfile=outputrootfiles['g_over_z'])
 
         #dratio_dict['z_over_w'] = plot_ratio_anticorr(sumw_var, tag='z_over_w', xedges=xedges)
 
