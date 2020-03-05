@@ -637,15 +637,15 @@ def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
 
     # Guard against invalid input pt
     invalid = (gen_v_pt <=0) | np.isinf(gen_v_pt) | np.isnan(gen_v_pt)
-	if df['is_lo_w'] or df['is_lo_z'] or df['is_lo_g']:
-		theory_weights_qcd[invalid] = 1
-		theory_weights_ewk[invalid] = 1
-		weights.add('theory_qcd', theory_weights_qcd)
-		weights.add('theory_ewk', theory_weights_ewk)
+    if df['is_lo_w'] or df['is_lo_z'] or df['is_lo_g']:
+        theory_weights_qcd[invalid] = 1
+        theory_weights_ewk[invalid] = 1
+        weights.add('theory_qcd', theory_weights_qcd)
+        weights.add('theory_ewk', theory_weights_ewk)
 
-	else:
-		theory_weights[invalid] = 1
-		weights.add('theory', theory_weights)
+    else:
+        theory_weights[invalid] = 1
+        weights.add('theory', theory_weights)
 
     return weights
 
