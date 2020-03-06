@@ -152,7 +152,7 @@ def make_uncertainties(infile):
                 variation.Divide(nominal)
                 for i in range(1,variation.GetNbinsX()+1):
                     content = variation.GetBinContent(i)
-                    variation.SetBinContent(i, content-1)
+                    variation.SetBinContent(i, content)
 
                 variation.SetDirectory(of)
                 variation.Write()
@@ -176,7 +176,7 @@ def make_uncertainties(infile):
                 variation.Divide(nominal)
                 for i in range(1,variation.GetNbinsX()+1):
                     content = variation.GetBinContent(i)
-                    variation.SetBinContent(i, content-1)
+                    variation.SetBinContent(i, content)
 
                 variation.SetDirectory(of)
                 variation.Write()
@@ -189,10 +189,17 @@ def make_uncertainties(infile):
 import os
 pjoin = os.path.join
 def main():
-    outdir = './output'
+    inpath = sys.argv[1] 
+
+    # Get the output tag for output directory namming
+    if inpath.endswith('/'):
+        outtag = inpath.split('/')[-2]
+    else:
+        outtag = inpath.split('/')[-1]
+    
+    outdir = f'./output/{outtag}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    inpath = sys.argv[1] 
     outfile = pjoin(outdir, f'vbf_z_w_gjets_theory_unc.root')
     from_coffea(inpath, outfile)
     outfile = make_ratios(outfile)
