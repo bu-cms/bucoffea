@@ -148,11 +148,8 @@ def make_uncertainties(infile):
                 ratio = f.Get(name)
                 variation = ratio.Clone(f'uncertainty_{name}')
 
-                # New = variation / nominal -1
+                # Content: Varied ratio / Nominal ratio
                 variation.Divide(nominal)
-                for i in range(1,variation.GetNbinsX()+1):
-                    content = variation.GetBinContent(i)
-                    variation.SetBinContent(i, content)
 
                 variation.SetDirectory(of)
                 variation.Write()
@@ -172,11 +169,8 @@ def make_uncertainties(infile):
                 ratio = f.Get(name)
                 variation = ratio.Clone(f'uncertainty_{name}')
 
-                # New = variation / nominal -1
+                # Content: Varied ratio / Nominal ratio
                 variation.Divide(nominal)
-                for i in range(1,variation.GetNbinsX()+1):
-                    content = variation.GetBinContent(i)
-                    variation.SetBinContent(i, content)
 
                 variation.SetDirectory(of)
                 variation.Write()
