@@ -153,10 +153,10 @@ def merge_legacy_inputs(outdir):
         category, year = m.groups()
         files[year][category] = pjoin(outdir, fname)
 
+    outfile = r.TFile(pjoin(outdir, f'legacy_limit_monojet.root'),'RECREATE')
     for year, ifiles in files.items():
-        outfile = r.TFile(pjoin(outdir, f'legacy_limit_{year}.root'),'RECREATE')
         for category, file in ifiles.items():
-            subdir = outfile.mkdir(f'category_{category}')
+            subdir = outfile.mkdir(f'category_{category}_{year}')
             infile = r.TFile(file)
             for key in infile.GetListOfKeys():
                 print(key)
