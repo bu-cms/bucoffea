@@ -107,7 +107,7 @@ def sf_1d(acc, tag, regex, outputrootfile):
             outputrootfile[f'{tag}_{pt_type}_{selection}'] = (sf_y,sf_x)
 
 
-def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None):
+def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None, photon_run=False):
     outdir = f'./output/2d/{outtag}' if outtag else './output/2d'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -185,7 +185,7 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None):
                         )
 
         # Display which LO GJets sample was used
-        if tag == 'gjets':
+        if tag == 'gjets' and photon_run:
             dataset_name = regex.split('|')[1].replace('.*', '_').replace(')', '')
             text = f'LO GJets: {dataset_name}'
             ax.text(0,1,text,
@@ -244,13 +244,13 @@ def main():
     acc.load('sumw2')
 
     # Run k-factors only for photons (2D) if requested
-    run_only_photons = False
+    photon_run_special = False
     if len(sys.argv) > 2:
-        run_only_photons = (sys.argv[2] == 'gjets')
+        photon_run_special = (sys.argv[2] == 'gjets')
 
     outputrootfile = uproot.recreate(f'2017_gen_v_pt_qcd_sf.root')
 
-    if not run_only_photons:
+    if not photon_run_special:
         sf_1d(acc, tag='wjet', regex='WN?JetsToLNu.*',outputrootfile=outputrootfile)
         sf_1d(acc, tag='dy', regex='DYN?JetsToLL.*',outputrootfile=outputrootfile)
         # # outputrootfile = uproot.recreate(f'test.root')
@@ -258,17 +258,19 @@ def main():
         sf_2d(acc, tag='dy', regex='DYN?JetsToLL.*',pt_type='combined',outputrootfile=outputrootfile)
     
         sf_1d(acc, tag='gjets', regex='G\d?Jet.*',outputrootfile=outputrootfile)
+        sf_2d(acc, tag='gjets', regex='G\d?Jet.*',pt_type='stat1',outputrootfile=outputrootfile)
     # outputrootfile = uproot.recreate('test.root')
-
-    # Store photon dataset regex for different LO samples
-    regex_dict = {
-        'gjets_dr_16' : '(G1Jet.*2016|GJets_DR-0p4.*2016)',
-        'gjets_dr_17' : '(G1Jet.*2016|GJets_DR-0p4.*2017)',
-        'gjets_ht_16' : '(G1Jet.*2016|GJets_HT.*2016)',
-        'gjets_ht_17' : '(G1Jet.*2016|GJets_HT.*2017)'
-    }
-    for outtag, regex in regex_dict.items():
-        sf_2d(acc, tag='gjets',regex=regex, outtag=outtag, pt_type='stat1',outputrootfile=outputrootfile)
+    
+    else:
+        # Store photon dataset regex for different LO samples
+        regex_dict = {
+            'gjets_dr_16' : '(G1Jet.*2016|GJets_DR-0p4.*2016)',
+            'gjets_dr_17' : '(G1Jet.*2016|GJets_DR-0p4.*2017)',
+            'gjets_ht_16' : '(G1Jet.*2016|GJets_HT.*2016)',
+            'gjets_ht_17' : '(G1Jet.*2016|GJets_HT.*2017)'
+        }
+        for outtag, regex in regex_dict.items():
+            sf_2d(acc, tag='gjets',regex=regex, outtag=outtag, pt_type='stat1',outputrootfile=outputrootfile, photon_run=True)
 
 
 if __name__ == "__main__":
