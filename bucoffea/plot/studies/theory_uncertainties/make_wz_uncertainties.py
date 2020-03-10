@@ -62,8 +62,12 @@ def from_coffea(inpath, outfile):
             f[f'z_qcd_mjj_{unc}_{year}'] = export1d(h)
 
         # EWK variations for QCD Z
-        h_z_unc_ewk = acc['mjj_noewk'][re.compile(f'ZJ.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
+        h_z_unc_ewk = acc['mjj_noewk'][re.compile(f'ZJetsToNuNu.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
         f[f'z_qcd_mjj_noewk_{year}'] = export1d(h_z_unc_ewk)
+
+        # EWK variations for QCD W
+        h_w_unc_ewk = acc['mjj_noewk'][re.compile(f'WJetsToLNu.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
+        f[f'w_qcd_mjj_noewk_{year}'] = export1d(h_w_unc_ewk)
 
         # QCD Variations for QCD photons
         h_ph_unc = acc['mjj_unc'][re.compile(f'GJets_DR-0p4.*HT.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
@@ -125,12 +129,19 @@ def make_ratios(infile):
     
     # Z / W ratios (EWK variation)
     for year in [2017,2018]:
-        denominator = f.Get(f'w_qcd_mjj_nominal_{year}')
-        numerator_name = f'z_qcd_mjj_noewk_{year}'
-        ratio = f.Get(numerator_name).Clone(f'ratio_{numerator_name}')
-        ratio.Divide(denominator)
-        ratio.SetDirectory(of)
-        ratio.Write()      
+        varied_z_name = f'z_qcd_mjj_noewk_{year}'
+        varied_w = f.Get(f'w_qcd_mjj_noewk_{year}')
+        varied_ratio = f.Get(varied_z_name).Clone(f'ratio_qcd_z_over_w_ewkvar_{year}')
+        varied_ratio.Divide(varied_w)
+        varied_ratio.SetDirectory(of)
+        varied_ratio.Write()  
+
+        nominal_z_name = f'z_qcd_mjj_nominal_{year}'
+        nominal_w = f.Get(f'w_qcd_mjj_nominal_{year}')
+        nominal_ratio = f.Get(nominal_z_name).Clone(f'ratio_qcd_z_over_w_nominal_{year}')
+        nominal_ratio.Divide(nominal_w)
+        nominal_ratio.SetDirectory(of)    
+        nominal_ratio.Write()  
 
     # GJets / Z ratios (QCD variations)
     for source in ['ewk','qcd']:
@@ -148,12 +159,19 @@ def make_ratios(infile):
 
     # GJets / Z ratios (EWK variation)
     for year in [2017,2018]:
-        denominator = f.Get(f'z_qcd_mjj_nominal_{year}')
-        numerator_name = f'gjets_qcd_mjj_noewk_{year}'
-        ratio = f.Get(numerator_name).Clone(f'ratio_{numerator_name}')
-        ratio.Divide(denominator)
-        ratio.SetDirectory(of)
-        ratio.Write()
+        varied_g_name = f'gjets_qcd_mjj_noewk_{year}'
+        varied_z = f.Get(f'z_qcd_mjj_noewk_{year}')
+        varied_ratio = f.Get(varied_g_name).Clone(f'ratio_qcd_gjets_over_z_ewkvar_{year}')
+        varied_ratio.Divide(varied_z)
+        varied_ratio.SetDirectory(of)
+        varied_ratio.Write()
+
+        nominal_g_name = f'gjets_qcd_mjj_nominal_{year}'
+        nominal_z = f.Get(f'z_qcd_mjj_nominal_{year}')
+        nominal_ratio = f.Get(nominal_g_name).Clone(f'ratio_qcd_gjets_over_z_nominal_{year}')
+        nominal_ratio.Divide(nominal_z)
+        nominal_ratio.SetDirectory(of)
+        nominal_ratio.Write()
 
     of.Close()
     return str(of.GetName())
@@ -186,12 +204,16 @@ def make_uncertainties(infile):
     
     # Uncertainty in Z / W ratios (EWK variation)
     for year in [2017,2018]:
-        nominal = f.Get(f'ratio_z_qcd_mjj_nominal_{year}')
-        varied_name = f'ratio_z_qcd_mjj_noewk_{year}'
+        nominal = f.Get(f'ratio_qcd_z_over_w_nominal_{year}')
+        varied_name = f'ratio_qcd_z_over_w_ewkvar_{year}'
         varied = f.Get(varied_name)
         # Variation: (varied Z / W) / (nominal Z / W)
         variation_up = varied.Clone(f'uncertainty_{varied_name}_up')
         variation_up.Divide(nominal)
+        for i in range(variation_up.GetNbinsX()+1):
+            content = variation_up.GetBinContent(i)
+            new_content = 1 + np.abs(content-1)
+            variation_up.SetBinContent(i, new_content)
 
         variation_up.SetDirectory(of)
         variation_up.Write()
@@ -233,12 +255,16 @@ def make_uncertainties(infile):
 
     # Uncertainty in GJets / Z ratios (EWK variation)
     for year in [2017,2018]:
-        nominal = f.Get(f'ratio_gjets_qcd_mjj_nominal_{year}')
-        varied_name = f'ratio_gjets_qcd_mjj_noewk_{year}'
+        nominal = f.Get(f'ratio_qcd_gjets_over_z_nominal_{year}')
+        varied_name = f'ratio_qcd_gjets_over_z_ewkvar_{year}'
         varied = f.Get(varied_name)
         # Variation: (varied Z / W) / (nominal Z / W)
         variation_up = varied.Clone(f'uncertainty_{varied_name}_up')
         variation_up.Divide(nominal)
+        for i in range(variation_up.GetNbinsX()+1):
+            content = variation_up.GetBinContent(i)
+            new_content = 1 + np.abs(content-1)
+            variation_up.SetBinContent(i, new_content)
 
         variation_up.SetDirectory(of)
         variation_up.Write()
@@ -247,7 +273,7 @@ def make_uncertainties(infile):
         variation_down = varied.Clone(f'uncertainty_{varied_name}_down')
         variation_down.Divide(nominal)
         for i in range(variation_down.GetNbinsX()+1):
-            content= variation_down.GetBinContent(i)
+            content = variation_down.GetBinContent(i)
             new_content = 1 - np.abs(content-1)
             variation_down.SetBinContent(i, new_content)
 
