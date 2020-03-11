@@ -30,6 +30,7 @@ def parse_commandline():
     parser.add_argument('--path_to_06Jan', help='Path to coffea files for 06Jan20 inputs.')
     parser.add_argument('--path_to_19Feb', help='Path to coffea files for 19Feb20 inputs.')
     parser.add_argument('--distribution', help='Distribution to plot.')
+    parser.add_argument('--variation', help='JES/JER variation to consider.')
     args = parser.parse_args()
     return args
 
@@ -120,7 +121,11 @@ def plot_comparison(acc_06Jan, acc_19Feb, ptag, regex, region, distribution, var
     rax.plot(rax.get_xlim(), [1.0, 1.0], 'r--')
 
     # Save plot
-    outdir = f'./output/input_comparisons'
+    if var == '':
+        outdir = f'./output/input_comparisons'
+    else:
+        var_label = var.replace('_', '', 1)
+        outdir = f'./output/input_comparisons/{var_label}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     
@@ -146,6 +151,12 @@ def main():
         'gjets17' : {'regex': 'GJets.*2017', 'region': 'cr_g_vbf'}
     }
 
+    # Use the specific variation if specified
+    # Otherwise, just look at the nominal case
+    var = ''
+    if args.variation:
+        var = args.variation
+
     acc_06Jan = dir_archive(
         args.path_to_06Jan,
         serialized=True,
@@ -169,7 +180,7 @@ def main():
     for dist in distributions:
         for ptag, info in dataset_info.items():
             regex, region = info.values()
-            plot_comparison(acc_06Jan, acc_19Feb, ptag=ptag, regex=regex, region=region, distribution=dist)
+            plot_comparison(acc_06Jan, acc_19Feb, ptag=ptag, regex=regex, region=region, distribution=dist, var=var)
 
 if __name__ == '__main__':
     main()
