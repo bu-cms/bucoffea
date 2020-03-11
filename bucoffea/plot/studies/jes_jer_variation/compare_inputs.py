@@ -6,6 +6,7 @@ import os
 import sys
 import re
 import argparse
+import numpy as np
 from bucoffea.plot.util import merge_datasets, scale_xs_lumi, merge_extensions
 from coffea import hist
 from matplotlib import pyplot as plt
@@ -73,7 +74,8 @@ def plot_comparison(acc_06Jan, acc_19Feb, ptag, regex, region, distribution, var
         '19Feb' : h_19Feb
     }
 
-    values = {}
+    sumw = {}
+    sumw2 = {}
     # Store bin edges and centers for histogram plotting
     edges = h_06Jan.axis(axis_name).edges(overflow='over')
     centers = h_06Jan.axis(axis_name).centers(overflow='over')
@@ -86,14 +88,20 @@ def plot_comparison(acc_06Jan, acc_19Feb, ptag, regex, region, distribution, var
         h = h.integrate('var', var)
 
         # Store the values in new dict
-        values[tag] = h.values(overflow='over')[()]
+        sumw[tag], sumw2[tag] = h.values(overflow='over', sumw2=True)[()]
     
     # Calculate and store the ratios
-    ratios = values['19Feb'] / values['06Jan']
+    ratios = sumw['19Feb'] / sumw['06Jan']
+
+    # Gaussian error propagation on the ratios
+    uncs = np.hypot(
+        np.sqrt(sumw2['19Feb'])/sumw['06Jan'],
+        np.sqrt(sumw2['06Jan'])/sumw['19Feb']
+        )
     
     # Plot the comparison
     fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (2,1)}, sharex=True)
-    for tag, val in values.items():
+    for tag, val in sumw.items():
         ax.step(edges[:-1], val, label=tag, where='post')
     
     ax.legend()
@@ -103,8 +111,7 @@ def plot_comparison(acc_06Jan, acc_19Feb, ptag, regex, region, distribution, var
     ax.set_title(dataset_name)
 
     # Ratio pad
-    # TODO: Add error bars to ratio pad (Gaussian error propagation)
-    rax.plot(centers, ratios, 'o', color='k')
+    rax.errorbar(x=centers, y=ratios, yerr=uncs, ls='', marker='o', color='k')
     rax.set_xlabel(h_06Jan.axis(axis_name).label)
     rax.set_ylabel('19 Feb / 06 Jan')
     rax.set_ylim(0.8,1.2)
@@ -117,7 +124,7 @@ def plot_comparison(acc_06Jan, acc_19Feb, ptag, regex, region, distribution, var
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     
-    outpath = pjoin(outdir, f'{ptag}_{distribution}_{var}_comparison.pdf')
+    outpath = pjoin(outdir, f'{ptag}_{distribution}_comparison.pdf')
     fig.savefig(outpath)
     plt.close()
     print(f'File saved: {outpath}')
