@@ -6,6 +6,7 @@ import sys
 import re
 import numpy as np
 import pickle
+import argparse
 from matplotlib import pyplot as plt
 
 from coffea import hist
@@ -25,6 +26,14 @@ data_err_opts = {
         'elinewidth': 1,
         'emarker': '_'
     }
+
+def parse_commandline():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--inpath', help='Input path containing coffea files.')
+    parser.add_argument('--run_gjets_only', help='Only run for several GJets samples.', action='store_true')
+    parser.add_argument('--dr_req', help='Make k-factors using the distributions with DR>0.4', action='store_true')
+    args = parser.parse_args()
+    return args
 
 def get_old_kfac(tag):
     if tag.startswith('w'):
@@ -107,7 +116,7 @@ def sf_1d(acc, tag, regex, outputrootfile):
             outputrootfile[f'{tag}_{pt_type}_{selection}'] = (sf_y,sf_x)
 
 
-def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None, photon_run=False):
+def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None, photon_run=False, dr_req=False):
     outdir = f'./output/2d/{outtag}' if outtag else './output/2d'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -131,7 +140,10 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None, photon_run=Fals
         clims = 1.0, 1.5
 
     for selection in ['vbf']:
-        dist = f'gen_vpt_{selection}_{pt_type}'
+        if dr_req:
+            dist = f'gen_vpt_{selection}_{pt_type}_withDRreq'
+        else:
+            dist = f'gen_vpt_{selection}_{pt_type}'
         acc.load(dist)
         h = copy.deepcopy(acc[dist])
         print(h)
@@ -231,8 +243,8 @@ def pdfwgt_sf(vpt):
     return 1/(1.157 + 2.291e-4 * vpt + 6.0612e-7 * vpt**2)
 
 def main():
-    inpath = sys.argv[1]
-    #acc = acc_from_dir("./input/2019-10-07_das_lhevpt_dressed_v1")
+    args = parse_commandline()
+    inpath = args.inpath
     
     acc = dir_archive(
                       inpath,
@@ -244,9 +256,10 @@ def main():
     acc.load('sumw2')
 
     # Run k-factors only for photons (2D) if requested
-    photon_run_special = False
-    if len(sys.argv) > 2:
-        photon_run_special = (sys.argv[2] == 'gjets')
+    photon_run_special = args.run_gjets_only
+    
+    # Derive k-factors from distributions with DR > 0.4 
+    dr_req = args.dr_req
 
     outputrootfile = uproot.recreate(f'2017_gen_v_pt_qcd_sf.root')
 
@@ -261,6 +274,10 @@ def main():
         sf_2d(acc, tag='gjets', regex='G\d?Jet.*',pt_type='stat1',outputrootfile=outputrootfile)
     # outputrootfile = uproot.recreate('test.root')
     
+    # Only derive 2D k-factors for photons (if specified)
+    # Use several GJets samples as LO samples:
+    # GJets_HT_2016, GJets_HT_2017
+    # GJets_DR-0p4_HT_2016, GJets_DR-0p4_HT_2017
     else:
         # Store photon dataset regex for different LO samples
         regex_dict = {
@@ -270,7 +287,12 @@ def main():
             'gjets_ht_17' : '(G1Jet.*2016|GJets_HT.*2017)'
         }
         for outtag, regex in regex_dict.items():
-            sf_2d(acc, tag='gjets',regex=regex, outtag=outtag, pt_type='stat1',outputrootfile=outputrootfile, photon_run=True)
+            sf_2d(acc, tag='gjets',regex=regex, 
+                outtag=outtag, 
+                pt_type='stat1',
+                outputrootfile=outputrootfile, 
+                photon_run=True, 
+                dr_req=dr_req)
 
 
 if __name__ == "__main__":
