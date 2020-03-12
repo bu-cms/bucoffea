@@ -50,7 +50,6 @@ def from_coffea(inpath, outfile):
 
         h_ph = acc['mjj'][re.compile(f'GJets_DR-0p4.*HT.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
         f[f'gjets_qcd_mjj_nominal_{year}'] = export1d(h_ph)
-        print(h_ph.values())
 
         # QCD Variations for QCD Z 
         h_z_unc = acc['mjj_unc'][re.compile(f'ZJ.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
@@ -61,24 +60,26 @@ def from_coffea(inpath, outfile):
             f[f'z_qcd_mjj_{unc}_{year}'] = export1d(h)
 
         # EWK variations for QCD Z
-        # Get EWK up variation first
+        # Get EWK down variation first
         h_z_unc_ewk = acc['mjj_noewk'][re.compile(f'ZJetsToNuNu.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
-        f[f'z_qcd_mjj_unc_w_ewkcorr_overz_common_up_{year}'] = export1d(h_z_unc_ewk)
+        f[f'z_qcd_mjj_unc_w_ewkcorr_overz_common_down_{year}'] = export1d(h_z_unc_ewk)
 
-        # Get EWK down variation
-        h_z_diff = h_z.add( h_z_unc_ewk.scale(-1) )
+        # Get EWK up variation
+        h_z_unc_ewk.scale(-1)
+        h_z_diff = h_z.copy().add(h_z_unc_ewk)
         h_z_unc_ewk_down = h_z.add(h_z_diff) 
-        f[f'z_qcd_mjj_unc_w_ewkcorr_overz_common_down_{year}'] = export1d(h_z_unc_ewk_down)
+        f[f'z_qcd_mjj_unc_w_ewkcorr_overz_common_up_{year}'] = export1d(h_z_unc_ewk_down)
 
         # EWK variations for QCD W
-        # Get EWK up variation first
+        # Get EWK down variation first
         h_w_unc_ewk = acc['mjj_noewk'][re.compile(f'WJetsToLNu.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
-        f[f'w_qcd_mjj_unc_w_ewkcorr_overz_common_up_{year}'] = export1d(h_w_unc_ewk)
+        f[f'w_qcd_mjj_unc_w_ewkcorr_overz_common_down_{year}'] = export1d(h_w_unc_ewk)
 
-        # Get EWK down variation
-        h_w_diff = h_w.add( h_w_unc_ewk.scale(-1) )
+        # Get EWK up variation
+        h_w_unc_ewk.scale(-1)
+        h_w_diff = h_w.copy().add(h_w_unc_ewk)
         h_w_unc_ewk_down = h_w.add(h_w_diff)
-        f[f'w_qcd_mjj_unc_w_ewkcorr_overz_common_down_{year}'] = export1d(h_w_unc_ewk_down)
+        f[f'w_qcd_mjj_unc_w_ewkcorr_overz_common_up_{year}'] = export1d(h_w_unc_ewk_down)
 
         # QCD Variations for QCD photons
         h_ph_unc = acc['mjj_unc'][re.compile(f'GJets_DR-0p4.*HT.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
@@ -89,14 +90,15 @@ def from_coffea(inpath, outfile):
             f[f'gjets_qcd_mjj_{unc}_{year}'] = export1d(h)
 
         # EWK variations for QCD photons
-        # Get EWK up variation first
+        # Get EWK down variation first
         h_ph_unc_ewk = acc['mjj_noewk'][re.compile(f'GJets_DR-0p4.*HT.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
-        f[f'gjets_qcd_mjj_unc_gjets_ewkcorr_overz_common_up_{year}'] = export1d(h_ph_unc_ewk)
+        f[f'gjets_qcd_mjj_unc_gjets_ewkcorr_overz_common_down_{year}'] = export1d(h_ph_unc_ewk)
 
-        # Get EWK down variation
-        h_ph_diff = h_ph.add( h_ph_unc_ewk.scale(-1) )
+        # Get EWK up variation
+        h_ph_unc_ewk.scale(-1)
+        h_ph_diff = h_ph.copy().add(h_ph_unc_ewk)
         h_ph_unc_ewk_down = h_ph.add(h_ph_diff)
-        f[f'gjets_qcd_mjj_unc_gjets_ewkcorr_overz_common_down_{year}'] = export1d(h_ph_unc_ewk_down)
+        f[f'gjets_qcd_mjj_unc_gjets_ewkcorr_overz_common_up_{year}'] = export1d(h_ph_unc_ewk_down)
 
         # EWK V
         h_z = acc['mjj'][re.compile(f'.*EWKZ.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
@@ -137,14 +139,14 @@ def make_ratios(infile):
             for name in map(lambda x:x.GetName(), f.GetListOfKeys()):
                 if not name.startswith(f'z_{source}'):
                     continue
-                if not f"{year}" in name:
+                if not f"{year}" in name or 'ewkcorr' in name:
                     continue
                 ratio = f.Get(name).Clone(f'ratio_{name}')
                 ratio.Divide(denominator)
                 ratio.SetDirectory(of)
                 ratio.Write()
     
-    # Z / W ratios (EWK variation)
+    # Z / W ratios (up and down EWK variations)
     for year in [2017,2018]:
         for vartype in ['up', 'down']:
             varied_z_name = f'z_qcd_mjj_unc_w_ewkcorr_overz_common_{vartype}_{year}'
@@ -168,18 +170,18 @@ def make_ratios(infile):
             for name in map(lambda x:x.GetName(), f.GetListOfKeys()):
                 if not name.startswith(f'gjets_{source}'):
                     continue
-                if not f"{year}" in name:
+                if not f"{year}" in name or 'ewkcorr' in name:
                     continue
                 ratio = f.Get(name).Clone(f'ratio_{name}')
                 ratio.Divide(denominator)
                 ratio.SetDirectory(of)
                 ratio.Write()
 
-    # GJets / Z ratios (EWK variation)
+    # GJets / Z ratios (up and down EWK variations)
     for year in [2017,2018]:
         for vartype in ['up', 'down']:
             varied_g_name = f'gjets_qcd_mjj_unc_gjets_ewkcorr_overz_common_{vartype}_{year}'
-            varied_z = f.Get(f'z_qcd_mjj_unc_gjets_ewkcorr_overz_common_{vartype}_{year}')
+            varied_z = f.Get(f'z_qcd_mjj_unc_w_ewkcorr_overz_common_{vartype}_{year}')
             varied_ratio = f.Get(varied_g_name).Clone(f'ratio_{varied_g_name}')
             varied_ratio.Divide(varied_z)
             varied_ratio.SetDirectory(of)
@@ -205,10 +207,9 @@ def make_uncertainties(infile):
         for year in [2017,2018]:
             nominal = f.Get(f'ratio_z_{source}_mjj_nominal_{year}')
             for name in map(lambda x:x.GetName(), f.GetListOfKeys()):
-                m = re.match(f'.*z_{source}_mjj_unc_(.*)_{year}', name)
+                m = bool(re.match(f'.*z_{source}_mjj_unc_(.*)_{year}', name)) and 'ewkcorr' not in name
                 if not m:
                     continue
-                variation_name = m.groups()[0]
                 ratio = f.Get(name)
                 variation = ratio.Clone(f'uncertainty_{name}')
 
@@ -230,10 +231,6 @@ def make_uncertainties(infile):
             # Variation: (varied Z / W) / (nominal Z / W)
             variation = varied.Clone(f'uncertainty_{varied_name}')
             variation.Divide(nominal)
-            for i in range(variation.GetNbinsX()+1):
-                content = variation.GetBinContent(i)
-                new_content = 1 + np.abs(content-1)
-                variation.SetBinContent(i, new_content)
     
             variation.SetDirectory(of)
             variation.Write()
@@ -246,10 +243,9 @@ def make_uncertainties(infile):
         for year in [2017,2018]:
             nominal = f.Get(f'ratio_gjets_{source}_mjj_nominal_{year}')
             for name in map(lambda x:x.GetName(), f.GetListOfKeys()):
-                m = re.match(f'.*gjets_{source}_mjj_unc_(.*)_{year}', name)
+                m = bool(re.match(f'.*gjets_{source}_mjj_unc_(.*)_{year}', name)) and 'ewkcorr' not in name
                 if not m:
                     continue
-                variation_name = m.groups()[0]
                 ratio = f.Get(name)
                 variation = ratio.Clone(f'uncertainty_{name}')
 
@@ -266,15 +262,11 @@ def make_uncertainties(infile):
     for year in [2017,2018]:
         nominal = f.Get(f'ratio_gjets_qcd_mjj_nominal_{year}')
         for vartype in ['up', 'down']:
-            varied_name = f'ratio_gjets_qcd_mjj_unc_gjets_ewkcorr_over_z_common_{vartype}_{year}'
+            varied_name = f'ratio_gjets_qcd_mjj_unc_gjets_ewkcorr_overz_common_{vartype}_{year}'
             varied = f.Get(varied_name)
             # Variation: (varied Z / W) / (nominal Z / W)
             variation = varied.Clone(f'uncertainty_{varied_name}')
             variation.Divide(nominal)
-            for i in range(variation.GetNbinsX()+1):
-                content = variation.GetBinContent(i)
-                new_content = 1 + np.abs(content-1)
-                variation.SetBinContent(i, new_content)
     
             variation.SetDirectory(of)
             variation.Write()
@@ -284,8 +276,10 @@ def make_uncertainties(infile):
 
     of.Close()
     return str(of.GetName())
+
 import os
 pjoin = os.path.join
+
 def main():
     inpath = sys.argv[1] 
 
@@ -304,12 +298,3 @@ def main():
     make_uncertainties(outfile)
 if __name__ == "__main__":
     main()
-# print(h)
-# fig, ax, _ = plot1d(
-#                     h,
-#                     overlay='uncertainty'
-# )
-# # plt.yscale('log')
-# plt.ylim(2e3,3e3)
-# plt.xlim(0,5e2)
-# fig.savefig('test.pdf')
