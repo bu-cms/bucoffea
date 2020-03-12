@@ -39,7 +39,6 @@ def from_coffea(inpath, outfile):
         acc[distribution] = acc[distribution].rebin(acc[distribution].axis('mjj'), mjj_ax)
 
     pprint(acc[distribution].axis('dataset').identifiers())
-    histos = {}
     f = uproot.recreate(outfile)
     for year in [2017,2018]:
         # QCD V
@@ -62,12 +61,24 @@ def from_coffea(inpath, outfile):
             f[f'z_qcd_mjj_{unc}_{year}'] = export1d(h)
 
         # EWK variations for QCD Z
+        # Get EWK up variation first
         h_z_unc_ewk = acc['mjj_noewk'][re.compile(f'ZJetsToNuNu.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
-        f[f'z_qcd_mjj_noewk_{year}'] = export1d(h_z_unc_ewk)
+        f[f'z_qcd_mjj_unc_w_ewkcorr_overz_common_up_{year}'] = export1d(h_z_unc_ewk)
+
+        # Get EWK down variation
+        h_z_diff = h_z.add( h_z_unc_ewk.scale(-1) )
+        h_z_unc_ewk_down = h_z.add(h_z_diff) 
+        f[f'z_qcd_mjj_unc_w_ewkcorr_overz_common_down_{year}'] = export1d(h_z_unc_ewk_down)
 
         # EWK variations for QCD W
+        # Get EWK up variation first
         h_w_unc_ewk = acc['mjj_noewk'][re.compile(f'WJetsToLNu.*HT.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
-        f[f'w_qcd_mjj_noewk_{year}'] = export1d(h_w_unc_ewk)
+        f[f'w_qcd_mjj_unc_w_ewkcorr_overz_common_up_{year}'] = export1d(h_w_unc_ewk)
+
+        # Get EWK down variation
+        h_w_diff = h_w.add( h_w_unc_ewk.scale(-1) )
+        h_w_unc_ewk_down = h_w.add(h_w_diff)
+        f[f'w_qcd_mjj_unc_w_ewkcorr_overz_common_down_{year}'] = export1d(h_w_unc_ewk_down)
 
         # QCD Variations for QCD photons
         h_ph_unc = acc['mjj_unc'][re.compile(f'GJets_DR-0p4.*HT.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
@@ -78,8 +89,14 @@ def from_coffea(inpath, outfile):
             f[f'gjets_qcd_mjj_{unc}_{year}'] = export1d(h)
 
         # EWK variations for QCD photons
+        # Get EWK up variation first
         h_ph_unc_ewk = acc['mjj_noewk'][re.compile(f'GJets_DR-0p4.*HT.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
-        f[f'gjets_qcd_mjj_noewk_{year}'] = export1d(h_ph_unc_ewk)
+        f[f'gjets_qcd_mjj_unc_gjets_ewkcorr_overz_common_up_{year}'] = export1d(h_ph_unc_ewk)
+
+        # Get EWK down variation
+        h_ph_diff = h_ph.add( h_ph_unc_ewk.scale(-1) )
+        h_ph_unc_ewk_down = h_ph.add(h_ph_diff)
+        f[f'gjets_qcd_mjj_unc_gjets_ewkcorr_overz_common_down_{year}'] = export1d(h_ph_unc_ewk_down)
 
         # EWK V
         h_z = acc['mjj'][re.compile(f'.*EWKZ.*{year}')].integrate('region', 'sr_vbf').integrate('dataset')
@@ -100,10 +117,10 @@ def from_coffea(inpath, outfile):
             h = h_z_unc.integrate(h_z_unc.axis('uncertainty'), unc)
             f[f'z_ewk_mjj_{unc}_{year}'] = export1d(h)
 
-        # EWK Variations for photons
+        # QCD Variations for EWK photons
         h_ph_unc = acc['mjj_unc'][re.compile(f'GJets_SM.*{year}')].integrate('region', 'cr_g_vbf').integrate('dataset')
         for unc in map(str, h_ph_unc.axis('uncertainty').identifiers()):
-            if 'zoverw' in unc:
+            if 'zoverw' in unc or 'ewkcorr' in unc:
                 continue
             h = h_ph_unc.integrate(h_ph_unc.axis('uncertainty'), unc)
             f[f'gjets_ewk_mjj_{unc}_{year}'] = export1d(h)
@@ -129,16 +146,17 @@ def make_ratios(infile):
     
     # Z / W ratios (EWK variation)
     for year in [2017,2018]:
-        varied_z_name = f'z_qcd_mjj_noewk_{year}'
-        varied_w = f.Get(f'w_qcd_mjj_noewk_{year}')
-        varied_ratio = f.Get(varied_z_name).Clone(f'ratio_qcd_z_over_w_ewkvar_{year}')
-        varied_ratio.Divide(varied_w)
-        varied_ratio.SetDirectory(of)
-        varied_ratio.Write()  
+        for vartype in ['up', 'down']:
+            varied_z_name = f'z_qcd_mjj_unc_w_ewkcorr_overz_common_{vartype}_{year}'
+            varied_w = f.Get(f'w_qcd_mjj_unc_w_ewkcorr_overz_common_{vartype}_{year}')
+            varied_ratio = f.Get(varied_z_name).Clone(f'ratio_{varied_z_name}')
+            varied_ratio.Divide(varied_w)
+            varied_ratio.SetDirectory(of)
+            varied_ratio.Write()  
 
         nominal_z_name = f'z_qcd_mjj_nominal_{year}'
         nominal_w = f.Get(f'w_qcd_mjj_nominal_{year}')
-        nominal_ratio = f.Get(nominal_z_name).Clone(f'ratio_qcd_z_over_w_nominal_{year}')
+        nominal_ratio = f.Get(nominal_z_name).Clone(f'ratio_{nominal_z_name}')
         nominal_ratio.Divide(nominal_w)
         nominal_ratio.SetDirectory(of)    
         nominal_ratio.Write()  
@@ -159,16 +177,17 @@ def make_ratios(infile):
 
     # GJets / Z ratios (EWK variation)
     for year in [2017,2018]:
-        varied_g_name = f'gjets_qcd_mjj_noewk_{year}'
-        varied_z = f.Get(f'z_qcd_mjj_noewk_{year}')
-        varied_ratio = f.Get(varied_g_name).Clone(f'ratio_qcd_gjets_over_z_ewkvar_{year}')
-        varied_ratio.Divide(varied_z)
-        varied_ratio.SetDirectory(of)
-        varied_ratio.Write()
+        for vartype in ['up', 'down']:
+            varied_g_name = f'gjets_qcd_mjj_unc_gjets_ewkcorr_overz_common_{vartype}_{year}'
+            varied_z = f.Get(f'z_qcd_mjj_unc_gjets_ewkcorr_overz_common_{vartype}_{year}')
+            varied_ratio = f.Get(varied_g_name).Clone(f'ratio_{varied_g_name}')
+            varied_ratio.Divide(varied_z)
+            varied_ratio.SetDirectory(of)
+            varied_ratio.Write()
 
         nominal_g_name = f'gjets_qcd_mjj_nominal_{year}'
         nominal_z = f.Get(f'z_qcd_mjj_nominal_{year}')
-        nominal_ratio = f.Get(nominal_g_name).Clone(f'ratio_qcd_gjets_over_z_nominal_{year}')
+        nominal_ratio = f.Get(nominal_g_name).Clone(f'ratio_{nominal_g_name}')
         nominal_ratio.Divide(nominal_z)
         nominal_ratio.SetDirectory(of)
         nominal_ratio.Write()
@@ -202,35 +221,25 @@ def make_uncertainties(infile):
                 ratio.SetDirectory(of)
                 ratio.Write()
     
-    # Uncertainty in Z / W ratios (EWK variation)
+    # Uncertainty in Z / W ratios (up and down EWK variations)
     for year in [2017,2018]:
-        nominal = f.Get(f'ratio_qcd_z_over_w_nominal_{year}')
-        varied_name = f'ratio_qcd_z_over_w_ewkvar_{year}'
-        varied = f.Get(varied_name)
-        # Variation: (varied Z / W) / (nominal Z / W)
-        variation_up = varied.Clone(f'uncertainty_{varied_name}_up')
-        variation_up.Divide(nominal)
-        for i in range(variation_up.GetNbinsX()+1):
-            content = variation_up.GetBinContent(i)
-            new_content = 1 + np.abs(content-1)
-            variation_up.SetBinContent(i, new_content)
+        nominal = f.Get(f'ratio_z_qcd_mjj_nominal_{year}')
+        for vartype in ['up', 'down']:
+            varied_name = f'ratio_z_qcd_mjj_unc_w_ewkcorr_overz_common_{vartype}_{year}'
+            varied = f.Get(varied_name)
+            # Variation: (varied Z / W) / (nominal Z / W)
+            variation = varied.Clone(f'uncertainty_{varied_name}')
+            variation.Divide(nominal)
+            for i in range(variation.GetNbinsX()+1):
+                content = variation.GetBinContent(i)
+                new_content = 1 + np.abs(content-1)
+                variation.SetBinContent(i, new_content)
+    
+            variation.SetDirectory(of)
+            variation.Write()
 
-        variation_up.SetDirectory(of)
-        variation_up.Write()
-
-        # Get the down variations
-        variation_down = varied.Clone(f'uncertainty_{varied_name}_down')
-        variation_down.Divide(nominal)
-        for i in range(variation_down.GetNbinsX()+1):
-            content= variation_down.GetBinContent(i)
-            new_content = 1 - np.abs(content-1)
-            variation_down.SetBinContent(i, new_content)
-
-        variation_down.SetDirectory(of)
-        variation_down.Write()
-
-        varied.SetDirectory(of)
-        varied.Write()
+            varied.SetDirectory(of)
+            varied.Write()
 
     # Uncertainty in GJets / Z ratios (QCD variations)
     for source in ['ewk','qcd']:
@@ -253,35 +262,25 @@ def make_uncertainties(infile):
                 ratio.SetDirectory(of)
                 ratio.Write()
 
-    # Uncertainty in GJets / Z ratios (EWK variation)
+    # Uncertainty in GJets / Z ratios (up and down EWK variations)
     for year in [2017,2018]:
-        nominal = f.Get(f'ratio_qcd_gjets_over_z_nominal_{year}')
-        varied_name = f'ratio_qcd_gjets_over_z_ewkvar_{year}'
-        varied = f.Get(varied_name)
-        # Variation: (varied Z / W) / (nominal Z / W)
-        variation_up = varied.Clone(f'uncertainty_{varied_name}_up')
-        variation_up.Divide(nominal)
-        for i in range(variation_up.GetNbinsX()+1):
-            content = variation_up.GetBinContent(i)
-            new_content = 1 + np.abs(content-1)
-            variation_up.SetBinContent(i, new_content)
+        nominal = f.Get(f'ratio_gjets_qcd_mjj_nominal_{year}')
+        for vartype in ['up', 'down']:
+            varied_name = f'ratio_gjets_qcd_mjj_unc_gjets_ewkcorr_over_z_common_{vartype}_{year}'
+            varied = f.Get(varied_name)
+            # Variation: (varied Z / W) / (nominal Z / W)
+            variation = varied.Clone(f'uncertainty_{varied_name}')
+            variation.Divide(nominal)
+            for i in range(variation.GetNbinsX()+1):
+                content = variation.GetBinContent(i)
+                new_content = 1 + np.abs(content-1)
+                variation.SetBinContent(i, new_content)
+    
+            variation.SetDirectory(of)
+            variation.Write()
 
-        variation_up.SetDirectory(of)
-        variation_up.Write()
-
-        # Get the down variations
-        variation_down = varied.Clone(f'uncertainty_{varied_name}_down')
-        variation_down.Divide(nominal)
-        for i in range(variation_down.GetNbinsX()+1):
-            content = variation_down.GetBinContent(i)
-            new_content = 1 - np.abs(content-1)
-            variation_down.SetBinContent(i, new_content)
-
-        variation_down.SetDirectory(of)
-        variation_down.Write()
-
-        varied.SetDirectory(of)
-        varied.Write()
+            varied.SetDirectory(of)
+            varied.Write()
 
     of.Close()
     return str(of.GetName())
