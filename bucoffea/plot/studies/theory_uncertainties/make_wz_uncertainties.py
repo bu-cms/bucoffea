@@ -237,6 +237,17 @@ def make_uncertainties(infile):
 
             varied.SetDirectory(of)
             varied.Write()
+    
+    # Copy the EWK uncertainty for QCD Z / W ratio
+    # apply to the EWK Z / W ratio (for now)
+    for year in [2017,2018]:
+        for vartype in ['up', 'down']:
+            qcd_unc_name = f'uncertainty_ratio_z_qcd_mjj_unc_w_ewkcorr_overz_common_{vartype}_{year}'
+            qcd_unc = of.Get(qcd_unc_name)
+            ewk_unc = qcd_unc.Clone(f'{qcd_unc_name.replace("qcd", "ewk")}')
+
+            ewk_unc.SetDirectory(of)
+            ewk_unc.Write()
 
     # Uncertainty in GJets / Z ratios (scale + PDF variations)
     for source in ['ewk','qcd']:
@@ -273,6 +284,17 @@ def make_uncertainties(infile):
 
             varied.SetDirectory(of)
             varied.Write()
+    
+    # Copy the EWK uncertainty for QCD GJets / Z ratio
+    # apply to the EWK GJets / Z ratio (for now)
+    for year in [2017,2018]:
+        for vartype in ['up', 'down']:
+            qcd_unc_name = f'uncertainty_ratio_gjets_qcd_mjj_unc_w_ewkcorr_overz_common_{vartype}_{year}'
+            qcd_unc = of.Get(qcd_unc_name)
+            ewk_unc = qcd_unc.Clone(f'{qcd_unc_name.replace("qcd", "ewk")}')
+
+            ewk_unc.SetDirectory(of)
+            ewk_unc.Write()
 
     of.Close()
     return str(of.GetName())
