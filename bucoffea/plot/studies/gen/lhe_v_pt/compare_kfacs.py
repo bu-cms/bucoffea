@@ -56,6 +56,9 @@ def compare_kfactors(cases):
     title = ' VS '.join([pretty_title[case] for case in cases]) 
     ax.set_title(title)
 
+    ax.set_xlabel('k-fac diff / stat unc')
+    ax.set_ylabel('Counts')
+
     outdir = './output/kfactor_comparison'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
