@@ -261,9 +261,10 @@ def main():
     # Derive k-factors from distributions with DR > 0.4 
     dr_req = args.dr_req
 
-    outputrootfile = uproot.recreate(f'2017_gen_v_pt_qcd_sf.root')
 
     if not photon_run_special:
+        outputrootfile = uproot.recreate(f'2017_gen_v_pt_qcd_sf.root')
+
         sf_1d(acc, tag='wjet', regex='WN?JetsToLNu.*',outputrootfile=outputrootfile)
         sf_1d(acc, tag='dy', regex='DYN?JetsToLL.*',outputrootfile=outputrootfile)
         # # outputrootfile = uproot.recreate(f'test.root')
@@ -279,6 +280,7 @@ def main():
     # GJets_HT_2016, GJets_HT_2017
     # GJets_DR-0p4_HT_2016, GJets_DR-0p4_HT_2017
     else:
+        outputrootfile = uproot.recreate('gjets_sf.root')
         # Store photon dataset regex for different LO samples
         regex_dict = {
             'gjets_dr_16' : '(G1Jet.*2016|GJets_DR-0p4.*2016)',
