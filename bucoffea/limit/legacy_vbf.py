@@ -10,7 +10,7 @@ from coffea.hist.export import export1d
 
 import ROOT as r
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
-
+from legacy_monojet import suppress_negative_bins
 pjoin = os.path.join
 
 def datasets(year):
@@ -173,5 +173,5 @@ def merge_legacy_inputs(outdir):
                 h.SetTitle(h.GetName())
                 h.SetDirectory(subdir)
                 h.GetXaxis().SetTitle('mjj')
-                # h.Write()
+                suppress_negative_bins(h)
                 subdir.Write()
