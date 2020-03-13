@@ -237,7 +237,7 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None, photon_run=Fals
         print(tup[0].shape)
         print(tup[1].shape)
         print(tup[2].shape)
-        outputrootfile[f'2d_{tag}_{selection}'] =  tup
+        outputrootfile[f'2d_{tag}_{selection}_{outtag}'] =  tup
 
 def pdfwgt_sf(vpt):
     return 1/(1.157 + 2.291e-4 * vpt + 6.0612e-7 * vpt**2)
