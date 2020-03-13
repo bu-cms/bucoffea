@@ -169,7 +169,7 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None, photon_run=Fals
             sumw_nlo * np.sqrt(sumw2_lo) / (sumw_lo**2)
         )
         data = (sf, dsf)
-        pkl_filename = f'{tag}_kfac.pkl'
+        pkl_filename = f'{outtag}_kfac.pkl' if outtag else f'{tag}_kfac.pkl'
         with open(pkl_filename, 'wb') as f:
             pickle.dump(data, f)
 
@@ -205,23 +205,6 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None, photon_run=Fals
                 verticalalignment='bottom',
                 horizontalalignment='left',
                 transform=ax.transAxes)
-        # hist.plotratio(nlo, lo,
-        #     ax=rax,
-        #     denom_fill_opts={},
-        #     guide_opts={},
-        #     unc='num',
-        #     overflow='all',
-        #     error_opts=data_err_opts,
-        #     label='2017 NLO/LO ratio'
-        #     )
-        # old = get_old_kfac(tag)
-        # old_x = 0.5*(old.bins[:,0]+old.bins[:,1])
-        # rax.plot(old_x, old.values,'ob-', label='2016 QCD k fac')
-        # rax.plot(old_x, old.values * pdfwgt_sf(old_x),'or-', label='2016 x ad-hoc DY pdfwgt SF')
-        # ax.set_yscale('log')
-        # ax.set_ylim(1e-3,1e6)
-        # rax.set_ylim(0,2)
-        # rax.legend()
 
         ax.set_ylabel('$p_{T}(V)$ (GeV)')
         ax.set_xlabel('M(jj) (GeV)')
@@ -229,9 +212,6 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None, photon_run=Fals
         cb.set_label('LO $\\rightarrow$ NLO SF')
         im.set_clim(*clims)
         fig.savefig(pjoin(outdir,f'2d_{tag}_{dist}.pdf'))
-
-        # sf_x = lo.axis('vpt').edges()
-        # sf_y = nlo.values()[()] / lo.values()[()]
 
         tup = (sf, xaxis.edges(overflow='over'),yaxis.edges(overflow='over'))
         print(tup[0].shape)
