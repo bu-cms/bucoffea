@@ -116,8 +116,8 @@ def sf_1d(acc, tag, regex, outputrootfile):
             outputrootfile[f'{tag}_{pt_type}_{selection}'] = (sf_y,sf_x)
 
 
-def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None, photon_run=False, dr_req=False):
-    outdir = f'./output/2d/{outtag}' if outtag else './output/2d'
+def sf_2d(acc, tag, regex, pt_type, outputrootfile, output_dir_name=None, outtag=None, photon_run=False, dr_req=False):
+    outdir = f'./output/2d/{output_dir_name}/{outtag}' if outtag else './output/2d'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
@@ -137,7 +137,7 @@ def sf_2d(acc, tag, regex, pt_type, outputrootfile, outtag=None, photon_run=Fals
     elif tag in ['gjets']:
         vpt_ax = hist.Bin('vpt','V $p_{T}$ (GeV)',[0, 40, 80, 120, 160, 200, 240, 280, 320, 400, 520, 640])
         mjj_ax = hist.Bin('mjj','M(jj) (GeV)',[0,200,500,1000,1500])
-        clims = 1.0, 1.5
+        clims = 1.0, 2.0
 
     for selection in ['vbf']:
         if dr_req:
@@ -261,6 +261,12 @@ def main():
     # GJets_DR-0p4_HT_2016, GJets_DR-0p4_HT_2017
     else:
         outputrootfile = uproot.recreate('gjets_sf.root')
+
+        if inpath.endswith('/'):
+            output_dir_name = inpath.split('/')[-2]
+        else:
+            output_dir_name = inpath.split('/')[-1]
+
         # Store photon dataset regex for different LO samples
         regex_dict = {
             'gjets_dr_16' : '(G1Jet.*2016|GJets_DR-0p4.*2016)',
@@ -270,7 +276,8 @@ def main():
         }
         for outtag, regex in regex_dict.items():
             sf_2d(acc, tag='gjets',regex=regex, 
-                outtag=outtag, 
+                outtag=outtag,
+                output_dir_name=output_dir_name, 
                 pt_type='stat1',
                 outputrootfile=outputrootfile, 
                 photon_run=True, 
