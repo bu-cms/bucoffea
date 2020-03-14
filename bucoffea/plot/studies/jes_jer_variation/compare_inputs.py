@@ -148,7 +148,7 @@ def main():
     dataset_info = {
         'wjets17' : {'regex': 'WJetsToLNu.*2017', 'region': 'sr_vbf'},
         'zjets17' : {'regex': 'ZJetsToNuNu.*2017', 'region': 'sr_vbf'},
-        'gjets17' : {'regex': 'GJets.*2017', 'region': 'cr_g_vbf'}
+        'gjets17' : {'regex': 'GJets_DR-0p4.*2017', 'region': 'cr_g_vbf'}
     }
 
     # Use the specific variation if specified
