@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import sys
 from bucoffea.plot.util import acc_from_dir
 from klepto.archives import dir_archive
 import argparse

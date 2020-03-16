@@ -10,7 +10,7 @@ from coffea.hist.export import export1d
 
 import ROOT as r
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
-from legacy_monojet import legacy_dataset_name, datasets, legacy_region_name
+from legacy_monojet import legacy_dataset_name, datasets, legacy_region_name, suppress_negative_bins
 
 pjoin = os.path.join
 
@@ -99,7 +99,7 @@ def merge_legacy_inputs(outdir):
                 h.SetTitle(h.GetName())
                 h.SetDirectory(subdir)
                 h.GetXaxis().SetTitle('met')
-                # h.Write()
+                suppress_negative_bins(h)
                 subdir.Write()
 
             if wp == 'tau21':
@@ -117,5 +117,5 @@ def merge_legacy_inputs(outdir):
                 h.SetTitle(h.GetName())
                 h.SetDirectory(subdir)
                 h.GetXaxis().SetTitle('met')
-                # h.Write()
+                suppress_negative_bins(h)
                 subdir.Write()

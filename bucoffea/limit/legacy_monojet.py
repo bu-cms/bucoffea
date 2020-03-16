@@ -88,6 +88,13 @@ def recoil_bins_2016():
              690.,  740.,  790.,  840.,  900.,  960., 
              1020., 1090., 1160., 1250., 1400.]
 
+def suppress_negative_bins(histogram):
+    if "data" in histogram.GetName():
+        return
+    for i in range(0,histogram.GetNbinsX()+2):
+        if histogram.GetBinContent(i) < 0:
+            histogram.SetBinContent(i, 0)
+            histogram.SetBinError(i,0)
 
 def legacy_limit_input_monojet(acc, outdir='./output'):
     """Writes ROOT TH1s to file as a limit input
@@ -164,5 +171,6 @@ def merge_legacy_inputs(outdir):
                 h.SetTitle(h.GetName())
                 h.SetDirectory(subdir)
                 h.GetXaxis().SetTitle('met')
+                suppress_negative_bins(h)
                 # h.Write()
                 subdir.Write()
