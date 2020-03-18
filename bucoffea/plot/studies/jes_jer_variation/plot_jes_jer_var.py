@@ -222,8 +222,8 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
     # for each JES/JER variation
     ratios = {}
     err = {}
-    h1_vals = h1.values(overflow='over', sumw2=True)
-    h2_vals = h2.values(overflow='over', sumw2=True)
+    h1_vals = h1.values(sumw2=True)
+    h2_vals = h2.values(sumw2=True)
     
     for var in h1_vals.keys():
         h1_sumw, h1_sumw2 = h1_vals[var]
@@ -256,26 +256,13 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
         'wlnu_over_gjets18' : r'{} $W\rightarrow \ell \nu$ SR / {} $\gamma$ + jets CR'.format(sample_label, sample_label),
     }
     
-    # Lower + upper y-limits for each tag
-    tag_to_ylim = {
-        'znunu_over_wlnu17' : {'qcd' : (1.9, 2.1), 'ewk' : (1.95, 2.15)}, 
-        'znunu_over_wlnu18' : {'qcd' : (1.95, 2.15), 'ewk' : (1.95, 2.15)}, 
-        'znunu_over_zmumu17' : {'qcd' : (8, 9.5), 'ewk' : (7.6, 8.6)},
-        'znunu_over_zmumu18' : {'qcd' : (8, 9.5), 'ewk' : (7.4, 8.8)},
-        'znunu_over_zee17' : {'qcd' : (10.5, 11.1), 'ewk' : (0,10)},
-        'znunu_over_zee18' : {'qcd' : (10, 10.8), 'ewk' : (0,10)},
-        'znunu_over_gjets17' : {'qcd' : (0.65,0.75), 'ewk' : (0,10)},
-        'znunu_over_gjets18' : {'qcd' : (0.6,0.68), 'ewk' : (0,10)},
-        'wlnu_over_wenu17' : {'qcd' : (0.75,0.85), 'ewk' : (0.15, 0.35)},
-        'wlnu_over_wenu18' : {'qcd' : (0.65,0.75), 'ewk' : (0.43, 0.47)},
-        'wlnu_over_wmunu17' : {'qcd' : (0.45,0.55), 'ewk' : (0.27, 0.32)},
-        'wlnu_over_wmunu18' : {'qcd' : (0.45,0.55), 'ewk' : (0.28, 0.33)},
-        'wlnu_over_gjets17' : {'qcd' : (0.3,0.4), 'ewk' : (0.6, 0.8)},
-        'wlnu_over_gjets18' : {'qcd' : (0.3,0.4), 'ewk' : (0.95, 1.15)}
-    }
-   
-    mjj_edges = h1.axes()[0].edges(overflow='over')
+    mjj_edges = h1.axes()[0].edges()
     mjj_centers = ((mjj_edges + np.roll(mjj_edges, -1))/2)[:-1]
+
+    # Get maximum and minimum ratios, fix y-axis limits
+    counts = list(ratios.values())
+    lower_ylim = min(counts) * 0.95
+    upper_ylim = max(counts) * 1.05
 
     # Plot the ratios for each variation
     fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 2)}, sharex=True)
@@ -295,7 +282,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
 
     # Aesthetics
     ax.set_xlim(200,4000)
-    ax.set_ylim(tag_to_ylim[tag][sample_type][0], tag_to_ylim[tag][sample_type][1])
+    ax.set_ylim(lower_ylim, upper_ylim)
     ax.set_ylabel(tag_to_ylabel[tag])
     ax.legend()
 
