@@ -61,22 +61,22 @@ tag_to_dataset_pairs = {
     },
     'gjets_over_znunu17' : {
         'qcd': {
-            'dataset1' : {'regex' : 'GJets_DR-0p4.*2017', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'cr_g_vbf'},
+            'dataset1' : {'regex' : 'GJets_DR-0p4.*2017', 'region' : 'cr_g_vbf'},
+            'dataset2' : {'regex' : 'ZJetsToNuNu.*2017', 'region' : 'sr_vbf'},
         },
         'ewk': {
-            'dataset1' : {'regex' : 'GJets_SM_5f_EWK.*2017', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2017', 'region' : 'cr_g_vbf'},
+            'dataset1' : {'regex' : 'GJets_SM_5f_EWK.*2017', 'region' : 'cr_g_vbf'},
+            'dataset2' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2017', 'region' : 'sr_vbf'},
         }
     },
     'gjets_over_znunu18' : {
         'qcd': {
-            'dataset1' : {'regex' : 'GJets_DR-0p4.*2018', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'cr_g_vbf'},
+            'dataset1' : {'regex' : 'GJets_DR-0p4.*2018', 'region' : 'cr_g_vbf'},
+            'dataset2' : {'regex' : 'ZJetsToNuNu.*2018', 'region' : 'sr_vbf'},
         },
         'ewk': {
-            'dataset1' : {'regex' : 'GJets_SM_5f_EWK.*2018', 'region' : 'sr_vbf'},
-            'dataset2' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2018', 'region' : 'cr_g_vbf'},
+            'dataset1' : {'regex' : 'GJets_SM_5f_EWK.*2018', 'region' : 'cr_g_vbf'},
+            'dataset2' : {'regex' : 'EWKZ2Jets_ZToNuNu.*2018', 'region' : 'sr_vbf'},
         }
     },
     'znunu_over_zee18' : {
