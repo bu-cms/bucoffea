@@ -695,14 +695,28 @@ def photon_trigger_sf(weights, photons, df):
 
     weights.add("trigger_photon", sf)
 
+
+
 def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     year = extract_year(df['dataset'])
     # Muon ID and Isolation for tight and loose WP
     # Function of pT, eta (Order!)
-    weights.add("muon_id_tight", evaluator['muon_id_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod())
-    weights.add("muon_iso_tight", evaluator['muon_iso_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod())
-    weights.add("muon_id_loose", evaluator['muon_id_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
-    weights.add("muon_iso_loose", evaluator['muon_iso_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
+    muon_id_iso_tight  = evaluator['muon_id_tight'](muons.pt, muons.abseta) * evaluator['muon_iso_tight'](muons.pt, muons.abseta)
+    muon_id_iso_loose  = evaluator['muon_id_loose'](muons.pt, muons.abseta) * evaluator['muon_iso_loose'](muons.pt, muons.abseta)
+
+
+    # Baseline is tight weights for tight muons, loose weights for non-tight muons
+    w_mu = (muon_id_iso_tight[df['is_tight_muon']]).prod() * (muon_id_iso_loose[~df['is_tight_muon']]).prod()
+
+    # In case there are exactly two muons and both are tight,
+    # average the tight and loose weights.
+    w_mu = np.where(
+            (muons[df['is_tight_muon']].counts==2) & (muons.counts==2),
+            0.5 * ( muon_id_iso_tight[:,:1]*muon_id_iso_loose[:,-1:]
+                + muon_id_iso_tight[:,-1:]*muon_id_iso_loose[:,:1]).prod(),
+            w_mu
+        )
+    weights.add("muon_id_iso", w_mu)
 
     # Electron ID and reco
     # Function of eta, pT (Other way round relative to muons!)
@@ -715,9 +729,25 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     else:
         ele_reco_sf = evaluator['ele_reco'](electrons.etasc, electrons.pt).prod()
     weights.add("ele_reco", ele_reco_sf)
+    
     # ID/iso SF is not split
-    weights.add("ele_id_tight", evaluator['ele_id_tight'](electrons[df['is_tight_electron']].etasc, electrons[df['is_tight_electron']].pt).prod())
-    weights.add("ele_id_loose", evaluator['ele_id_loose'](electrons[~df['is_tight_electron']].etasc, electrons[~df['is_tight_electron']].pt).prod())
+    ele_id_tight = evaluator['ele_id_tight'](electrons.etasc, electrons.pt)
+    ele_id_loose = evaluator['ele_id_loose'](electrons.etasc, electrons.pt)
+    
+    # Baseline is tight weights for tight electrons, loose weights for non-tight electrons
+    w_el = (ele_id_tight[df['is_tight_electron']]).prod() * (ele_id_loose[~df['is_tight_electron']]).prod()
+
+    # In case there are exactly two electrons and both are tight,
+    # average the tight and loose weights.
+    w_el = np.where(
+            (electrons[df['is_tight_electron']].counts==2)&(electrons.counts==2),
+            0.5 * (ele_id_tight[:,:1]*ele_id_loose[:,-1:]
+                 + ele_id_tight[:,-1:]*ele_id_loose[:,:1]).prod(),
+            w_el
+            )
+    weights.add("ele_id_iso", w_el)
+
+    m = (electrons[df['is_tight_electron']].counts==2)&(electrons.counts==2)
 
     # Photon ID and electron veto
     weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
