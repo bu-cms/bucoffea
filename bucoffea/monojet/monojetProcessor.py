@@ -249,7 +249,7 @@ class monojetProcessor(processor.ProcessorABC):
                                     & (ak8.wvsqcd[leadak8_index] < cfg.WTAG.TIGHT)).any())
         selection.add('leadak8_wvsqcd_tight', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.TIGHT)).any())
 
-        selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_tau21", "leadak8_mass"))
+        selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_wvsqcd_tight", "leadak8_mass"))
         selection.add('only_one_ak8', ak8.counts==1)
 
         # Dimuon CR
@@ -537,6 +537,10 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/df["recoil_pt"][mask],      weight=region_weights.weight()[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.weight()[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.weight()[mask] )
+
+            # SR data-driven QCD estimate
+            if re.match(".*cr_qcd.*",region):
+                ezfill("recoil_vs_dphi_qcd",recoil=df["recoil_pt"][mask],dphi=df["minDPhiJetMet"][mask], weight=region_weights.weight()[mask])
 
             # Photon CR data-driven QCD estimate
             if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):

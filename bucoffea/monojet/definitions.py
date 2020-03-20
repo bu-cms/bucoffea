@@ -46,6 +46,7 @@ def monojet_accumulator(cfg):
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
+    dphi_ax_qcd = Bin("dphi", r"$\Delta\phi$", 7, 0, 3.5)
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
     dxy_ax = Bin("dxy", r"$d_{xy}$", 20, 0, 0.5)
@@ -80,6 +81,7 @@ def monojet_accumulator(cfg):
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_vs_dphi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax,dphi_ax_qcd)
     items["recoil_nopog"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_notrg"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
@@ -433,12 +435,12 @@ def monojet_regions(cfg):
         'veto_b',
         'mindphijr',
         'dpfcalo',
-        'recoil'
+        'recoil',
     ]
     j_cuts = [
         'leadak4_pt_eta',
         'leadak4_id',
-        # 'veto_vtag'
+        'veto_vtag'
     ]
     # Test out different working point for v tagging
     # the first one is the traditional one used in 2016
@@ -455,8 +457,8 @@ def monojet_regions(cfg):
     regions['sr_v'] = ['trig_met'] + common_cuts + v_cuts
     regions['sr_j'] = ['trig_met'] + common_cuts + j_cuts
 
-    regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
-    regions['cr_nofilt_j'].remove('filt_met')
+    # regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
+    # regions['cr_nofilt_j'].remove('filt_met')
 
     # Dimuon CR
     cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
@@ -490,13 +492,13 @@ def monojet_regions(cfg):
     regions['cr_g_j'] = cr_g_cuts + j_cuts
     regions['cr_g_v'] = cr_g_cuts + v_cuts
 
-    # a tt-bar populated region by removing b veto
-    regions['cr_nobveto_v'] = copy.deepcopy(regions['sr_v'])
-    regions['cr_nobveto_v'].remove('veto_b')
+    # # a tt-bar populated region by removing b veto
+    # regions['cr_nobveto_v'] = copy.deepcopy(regions['sr_v'])
+    # regions['cr_nobveto_v'].remove('veto_b')
 
     # additional regions to test out deep ak8 WvsQCD tagger
-    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','cr_nobveto_v']:
-        for wp in ['inclusive', 'loose', 'tight','loosemd','tightmd']:
+    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
+        for wp in ['tight']:
             # the new region name will be, for example, cr_2m_loose_v
             newRegionName=region.replace('_v','_'+wp+'_v')
             regions[newRegionName] = copy.deepcopy(regions[region])
@@ -586,6 +588,17 @@ def monojet_regions(cfg):
 
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
+
+    tmp = {}
+    for sr, reqs in regions.items():
+        new_name = sr.replace("sr","cr_qcd")
+        new_reqs = copy.deepcopy(reqs)
+        new_reqs.remove("mindphijr")
+        new_reqs.remove("recoil")
+        tmp[new_name] = new_reqs
+    regions.update(tmp)
+    from pprint import pprint
+    pprint(regions)
 
     if not cfg.RUN.MONOV:
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_v') or '_v_' in x]
