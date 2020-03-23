@@ -46,7 +46,7 @@ def monojet_accumulator(cfg):
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
-    dphi_ax_qcd = Bin("dphi", r"$\Delta\phi$", 7, 0, 3.5)
+    dphi_ax_qcd = Bin("dphi", r"$\Delta\phi$", [0.,.1,.2,.3,.4,.5,5])
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
     dxy_ax = Bin("dxy", r"$d_{xy}$", 20, 0, 0.5)
