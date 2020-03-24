@@ -213,6 +213,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_b', bjets.counts==0)
         selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
+        selection.add('invmindphijr',df['minDPhiJetRecoil'] <= cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
 
@@ -541,6 +542,15 @@ class monojetProcessor(processor.ProcessorABC):
             # SR data-driven QCD estimate
             if re.match(".*cr_qcd.*",region):
                 ezfill("recoil_vs_dphi_qcd",recoil=df["recoil_pt"][mask],dphi=df["minDPhiJetMet"][mask], weight=region_weights.weight()[mask])
+
+            if re.match(".*cr_qcd.*invdphi.*",region):
+                ezfill("recoil_vs_ak4_phi_qcd", recoil=(ak4.phi.ones_like() * df["recoil_pt"])[mask].flatten(), phi=ak4.phi[mask].flatten(), weight=w_alljets)
+                ezfill("recoil_vs_ak4_eta_qcd", recoil=(ak4.eta.ones_like() * df["recoil_pt"])[mask].flatten(), eta=ak4.eta[mask].flatten(), weight=w_alljets)
+
+                ezfill("recoil_vs_ak4_phi0_qcd", recoil=df["recoil_pt"][mask], phi=ak4[leadak4_index].phi[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_eta0_qcd", recoil=df["recoil_pt"][mask], eta=ak4[leadak4_index].eta[mask].flatten(), weight=w_leadak4)
+
+                ezfill("recoil_vs_recoil_phi_qcd", recoil=df["recoil_pt"][mask], phi=df["recoil_phi"][mask], weight=region_weights.weight()[mask])
 
             # Photon CR data-driven QCD estimate
             if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):

@@ -34,6 +34,7 @@ def monojet_accumulator(cfg):
 
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
+    recoil_ax_qcd = Bin("recoil", r"Recoil (GeV)", 20, 0, 2000)
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
     jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
@@ -82,6 +83,15 @@ def monojet_accumulator(cfg):
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_vs_dphi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax,dphi_ax_qcd)
+
+    items["recoil_vs_ak4_phi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, phi_ax)
+    items["recoil_vs_ak4_phi0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, phi_ax)
+    items["recoil_vs_ak4_eta_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, eta_ax)
+    items["recoil_vs_ak4_eta0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, eta_ax)
+
+    items["recoil_vs_recoil_phi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, phi_ax)
+
+
     items["recoil_nopog"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_notrg"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
@@ -596,6 +606,14 @@ def monojet_regions(cfg):
         new_reqs.remove("mindphijr")
         new_reqs.remove("recoil")
         tmp[new_name] = new_reqs
+
+        new_name = sr.replace("sr","cr_qcd_invdphijr")
+        new_reqs = copy.deepcopy(reqs)
+        new_reqs.remove("mindphijr")
+        new_reqs.append("invmindphijr")
+        new_reqs.remove("recoil")
+        tmp[new_name] = new_reqs
+
     regions.update(tmp)
     from pprint import pprint
     pprint(regions)
