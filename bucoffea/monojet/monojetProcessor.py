@@ -544,12 +544,29 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill("recoil_vs_dphi_qcd",recoil=df["recoil_pt"][mask],dphi=df["minDPhiJetMet"][mask], weight=region_weights.weight()[mask])
 
             if re.match(".*cr_qcd.*invdphi.*",region):
-                ezfill("recoil_vs_ak4_phi_qcd", recoil=(ak4.phi.ones_like() * df["recoil_pt"])[mask].flatten(), phi=ak4.phi[mask].flatten(), weight=w_alljets)
-                ezfill("recoil_vs_ak4_eta_qcd", recoil=(ak4.eta.ones_like() * df["recoil_pt"])[mask].flatten(), eta=ak4.eta[mask].flatten(), weight=w_alljets)
+                ak4_30 = ak4[ak4.pt>30]
+                recoil_all_jets = (ak4_30.phi.ones_like() * df["recoil_pt"])[mask].flatten()
+                ezfill("recoil_vs_ak4_pt_qcd", recoil=recoil_all_jets, pt=ak4_30.pt[mask].flatten(), weight=w_alljets)
+                ezfill("recoil_vs_ak4_eta_qcd", recoil=recoil_all_jets, eta=ak4_30.eta[mask].flatten(), weight=w_alljets)
+                ezfill("recoil_vs_ak4_phi_qcd", recoil=recoil_all_jets, phi=ak4_30.phi[mask].flatten(), weight=w_alljets)
 
-                ezfill("recoil_vs_ak4_phi0_qcd", recoil=df["recoil_pt"][mask], phi=ak4[leadak4_index].phi[mask].flatten(), weight=w_leadak4)
-                ezfill("recoil_vs_ak4_eta0_qcd", recoil=df["recoil_pt"][mask], eta=ak4[leadak4_index].eta[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_nhf_qcd", recoil=recoil_all_jets, fraction=ak4_30.nhf[mask].flatten(), weight=w_alljets)
+                ezfill("recoil_vs_ak4_chf_qcd", recoil=recoil_all_jets, fraction=ak4_30.chf[mask].flatten(), weight=w_alljets)
+                ezfill("recoil_vs_ak4_nef_qcd", recoil=recoil_all_jets, fraction=ak4_30.nef[mask].flatten(), weight=w_alljets)
+                ezfill("recoil_vs_ak4_muf_qcd", recoil=recoil_all_jets, fraction=ak4_30.muf[mask].flatten(), weight=w_alljets)
+                ezfill("recoil_vs_ak4_nconst_qcd", recoil=recoil_all_jets, fraction=ak4_30.nconst[mask].flatten(), weight=w_alljets)
 
+                ezfill("recoil_vs_ak4_pt0_qcd", recoil=df["recoil_pt"][mask], pt=ak4_30[leadak4_index].pt[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_eta0_qcd", recoil=df["recoil_pt"][mask], eta=ak4_30[leadak4_index].eta[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_phi0_qcd", recoil=df["recoil_pt"][mask], phi=ak4_30[leadak4_index].phi[mask].flatten(), weight=w_leadak4)
+
+                ezfill("recoil_vs_ak4_nhf0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4_30[leadak4_index].nhf[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_chf0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4_30[leadak4_index].chf[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_nef0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4_30[leadak4_index].nef[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_muf0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4_30[leadak4_index].muf[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_nconst0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4_30[leadak4_index].nconst[mask].flatten(), weight=w_leadak4)
+
+                ezfill("recoil_vs_njet_qcd", recoil=df["recoil_pt"][mask], multiplicity=ak4_30.counts[mask], weight=region_weights.weight()[mask])
                 ezfill("recoil_vs_recoil_phi_qcd", recoil=df["recoil_pt"][mask], phi=df["recoil_phi"][mask], weight=region_weights.weight()[mask])
 
             # Photon CR data-driven QCD estimate

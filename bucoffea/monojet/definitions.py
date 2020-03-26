@@ -34,7 +34,7 @@ def monojet_accumulator(cfg):
 
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
-    recoil_ax_qcd = Bin("recoil", r"Recoil (GeV)", 20, 0, 2000)
+    recoil_ax_qcd = Bin("recoil", r"Recoil (GeV)", [0,800,900,1000,1100,1200,2000])
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
     jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
@@ -45,7 +45,8 @@ def monojet_accumulator(cfg):
 
     dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
-    multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
+    multiplicity_ax = Bin("multiplicity", r"multiplicity", 20, -0.5, 19.5)
+    constituent_ax = Bin("constituents", r"constituents", 20, -0.5, 99.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
     dphi_ax_qcd = Bin("dphi", r"$\Delta\phi$", [0.,.1,.2,.3,.4,.5,5])
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
@@ -55,6 +56,7 @@ def monojet_accumulator(cfg):
     id_ax = Bin("id", r"ID bool", 2,-0.5,1.5)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 50, 0, 1000)
+    pt_ax_coarse = Bin("pt", r"$p_{T}$ (GeV)", 40, 0, 2000)
     ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 50, 0, 4000)
     mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 50, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
@@ -75,6 +77,7 @@ def monojet_accumulator(cfg):
     nvtx_ax = Bin('nvtx','Number of vertices',50,-0.5,99.5)
     rho_ax = Bin('rho','Energy density',50, 0, 100)
     frac_ax = Bin('frac','Fraction', 50, 0, 1)
+    fraction_ax = Bin('fraction','Fraction', 20, 0, 1)
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
@@ -84,10 +87,26 @@ def monojet_accumulator(cfg):
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_vs_dphi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax,dphi_ax_qcd)
 
+    items["recoil_vs_ak4_pt_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, pt_ax_coarse)
+    items["recoil_vs_ak4_pt0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, pt_ax_coarse)
     items["recoil_vs_ak4_phi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, phi_ax)
     items["recoil_vs_ak4_phi0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, phi_ax)
     items["recoil_vs_ak4_eta_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, eta_ax)
     items["recoil_vs_ak4_eta0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, eta_ax)
+
+    items["recoil_vs_ak4_nhf_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_nhf0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_nef_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_nef0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_chf_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_chf0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_muf_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    items["recoil_vs_ak4_muf0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
+    
+    items["recoil_vs_ak4_nconst_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, constituent_ax)
+    items["recoil_vs_ak4_nconst0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, constituent_ax)
+    
+    items["recoil_vs_njet_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, multiplicity_ax)
 
     items["recoil_vs_recoil_phi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, phi_ax)
 
@@ -358,8 +377,12 @@ def setup_candidates(df, cfg):
         # nef=df['Jet_neEmEF'],
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
+        nef=df['Jet_neEmEF'],
+        muf=df['Jet_muEF'],
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
-        nconst=df['Jet_nConstituents']
+        nconst=df['Jet_nConstituents'],
+        nele=df['Jet_nElectrons'],
+        nmu=df['Jet_nMuons']
         # clean=df['Jet_cleanmask']
         # cef=df['Jet_chEmEF'],
     )
