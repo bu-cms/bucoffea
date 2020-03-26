@@ -17,8 +17,6 @@ from pprint import pprint
 
 def vbfhinv_accumulator(cfg, variations):
     dataset_ax = Cat("dataset", "Primary dataset")
-    unc_ax = Cat("uncertainty", "Uncertainty weight variation")
-    variation_ax = Cat("variation", "Uncertainty weight variation")
     region_ax = Cat("region", "Selection region")
     type_ax = Cat("type", "Type")
     var_ax = Cat("var", "JES/JER variation type")
@@ -32,20 +30,8 @@ def vbfhinv_accumulator(cfg, variations):
 
     mjj_ax = Bin("mjj", r"$M_{jj}$ (GeV)", 150, 0, 7500)
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
-    jet_pt_ax_coarse = Bin("jetpt", r"$p_{T}$ (GeV)", 5, 0, 500)
-    jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
-    jet_eta_ax_coarse = Bin("jeteta", r"$\eta$", 10, -5, 5)
-    jet_phi_ax = Bin("jetphi", r"$\phi$", 50,-np.pi, np.pi)
 
-    jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
-
-    dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
-    btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
-    nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
-    dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
-    deta_ax = Bin("deta", r"$\Delta\eta$", 50, 0, 10)
-    dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
     pt_ax_mu = Bin("pt", r"$p_{T}$ (GeV)", [20,25,30,40,50,60,120])
@@ -53,17 +39,11 @@ def vbfhinv_accumulator(cfg, variations):
     pt_ax_tau = Bin("pt", r"$p_{T}$ (GeV)", [18,20,25,30,35,40,500,1000])
 
     ht_ax = Bin("ht", r"$H_{T}$ (GeV)", 100, 0, 4000)
-    mt_ax = Bin("mt", r"$M_{T}$ (GeV)", 100, 0, 1000)
     eta_ax = Bin("eta", r"$\eta$", 50, -5, 5)
     eta_ax_el = Bin("eta", r"$\eta$", [-2.5, -2.0, -1.56, -1.44, -0.8, 0, 0.8, 1.44,1.56,2.0,2.5])
     abseta_ax_mu = Bin("abseta", r"$|\eta|$", [0,0.9,1.2,2.1,2.4])
 
-    eta_ax_coarse = Bin("eta", r"$\eta$", 25, -5, 5)
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
-    phi_ax_coarse = Bin("phi", r"$\phi$", 20,-np.pi, np.pi)
-
-    tau21_ax = Bin("tau21", r"Tagger", 50,-5,5)
-    tagger_ax = Bin("tagger", r"Tagger", 50,-5,5)
 
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 100,50,150)
 
@@ -73,8 +53,9 @@ def vbfhinv_accumulator(cfg, variations):
 
     nvtx_ax = Bin('nvtx','Number of vertices',100,-0.5,99.5)
     rho_ax = Bin('rho','Energy density',100, 0, 100)
-    frac_ax = Bin('frac','Fraction', 50, 0, 1)
+    
     Hist = hist.Hist
+    
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
     items["lhe_njets"] = Hist("Counts", dataset_ax, multiplicity_ax)
@@ -119,9 +100,9 @@ def vbfhinv_accumulator(cfg, variations):
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
-    items[f"met"] = Hist("Counts", dataset_ax, region_ax, met_ax, var_ax)
-    items[f"recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, var_ax)
-    items[f"mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax, var_ax)
+    items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax, var_ax)
+    items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, var_ax)
+    items["mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax, var_ax)
     
     items['recoil_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax, var_ax)
     items['mjj_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax, var_ax)
@@ -130,9 +111,9 @@ def vbfhinv_accumulator(cfg, variations):
     items['detajj_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax, var_ax)
     items['dphijj_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax, var_ax)
 
-    items[f"ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
-    items[f"ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
-    items[f"ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
+    items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
+    items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
+    items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
 
     items["tau_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax_tau)
 

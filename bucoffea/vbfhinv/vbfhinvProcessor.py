@@ -624,7 +624,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
             w_btag = weight_shape(btag[mask], rweight[mask])
-            ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
 
             # Photon CR data-driven QCD estimate
             if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
