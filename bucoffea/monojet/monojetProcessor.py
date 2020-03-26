@@ -570,6 +570,7 @@ class monojetProcessor(processor.ProcessorABC):
 
                 ezfill("recoil_vs_njet_qcd", recoil=df["recoil_pt"][mask], multiplicity=ak4_30.counts[mask], weight=region_weights.weight()[mask])
                 ezfill("recoil_vs_recoil_phi_qcd", recoil=df["recoil_pt"][mask], phi=df["recoil_phi"][mask], weight=region_weights.weight()[mask])
+                ezfill("recoil_vs_ak4pt0_over_recoil_qcd", recoil=df["recoil_pt"][mask], ratio=ak4[leadak4_index].pt[mask].max() / df["recoil_pt"][mask], weight=region_weights.weight()[mask])
 
             # Photon CR data-driven QCD estimate
             if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):

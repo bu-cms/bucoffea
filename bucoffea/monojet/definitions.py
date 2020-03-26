@@ -64,7 +64,7 @@ def monojet_accumulator(cfg):
     phi_ax = Bin("phi", r"$\phi$", 50,-np.pi, np.pi)
     phi_ax_coarse = Bin("phi", r"$\phi$", 20,-np.pi, np.pi)
 
-    ratio_ax = Bin("ratio", "ratio", 50,0,2)
+    ratio_ax = Bin("ratio", "ratio", 10,0,2)
 
     tau21_ax = Bin("tau21", r"Tagger", 50,0,1)
     tagger_ax = Bin("tagger", r"Tagger", 50,0,1)
@@ -109,6 +109,7 @@ def monojet_accumulator(cfg):
     items["recoil_vs_njet_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, multiplicity_ax)
 
     items["recoil_vs_recoil_phi_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, phi_ax)
+    items["recoil_vs_ak4pt0_over_recoil_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, ratio_ax)
 
 
     items["recoil_nopog"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
