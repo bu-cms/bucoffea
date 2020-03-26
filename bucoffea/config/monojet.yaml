@@ -163,7 +163,7 @@ default:
     save:
       passing: False
       prescale: 1  
-      tree: False
+      tree: True
     kinematics:
       save: False
       events:
@@ -174,7 +174,7 @@ default:
         - 79123963
         - 51393664
     trigger_study: False
-    monov: False
+    monov: True
     monoj: True
   triggers:
     ht:
