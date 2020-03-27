@@ -416,7 +416,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 df[f'detajj{var}_over_nom'] = df[f'detajj{var}']/df['detajj'] - 1 
                 df[f'dphijj{var}_over_nom'] = df[f'dphijj{var}']/df['dphijj'] - 1 
                 df[f'recoil_pt{var}_over_nom'] = df[f'recoil_pt{var}']/df['recoil_pt'] - 1 
-                
+
                 # Get nominal leading and trailing jet pt
                 diak4_nom = vmap.get_diak4(var='') 
                 lead_jetpt_nom = diak4_nom.i0.pt 
@@ -609,13 +609,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # All ak4
             # This is a workaround to create a weight array of the right dimension
-            w_alljets = weight_shape(ak4[mask].eta, weights.weight()[mask])
-            w_alljets_nopref = weight_shape(ak4[mask].eta, weights.partial_weight(exclude=['prefire'])[mask])
+            w_alljets = weight_shape(ak4[mask].eta, rweight[mask])
             
             ezfill(f'ak4_pt',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets, var=var)
 
             # Leading ak4
-            w_diak4 = weight_shape(diak4.pt[mask], weights.weight()[mask])
+            w_diak4 = weight_shape(diak4.pt[mask], rweight[mask])
             ezfill(f'ak4_pt0',       jetpt=getattr(diak4.i0, f'pt{var}')[mask].flatten(),      weight=w_diak4, var=var)
 
             # Trailing ak4
@@ -655,7 +654,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # Muons
             if region in ['cr_1m_vbf', 'cr_2m_vbf']:
                 w_allmu = weight_shape(muons.pt[mask], rweight[mask])
-                ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
+                ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu)
                 ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
                 ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
 
@@ -670,7 +669,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('muon_phi1',     phi=dimuons.i1.phi[mask].flatten(),         weight=w_dimu)
                 ezfill('dimuon_pt',     pt=dimuons.pt[mask].flatten(),              weight=w_dimu)
                 ezfill('dimuon_eta',    eta=dimuons.eta[mask].flatten(),            weight=w_dimu)
-                ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
+                ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu)
 
             # Electrons
             if region in ['cr_1e_vbf', 'cr_2e_vbf']:
@@ -710,10 +709,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # Variation / Nominal ratio plots for signal region
             if region.startswith('sr') and var != '':
-                   ezfill('recoil_varovernom',       ratio=df[f'recoil_pt{var}_over_nom'][mask], weight=weights.weight()[mask], var=var)             
-                   ezfill('mjj_varovernom',          ratio=df[f'mjj{var}_over_nom'][mask],    weight=weights.weight()[mask], var=var)             
-                   ezfill('detajj_varovernom',       ratio=df[f'detajj{var}_over_nom'][mask], weight=weights.weight()[mask], var=var)             
-                   ezfill('dphijj_varovernom',       ratio=df[f'dphijj{var}_over_nom'][mask], weight=weights.weight()[mask], var=var)             
+                   ezfill('recoil_varovernom',       ratio=df[f'recoil_pt{var}_over_nom'][mask], weight=rweight[mask], var=var)             
+                   ezfill('mjj_varovernom',          ratio=df[f'mjj{var}_over_nom'][mask],    weight=rweight[mask], var=var)             
+                   ezfill('detajj_varovernom',       ratio=df[f'detajj{var}_over_nom'][mask], weight=rweight[mask], var=var)             
+                   ezfill('dphijj_varovernom',       ratio=df[f'dphijj{var}_over_nom'][mask], weight=rweight[mask], var=var)             
 
             # PV
             if region in ['sr_vbf', 'cr_1m_vbf', 'cr_2m_vbf', 'cr_1e_vbf', 'cr_2e_vbf']:
