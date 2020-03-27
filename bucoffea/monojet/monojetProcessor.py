@@ -373,7 +373,9 @@ class monojetProcessor(processor.ProcessorABC):
                 if re.match(r'cr_(\d+)e.*', region):
                     p_pass_data = 1 - (1-evaluator["trigger_electron_eff_data"](electrons.etasc, electrons.pt)).prod()
                     p_pass_mc   = 1 - (1-evaluator["trigger_electron_eff_mc"](electrons.etasc, electrons.pt)).prod()
-                    region_weights.add('trigger', p_pass_data/p_pass_mc)
+                    trigger_weight = p_pass_data/p_pass_mc
+                    trigger_weight[np.isnan(trigger_weight)] = 1
+                    region_weights.add('trigger', trigger_weight)
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
                     region_weights.add('trigger_met', evaluator["trigger_met"](df['recoil_pt']))
                 elif re.match(r'cr_g.*', region):
@@ -412,6 +414,7 @@ class monojetProcessor(processor.ProcessorABC):
 
 
             if cfg.RUN.SAVE.TREE:
+
                 def fill_tree(variable, values):
                     treeacc = processor.column_accumulator(values)
                     name = f'tree_{region}_{variable}'
@@ -419,16 +422,16 @@ class monojetProcessor(processor.ProcessorABC):
                         output[name][dataset] += treeacc
                     else:
                         output[name][dataset] = treeacc
-                if region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
-                    fill_tree('recoil',df['recoil_pt'][mask].flatten())
-                    fill_tree('weight',region_weights.weight()[mask].flatten())
-                    if gen_v_pt is not None:
-                        fill_tree('gen_v_pt',gen_v_pt[mask].flatten())
-                    else:
-                        fill_tree('gen_v_pt', -1 * np.ones(sum(mask)))
+                if region in ['cr_1e_j']:
+                    output['tree'][region]["event"] +=  processor.column_accumulator(df["event"][mask])
+                    output['tree'][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
+                    # output['tree'][region]["recoil"] +=  processor.column_accumulator(df["recoil_pt"][mask])
+                    output['tree'][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
-                output['selected_events'][region] += list(df['event'][mask])
+                # Save only every Nth event
+                save_mask = mask & ((df['event']%cfg.RUN.SAVE.PRESCALE)== 0)
+                output['selected_events'][region] += processor.column_accumulator(df['event'][save_mask].astype(np.uint64))
 
 
             # Multiplicities
@@ -505,6 +508,10 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_wvsqcdmd0',  tagger=ak8[leadak8_index].wvsqcdmd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcd0',    tagger=ak8[leadak8_index].zvsqcd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_zvsqcdmd0',  tagger=ak8[leadak8_index].zvsqcdmd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_tvsqcd0',    tagger=ak8[leadak8_index].tvsqcd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_tvsqcdmd0',    tagger=ak8[leadak8_index].tvsqcdmd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_wvstqcd0',    tagger=ak8[leadak8_index].wvstqcd[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_wvstqcdmd0',    tagger=ak8[leadak8_index].wvstqcdmd[mask].flatten(),     weight=w_leadak8)
 
                 # histogram with only gen-matched lead ak8 pt
                 if not df['is_data']:

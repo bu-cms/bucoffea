@@ -3,6 +3,7 @@
 import os
 import sys
 import re
+import argparse
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi, fig_ratio
 from klepto.archives import dir_archive
 from coffea import hist
@@ -25,6 +26,14 @@ var_to_legend_label = {
     '_jesup'   : 'JES up',
     '_jesdown' : 'JES down'
 }
+
+def parse_commandline():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--inpath', help='Path containing input coffea files.')
+    parser.add_argument('-r', '--ratio', help='Only plot ratios.', action='store_true')
+    parser.add_argument('--individual', help='Only plot individual distributions, do not plot ratios.', action='store_true')
+    args = parser.parse_args()
+    return args
 
 def dict_to_arr(d):
     '''Given a dictionary containing different weights as
@@ -222,8 +231,8 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
     # for each JES/JER variation
     ratios = {}
     err = {}
-    h1_vals = h1.values(overflow='over', sumw2=True)
-    h2_vals = h2.values(overflow='over', sumw2=True)
+    h1_vals = h1.values(sumw2=True)
+    h2_vals = h2.values(sumw2=True)
     
     for var in h1_vals.keys():
         h1_sumw, h1_sumw2 = h1_vals[var]
@@ -246,8 +255,8 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
         'znunu_over_zmumu18' : r'{} $Z\rightarrow \nu \nu$ SR / {} $Z\rightarrow \mu \mu$ CR'.format(sample_label, sample_label),
         'znunu_over_zee17' : r'{} $Z\rightarrow \nu \nu$ SR / {} $Z\rightarrow ee$ CR'.format(sample_label, sample_label),
         'znunu_over_zee18' : r'{} $Z\rightarrow \nu \nu$ SR / {} $Z\rightarrow ee$ CR'.format(sample_label, sample_label),
-        'znunu_over_gjets17' : r'{} $Z\rightarrow \nu \nu$ SR / {} $\gamma$ + jets CR'.format(sample_label, sample_label),
-        'znunu_over_gjets18' : r'{} $Z\rightarrow \nu \nu$ SR / {} $\gamma$ + jets CR'.format(sample_label, sample_label),
+        'gjets_over_znunu17' : r'{} $\gamma$ + jets CR / {} $Z\rightarrow \nu \nu$ SR'.format(sample_label, sample_label),
+        'gjets_over_znunu18' : r'{} $\gamma$ + jets CR / {} $Z\rightarrow \nu \nu$ SR'.format(sample_label, sample_label),
         'wlnu_over_wenu17' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow e\nu$ CR'.format(sample_label, sample_label),
         'wlnu_over_wenu18' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow e\nu$ CR'.format(sample_label, sample_label),
         'wlnu_over_wmunu17' : r'{} $W\rightarrow \ell \nu$ SR / {} $W\rightarrow \mu \nu$ CR'.format(sample_label, sample_label),
@@ -256,26 +265,13 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
         'wlnu_over_gjets18' : r'{} $W\rightarrow \ell \nu$ SR / {} $\gamma$ + jets CR'.format(sample_label, sample_label),
     }
     
-    # Lower + upper y-limits for each tag
-    tag_to_ylim = {
-        'znunu_over_wlnu17' : {'qcd' : (1.9, 2.1), 'ewk' : (1.95, 2.15)}, 
-        'znunu_over_wlnu18' : {'qcd' : (1.95, 2.15), 'ewk' : (1.95, 2.15)}, 
-        'znunu_over_zmumu17' : {'qcd' : (8, 9.5), 'ewk' : (7.6, 8.6)},
-        'znunu_over_zmumu18' : {'qcd' : (8, 9.5), 'ewk' : (7.4, 8.8)},
-        'znunu_over_zee17' : {'qcd' : (10.5, 11.1), 'ewk' : (0,10)},
-        'znunu_over_zee18' : {'qcd' : (10, 10.8), 'ewk' : (0,10)},
-        'znunu_over_gjets17' : {'qcd' : (0.65,0.75), 'ewk' : (0,10)},
-        'znunu_over_gjets18' : {'qcd' : (0.6,0.68), 'ewk' : (0,10)},
-        'wlnu_over_wenu17' : {'qcd' : (0.75,0.85), 'ewk' : (0.15, 0.35)},
-        'wlnu_over_wenu18' : {'qcd' : (0.65,0.75), 'ewk' : (0.43, 0.47)},
-        'wlnu_over_wmunu17' : {'qcd' : (0.45,0.55), 'ewk' : (0.27, 0.32)},
-        'wlnu_over_wmunu18' : {'qcd' : (0.45,0.55), 'ewk' : (0.28, 0.33)},
-        'wlnu_over_gjets17' : {'qcd' : (0.3,0.4), 'ewk' : (0.6, 0.8)},
-        'wlnu_over_gjets18' : {'qcd' : (0.3,0.4), 'ewk' : (0.95, 1.15)}
-    }
-   
-    mjj_edges = h1.axes()[0].edges(overflow='over')
+    mjj_edges = h1.axes()[0].edges()
     mjj_centers = ((mjj_edges + np.roll(mjj_edges, -1))/2)[:-1]
+
+    # Get maximum and minimum ratios, fix y-axis limits
+    counts = list(ratios.values())
+    lower_ylim = min(counts) * 0.95
+    upper_ylim = max(counts) * 1.05
 
     # Plot the ratios for each variation
     fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 2)}, sharex=True)
@@ -295,7 +291,7 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
 
     # Aesthetics
     ax.set_xlim(200,4000)
-    ax.set_ylim(tag_to_ylim[tag][sample_type][0], tag_to_ylim[tag][sample_type][1])
+    ax.set_ylim(lower_ylim, upper_ylim)
     ax.set_ylabel(tag_to_ylabel[tag])
     ax.legend()
 
@@ -315,8 +311,8 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
                 transform=ax.transAxes
                 )
 
-    rax.set_ylim(0.94, 1.06)
-    loc = matplotlib.ticker.MultipleLocator(base=0.02)
+    rax.set_ylim(0.9, 1.1)
+    loc = matplotlib.ticker.MultipleLocator(base=0.05)
     rax.yaxis.set_major_locator(loc)
     rax.set_ylabel('Varied / Nominal')
     rax.set_xlabel(r'$M_{jj} \ (GeV)$')
@@ -339,7 +335,8 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
     get_unc(ratios, mjj_edges, out_tag, tag, sample_type)
 
 def main():
-    inpath = sys.argv[1]
+    args = parse_commandline()
+    inpath = args.inpath
 
     acc = dir_archive(
                          inpath,
@@ -358,30 +355,34 @@ def main():
 
     sample_types = ['qcd', 'ewk']
 
-    for tag, data_dict in dataset_regex.items():
-        for sample_type in sample_types:
-            try:
-                title, regex, region = data_dict[sample_type].values()
-                plot_jes_jer_var(acc, regex=regex, title=title, tag=tag, out_tag=out_tag, region=region, sample_type=sample_type)
-            except KeyError:
-                continue
+    # Plot individual distributions unless "ratio only" option is specified
+    if not args.ratio:
+        for tag, data_dict in dataset_regex.items():
+            for sample_type in sample_types:
+                try:
+                    title, regex, region = data_dict[sample_type].values()
+                    plot_jes_jer_var(acc, regex=regex, title=title, tag=tag, out_tag=out_tag, region=region, sample_type=sample_type)
+                except KeyError:
+                    continue
 
-    for tag, data_dict in tag_to_dataset_pairs.items():
-        for sample_type in sample_types:
-            try:
-                datapair_dict = data_dict[sample_type] 
-                data1_info = datapair_dict['dataset1']
-                data2_info = datapair_dict['dataset2']
-                plot_jes_jer_var_ratio( acc, 
-                                        regex1=data1_info['regex'], 
-                                        regex2=data2_info['regex'], 
-                                        region1=data1_info['region'], 
-                                        region2=data2_info['region'], 
-                                        tag=tag, 
-                                        out_tag=out_tag,
-                                        sample_type=sample_type)
-            except KeyError:
-                continue
+    # Plot ratios unless "individual plots only option is specified"
+    if not args.individual:
+        for tag, data_dict in tag_to_dataset_pairs.items():
+            for sample_type in sample_types:
+                try:
+                    datapair_dict = data_dict[sample_type] 
+                    data1_info = datapair_dict['dataset1']
+                    data2_info = datapair_dict['dataset2']
+                    plot_jes_jer_var_ratio( acc, 
+                                            regex1=data1_info['regex'], 
+                                            regex2=data2_info['regex'], 
+                                            region1=data1_info['region'], 
+                                            region2=data2_info['region'], 
+                                            tag=tag, 
+                                            out_tag=out_tag,
+                                            sample_type=sample_type)
+                except KeyError:
+                    continue
 
 if __name__ == '__main__':
     main()

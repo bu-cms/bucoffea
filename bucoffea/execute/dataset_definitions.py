@@ -166,7 +166,7 @@ def find_files_eos(directory, regex):
         dataset = path.split('/')[9]
         if not re.match(regex, dataset):
             continue
-        fileset[dataset].append(re.sub('.*/store','root://cmsxrootd.fnal.gov//store', path))
+        fileset[dataset].append(re.sub('.*/store','root://cmsxrootd-site.fnal.gov//store', path))
     return fileset
 
 def files_from_eos(regex):

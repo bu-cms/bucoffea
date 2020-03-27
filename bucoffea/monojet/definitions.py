@@ -12,8 +12,17 @@ Hist = hist.Hist
 Bin = hist.Bin
 Cat = hist.Cat
 
+def empty_column_accumulator_int():
+    return processor.column_accumulator(np.array([],dtype=np.uint64))
+
+def empty_column_accumulator_float():
+    return processor.column_accumulator(np.array([],dtype=np.float64))
+
 def accu_int():
     return processor.defaultdict_accumulator(int)
+
+def defaultdict_accumulator_of_empty_column_accumulator_float():
+    return processor.defaultdict_accumulator(empty_column_accumulator_float)
 
 def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
@@ -101,6 +110,10 @@ def monojet_accumulator(cfg):
     items["ak8_wvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_zvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_zvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_tvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_tvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_wvstqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_wvstqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
     items["ak8_passtight_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
     items["ak8_passloosemd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
@@ -184,12 +197,11 @@ def monojet_accumulator(cfg):
     items['sumw2'] = processor.defaultdict_accumulator(float)
     items['sumw_pileup'] = processor.defaultdict_accumulator(float)
 
-    items['selected_events'] = processor.defaultdict_accumulator(list)
+    items['selected_events'] = processor.defaultdict_accumulator(empty_column_accumulator_int)
     items['kinematics'] = processor.defaultdict_accumulator(list)
 
-    for region in ['sr_j','cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j']:
-        for variable in ['recoil','weight','gen_v_pt']:
-            items[f'tree_{region}_{variable}'] = processor.dict_accumulator()
+
+    items['tree'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_float)
 
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
     items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
@@ -417,7 +429,11 @@ def setup_candidates(df, cfg, variations):
         wvsqcd=df['FatJet_deepTag_WvsQCD'],
         wvsqcdmd=df['FatJet_deepTagMD_WvsQCD'],
         zvsqcd=df['FatJet_deepTag_ZvsQCD'],
-        zvsqcdmd=df['FatJet_deepTagMD_ZvsQCD']
+        zvsqcdmd=df['FatJet_deepTagMD_ZvsQCD'],
+        tvsqcd=df['FatJet_deepTag_TvsQCD'],
+        tvsqcdmd=df['FatJet_deepTagMD_TvsQCD'],
+        wvstqcd=df['FatJet_deepTag_WvsQCD']*(1-df['FatJet_deepTag_TvsQCD'])/(1-df['FatJet_deepTag_WvsQCD']*df['FatJet_deepTag_TvsQCD']),
+        wvstqcdmd=df['FatJet_deepTagMD_WvsQCD']*(1-df['FatJet_deepTagMD_TvsQCD'])/(1-df['FatJet_deepTagMD_WvsQCD']*df['FatJet_deepTagMD_TvsQCD']),
     )
     ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
@@ -429,6 +445,7 @@ def setup_candidates(df, cfg, variations):
     met = JaggedCandidateArray.candidatesfromcounts(
         np.ones(df.size),
         pt=df[f'{met_branch}_pt{jes_suffix_met}'],
+        pt_nom=df[f'{met_branch}_pt_nom'],
         pt_jerup=df[f'{met_branch}_pt_jerUp'],
         pt_jerdown=df[f'{met_branch}_pt_jerDown'],
         pt_jesup=df[f'{met_branch}_pt_jesTotalUp'],
@@ -452,6 +469,24 @@ def setup_candidates(df, cfg, variations):
         _ak4 = ak4[ak4_pt.argsort()]
         ak4_pt = ak4_pt[ak4_pt.argsort()]
         
+        # For JES up and JES down variations, get JER smeared MET
+        if var in ['_jesup', '_jesdown']:
+            varied_met_pt = getattr(met, f'pt{var}')
+            varied_met_phi = getattr(met, f'phi{var}')
+            met_px = varied_met_pt*np.cos(varied_met_phi)
+            met_py = varied_met_pt*np.sin(varied_met_phi)
+
+            # Get JER smeared MET px and py
+            met_px_jer = met.pt + (met_px - met.pt_nom)
+            met_py_jer = met.pt + (met_py - met.pt_nom)
+
+            # Convert back to MET pt and phi
+            varied_met_pt_jer = np.hypot(met_px, met_py)
+            varied_met_phi_jer = np.arctan(met_py_jer / met_px_jer)
+
+            setattr(met, f'pt{var}', varied_met_pt_jer)
+            setattr(met, f'phi{var}', varied_met_phi_jer)
+
         # Choose relevant b-jets
         _bjets = _ak4[
               (_ak4.looseId) \

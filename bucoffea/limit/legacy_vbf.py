@@ -10,7 +10,7 @@ from coffea.hist.export import export1d
 
 import ROOT as r
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
-
+from legacy_monojet import suppress_negative_bins
 pjoin = os.path.join
 
 def datasets(year):
@@ -22,14 +22,14 @@ def datasets(year):
                     'cr_2e_vbf' : f'EGamma_{year}',
                     'cr_g_vbf' : f'EGamma_{year}',
                     # 'sr_vbf' : f'MET_{year}',
-                    'sr_vbf' : f'nomatch',
+                    'sr_vbf_no_veto_all' : f'nomatch',
                 }
     mc = {
-            'sr_vbf' : re.compile(f'W(minus|plus)H_.*|((VBF|GluGlu)_HToInvisible.*|ggZH.*|ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|DYJetsToLL.*|.*W.*HT.*).*{year}'),
-            'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
-            'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*W.*HT.*).*{year}'),
-            'cr_2m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-            'cr_2e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+            'sr_vbf_no_veto_all' : re.compile(f'W(minus|plus)H_.*|((VBF|GluGlu)_HToInvisible.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_1m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_1e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+            'cr_2e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
           }
         
@@ -47,7 +47,7 @@ def legacy_dataset_name_vbf(dataset):
         'EWKZ\d?Jets.*ZToNuNu.*' : 'ewkzjets',
         'EWKW.*' : 'ewkwjets',
         'QCD.*' : 'qcd',
-        'TTJets.*' : 'top',
+        'Top.*' : 'top',
         'Diboson.*' : 'diboson',
         '(MET|EGamma).*' : 'data',
         'WJetsToLNu.*' : 'qcdwjets',
@@ -108,7 +108,7 @@ def legacy_limit_input_vbf(acc, outdir='./output'):
         signal = re.compile(f'VBF_HToInvisible.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_vbf_{year}.root'))
         data, mc = datasets(year)
-        for region in ['cr_2m_vbf','cr_1m_vbf','cr_2e_vbf','cr_1e_vbf','cr_g_vbf','sr_vbf']:
+        for region in ['cr_2m_vbf','cr_1m_vbf','cr_2e_vbf','cr_1e_vbf','cr_g_vbf','sr_vbf_no_veto_all']:
             print(f'Region {region}')
             tag = region.split('_')[0]
             # Rebin
@@ -122,7 +122,7 @@ def legacy_limit_input_vbf(acc, outdir='./output'):
             scale_xs_lumi(h)
 
             h = merge_datasets(h)
-
+        
             h = h.integrate(h.axis('region'),region)
             
             for dataset in map(str, h.axis('dataset').identifiers()):
@@ -162,10 +162,10 @@ def merge_legacy_inputs(outdir):
         category, year = m.groups()
         files[year][category] = pjoin(outdir, fname)
 
+    outfile = r.TFile(pjoin(outdir, f'legacy_limit_vbf.root'),'RECREATE')
     for year, ifiles in files.items():
-        outfile = r.TFile(pjoin(outdir, f'legacy_limit_{year}.root'),'RECREATE')
         for category, file in ifiles.items():
-            subdir = outfile.mkdir(f'category_{category}')
+            subdir = outfile.mkdir(f'category_{category}_{year}')
             infile = r.TFile(file)
             for key in infile.GetListOfKeys():
                 print(key)
@@ -173,5 +173,5 @@ def merge_legacy_inputs(outdir):
                 h.SetTitle(h.GetName())
                 h.SetDirectory(subdir)
                 h.GetXaxis().SetTitle('mjj')
-                # h.Write()
+                suppress_negative_bins(h)
                 subdir.Write()

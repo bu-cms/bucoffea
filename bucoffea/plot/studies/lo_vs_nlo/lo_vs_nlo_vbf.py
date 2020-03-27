@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 import os
 import re
 import sys
@@ -10,8 +11,8 @@ from bucoffea.plot.style import plot_settings
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
 
 
-def plot(inpath):
-        indir=os.path.abspath(inpath)
+def plot(args):
+        indir=os.path.abspath(args.inpath)
 
         # The processor output is stored in an
         # 'accumulator', which in our case is
@@ -23,7 +24,7 @@ def plot(inpath):
         # The merging only happens the first time
         # you run over a specific set of inputs.
         acc = dir_archive(
-                          inpath,
+                          args.inpath,
                           serialized=True,
                           compression=0,
                           memsize=1e3
@@ -56,11 +57,11 @@ def plot(inpath):
             # Match datasets by regular expressions
             # Here for LO V samples (HT binned)
             mc_lo = {
-                'sr_vbf' : re.compile(f'(ZJetsToNuNu.*|EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_1m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_1e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_2m_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_2e_vbf' : re.compile(f'(EW.*|TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+                'sr_vbf' : re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
+                'cr_1m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
+                'cr_1e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
+                'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+                'cr_2e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_HT.*|WJetsToLNu.*HT.*).*{year}'),
             }
 
@@ -72,6 +73,8 @@ def plot(inpath):
             # Data / MC plots are made here
             # Loop over all regions
             for region in mc_lo.keys():
+                if not re.match(args.region, region):
+                        continue
                 ratio = True if region != 'sr_vbf' else False 
                 # Make separate output direcotry for each region
                 outdir = f'./output/{os.path.basename(indir)}/{region}'
@@ -80,6 +83,8 @@ def plot(inpath):
 
                 # Loop over the distributions
                 for distribution in plotset.keys():
+                    if not re.match(args.distribution, distribution):
+                        continue
                     # Load from cache
                     if not distribution in merged:
                         acc.load(distribution)
@@ -113,9 +118,17 @@ def plot(inpath):
                     except KeyError:
                         continue
 
+def commandline():
+    parser = argparse.ArgumentParser(prog='Plotter.')
+    parser.add_argument('inpath', type=str, help='Input folder to use.')
+    parser.add_argument('--region', type=str, default='.*', help='Region to plot.')
+    parser.add_argument('--distribution', type=str, default='.*', help='Distribution to plot.')
+    args = parser.parse_args()
+    return args
+
 def main():
-    inpath = sys.argv[1]
-    plot(inpath)
+    args = commandline()
+    plot(args)
 
 
 if __name__ == "__main__":

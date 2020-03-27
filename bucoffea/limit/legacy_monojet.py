@@ -24,22 +24,25 @@ def datasets(year):
                     'sr_j' : f'nomatch',
                 }
     tmp = {}
-    for k, v in data.items():
+    for k, v in list(data.items()):
         tmp[k] = re.compile(v)
+        k1=k.replace('_j','_v')
+        tmp[k1] = re.compile(v)
     data.update(tmp)
 
 
  
     mc = {
-                'cr_1m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_1e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_2m_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_2e_j' : re.compile(f'(TTJets.*FXFX.*|Diboson.*|ST.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
-                # 'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*).*{year}'),
-                'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
-                # 'sr_v' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|TTJets.*FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
+            'cr_1m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
+            'cr_1e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*|GJets_DR-0p4.*).*{year}'),
+            'cr_2m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+            'cr_2e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+            'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
+            'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
             }
+    for key in list(mc.keys()):
+        new_key = key.replace('_j','_v')
+        mc[new_key]=mc[key]
     return data, mc
 
 
@@ -47,7 +50,7 @@ def legacy_dataset_name(dataset):
     patterns = {
         '.*DY.*' : 'zll',
         'QCD.*' : 'qcd',
-        'TTJets.*' : 'top',
+        '(Top).*' : 'top',
         'Diboson.*' : 'diboson',
         '(MET|EGamma).*' : 'data',
         'WJetsToLNu.*' : 'wjets',
@@ -85,6 +88,13 @@ def recoil_bins_2016():
              690.,  740.,  790.,  840.,  900.,  960., 
              1020., 1090., 1160., 1250., 1400.]
 
+def suppress_negative_bins(histogram):
+    if "data" in histogram.GetName():
+        return
+    for i in range(0,histogram.GetNbinsX()+2):
+        if histogram.GetBinContent(i) < 0:
+            histogram.SetBinContent(i, 0)
+            histogram.SetBinError(i,0)
 
 def legacy_limit_input_monojet(acc, outdir='./output'):
     """Writes ROOT TH1s to file as a limit input
@@ -150,10 +160,10 @@ def merge_legacy_inputs(outdir):
         category, year = m.groups()
         files[year][category] = pjoin(outdir, fname)
 
+    outfile = r.TFile(pjoin(outdir, f'legacy_limit_monojet.root'),'RECREATE')
     for year, ifiles in files.items():
-        outfile = r.TFile(pjoin(outdir, f'legacy_limit_{year}.root'),'RECREATE')
         for category, file in ifiles.items():
-            subdir = outfile.mkdir(f'category_{category}')
+            subdir = outfile.mkdir(f'category_{category}_{year}')
             infile = r.TFile(file)
             for key in infile.GetListOfKeys():
                 print(key)
@@ -161,5 +171,6 @@ def merge_legacy_inputs(outdir):
                 h.SetTitle(h.GetName())
                 h.SetDirectory(subdir)
                 h.GetXaxis().SetTitle('met')
+                suppress_negative_bins(h)
                 # h.Write()
                 subdir.Write()

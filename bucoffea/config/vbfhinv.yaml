@@ -300,6 +300,15 @@ era2016:
     muon_iso_loose:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
       file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
+    tau_id:
+      histogram: tau_sf_VLoose_2016_cent
+      file: data/sf/tau/tau_sf.root
+    tau_id_up:
+      histogram: tau_sf_VLoose_2016_up
+      file: data/sf/tau/tau_sf.root
+    tau_id_dn:
+      histogram: tau_sf_VLoose_2016_down
+      file: data/sf/tau/tau_sf.root
     pileup:
       histogram: "sf2017_nominal"
       file: "data/sf/pileup/pileup.root"
@@ -394,12 +403,15 @@ era2017:
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
+
     ele_reco_pt_lt_20:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO_lowEt.root
+
     ele_id_loose:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2.root
+
     ele_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_ElectronTight.root
@@ -423,6 +435,16 @@ era2017:
     muon_iso_loose:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
       file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
+    tau_id:
+      histogram: tau_sf_VLoose_2017_cent
+      file: data/sf/tau/tau_sf.root
+    tau_id_up:
+      histogram: tau_sf_VLoose_2017_up
+      file: data/sf/tau/tau_sf.root
+    tau_id_dn:
+      histogram: tau_sf_VLoose_2017_down
+      file: data/sf/tau/tau_sf.root
+
     pileup:
       histogram: "sf2017_nominal"
       file: "data/sf/pileup/pileup.root"
@@ -494,9 +516,11 @@ era2018:
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_egammaEffi_txt_EGM2D_updatedAll.root
+
     ele_id_loose:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_ElectronWPVeto_Fall17V2.root
+
     ele_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_ElectronTight.root
@@ -544,7 +568,15 @@ era2018:
     muon_iso_loose_sys:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_syst
       file: data/sf/muon/2018_RunABCD_SF_ISO.root
-
+    tau_id:
+      histogram: tau_sf_VLoose_2018_cent
+      file: data/sf/tau/tau_sf.root
+    tau_id_up:
+      histogram: tau_sf_VLoose_2018_up
+      file: data/sf/tau/tau_sf.root
+    tau_id_dn:
+      histogram: tau_sf_VLoose_2018_down
+      file: data/sf/tau/tau_sf.root
     pileup:
       histogram: "sf2018_nominal"
       file: "data/sf/pileup/pileup.root"

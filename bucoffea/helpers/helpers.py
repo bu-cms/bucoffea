@@ -167,6 +167,7 @@ def evaluator_from_config(cfg):
     for sfname, definition in cfg.SF.items():
         fpath = bucoffea_path(definition['file'])
         ext.add_weight_sets([f"{sfname} {definition['histogram']} {fpath}"])
+        ext.add_weight_sets([f"{sfname}_error {definition['histogram']}_error {fpath}"])
 
     ext.finalize()
 
