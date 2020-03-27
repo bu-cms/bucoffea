@@ -634,18 +634,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                                     weight=rweight[mask] * w_imp
                                 )
 
-            # Uncertainty variations
-            if df['is_lo_z'] or df['is_nlo_z'] or df['is_lo_z_ewk']:
-                theory_uncs = [x for x in cfg.SF.keys() if x.startswith('unc')]
-                for unc in theory_uncs:
-                    reweight = evaluator[unc](gen_v_pt)
-                    w = (region_weights.weight() * reweight)[mask]
-                    ezfill(
-                        'mjj_unc',
-                        mjj=df['mjj'][mask],
-                        uncertainty=unc,
-                        weight=w)
-
             # MET
             ezfill(f'met',                met=met_pt[mask],            weight=weights.weight()[mask],   var=var )
             ezfill(f'recoil',             recoil=df[f"recoil_pt{var}"][mask],      weight=weights.weight()[mask], var=var )
