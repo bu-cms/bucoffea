@@ -78,6 +78,7 @@ def monojet_accumulator(cfg):
     rho_ax = Bin('rho','Energy density',50, 0, 100)
     frac_ax = Bin('frac','Fraction', 50, 0, 1)
     fraction_ax = Bin('fraction','Fraction', 20, 0, 1)
+    fraction_ax_qcd = Bin('fraction','Fraction', [0,0.7,0.8,1.0])
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
@@ -103,6 +104,8 @@ def monojet_accumulator(cfg):
     items["recoil_vs_ak4_muf_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
     items["recoil_vs_ak4_muf0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, fraction_ax)
     
+    items["recoil_vs_ak4_nef0_fine_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, fraction_ax_qcd)
+
     items["recoil_vs_ak4_nconst_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, constituent_ax)
     items["recoil_vs_ak4_nconst0_qcd"] = Hist("Counts", dataset_ax, region_ax, recoil_ax_qcd, constituent_ax)
     

@@ -565,6 +565,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill("recoil_vs_ak4_nhf0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4[leadak4_index].nhf[mask].flatten(), weight=w_leadak4)
                 ezfill("recoil_vs_ak4_chf0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4[leadak4_index].chf[mask].flatten(), weight=w_leadak4)
                 ezfill("recoil_vs_ak4_nef0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4[leadak4_index].nef[mask].flatten(), weight=w_leadak4)
+                ezfill("recoil_vs_ak4_nef0_fine_qcd", recoil=df["recoil_pt"][mask], fraction=ak4[leadak4_index].nef[mask].flatten(), weight=w_leadak4)
                 ezfill("recoil_vs_ak4_muf0_qcd", recoil=df["recoil_pt"][mask], fraction=ak4[leadak4_index].muf[mask].flatten(), weight=w_leadak4)
                 ezfill("recoil_vs_ak4_nconst0_qcd", recoil=df["recoil_pt"][mask], constituents=ak4[leadak4_index].nconst[mask].flatten(), weight=w_leadak4)
 
