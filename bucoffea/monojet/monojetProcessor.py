@@ -420,9 +420,11 @@ class monojetProcessor(processor.ProcessorABC):
                         output[name][dataset] = treeacc
                 if df["is_data"]:
                     if region in ['cr_qcd_j']:
-                        mask2 = df["recoil_pt"] > 1000
+                        mask2 = df["recoil_pt"] > 1100
+                        output['tree'][region]["run"] +=  processor.column_accumulator(df["run"][mask&mask2])
+                        output['tree'][region]["lumi"] +=  processor.column_accumulator(df["luminosityBlock"][mask&mask2])
                         output['tree'][region]["event"] +=  processor.column_accumulator(df["event"][mask&mask2])
-                        output['tree'][region]["tree"] +=  processor.column_accumulator(df["recoil_pt"][mask&mask2])
+                        output['tree'][region]["recoil"] +=  processor.column_accumulator(df["recoil_pt"][mask&mask2])
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 # Save only every Nth event
