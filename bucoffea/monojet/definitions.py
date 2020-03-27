@@ -639,11 +639,19 @@ def monojet_regions(cfg):
         new_reqs.remove("mindphijr")
         new_reqs.append("invmindphijr")
         new_reqs.remove("recoil")
-        tmp[new_name] = new_reqs
-
+        tmp[new_name] = new_reqs   
     regions.update(tmp)
-    from pprint import pprint
-    pprint(regions)
+
+    tmp = {}
+    for region, cuts in regions.items():
+        if "_j" not in region:
+            continue
+        new_cuts = copy.deepcopy(cuts)
+        new_cuts.append("leadak4_nef")
+
+        new_name = f"{region}_nefcut"
+        tmp[new_name] = new_cuts
+    regions.update(tmp)
 
     if not cfg.RUN.MONOV:
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_v') or '_v_' in x]

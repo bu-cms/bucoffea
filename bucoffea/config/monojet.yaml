@@ -8,6 +8,7 @@ default:
         eta: 2.4  # max
         nhf: 0.8  # max
         chf: 0.1  # min
+        nef: 0.8  # max
       leadak8:
         pt: 250   # min
         eta: 2.4  # max
