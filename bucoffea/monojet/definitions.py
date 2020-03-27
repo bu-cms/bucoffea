@@ -481,7 +481,7 @@ def setup_candidates(df, cfg, variations):
             met_py_jer = met.pt + (met_py - met.pt_nom)
 
             # Convert back to MET pt and phi
-            varied_met_pt_jer = np.hypot(met_px, met_py)
+            varied_met_pt_jer = np.hypot(met_px_jer, met_py_jer)
             varied_met_phi_jer = np.arctan(met_py_jer / met_px_jer)
 
             setattr(met, f'pt{var}', varied_met_pt_jer)
