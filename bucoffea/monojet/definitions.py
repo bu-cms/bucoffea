@@ -92,6 +92,7 @@ def monojet_accumulator(cfg):
     items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
 
     items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
 
@@ -343,7 +344,7 @@ def setup_candidates(df, cfg):
         puid=((df['Jet_puId']&2>0) | (df[f'Jet_pt{jes_suffix}']>50)), # medium pileup jet ID
         csvv2=df["Jet_btagCSVV2"],
         deepcsv=df['Jet_btagDeepB'],
-        # nef=df['Jet_neEmEF'],
+        nef=df['Jet_neEmEF'],
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),

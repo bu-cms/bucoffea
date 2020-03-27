@@ -475,6 +475,7 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_ptraw0',    jetpt=ak4[leadak4_index].ptraw[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_chf0',    frac=ak4[leadak4_index].chf[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_nhf0',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_nef0',    frac=ak4[leadak4_index].nef[mask].flatten(),      weight=w_leadak4)
 
             ezfill('drelejet',    dr=df['dREleJet'][mask],      weight=region_weights.weight()[mask])
             ezfill('drmuonjet',    dr=df['dRMuonJet'][mask],      weight=region_weights.weight()[mask])
