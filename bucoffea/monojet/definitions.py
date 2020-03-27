@@ -445,6 +445,7 @@ def setup_candidates(df, cfg, variations):
     met = JaggedCandidateArray.candidatesfromcounts(
         np.ones(df.size),
         pt=df[f'{met_branch}_pt{jes_suffix_met}'],
+        pt_nom=df[f'{met_branch}_pt_nom'],
         pt_jerup=df[f'{met_branch}_pt_jerUp'],
         pt_jerdown=df[f'{met_branch}_pt_jerDown'],
         pt_jesup=df[f'{met_branch}_pt_jesTotalUp'],
@@ -468,6 +469,24 @@ def setup_candidates(df, cfg, variations):
         _ak4 = ak4[ak4_pt.argsort()]
         ak4_pt = ak4_pt[ak4_pt.argsort()]
         
+        # For JES up and JES down variations, get JER smeared MET
+        if var in ['_jesup', '_jesdown']:
+            varied_met_pt = getattr(met, f'pt{var}')
+            varied_met_phi = getattr(met, f'phi{var}')
+            met_px = varied_met_pt*np.cos(varied_met_phi)
+            met_py = varied_met_pt*np.sin(varied_met_phi)
+
+            # Get JER smeared MET px and py
+            met_px_jer = met.pt + (met_px - met.pt_nom)
+            met_py_jer = met.pt + (met_py - met.pt_nom)
+
+            # Convert back to MET pt and phi
+            varied_met_pt_jer = np.hypot(met_px, met_py)
+            varied_met_phi_jer = np.arctan(met_py_jer / met_px_jer)
+
+            setattr(met, f'pt{var}', varied_met_pt_jer)
+            setattr(met, f'phi{var}', varied_met_phi_jer)
+
         # Choose relevant b-jets
         _bjets = _ak4[
               (_ak4.looseId) \
