@@ -438,7 +438,7 @@ def monojet_regions(cfg):
     j_cuts = [
         'leadak4_pt_eta',
         'leadak4_id',
-        # 'veto_vtag'
+        'veto_vtag'
     ]
     # Test out different working point for v tagging
     # the first one is the traditional one used in 2016
