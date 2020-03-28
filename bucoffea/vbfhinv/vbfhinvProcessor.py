@@ -640,6 +640,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # MET
             ezfill('met',                met=met_pt[mask],            weight=rweight[mask] )
+            ezfill('met_inc',            met=met_pt,                  weight=rweight )
             ezfill('recoil',             recoil=df[f"recoil_pt{var}"][mask],      weight=rweight[mask] )
             ezfill('mjj',                mjj=df[f"mjj{var}"][mask],      weight=rweight[mask] )
 

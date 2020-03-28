@@ -100,6 +100,7 @@ def vbfhinv_accumulator(cfg, variations):
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["met_inc"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     
     items["met_jer"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_jer_inc"] = Hist("Counts", dataset_ax, region_ax, met_ax)
