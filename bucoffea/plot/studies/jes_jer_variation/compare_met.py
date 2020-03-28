@@ -17,16 +17,20 @@ from bucoffea.plot.util import merge_extensions, merge_datasets, scale_xs_lumi
 from coffea import hist
 from klepto.archives import dir_archive
 from matplotlib import pyplot as plt
+from pprint import pprint
 
 pjoin = os.path.join
 
-def preprocess_histos(h, acc, regex):
+def preprocess_histos(h, acc, regex, integrate_region=True):
     '''Merging, scaling, integrating.'''
     h = merge_extensions(h, acc, reweight_pu=False)
     scale_xs_lumi(h)
     h = merge_datasets(h)
     # Histograms filled only for signal region, integrate it out
-    h = h.integrate('region').integrate('dataset', re.compile(regex) )
+    if integrate_region:
+        h = h.integrate('region').integrate('dataset', re.compile(regex) )
+    else:
+        h = h.integrate('dataset', re.compile(regex) )
 
     # Rebin
     new_met_bin = hist.Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1100,100)) )
@@ -73,6 +77,26 @@ def compare_jer_nom_met(acc, regex, dataset_name, tag, outtag, inclusive=True):
     fig.savefig(outpath)
     print(f'Figure saved: {outpath}')
 
+def plot_varied_met(acc, regex, dataset_name, tag, outtag):
+    '''Plot JES/JER varied MET.'''
+    acc.load('met')
+    h = preprocess_histos(acc['met'], acc, regex, integrate_region=False)
+    h = h[re.compile('sr_vbf.*')]
+
+    fig, ax = plt.subplots(1,1)
+    hist.plot1d(h, ax=ax, overlay='region')
+    ax.set_title(dataset_name)
+
+    # Save figure
+    outdir = f'./output/{outtag}/met_comparison'
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    filename = f'{tag}_varied_met.pdf'
+    outpath = pjoin(outdir, filename)
+    fig.savefig(outpath)
+    print(f'Figure saved: {outpath}')
+
 def main():
     inpath = sys.argv[1]
 
@@ -103,6 +127,8 @@ def main():
     for tag, info in data_info.items():
         compare_jer_nom_met(acc, dataset_name=info['dataset_name'], regex=info['regex'], tag=tag, outtag=outtag, inclusive=True)
         compare_jer_nom_met(acc, dataset_name=info['dataset_name'], regex=info['regex'], tag=tag, outtag=outtag, inclusive=False)
+    
+        plot_varied_met(acc, dataset_name=info['dataset_name'], regex=info['regex'], tag=tag, outtag=outtag)
 
 if __name__ == '__main__':
     main()
