@@ -52,8 +52,7 @@ def plot_dist(acc, tag, param, regex, region, outtag):
     h = merge_datasets(h)
 
     # Pick the relevant region and dataset
-    h = h[re.compile(regex)].integrate('dataset')
-    h = h.integrate('region', re.compile(f'{region}.*'))
+    h = h[re.compile(regex)].integrate('dataset')[re.compile(f'{region}.*')]
 
     var_to_label = {
         '' : 'Nominal',
@@ -66,21 +65,21 @@ def plot_dist(acc, tag, param, regex, region, outtag):
     fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (2,1)}, sharex=True)
     # Rename variations so that they show up in legend 
     # when plotted by plot1d func
-    for var in h.identifiers('var'):
-        var.label = var_to_label[var.name]
+    # for var in h.identifiers('var'):
+        # var.label = var_to_label[var.name]
     
     # Plot for each variation
-    hist.plot1d(h, ax=ax, overlay='var')
+    hist.plot1d(h, ax=ax, overlay='region')
     ax.set_ylabel('Counts')        
 
     # Calculate and plot ratios
-    h_nom = h.integrate('var', '').values()[()]
+    h_nom = h.integrate('region', region).values()[()]
     centers = h.axis(axis_name).centers()
-    for idx, var in enumerate(h.identifiers('var') ):
-        if var.name == '':
+    for idx, (var, label) in enumerate(var_to_label.items() ):
+        if var == '':
             continue
-        ratio = h.integrate('var', var).values()[()] / h_nom
-        rax.plot(centers, ratio, 'o', color=colors[idx], label=var)
+        ratio = h.integrate('region', f'{region}{var}').values()[()] / h_nom
+        rax.plot(centers, ratio, 'o', color=colors[idx], label=label)
 
     # Display dataset name and type (old or new) as title 
     dataset_name = regex.replace('.*', '_HT_')
