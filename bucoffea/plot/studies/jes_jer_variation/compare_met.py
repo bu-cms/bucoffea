@@ -87,7 +87,8 @@ def plot_varied_met(acc, regex, dataset_name, tag, outtag, inclusive=True):
 
     fig, ax = plt.subplots(1,1)
     hist.plot1d(h, ax=ax, overlay='region')
-    ax.set_title(dataset_name)
+    title = f'{dataset_name} (Inclusive)' if inclusive else f'{dataset_name} (VBF selection)' 
+    ax.set_title(title)
 
     # Save figure
     outdir = f'./output/{outtag}/met_comparison'
