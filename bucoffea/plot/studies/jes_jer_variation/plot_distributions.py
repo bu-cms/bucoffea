@@ -63,10 +63,6 @@ def plot_dist(acc, tag, param, regex, region, outtag):
     }
 
     fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (2,1)}, sharex=True)
-    # Rename variations so that they show up in legend 
-    # when plotted by plot1d func
-    # for var in h.identifiers('var'):
-        # var.label = var_to_label[var.name]
     
     # Plot for each variation
     hist.plot1d(h, ax=ax, overlay='region')
