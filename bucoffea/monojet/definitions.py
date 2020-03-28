@@ -223,39 +223,34 @@ class VarMap:
         self.ak4 = {}
         self.bjets = {}
         self.diak4 = {}
-        self.met_pt = {}
-        self.met_phi = {}
+        self.met = {}
         self.selection_packers = {}
     
-    def fill_mapping(self, ak4, bjets, met_pt, met_phi, var):
+    def fill_mapping(self, ak4, bjets, met, var):
         '''Fill the dictionaries for the relevant variation.'''
-        self.ak4[f'{var}'] = ak4 
-        self.bjets[f'{var}'] = bjets 
-        self.diak4[f'{var}'] = ak4[:,:2].distincts() # Leading jet pair 
-        self.met_pt[f'{var}'] = met_pt
-        self.met_phi[f'{var}'] = met_phi
+        self.ak4[var] = ak4 
+        self.bjets[var] = bjets 
+        self.diak4[var] = ak4[:,:2].distincts() # Leading jet pair 
+        self.met[var] = met
    
     # Getter methods
     def get_ak4(self, var):
-        return self.ak4[f'{var}']
+        return self.ak4[var]
     
     def get_bjets(self, var):
-        return self.bjets[f'{var}']
+        return self.bjets[var]
     
     def get_diak4(self, var):
-        return self.diak4[f'{var}']
+        return self.diak4[var]
     
-    def get_met_pt(self, var):
-        return self.met_pt[f'{var}']
-    
-    def get_met_phi(self, var):
-        return self.met_phi[f'{var}']
+    def get_met(self, var):
+        return self.met[var]
     
     def get_selection_packer(self, var):
-        return self.selection_packers[f'{var}']
+        return self.selection_packers[var]
     
     def set_selection_packer(self, var, sel):
-        self.selection_packers[f'{var}'] = sel
+        self.selection_packers[var] = sel
 
 def setup_candidates(df, cfg, variations):
     if df['is_data'] and extract_year(df['dataset']) != 2018:
@@ -451,6 +446,7 @@ def setup_candidates(df, cfg, variations):
         pt_jesup=df[f'{met_branch}_pt_jesTotalUp'],
         pt_jesdown=df[f'{met_branch}_pt_jesTotalDown'],
         phi=df[f'{met_branch}_phi{jes_suffix_met}'],
+        phi_nom=df[f'{met_branch}_phi_nom'],
         phi_jerup=df[f'{met_branch}_phi_jerUp'],
         phi_jerdown=df[f'{met_branch}_phi_jerDown'],
         phi_jesup=df[f'{met_branch}_phi_jesTotalUp'],
@@ -515,8 +511,7 @@ def setup_candidates(df, cfg, variations):
        
         vmap.fill_mapping(  ak4=_ak4,
                             bjets=_bjets,
-                            met_pt=getattr(met, f'pt{var}').flatten(),
-                            met_phi=getattr(met, f'phi{var}').flatten(),
+                            met=met,
                             var=var
                             )
 
