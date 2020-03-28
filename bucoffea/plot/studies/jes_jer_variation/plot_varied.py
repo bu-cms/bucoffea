@@ -54,12 +54,12 @@ def plot_comparison(acc, param, vars, dataregex, tag, outtag):
 		if re.match(dataregex, dataset.name):
 			dataset_name = dataset.name
 		
-	histo = h.integrate('dataset', re.compile(dataregex) ).integrate('region', re.compile('sr_vbf.*'))
+	histo = h.integrate('dataset', re.compile(dataregex) )[re.compile('sr_vbf.*')]
 
 	# Plot the distributions
 	fig, (ax1, ax2) = plt.subplots(1,2,figsize=(13,6))
 
-	centers = histo.axes()[0].centers()
+	centers = histo.axes()[1].centers()
 
 	# Store the centers and distributions in a dict
 	histdict = {
@@ -68,7 +68,7 @@ def plot_comparison(acc, param, vars, dataregex, tag, outtag):
 	# Plot JES variations on left-hand side plot 
 	# and JER variations on right-hand side plot
 	for var in vars:
-		histdict[f'sumw{var}'] = histo.values()[(var,)]
+		histdict[f'sumw{var}'] = histo.integrate('region', f'sr_vbf{var}').values()[()]
 		if 'jes' in var:
 			ax1.step(centers, histdict[f'sumw{var}'], label=var_to_label[var])
 		elif 'jer' in var:
