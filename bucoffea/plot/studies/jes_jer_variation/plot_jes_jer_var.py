@@ -29,7 +29,7 @@ var_to_legend_label = {
 
 def parse_commandline():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inpath', help='Path containing input coffea files.')
+    parser.add_argument('inpath', help='Path containing input coffea files.')
     parser.add_argument('-r', '--ratio', help='Only plot ratios.', action='store_true')
     parser.add_argument('--individual', help='Only plot individual distributions, do not plot ratios.', action='store_true')
     args = parser.parse_args()
