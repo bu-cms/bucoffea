@@ -39,7 +39,6 @@ def compare_jer_nom_met(acc, regex, dataset_name, tag, outtag, inclusive=True):
     acc.load(f'met_jer{inc_suffix}')
     acc.load(f'met_nom{inc_suffix}')
 
-
     # Get pre-processed histograms
     histograms = {
         'with JER' : preprocess_histos(acc[f'met_jer{inc_suffix}'], acc, regex),
@@ -60,14 +59,17 @@ def compare_jer_nom_met(acc, regex, dataset_name, tag, outtag, inclusive=True):
     ax.set_xlim(met_edges[0], met_edges[-2])
     ax.set_xlabel(r'$p_T^{miss}$ (GeV)')
     ax.set_ylabel('Normalized Counts')
-    ax.set_title(dataset_name)
+    title = f'{dataset_name} (Inclusive)' if inclusive else f'{dataset_name} (VBF selection)' 
+    ax.set_title(title)
 
     # Save figure
     outdir = f'./output/{outtag}/met_comparison'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     
-    outpath = pjoin(outdir, f'{tag}_nom_jer_met_comparison.pdf')
+    filename = f'{tag}_nom_jer_met_comparison{inc_suffix}.pdf'
+
+    outpath = pjoin(outdir, filename)
     fig.savefig(outpath)
     print(f'Figure saved: {outpath}')
 
@@ -99,7 +101,8 @@ def main():
     }
 
     for tag, info in data_info.items():
-        compare_jer_nom_met(acc, dataset_name=info['dataset_name'], regex=info['regex'], tag=tag, outtag=outtag)
+        compare_jer_nom_met(acc, dataset_name=info['dataset_name'], regex=info['regex'], tag=tag, outtag=outtag, inclusive=True)
+        compare_jer_nom_met(acc, dataset_name=info['dataset_name'], regex=info['regex'], tag=tag, outtag=outtag, inclusive=False)
 
 if __name__ == '__main__':
     main()
