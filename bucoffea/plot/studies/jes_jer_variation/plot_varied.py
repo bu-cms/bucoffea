@@ -70,15 +70,19 @@ def plot_comparison(acc, param, vars, dataregex, tag, outtag):
 	for var in vars:
 		histdict[f'sumw{var}'] = histo.values()[(var,)]
 		if 'jes' in var:
-			ax1.step(centers, histdict[f'sumw{var}'], label=var_to_label[var], alpha=0.7)
+			ax1.step(centers, histdict[f'sumw{var}'], label=var_to_label[var])
 		elif 'jer' in var:
-			ax2.step(centers, histdict[f'sumw{var}'], label=var_to_label[var], alpha=0.7)
+			ax2.step(centers, histdict[f'sumw{var}'], label=var_to_label[var])
 
 	for ax in [ax1, ax2]:
 		ax.legend()
 		ax.set_xlabel(param_to_label[param])
 		ax.set_ylabel('Counts')
 		ax.set_ylim(bottom=0)
+
+		ylim = ax.get_ylim()
+		ax.plot([0,0], ylim, 'r--')
+		ax.set_ylim(ylim)
 
 		ax.text(1,1,
 				dataset_name,
