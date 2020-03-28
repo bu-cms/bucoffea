@@ -97,7 +97,9 @@ def plot_varied_met(acc, regex, dataset_name, tag, outtag, inclusive=True):
     filename = f'{tag}_varied_met{inc_suffix}.pdf'
     outpath = pjoin(outdir, filename)
     fig.savefig(outpath)
+    
     print(f'Figure saved: {outpath}')
+    plt.close()
 
 def main():
     inpath = sys.argv[1]
