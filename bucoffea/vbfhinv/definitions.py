@@ -19,7 +19,6 @@ def vbfhinv_accumulator(cfg, variations):
     dataset_ax = Cat("dataset", "Primary dataset")
     region_ax = Cat("region", "Selection region")
     type_ax = Cat("type", "Type")
-    var_ax = Cat("var", "JES/JER variation type")
 
     vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 100, 0, 2000)
 
@@ -100,20 +99,26 @@ def vbfhinv_accumulator(cfg, variations):
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
-    items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax, var_ax)
-    items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, var_ax)
-    items["mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax, var_ax)
+    items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     
-    items['recoil_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax, var_ax)
-    items['mjj_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax, var_ax)
-    items['ak4_pt0_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax, var_ax)
-    items['ak4_pt1_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax, var_ax)
-    items['detajj_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax, var_ax)
-    items['dphijj_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax, var_ax)
+    items["met_jer"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["met_jer_inc"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["met_nom"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["met_nom_inc"] = Hist("Counts", dataset_ax, region_ax, met_ax)
 
-    items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
-    items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
-    items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, var_ax)
+    items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
+    
+    items['recoil_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax)
+    items['mjj_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax)
+    items['ak4_pt0_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax)
+    items['ak4_pt1_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax)
+    items['detajj_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax)
+    items['dphijj_varovernom'] = Hist('Counts', dataset_ax, region_ax, ratio_ax)
+
+    items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
 
     items["tau_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax_tau)
 

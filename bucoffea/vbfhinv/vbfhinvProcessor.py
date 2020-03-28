@@ -343,8 +343,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
             bjets = vmap.get_bjets(var)
             ak4 = vmap.get_ak4(var) 
             diak4 = vmap.get_diak4(var) 
-            met_pt = vmap.get_met_pt(var) 
-            met_phi = vmap.get_met_phi(var) 
+            met = vmap.get_met(var) 
+
+            met_pt = getattr(met, f'pt{var}').flatten()
+            met_phi = getattr(met, f'phi{var}').flatten()
 
             selection.add(f'veto_b{var}', bjets.counts==0)
 
@@ -374,7 +376,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             df['dRMuonJet{var}'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
 
             # Recoil
-            df[f'recoil_pt{var}'], df[f'recoil_phi{var}'] = recoil(met_pt,met_phi, electrons, muons, photons)
+            df[f'recoil_pt{var}'], df[f'recoil_phi{var}'] = recoil(met_pt, met_phi, electrons, muons, photons)
             df[f"dPFCalo{var}"] = (met_pt - df["CaloMET_pt"]) / df[f"recoil_pt{var}"]
             df[f"minDPhiJetRecoil{var}"] = min_dphi_jet_met(ak4, df[f'recoil_phi{var}'], njet=4, ptmin=30, etamax=5.0, var=var)
             df[f"minDPhiJetMet{var}"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=5.0, var=var)
@@ -559,8 +561,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
             bjets = vmap.get_bjets(var)
             ak4 = vmap.get_ak4(var) 
             diak4 = vmap.get_diak4(var) 
-            met_pt = vmap.get_met_pt(var) 
-            met_phi = vmap.get_met_phi(var) 
+            met = vmap.get_met(var)
+
+            met_pt_nom = met.pt_nom.flatten() # MET_pt_nom in nanoAOD
+            met_pt_jer = met.pt.flatten()     # MET_pt_jer in nanoAOD
+            met_pt = getattr(met, f'pt{var}').flatten() # Varied MET pt 
 
             # Cutflow plot for signal and control regions
             if any(x in region for x in ["sr", "cr", "tr"]):
@@ -574,7 +579,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 output['selected_events'][region] += list(df['event'][mask])
-
 
             # Multiplicities
             def fill_mult(name, candidates):
@@ -611,14 +615,14 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # This is a workaround to create a weight array of the right dimension
             w_alljets = weight_shape(ak4[mask].eta, rweight[mask])
             
-            ezfill(f'ak4_pt',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets, var=var)
+            ezfill('ak4_pt',     jetpt=getattr(ak4, f'pt{var}')[mask].flatten(),   weight=w_alljets)
 
             # Leading ak4
             w_diak4 = weight_shape(diak4.pt[mask], rweight[mask])
-            ezfill(f'ak4_pt0',       jetpt=getattr(diak4.i0, f'pt{var}')[mask].flatten(),      weight=w_diak4, var=var)
+            ezfill('ak4_pt0',       jetpt=getattr(diak4.i0, f'pt{var}')[mask].flatten(),      weight=w_diak4)
 
             # Trailing ak4
-            ezfill(f'ak4_pt1',       jetpt=getattr(diak4.i1, f'pt{var}')[mask].flatten(),      weight=w_diak4, var=var)
+            ezfill('ak4_pt1',       jetpt=getattr(diak4.i1, f'pt{var}')[mask].flatten(),      weight=w_diak4)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
@@ -635,9 +639,16 @@ class vbfhinvProcessor(processor.ProcessorABC):
                                 )
 
             # MET
-            ezfill(f'met',                met=met_pt[mask],            weight=weights.weight()[mask],   var=var )
-            ezfill(f'recoil',             recoil=df[f"recoil_pt{var}"][mask],      weight=weights.weight()[mask], var=var )
-            ezfill(f'mjj',                mjj=df[f"mjj{var}"][mask],      weight=weights.weight()[mask], var=var )
+            ezfill('met',                met=met_pt[mask],            weight=rweight[mask] )
+            ezfill('recoil',             recoil=df[f"recoil_pt{var}"][mask],      weight=rweight[mask] )
+            ezfill('mjj',                mjj=df[f"mjj{var}"][mask],      weight=rweight[mask] )
+
+            # Inclusive and masked, JER smeared and nominal (not JER smeared) MET
+            if region in ['sr_vbf']:
+                ezfill('met_jer',       met=met_pt_jer[mask],       weight=rweight[mask])
+                ezfill('met_nom',       met=met_pt_nom[mask],       weight=rweight[mask])
+                ezfill('met_jer_inc',   met=met_pt_jer,       weight=rweight)
+                ezfill('met_nom_inc',   met=met_pt_nom,       weight=rweight)
 
             # Muons
             if region in ['cr_1m_vbf', 'cr_2m_vbf']:
@@ -697,10 +708,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # Variation / Nominal ratio plots for signal region
             if region.startswith('sr') and var != '':
-                   ezfill('recoil_varovernom',       ratio=df[f'recoil_pt{var}_over_nom'][mask], weight=rweight[mask], var=var)             
-                   ezfill('mjj_varovernom',          ratio=df[f'mjj{var}_over_nom'][mask],    weight=rweight[mask], var=var)             
-                   ezfill('detajj_varovernom',       ratio=df[f'detajj{var}_over_nom'][mask], weight=rweight[mask], var=var)             
-                   ezfill('dphijj_varovernom',       ratio=df[f'dphijj{var}_over_nom'][mask], weight=rweight[mask], var=var)             
+                   ezfill('recoil_varovernom',       ratio=df[f'recoil_pt{var}_over_nom'][mask], weight=rweight[mask])             
+                   ezfill('mjj_varovernom',          ratio=df[f'mjj{var}_over_nom'][mask],    weight=rweight[mask])             
+                   ezfill('detajj_varovernom',       ratio=df[f'detajj{var}_over_nom'][mask], weight=rweight[mask])             
+                   ezfill('dphijj_varovernom',       ratio=df[f'dphijj{var}_over_nom'][mask], weight=rweight[mask])             
 
             # PV
             if region in ['sr_vbf', 'cr_1m_vbf', 'cr_2m_vbf', 'cr_1e_vbf', 'cr_2e_vbf']:
