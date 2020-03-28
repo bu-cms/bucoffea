@@ -77,10 +77,12 @@ def compare_jer_nom_met(acc, regex, dataset_name, tag, outtag, inclusive=True):
     fig.savefig(outpath)
     print(f'Figure saved: {outpath}')
 
-def plot_varied_met(acc, regex, dataset_name, tag, outtag):
+def plot_varied_met(acc, regex, dataset_name, tag, outtag, inclusive=True):
     '''Plot JES/JER varied MET.'''
-    acc.load('met')
-    h = preprocess_histos(acc['met'], acc, regex, integrate_region=False)
+    inc_suffix = '_inc' if inclusive else ''
+    dist = f'met{inc_suffix}'
+    acc.load(dist)
+    h = preprocess_histos(acc[dist], acc, regex, integrate_region=False)
     h = h[re.compile('sr_vbf.*')]
 
     fig, ax = plt.subplots(1,1)
@@ -92,7 +94,7 @@ def plot_varied_met(acc, regex, dataset_name, tag, outtag):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    filename = f'{tag}_varied_met.pdf'
+    filename = f'{tag}_varied_met{inc_suffix}.pdf'
     outpath = pjoin(outdir, filename)
     fig.savefig(outpath)
     print(f'Figure saved: {outpath}')
@@ -125,10 +127,12 @@ def main():
     }
 
     for tag, info in data_info.items():
-        compare_jer_nom_met(acc, dataset_name=info['dataset_name'], regex=info['regex'], tag=tag, outtag=outtag, inclusive=True)
-        compare_jer_nom_met(acc, dataset_name=info['dataset_name'], regex=info['regex'], tag=tag, outtag=outtag, inclusive=False)
+        dataset_name, regex = info.values()
+        compare_jer_nom_met(acc, dataset_name=dataset_name, regex=regex, tag=tag, outtag=outtag, inclusive=True)
+        compare_jer_nom_met(acc, dataset_name=dataset_name, regex=regex, tag=tag, outtag=outtag, inclusive=False)
     
-        plot_varied_met(acc, dataset_name=info['dataset_name'], regex=info['regex'], tag=tag, outtag=outtag)
+        plot_varied_met(acc, dataset_name=dataset_name, regex=regex, tag=tag, outtag=outtag, inclusive=True)
+        plot_varied_met(acc, dataset_name=dataset_name, regex=regex, tag=tag, outtag=outtag, inclusive=False)
 
 if __name__ == '__main__':
     main()
