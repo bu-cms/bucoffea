@@ -51,8 +51,8 @@ def compare_jer_nom_met(acc, regex, dataset_name, tag, outtag, inclusive=True):
 
     met_edges = histograms['with JER'].axes()[0].edges()
 
-    # Get normalized histogram values as numpy arrays
-    values = {key : histograms[key].values()[()]/np.sum(histograms[key].values()[()]) for key in histograms.keys()}
+    # Get histogram values as numpy arrays
+    values = {key : histograms[key].values()[()] for key in histograms.keys()}
 
     # Plot comparison between the two
     fig, ax = plt.subplots(1,1)
@@ -62,7 +62,7 @@ def compare_jer_nom_met(acc, regex, dataset_name, tag, outtag, inclusive=True):
     ax.legend(title='Signal Region VBF')
     ax.set_xlim(met_edges[0], met_edges[-2])
     ax.set_xlabel(r'$p_T^{miss}$ (GeV)')
-    ax.set_ylabel('Normalized Counts')
+    ax.set_ylabel('Counts')
     title = f'{dataset_name} (Inclusive)' if inclusive else f'{dataset_name} (VBF selection)' 
     ax.set_title(title)
 
