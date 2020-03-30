@@ -709,10 +709,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # Variation / Nominal ratio plots for signal region
             if region.startswith('sr') and var != '':
-                   ezfill('recoil_varovernom',       ratio=df[f'recoil_pt{var}_over_nom'], weight=rweight)             
-                   ezfill('mjj_varovernom',          ratio=df[f'mjj{var}_over_nom'],    weight=rweight)             
-                   ezfill('detajj_varovernom',       ratio=df[f'detajj{var}_over_nom'], weight=rweight)             
-                   ezfill('dphijj_varovernom',       ratio=df[f'dphijj{var}_over_nom'], weight=rweight)             
+                ezfill('recoil_varovernom',       ratio=df[f'recoil_pt{var}_over_nom'], weight=rweight)             
+                ezfill('mjj_varovernom',          ratio=df[f'mjj{var}_over_nom'],    weight=rweight)             
+                ezfill('detajj_varovernom',       ratio=df[f'detajj{var}_over_nom'], weight=rweight)             
+                ezfill('dphijj_varovernom',       ratio=df[f'dphijj{var}_over_nom'], weight=rweight)             
 
             # PV
             if region in ['sr_vbf', 'cr_1m_vbf', 'cr_2m_vbf', 'cr_1e_vbf', 'cr_2e_vbf']:
