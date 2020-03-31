@@ -230,7 +230,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('leadak4_id',(ak4.tightId[leadak4_index] \
                                                     & (ak4.chf[leadak4_index] >cfg.SELECTION.SIGNAL.leadak4.CHF) \
                                                     & (ak4.nhf[leadak4_index]<cfg.SELECTION.SIGNAL.leadak4.NHF)).any())
-        selection.add('leadak4_nef',(ak4.chf[leadak4_index]<cfg.SELECTION.SIGNAL.leadak4.NEF).any())
+        selection.add('leadak4_nef',(ak4.nef[leadak4_index]<cfg.SELECTION.SIGNAL.leadak4.NEF).any())
 
         # AK8 Jet
         leadak8_index=ak8.pt.argmax()
