@@ -36,6 +36,7 @@ colors = {
     'EWKW.*' : '#c6dbef',
     'EWKZ.*ZToLL.*' : '#d5bae2',
     'EWKZ.*ZToNuNu.*' : '#c4cae2',
+    'EWK_V.*' : '#deebf7',
     '.*Diboson.*' : '#4292c6',
     'Top.*' : '#6a51a3',
     '.*TT.*' : '#6a51a3',
@@ -44,7 +45,7 @@ colors = {
     'GJets_HT.*' : '#fc4e2a',
     'GJets_DR-0p4.*' : '#fc4e2a',
     'GJets_SM.*' : '#a76b51',
-    'ZJetsToNuNu.*' : '#0050ec',
+    'ZJetsToNuNu.*' : '#31a354',
     'ZNuNuGJets_.*' : '#0050ec'
 }
 class Style():
@@ -182,7 +183,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
             error_opts=data_err_opts,
             ax=ax,
             overflow='all',
-            binwnorm=True)
+            binwnorm=1)
 
     if signal:
         hist.plot1d(
@@ -191,7 +192,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
             error_opts=signal_err_opts,
             ax=ax,
             overflow='all',
-            binwnorm=True)
+            binwnorm=1)
 
     # Plot MC background samples
     # Here we use a regular expression to match
@@ -203,7 +204,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         clear=False,
         overflow='all',
         ax=ax,
-        binwnorm=True)
+        binwnorm=1)
 
     # Apply correct colors to BG histograms
     handles, labels = ax.get_legend_handles_labels()
