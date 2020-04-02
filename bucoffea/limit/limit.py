@@ -9,7 +9,7 @@ pjoin = os.path.join
 def parse_commandline():
     parser = argparse.ArgumentParser()
     parser.add_argument('inpath', type=str, help='Input path to use.')
-    parser.add_argument('--channel', type=str, choices=['monojet','monov','vbfhinv'], help='Channel to make inputs for.', default='monojet')
+    parser.add_argument('--channel', type=str, help='Channel to make inputs for.', default='monojet')
     args = parser.parse_args()
 
     if not os.path.isdir(args.inpath):
@@ -32,16 +32,17 @@ def main():
         acc = acc_from_dir(args.inpath)
 
     outdir = pjoin('./output/',list(filter(lambda x:x,args.inpath.split('/')))[-1])
-
-    if args.channel == 'monojet':
-        from legacy_monojet import legacy_limit_input_monojet
-        legacy_limit_input_monojet(acc, outdir=outdir)
-    elif args.channel == 'monov':
-        from legacy_monov import legacy_limit_input_monov
-        legacy_limit_input_monov(acc, outdir=outdir)
-    elif args.channel == 'vbfhinv':
-        from legacy_vbf import legacy_limit_input_vbf
-        legacy_limit_input_vbf(acc, outdir=outdir)
+    for channel in args.channel.split(','):
+        print(channel)
+        if channel == 'monojet':
+            from legacy_monojet import legacy_limit_input_monojet
+            legacy_limit_input_monojet(acc, outdir=outdir)
+        elif channel == 'monov':
+            from legacy_monov import legacy_limit_input_monov
+            legacy_limit_input_monov(acc, outdir=outdir)
+        elif channel == 'vbfhinv':
+            from legacy_vbf import legacy_limit_input_vbf
+            legacy_limit_input_vbf(acc, outdir=outdir)
 
 
 if __name__ == "__main__":
