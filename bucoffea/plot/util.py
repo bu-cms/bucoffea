@@ -141,14 +141,35 @@ def merge_extensions(histogram, acc, reweight_pu=True, noscale=False):
                 base = base.replace(m.groups()[0],"")
 
         mapping[base].append(d)
-        if not is_data(d):
-            sumw[base] += acc['sumw'][d]
-            if reweight_pu:
-                sumw_pileup[base] += acc['sumw_pileup'][d]
-                nevents[base] += acc['nevents'][d]
 
+
+    ### Duplicate removeal
+    # In cases where there is both a new_pmx and an old sample,
+    # only use the new one, as they may share GENSIM and not be
+    # stat. independent
+    to_remove = []
+    for newname, datasets in mapping.items():
+        for d in datasets:
+            if re.match(".*_new_+pmx.*", d):
+                non_new_pmx = re.sub("_new_+pmx","", d)
+                if non_new_pmx in datasets:
+                    to_remove.append((newname, non_new_pmx))
+    for key, value in to_remove:
+        mapping[key].remove(value)
+
+    ### Sumw merging according to mapping
+    for base, datasets in mapping.items():
+        for d in datasets:
+            if not is_data(d):
+                sumw[base] += acc['sumw'][d]
+                if reweight_pu:
+                    sumw_pileup[base] += acc['sumw_pileup'][d]
+                    nevents[base] += acc['nevents'][d]
+
+    # Apply mapping
     histogram = histogram.group("dataset", hist.Cat("dataset", "Primary dataset"), mapping)
 
+    # Scale to sumw
     if not noscale:
         histogram.scale({k:1/v for k, v in sumw.items() if not is_data(k)}, axis='dataset')
 
