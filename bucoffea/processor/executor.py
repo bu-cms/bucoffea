@@ -33,7 +33,7 @@ except ImportError:
 
 
 _PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
-
+DEFAULT_METADATA_CACHE = LRUCache(100000)
 
 # instrument xrootd source
 if not hasattr(uproot.source.xrootd.XRootDSource, '_read_real'):
