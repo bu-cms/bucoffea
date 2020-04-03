@@ -109,14 +109,14 @@ def _work_function_nanoaod(item, processor_instance, flatten=False, savemetrics=
                         df[name] = list(tmp)[0]
                     elif name in ['genEventCount','genEventSumw','genEventSumw2']:
                         # One entry per run -> just sum
-                        df[name] = int(item.index==0) * arr.sum()
+                        df[name] = int(item.entrystart==0) * arr.sum()
                     elif name in ['LHEScaleSumw','LHEPdfSumw']:
                         # Sum per variation, conserve number of variations
                         tmp = 0 * arr[0]
                         for i in range(len(arr)):
                             for j in range(len(arr[i])):
                                 tmp[j] += arr[i][j]
-                        df[name] = int(item.index==0) * tmp
+                        df[name] = int(item.entrystart==0) * tmp
                 ### END NANOAOD
                 df['dataset'] = item.dataset
                 df['filename'] = item.filename
