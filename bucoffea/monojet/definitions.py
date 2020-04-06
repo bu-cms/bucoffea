@@ -469,16 +469,24 @@ def setup_candidates(df, cfg, variations):
         if var in ['_jesup', '_jesdown']:
             varied_met_pt = getattr(met, f'pt{var}')
             varied_met_phi = getattr(met, f'phi{var}')
-            met_px = varied_met_pt*np.cos(varied_met_phi)
-            met_py = varied_met_pt*np.sin(varied_met_phi)
+            # Translate pt and phi to px and py 
+            varied_met_px = varied_met_pt*np.cos(varied_met_phi)
+            varied_met_py = varied_met_pt*np.sin(varied_met_phi)
 
-            # Get JER smeared MET px and py
-            met_px_jer = met.pt + (met_px - met.pt_nom)
-            met_py_jer = met.pt + (met_py - met.pt_nom)
+            # Do the same for nominal and JER smeared MET
+            jer_met_px = met.pt*np.cos(met.phi)
+            jer_met_py = met.pt*np.sin(met.phi)
+            nom_met_px = met.pt_nom*np.cos(met.phi_nom)
+            nom_met_py = met.pt_nom*np.sin(met.phi_nom)
+
+            # Apply corrections to JES varied MET px and MET py
+            # Corrected MET = (JER_smeared MET - nominal MET) + Uncorrected MET
+            varied_met_px_jer = jer_met_px + (varied_met_px - nom_met_px)
+            varied_met_py_jer = jer_met_py + (varied_met_py - nom_met_py)
 
             # Convert back to MET pt and phi
-            varied_met_pt_jer = np.hypot(met_px_jer, met_py_jer)
-            varied_met_phi_jer = np.arctan(met_py_jer / met_px_jer)
+            varied_met_pt_jer = np.hypot(varied_met_px_jer, varied_met_py_jer)
+            varied_met_phi_jer = np.arctan(varied_met_py_jer / varied_met_px_jer)
 
             setattr(met, f'pt{var}', varied_met_pt_jer)
             setattr(met, f'phi{var}', varied_met_phi_jer)
