@@ -645,7 +645,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('mjj',                mjj=df[f"mjj{var}"][mask],      weight=rweight[mask] )
 
             # Inclusive and masked, JER smeared and nominal (not JER smeared) MET
-            if region in ['sr_vbf']:
+            if region in ['sr_vbf', 'cr_1e_vbf', 'cr_2e_vbf', 'cr_1m_vbf', 'cr_2m_vbf', 'cr_g_vbf']:
                 ezfill('met_jer',       met=met_pt_jer[mask],       weight=rweight[mask])
                 ezfill('met_nom',       met=met_pt_nom[mask],       weight=rweight[mask])
                 ezfill('met_jer_inc',   met=met_pt_jer,       weight=rweight)
