@@ -34,6 +34,7 @@ def parse_commandline():
     parser.add_argument('--individual', help='Only plot individual distributions, do not plot ratios.', action='store_true')
     parser.add_argument('--qcd', help='Only run over QCD samples.', action='store_true')
     parser.add_argument('--ewk', help='Only run over EWK samples.', action='store_true')
+    parser.add_argument('--all', help='Run over both QCD and EWK samples.', action='store_true')
     args = parser.parse_args()
     return args
 
@@ -362,8 +363,8 @@ def main():
         out_tag = inpath.split('/')[-1]
 
     run_over_samples = {
-        'qcd' : args.qcd,
-        'ewk' : args.ewk 
+        'qcd' : args.qcd or args.all,
+        'ewk' : args.ewk or args.all 
     }
 
     # Plot individual distributions unless "ratio only" option is specified
