@@ -11,7 +11,9 @@ from matplotlib import pyplot as plt
 import matplotlib.ticker
 import mplhep as hep
 import numpy as np
-from data import tag_to_dataset_pairs, dataset_regex
+import pandas as pd
+from data import tag_to_dataset_pairs, dataset_regex, indices_from_tags
+from pprint import pprint
 
 pjoin = os.path.join
 
@@ -343,6 +345,12 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
     # for each mjj bin
     get_unc(ratios, mjj_edges, out_tag, tag, sample_type)
 
+    # Flatten and return
+    for key in ratios.keys():
+        ratios[key] = ratios[key][0]
+
+    return ratios
+
 def main():
     args = parse_commandline()
     inpath = args.inpath
@@ -378,14 +386,18 @@ def main():
 
     # Plot ratios unless "individual plots only option is specified"
     if not args.individual:
+        # Store the ratios and dataset names/types to tabulate values (using pandas) later
+        ratio_list = []
+        index_list = []
         for tag, data_dict in tag_to_dataset_pairs.items():
             for sample_type, run in run_over_samples.items():
                 if not run:
                     continue
+                index_list.append(indices_from_tags[tag][sample_type])
                 datapair_dict = data_dict[sample_type] 
                 data1_info = datapair_dict['dataset1']
                 data2_info = datapair_dict['dataset2']
-                plot_jes_jer_var_ratio( acc, 
+                ratio_dict = plot_jes_jer_var_ratio( acc, 
                                         regex1=data1_info['regex'], 
                                         regex2=data2_info['regex'], 
                                         region1=data1_info['region'], 
@@ -393,6 +405,22 @@ def main():
                                         tag=tag, 
                                         out_tag=out_tag,
                                         sample_type=sample_type)
+                ratio_list.append(ratio_dict)
+    
+    # Create a DataFrame out of ratios
+    rename_columns = {
+        '' : 'Nominal',
+        '_jerup' : 'JER up',
+        '_jerdown' : 'JER down',
+        '_jesup' : 'JES up',
+        '_jesdown' : 'JES down'
+    }
+    df = pd.DataFrame(ratio_list, index=index_list) 
+    df.rename(columns=rename_columns, inplace=True)
+    # Save to pkl file
+    pkl_file = 'ratios_df.pkl'
+    with open(pkl_file, 'wb+') as f:
+        df.to_pickle(pkl_file)
 
 if __name__ == '__main__':
     main()

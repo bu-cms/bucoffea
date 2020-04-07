@@ -216,3 +216,61 @@ dataset_regex = {
     
 }
 
+indices_from_tags = {
+        'znunu_over_wlnu17' : {
+            'qcd' : r'QCD $Z(\nu\nu) / W(\ell\nu)$ 2017',
+            'ewk' : r'EWK $Z(\nu\nu) / W(\ell\nu)$ 2017',
+        },
+        'znunu_over_wlnu18' : {
+            'qcd' : r'QCD $Z(\nu\nu) / W(\ell\nu)$ 2018',
+            'ewk' : r'EWK $Z(\nu\nu) / W(\ell\nu)$ 2018',
+        },
+        'znunu_over_zmumu17' : {
+            'qcd' : r'QCD $Z(\nu\nu) / Z(\mu\mu)$ 2017',
+            'ewk' : r'EWK $Z(\nu\nu) / Z(\mu\mu)$ 2017',
+        },
+        'znunu_over_zmumu18' : {
+            'qcd' : r'QCD $Z(\nu\nu) / Z(\mu\mu)$ 2018',
+            'ewk' : r'EWK $Z(\nu\nu) / Z(\mu\mu)$ 2018',
+        },
+        'znunu_over_zee17' : {
+            'qcd' : r'QCD $Z(\nu\nu) / Z(ee)$ 2017',
+            'ewk' : r'EWK $Z(\nu\nu) / Z(ee)$ 2017',
+        },
+        'znunu_over_zee18' : {
+            'qcd' : r'QCD $Z(\nu\nu) / Z(ee)$ 2018',
+            'ewk' : r'EWK $Z(\nu\nu) / Z(ee)$ 2018',
+        },
+        'gjets_over_znunu17' : {
+            'qcd' : r'QCD $\gamma$ + jets / $Z(\nu\nu)$ 2017',
+            'ewk' : r'EWK $\gamma$ + jets / $Z(\nu\nu)$ 2017',
+        },
+        'gjets_over_znunu18' : {
+            'qcd' : r'QCD $\gamma$ + jets / $Z(\nu\nu)$ 2018',
+            'ewk' : r'EWK $\gamma$ + jets / $Z(\nu\nu)$ 2018',
+        },
+        'wlnu_over_wenu17' : {
+            'qcd' : r'QCD $W(\ell\nu) / W(e\nu)$ 2017',
+            'ewk' : r'EWK $W(\ell\nu) / W(e\nu)$ 2017',
+        },
+        'wlnu_over_wenu18' : {
+            'qcd' : r'QCD $W(\ell\nu) / W(e\nu)$ 2018',
+            'ewk' : r'EWK $W(\ell\nu) / W(e\nu)$ 2018',
+        },
+        'wlnu_over_wmunu17' : {
+            'qcd' : r'QCD $W(\ell\nu) / W(\mu\nu)$ 2017',
+            'ewk' : r'EWK $W(\ell\nu) / W(\mu\nu)$ 2017',
+        },
+        'wlnu_over_wmunu18' : {
+            'qcd' : r'QCD $W(\ell\nu) / W(\mu\nu)$ 2018',
+            'ewk' : r'EWK $W(\ell\nu) / W(\mu\nu)$ 2018',
+        },
+        'wlnu_over_gjets17' : {
+            'qcd' : r'QCD $W(\ell\nu) / \gamma$ + jets 2017',
+            'ewk' : r'EWK $W(\ell\nu) / \gamma$ + jets 2017',
+        },
+        'wlnu_over_gjets18' : {
+            'qcd' : r'QCD $W(\ell\nu) / \gamma$ + jets 2018',
+            'ewk' : r'EWK $W(\ell\nu) / \gamma$ + jets 2018',
+        }
+    }
