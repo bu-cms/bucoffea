@@ -1,4 +1,5 @@
 import copy
+from collections import OrderedDict
 
 import coffea.processor as processor
 import numpy as np
@@ -537,7 +538,7 @@ def setup_candidates(df, cfg, variations):
     return vmap, muons, electrons, taus, photons
 
 def monojet_regions(cfg, variations):
-    regions = {}
+    regions = OrderedDict()
 
     for var in variations:
         common_cuts = [
