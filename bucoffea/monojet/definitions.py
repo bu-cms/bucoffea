@@ -24,7 +24,7 @@ def accu_int():
 def defaultdict_accumulator_of_empty_column_accumulator_float():
     return processor.defaultdict_accumulator(empty_column_accumulator_float)
 
-def monojet_accumulator(cfg):
+def monojet_accumulator(cfg, variations):
     dataset_ax = Cat("dataset", "Primary dataset")
     region_ax = Cat("region", "Selection region")
     type_ax = Cat("type", "Type")
@@ -186,7 +186,7 @@ def monojet_accumulator(cfg):
     items['drmuonjet'] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
     # One cutflow counter per region
-    regions = monojet_regions(cfg).keys()
+    regions = monojet_regions(cfg, variations).keys()
     for region in regions:
         if region=="inclusive":
             continue
@@ -536,77 +536,82 @@ def setup_candidates(df, cfg, variations):
 
     return vmap, muons, electrons, taus, photons
 
-def monojet_regions(cfg):
-    common_cuts = [
-        'filt_met',
-        'hemveto',
-        'veto_ele',
-        'veto_muo',
-        'veto_photon',
-        'veto_tau',
-        'veto_b',
-        'mindphijr',
-        'dpfcalo',
-        'recoil'
-    ]
-    j_cuts = [
-        'leadak4_pt_eta',
-        'leadak4_id',
-        # 'veto_vtag'
-    ]
-    # Test out different working point for v tagging
-    # the first one is the traditional one used in 2016
-    v_cuts = [
-        'leadak8_pt_eta',
-        'leadak8_id',
-        'leadak8_mass',
-        'leadak8_tau21',
-    ]
-
+def monojet_regions(cfg, variations):
     regions = {}
 
-    # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_v'] = ['trig_met'] + common_cuts + v_cuts
-    regions['sr_j'] = ['trig_met'] + common_cuts + j_cuts
+    for var in variations:
+        common_cuts = [
+            'filt_met',
+            'hemveto',
+            'veto_ele',
+            'veto_muo',
+            'veto_photon',
+            'veto_tau',
+            f'veto_b{var}',
+            f'mindphijr{var}',
+            f'dpfcalo{var}',
+            f'recoil{var}'
+        ]
+        j_cuts = [
+            f'leadak4_pt_eta{var}',
+            f'leadak4_id{var}',
+            # 'veto_vtag'
+        ]
+        # Test out different working point for v tagging
+        # the first one is the traditional one used in 2016
+        v_cuts = [
+            f'leadak8_pt_eta{var}',
+            f'leadak8_id{var}',
+            f'leadak8_mass{var}',
+            f'leadak8_tau21{var}',
+        ]
 
-    regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
-    regions['cr_nofilt_j'].remove('filt_met')
+        # Signal regions (v = mono-V, j = mono-jet)
+        regions[f'sr_v{var}'] = ['trig_met'] + common_cuts + v_cuts
+        regions[f'sr_j{var}'] = ['trig_met'] + common_cuts + j_cuts
+    
+        regions[f'cr_nofilt_j{var}'] = copy.deepcopy(regions[f'sr_j{var}'])
+        regions[f'cr_nofilt_j{var}'].remove('filt_met')
 
-    # Dimuon CR
-    cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
-    cr_2m_cuts.remove('veto_muo')
+        # Dimuon CR
+        cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
+        cr_2m_cuts.remove('veto_muo')
+    
+        regions[f'cr_2m_j{var}'] = cr_2m_cuts + j_cuts
+        regions[f'cr_2m_v{var}'] = cr_2m_cuts + v_cuts
 
-    regions['cr_2m_j'] = cr_2m_cuts + j_cuts
-    regions['cr_2m_v'] = cr_2m_cuts + v_cuts
+        # Single muon CR
+        cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu', f'mt_mu{var}'] + common_cuts
+        cr_1m_cuts.remove('veto_muo')
+        regions[f'cr_1m_j{var}'] = cr_1m_cuts + j_cuts
+        regions[f'cr_1m_v{var}'] = cr_1m_cuts + v_cuts
 
-    # Single muon CR
-    cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu', 'mt_mu'] + common_cuts
-    cr_1m_cuts.remove('veto_muo')
-    regions['cr_1m_j'] = cr_1m_cuts + j_cuts
-    regions['cr_1m_v'] = cr_1m_cuts + v_cuts
+        # Dielectron CR
+        cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'dielectron_charge'] + common_cuts
+        cr_2e_cuts.remove('veto_ele')
+        regions[f'cr_2e_j{var}'] = cr_2e_cuts + j_cuts
+        regions[f'cr_2e_v{var}'] = cr_2e_cuts + v_cuts
 
-    # Dielectron CR
-    cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'dielectron_charge'] + common_cuts
-    cr_2e_cuts.remove('veto_ele')
-    regions['cr_2e_j'] = cr_2e_cuts + j_cuts
-    regions['cr_2e_v'] = cr_2e_cuts + v_cuts
+        # Single electron CR
+        cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', f'met_el{var}',f'mt_el{var}'] + common_cuts
+        cr_1e_cuts.remove('veto_ele')
+        regions[f'cr_1e_j{var}'] =  cr_1e_cuts + j_cuts
+        regions[f'cr_1e_v{var}'] =  cr_1e_cuts + v_cuts
 
-    # Single electron CR
-    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'met_el','mt_el'] + common_cuts
-    cr_1e_cuts.remove('veto_ele')
-    regions['cr_1e_j'] =  cr_1e_cuts + j_cuts
-    regions['cr_1e_v'] =  cr_1e_cuts + v_cuts
+        # Photon CR
+        cr_g_cuts = ['trig_photon', 'one_photon', 'at_least_one_tight_photon','photon_pt'] + common_cuts
+        cr_g_cuts.remove('veto_photon')
+    
+        regions[f'cr_g_j{var}'] = cr_g_cuts + j_cuts
+        regions[f'cr_g_v{var}'] = cr_g_cuts + v_cuts
 
-    # Photon CR
-    cr_g_cuts = ['trig_photon', 'one_photon', 'at_least_one_tight_photon','photon_pt'] + common_cuts
-    cr_g_cuts.remove('veto_photon')
+        # a tt-bar populated region by removing b veto
+        regions[f'cr_nobveto_v{var}'] = copy.deepcopy(regions[f'sr_v{var}'])
+        regions[f'cr_nobveto_v{var}'].remove(f'veto_b{var}')
 
-    regions['cr_g_j'] = cr_g_cuts + j_cuts
-    regions['cr_g_v'] = cr_g_cuts + v_cuts
-
-    # a tt-bar populated region by removing b veto
-    regions['cr_nobveto_v'] = copy.deepcopy(regions['sr_v'])
-    regions['cr_nobveto_v'].remove('veto_b')
+    ###############################
+    # NOTE: No updates starting from this line
+    ###############################
 
     # additional regions to test out deep ak8 WvsQCD tagger
     for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','cr_nobveto_v']:
