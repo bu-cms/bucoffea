@@ -417,6 +417,10 @@ def setup_candidates(df, cfg, variations):
     ak8 = JaggedCandidateArray.candidatesfromcounts(
         df['nFatJet'],
         pt=df[f'FatJet_pt{jes_suffix}'],
+        pt_jerup=df['FatJet_pt_jerUp'],
+        pt_jerdown=df['FatJet_pt_jerDown'],
+        pt_jesup=df['FatJet_pt_jesTotalUp'],
+        pt_jesdown=df['FatJet_pt_jesTotalDown'],
         eta=df['FatJet_eta'],
         abseta=np.abs(df['FatJet_eta']),
         phi=df['FatJet_phi'],
