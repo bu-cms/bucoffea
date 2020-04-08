@@ -48,6 +48,8 @@ from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_regions
                                          )
 
+from pprint import pprint
+
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
     pass_none = ~pass_all
@@ -316,7 +318,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection_nom.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
                                         & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
         selection_nom.add('dielectron_charge', (dielectron_charge==0).any())
-        selection_nom.add('two_electrons', electrons.counts==2)
 
         df['is_tight_photon'] = photons.mediumId & photons.barrel
 
@@ -339,6 +340,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             else:
                 selection = copy.deepcopy(selection_nom) 
                 vmap.set_selection_packer(var=var, sel=selection)    
+
 
             bjets = vmap.get_bjets(var)
             ak4 = vmap.get_ak4(var) 
