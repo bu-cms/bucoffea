@@ -46,6 +46,8 @@ from bucoffea.helpers.gen import (
                                   fill_gen_v_info
                                  )
 
+from pprint import pprint
+
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
     pass_none = ~pass_all
@@ -105,7 +107,8 @@ class monojetProcessor(processor.ProcessorABC):
         self._year=None
         self._blind=blind
         self._configure()
-        self._accumulator = monojet_accumulator(cfg)
+        self._variations = ['_jerup', '_jerdown', '_jesup', '_jesdown', '']
+        self._accumulator = monojet_accumulator(cfg, variations=self._variations)
 
     @property
     def accumulator(self):
@@ -157,11 +160,17 @@ class monojetProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        met_pt_dict, met_phi_dict, ak4, bjets, ak8, muons, electrons, taus, photons = setup_candidates(df, cfg)
+        vmap, muons, electrons, taus, photons = setup_candidates(df, cfg, variations=self._variations)
 
-        met_pt = met_pt_dict['']
-        met_phi = met_phi_dict['']
+        # vmap holds information about ak4, met and selection
+        # packers for each JES/JER variation 
+        # Check out monojet/definitions.py for the object definition
 
+        #################################
+        # First process the part which is 
+        # unrelated to JES/JER variations
+        #################################
+        
         # Muons
         df['is_tight_muon'] = muons.tightId \
                       & (muons.iso < cfg.MUON.CUTS.TIGHT.ISO) \
@@ -171,8 +180,6 @@ class monojetProcessor(processor.ProcessorABC):
         dimuons = muons.distincts()
         dimuon_charge = dimuons.i0['charge'] + dimuons.i1['charge']
 
-        df['MT_mu'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
-
         # Electrons
         df['is_tight_electron'] = electrons.tightId \
                             & (electrons.pt > cfg.ELECTRON.CUTS.TIGHT.PT) \
@@ -181,121 +188,156 @@ class monojetProcessor(processor.ProcessorABC):
         dielectrons = electrons.distincts()
         dielectron_charge = dielectrons.i0['charge'] + dielectrons.i1['charge']
 
-        df['MT_el'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, met_pt, met_phi)).max()
-
-        # ak4
-        leadak4_index=ak4.pt.argmax()
-
-        elejet_pairs = ak4[:,:1].cross(electrons)
-        df['dREleJet'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
-        muonjet_pairs = ak4[:,:1].cross(muons)
-        df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
-
-        # Photons
-        # Angular distance leading photon - leading jet
-        phojet_pairs = ak4[:,:1].cross(photons[:,:1])
-        df['dRPhotonJet'] = np.hypot(phojet_pairs.i0.eta-phojet_pairs.i1.eta , dphi(phojet_pairs.i0.phi,phojet_pairs.i1.phi)).min()
-
-        # Recoil
-        df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
-        df["dPFCalo"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
-        df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30, etamax=2.4)
-        df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=2.4)
-        selection = processor.PackedSelection()
-
-
+        # Selection packer for the nominal (no varition) case
+        selection_nom = processor.PackedSelection() 
 
         # Triggers
         pass_all = np.ones(df.size)==1
-        selection.add('inclusive', pass_all)
-        selection = trigger_selection(selection, df, cfg)
-        selection.add('mu_pt_trig_safe', muons.pt.max() > 30)
+        selection_nom.add('inclusive', pass_all)
+        selection_nom = trigger_selection(selection_nom, df, cfg)
+
+        selection_nom.add('mu_pt_trig_safe', muons.pt.max() > 30)
 
         # Common selection
-        selection.add('veto_ele', electrons.counts==0)
-        selection.add('veto_muo', muons.counts==0)
-        selection.add('veto_photon', photons.counts==0)
-        selection.add('veto_tau', taus.counts==0)
-        selection.add('veto_b', bjets.counts==0)
-        selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
-        selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
-        selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
-        selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
+        selection_nom.add('veto_ele', electrons.counts==0)
+        selection_nom.add('veto_muo', muons.counts==0)
+        selection_nom.add('veto_photon', photons.counts==0)
+        selection_nom.add('veto_tau', taus.counts==0)
 
-        if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
-            selection.add('hemveto', df['hemveto'])
+        if (cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
+            selection_nom.add('hemveto', df['hemveto'])
         else:
-            selection.add('hemveto', np.ones(df.size)==1)
+            selection_nom.add('hemveto', np.ones(df.size)==1)
 
-        # AK4 Jet
-        leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
-                         & (ak4.abseta[leadak4_index] < cfg.SELECTION.SIGNAL.leadak4.ETA).any()
-        selection.add('leadak4_pt_eta', leadak4_pt_eta)
-
-        selection.add('leadak4_id',(ak4.tightId[leadak4_index] \
-                                                    & (ak4.chf[leadak4_index] >cfg.SELECTION.SIGNAL.leadak4.CHF) \
-                                                    & (ak4.nhf[leadak4_index]<cfg.SELECTION.SIGNAL.leadak4.NHF)).any())
-
-        # AK8 Jet
-        leadak8_index=ak8.pt.argmax()
-        leadak8_pt_eta = (ak8.pt.max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
-                         & (ak8.abseta[leadak8_index] < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
-        selection.add('leadak8_pt_eta', leadak8_pt_eta)
-
-        selection.add('leadak8_id',(ak8.tightId[leadak8_index]).any())
-
-        # Mono-V selection
-        selection.add('leadak8_tau21', ((ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]) < cfg.SELECTION.SIGNAL.LEADAK8.TAU21).any())
-        selection.add('leadak8_mass', ((ak8.mass[leadak8_index] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
-                                    & (ak8.mass[leadak8_index] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
-        selection.add('leadak8_wvsqcd_loosemd', ((ak8.wvsqcdmd[leadak8_index] > cfg.WTAG.LOOSEMD)
-                                    & (ak8.wvsqcdmd[leadak8_index] < cfg.WTAG.TIGHTMD)).any())
-        selection.add('leadak8_wvsqcd_tightmd', ((ak8.wvsqcdmd[leadak8_index] > cfg.WTAG.TIGHTMD)).any())
-        selection.add('leadak8_wvsqcd_loose', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.LOOSE)
-                                    & (ak8.wvsqcd[leadak8_index] < cfg.WTAG.TIGHT)).any())
-        selection.add('leadak8_wvsqcd_tight', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.TIGHT)).any())
-
-        selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_tau21", "leadak8_mass"))
-        selection.add('only_one_ak8', ak8.counts==1)
+        # Single muon CR
+        selection_nom.add('one_muon', muons.counts==1)
 
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()
-        selection.add('at_least_one_tight_mu', df['is_tight_muon'].any())
-        selection.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
+        selection_nom.add('at_least_one_tight_mu', df['is_tight_muon'].any())
+        selection_nom.add('dimuon_mass', ((dimuons.mass > cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MIN) \
                                     & (dimuons.mass < cfg.SELECTION.CONTROL.DOUBLEMU.MASS.MAX)).any())
-        selection.add('dimuon_charge', (dimuon_charge==0).any())
-        selection.add('two_muons', muons.counts==2)
-
-        # Single muon CR
-        selection.add('one_muon', muons.counts==1)
-        selection.add('mt_mu', df['MT_mu'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
+        selection_nom.add('dimuon_charge', (dimuon_charge==0).any())
+        selection_nom.add('two_muons', muons.counts==2)
 
         # Diele CR
         leadelectron_index=electrons.pt.argmax()
 
+        selection_nom.add('one_electron', electrons.counts==1)
+        selection_nom.add('two_electrons', electrons.counts==2)
+        selection_nom.add('at_least_one_tight_el', df['is_tight_electron'].any())
 
-        selection.add('one_electron', electrons.counts==1)
-        selection.add('two_electrons', electrons.counts==2)
-        selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
-
-        selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
+        selection_nom.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
                                         & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
-        selection.add('dielectron_charge', (dielectron_charge==0).any())
-        selection.add('two_electrons', electrons.counts==2)
-
-        # Single Ele CR
-        selection.add('met_el', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
-        selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
+        selection_nom.add('dielectron_charge', (dielectron_charge==0).any())
+        selection_nom.add('two_electrons', electrons.counts==2)
 
         # Photon CR
         leadphoton_index=photons.pt.argmax()
-
         df['is_tight_photon'] = photons.mediumId & photons.barrel
 
-        selection.add('one_photon', photons.counts==1)
-        selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
-        selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
-        selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
+        selection_nom.add('one_photon', photons.counts==1)
+        selection_nom.add('at_least_one_tight_photon', df['is_tight_photon'].any())
+        selection_nom.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
+        selection_nom.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
+
+        # Set the nominal selection packer, other selection packers (for variated cases)
+        # will copy the common selections from this one
+        vmap.set_selection_packer(var='', sel=selection_nom)
+
+        # Process for each JES/JER variation
+        for var in self._variations:
+            # Get the correct objects/quantities for each variation
+            # For other variations, copy the common selections and
+            # add on top of those.
+            if var == '':
+                selection = vmap.get_selection_packer(var='')
+            else:
+                selection = copy.deepcopy(selection_nom) 
+                vmap.set_selection_packer(var=var, sel=selection)    
+
+            bjets = vmap.get_bjets(var)
+            ak4 = vmap.get_ak4(var) 
+            ak8 = vmap.get_ak8(var) 
+            met = vmap.get_met(var) 
+
+            met_pt = getattr(met, f'pt{var}').flatten()
+            met_phi = getattr(met, f'phi{var}').flatten()
+
+            selection.add(f'veto_b{var}', bjets.counts==0)
+
+            # Filtering ak4 jets according to pileup ID
+            ak4_puid = getattr(ak4, f'puid{var}')
+            bjets_puid = getattr(bjets, f'puid{var}')
+            
+            ak4 = ak4[ak4_puid]
+            bjets = bjets[bjets_puid] 
+
+            # Get relevant pts for AK4 and AK8 jets
+            ak4_pt = getattr(ak4, f'pt{var}')
+            ak8_pt = getattr(ak8, f'pt{var}')
+
+            # MT requirements for muons and electrons
+            df[f'MT_mu{var}'] = ((muons.counts==1) * mt(muons.pt, muons.phi, met_pt, met_phi)).max()
+            selection.add(f'mt_mu{var}', df[f'MT_mu{var}'] < cfg.SELECTION.CONTROL.SINGLEMU.MT)
+            df[f'MT_el{var}'] = ((electrons.counts==1) * mt(electrons.pt, electrons.phi, met_pt, met_phi)).max()
+            selection.add(f'mt_el{var}', df[f'MT_el{var}'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
+            
+            # MET requirement in single electrion region
+            selection.add(f'met_el{var}', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
+
+            elejet_pairs = ak4[:,:1].cross(electrons)
+            df[f'dREleJet{var}'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
+            muonjet_pairs = ak4[:,:1].cross(muons)
+            df[f'dRMuonJet{var}'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
+
+            # Recoil
+            df[f"recoil_pt{var}"], df[f'recoil_phi{var}'] = recoil(met_pt,met_phi, electrons, muons, photons)
+            df[f"dPFCalo{var}"] = (met_pt - df["CaloMET_pt"]) / df[f"recoil_pt{var}"]
+            df[f"minDPhiJetRecoil{var}"] = min_dphi_jet_met(ak4, df[f"recoil_phi{var}"], njet=4, ptmin=30, etamax=2.4)
+            df[f"minDPhiJetMet{var}"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=2.4)
+
+            selection.add(f'mindphijr{var}',df[f'minDPhiJetRecoil{var}'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
+            selection.add(f'mindphijm{var}',df[f'minDPhiJetMet{var}'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
+            selection.add(f'dpfcalo{var}',np.abs(df[f'dPFCalo{var}']) < cfg.SELECTION.SIGNAL.DPFCALO)
+            selection.add(f'recoil{var}', df[f'recoil_pt{var}']>cfg.SELECTION.SIGNAL.RECOIL)
+
+            # Leading AK4 Jet
+            leadak4_index = ak4_pt.argmax()
+            leadak4_pt_eta = (ak4_pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
+                            & (ak4.abseta[leadak4_index] < cfg.SELECTION.SIGNAL.leadak4.ETA).any()
+            selection.add(f'leadak4_pt_eta{var}', leadak4_pt_eta)
+    
+            selection.add(f'leadak4_id{var}',(ak4.tightId[leadak4_index] \
+                                                        & (ak4.chf[leadak4_index] >cfg.SELECTION.SIGNAL.leadak4.CHF) \
+                                                        & (ak4.nhf[leadak4_index]<cfg.SELECTION.SIGNAL.leadak4.NHF)).any())
+
+            # AK8 Jet
+            leadak8_index = ak8_pt.argmax()
+            leadak8_pt_eta = (ak8_pt.max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
+                            & (ak8.abseta[leadak8_index] < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
+            selection.add(f'leadak8_pt_eta{var}', leadak8_pt_eta)
+    
+            selection.add(f'leadak8_id{var}',(ak8.tightId[leadak8_index]).any())
+
+            # Mono-V selection
+            selection.add(f'leadak8_tau21{var}', ((ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]) < cfg.SELECTION.SIGNAL.LEADAK8.TAU21).any())
+            selection.add(f'leadak8_mass{var}', ((ak8.mass[leadak8_index] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
+                                        & (ak8.mass[leadak8_index] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
+            selection.add('leadak8_wvsqcd_loosemd', ((ak8.wvsqcdmd[leadak8_index] > cfg.WTAG.LOOSEMD)
+                                        & (ak8.wvsqcdmd[leadak8_index] < cfg.WTAG.TIGHTMD)).any())
+            selection.add('leadak8_wvsqcd_tightmd', ((ak8.wvsqcdmd[leadak8_index] > cfg.WTAG.TIGHTMD)).any())
+            selection.add('leadak8_wvsqcd_loose', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.LOOSE)
+                                        & (ak8.wvsqcd[leadak8_index] < cfg.WTAG.TIGHT)).any())
+            selection.add('leadak8_wvsqcd_tight', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.TIGHT)).any())
+    
+            selection.add(f'veto_vtag{var}', ~selection.all(f"leadak8_pt_eta{var}", f"leadak8_id{var}", f"leadak8_tau21{var}", f"leadak8_mass{var}"))
+            selection.add('only_one_ak8', ak8.counts==1)
+
+            # Photons
+            # Angular distance leading photon - leading jet
+            phojet_pairs = ak4[:,:1].cross(photons[:,:1])
+            df[f'dRPhotonJet{var}'] = np.hypot(phojet_pairs.i0.eta-phojet_pairs.i1.eta , dphi(phojet_pairs.i0.phi,phojet_pairs.i1.phi)).min()
 
         # Fill histograms
         output = self.accumulator.identity()
@@ -365,7 +407,7 @@ class monojetProcessor(processor.ProcessorABC):
             output['sumw2'][dataset] +=  df['genEventSumw2']
             output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
 
-        regions = monojet_regions(cfg)
+        regions = monojet_regions(cfg, self._variations)
 
         for region, cuts in regions.items():
             region_weights = copy.deepcopy(weights)
