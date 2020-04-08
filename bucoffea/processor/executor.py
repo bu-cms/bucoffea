@@ -33,7 +33,7 @@ except ImportError:
 
 
 _PICKLE_PROTOCOL = pickle.HIGHEST_PROTOCOL
-
+DEFAULT_METADATA_CACHE = LRUCache(100000)
 
 # instrument xrootd source
 if not hasattr(uproot.source.xrootd.XRootDSource, '_read_real'):
@@ -44,7 +44,9 @@ if not hasattr(uproot.source.xrootd.XRootDSource, '_read_real'):
     uproot.source.xrootd.XRootDSource._read_real = uproot.source.xrootd.XRootDSource._read
     uproot.source.xrootd.XRootDSource._read = _read
 
-def _work_function_nanoaod(item, processor_instance, flatten=False, savemetrics=False, mmap=False):
+def _work_function_nanoaod(item, processor_instance, flatten=False, savemetrics=False,
+                   mmap=False, nano=False, cachestrategy=None, skipbadfiles=False,
+                   retries=0, xrootdtimeout=None):
     if processor_instance == 'heavy':
         item, processor_instance = item
     if not isinstance(processor_instance, ProcessorABC):
@@ -58,46 +60,111 @@ def _work_function_nanoaod(item, processor_instance, flatten=False, savemetrics=
         def localsource(path):
             return uproot.FileSource(path, **opts)
 
-    file = uproot.open(item.filename, localsource=localsource)
-    tree = file[item.treename]
-    df = LazyDataFrame(tree, item.chunksize, item.index, flatten=flatten)
-    # For NanoAOD, we have to look at the "Runs" TTree for info such as weight sums
-    # The different cases in the loop represent the different formats and accordingly
-    # different ways of dealing with the provided values.
-    for name in map(lambda x: x.decode('utf-8'), file['Runs'].keys()):
-        arr = file['Runs'][name].array()
-        if name.startswith('n'):
-            # Check that all instances are the same, then save that value
-            tmp = set([])
-            for entry in arr:
-                tmp.add(entry)
-            assert(len(tmp)==1)
-            df[name] = list(tmp)[0]
-        elif name in ['genEventCount','genEventSumw','genEventSumw2']:
-            # One entry per run -> just sum
-            df[name] = int(item.index==0) * arr.sum()
-        elif name in ['LHEScaleSumw','LHEPdfSumw']:
-            # Sum per variation, conserve number of variations
-            tmp = 0 * arr[0]
-            for i in range(len(arr)):
-                for j in range(len(arr[i])):
-                    tmp[j] += arr[i][j]
-            df[name] = int(item.index==0) * tmp
-    ### END NANOAOD
-    df['dataset'] = item.dataset
-    tic = time.time()
-    out = processor_instance.process(df)
-    toc = time.time()
-    metrics = dict_accumulator()
-    if savemetrics:
-        if isinstance(file.source, uproot.source.xrootd.XRootDSource):
-            metrics['bytesread'] = value_accumulator(int, file.source.bytesread)
-            metrics['dataservers'] = set_accumulator({file.source._source.get_property('DataServer')})
-        metrics['columns'] = set_accumulator(df.materialized)
-        metrics['entries'] = value_accumulator(int, df.size)
-        metrics['processtime'] = value_accumulator(float, toc - tic)
-    wrapped_out = dict_accumulator({'out': out, 'metrics': metrics})
-    file.source.close()
+    import warnings
+    out = processor_instance.accumulator.identity()
+    retry_count = 0
+    while retry_count <= retries:
+        try:
+            from uproot.source.xrootd import XRootDSource
+            xrootdsource = XRootDSource.defaults
+            xrootdsource['timeout'] = xrootdtimeout
+            file = uproot.open(item.filename, localsource=localsource, xrootdsource=xrootdsource)
+            if nano:
+                pass
+                # cache = None
+                # if cachestrategy == 'dask-worker':
+                #     from distributed import get_worker
+                #     from .dask import ColumnCache
+                #     worker = get_worker()
+                #     try:
+                #         cache = worker.plugins[ColumnCache.name]
+                #     except KeyError:
+                #         # emit warning if not found?
+                #         pass
+                # df = NanoEvents.from_file(
+                #     file=file,
+                #     treename=item.treename,
+                #     entrystart=item.entrystart,
+                #     entrystop=item.entrystop,
+                #     metadata={
+                #         'dataset': item.dataset,
+                #         'filename': item.filename
+                #     },
+                #     cache=cache,
+                # )
+            else:
+                tree = file[item.treename]
+                df = LazyDataFrame(tree, item.entrystart, item.entrystop, flatten=flatten)
+                # For NanoAOD, we have to look at the "Runs" TTree for info such as weight sums
+                # The different cases in the loop represent the different formats and accordingly
+                # different ways of dealing with the provided values.
+                for name in map(lambda x: x.decode('utf-8'), file['Runs'].keys()):
+                    arr = file['Runs'][name].array()
+                    if name.startswith('n'):
+                        # Check that all instances are the same, then save that value
+                        tmp = set([])
+                        for entry in arr:
+                            tmp.add(entry)
+                        assert(len(tmp)==1)
+                        df[name] = list(tmp)[0]
+                    elif name in ['genEventCount','genEventSumw','genEventSumw2']:
+                        # One entry per run -> just sum
+                        df[name] = int(item.entrystart==0) * arr.sum()
+                    elif name in ['LHEScaleSumw','LHEPdfSumw']:
+                        # Sum per variation, conserve number of variations
+                        tmp = 0 * arr[0]
+                        for i in range(len(arr)):
+                            for j in range(len(arr[i])):
+                                tmp[j] += arr[i][j]
+                        df[name] = int(item.entrystart==0) * tmp
+                ### END NANOAOD
+                df['dataset'] = item.dataset
+                df['filename'] = item.filename
+            tic = time.time()
+            out = processor_instance.process(df)
+            toc = time.time()
+            metrics = dict_accumulator()
+            if savemetrics:
+                if isinstance(file.source, uproot.source.xrootd.XRootDSource):
+                    metrics['bytesread'] = value_accumulator(int, file.source.bytesread)
+                    metrics['dataservers'] = set_accumulator({file.source._source.get_property('DataServer')})
+                metrics['columns'] = set_accumulator(df.materialized)
+                metrics['entries'] = value_accumulator(int, df.size)
+                metrics['processtime'] = value_accumulator(float, toc - tic)
+            wrapped_out = dict_accumulator({'out': out, 'metrics': metrics})
+            file.source.close()
+            break
+        # catch xrootd errors and optionally skip
+        # or retry to read the file
+        except OSError as e:
+            if not skipbadfiles:
+                raise e
+            else:
+                w_str = 'Bad file source %s.' % item.filename
+                if retries:
+                    w_str += ' Attempt %d of %d.' % (retry_count + 1, retries + 1)
+                    if retry_count + 1 < retries:
+                        w_str += ' Will retry.'
+                    else:
+                        w_str += ' Skipping.'
+                else:
+                    w_str += ' Skipping.'
+                warnings.warn(w_str)
+            metrics = dict_accumulator()
+            if savemetrics:
+                metrics['bytesread'] = value_accumulator(int, 0)
+                metrics['dataservers'] = set_accumulator({})
+                metrics['columns'] = set_accumulator({})
+                metrics['entries'] = value_accumulator(int, 0)
+                metrics['processtime'] = value_accumulator(float, 0)
+            wrapped_out = dict_accumulator({'out': out, 'metrics': metrics})
+        except Exception as e:
+            if retries == retry_count:
+                raise e
+            w_str = 'Attempt %d of %d. Will retry.' % (retry_count + 1, retries + 1)
+            warnings.warn(w_str)
+        retry_count += 1
+
     return wrapped_out
 
 def run_uproot_job_nanoaod(fileset,
@@ -156,40 +223,59 @@ def run_uproot_job_nanoaod(fileset,
             (about 1MB depending on the length of filenames, etc.)  If you edit an input file
             (please don't) during a session, the session can be restarted to clear the cache.
     '''
-    if not isinstance(fileset, Mapping):
-        raise ValueError("Expected fileset to be a mapping dataset: list(files)")
+    if not isinstance(fileset, (Mapping, str)):
+        raise ValueError("Expected fileset to be a mapping dataset: list(files) or filename")
     if not isinstance(processor_instance, ProcessorABC):
         raise ValueError("Expected processor_instance to derive from ProcessorABC")
 
     if pre_executor is None:
         pre_executor = executor
     if pre_args is None:
-        pre_args = executor_args
+        pre_args = dict(executor_args)
+    if metadata_cache is None:
+        metadata_cache = DEFAULT_METADATA_CACHE
 
     fileset = list(_normalize_fileset(fileset, treename))
     for filemeta in fileset:
         filemeta.maybe_populate(metadata_cache)
 
+    # pop _get_metdata args here (also sent to _work_function)
+    skipbadfiles = executor_args.pop('skipbadfiles', False)
+    retries = executor_args.pop('retries', 0)
+    xrootdtimeout = executor_args.pop('xrootdtimeout', None)
+    align_clusters = executor_args.pop('align_clusters', False)
+    metadata_fetcher = partial(_get_metadata,
+                               skipbadfiles=skipbadfiles,
+                               retries=retries,
+                               xrootdtimeout=xrootdtimeout,
+                               align_clusters=align_clusters,
+                               )
+
     chunks = []
     if maxchunks is None:
         # this is a bit of an abuse of map-reduce but ok
-        to_get = set(filemeta for filemeta in fileset if not filemeta.populated)
+        to_get = set(filemeta for filemeta in fileset if not filemeta.populated(clusters=align_clusters))
         if len(to_get) > 0:
             out = set_accumulator()
-            real_pre_args = {
+            pre_arg_override = {
                 'desc': 'Preprocessing',
                 'unit': 'file',
+                'compression': None,
+                'tailtimeout': None,
+                'worker_affinity': False,
             }
-            real_pre_args.update(pre_args)
-            executor(to_get, _get_metadata, out, **real_pre_args)
+            pre_args.update(pre_arg_override)
+            pre_executor(to_get, metadata_fetcher, out, **pre_args)
             while out:
                 item = out.pop()
-                metadata_cache[item] = item.numentries
+                metadata_cache[item] = item.metadata
             for filemeta in fileset:
                 filemeta.maybe_populate(metadata_cache)
         while fileset:
             filemeta = fileset.pop()
-            for chunk in filemeta.chunks(chunksize):
+            if skipbadfiles and not filemeta.populated(clusters=align_clusters):
+                continue
+            for chunk in filemeta.chunks(chunksize, align_clusters):
                 chunks.append(chunk)
     else:
         # get just enough file info to compute chunking
@@ -198,10 +284,12 @@ def run_uproot_job_nanoaod(fileset,
             filemeta = fileset.pop()
             if nchunks[filemeta.dataset] >= maxchunks:
                 continue
-            if not filemeta.populated:
-                filemeta.numentries = _get_metadata(filemeta).pop().numentries
-                metadata_cache[filemeta] = filemeta.numentries
-            for chunk in filemeta.chunks(chunksize):
+            if not filemeta.populated(clusters=align_clusters):
+                filemeta.metadata = metadata_fetcher(filemeta).pop().metadata
+                metadata_cache[filemeta] = filemeta.metadata
+            if skipbadfiles and not filemeta.populated(clusters=align_clusters):
+                continue
+            for chunk in filemeta.chunks(chunksize, align_clusters):
                 chunks.append(chunk)
                 nchunks[filemeta.dataset] += 1
                 if nchunks[filemeta.dataset] >= maxchunks:
@@ -211,32 +299,36 @@ def run_uproot_job_nanoaod(fileset,
     savemetrics = executor_args.pop('savemetrics', False)
     flatten = executor_args.pop('flatten', False)
     mmap = executor_args.pop('mmap', False)
+    nano = executor_args.pop('nano', False)
+    cachestrategy = executor_args.pop('cachestrategy', None)
     pi_compression = executor_args.pop('processor_compression', 1)
     if pi_compression is None:
         pi_to_send = processor_instance
     else:
         pi_to_send = lz4f.compress(cloudpickle.dumps(processor_instance), compression_level=pi_compression)
+    closure = partial(
+        _work_function_nanoaod,
+        flatten=flatten,
+        savemetrics=savemetrics,
+        mmap=mmap,
+        nano=nano,
+        cachestrategy=cachestrategy,
+        skipbadfiles=skipbadfiles,
+        retries=retries,
+        xrootdtimeout=xrootdtimeout,
+    )
     # hack around dask/dask#5503 which is really a silly request but here we are
     if executor is dask_executor:
         executor_args['heavy_input'] = pi_to_send
-        closure = partial(_work_function_nanoaod,
-                          processor_instance='heavy',
-                          flatten=flatten,
-                          savemetrics=savemetrics,
-                          mmap=mmap,
-                          )
+        closure = partial(closure, processor_instance='heavy')
     else:
-        closure = partial(_work_function_nanoaod,
-                          processor_instance=pi_to_send,
-                          flatten=flatten,
-                          savemetrics=savemetrics,
-                          mmap=mmap,
-                          )
+        closure = partial(closure, processor_instance=pi_to_send)
 
     out = processor_instance.accumulator.identity()
     wrapped_out = dict_accumulator({'out': out, 'metrics': dict_accumulator()})
     exe_args = {
         'unit': 'chunk',
+        'function_name': type(processor_instance).__name__,
     }
     exe_args.update(executor_args)
     executor(chunks, closure, wrapped_out, **exe_args)
