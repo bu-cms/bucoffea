@@ -46,8 +46,6 @@ from bucoffea.helpers.gen import (
                                   fill_gen_v_info
                                  )
 
-from pprint import pprint
-
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
     pass_none = ~pass_all
@@ -410,6 +408,19 @@ class monojetProcessor(processor.ProcessorABC):
         regions = monojet_regions(cfg, self._variations)
 
         for region, cuts in regions.items():
+            # Get relevant variation name for each region
+            if ('up' in region) or ('down' in region):
+                var = '_' + region.split('_')[-1]
+            else:
+                var = ''
+
+            # Get the correct objects/quantities for each variation
+            selection = vmap.get_selection_packer(var)
+            bjets = vmap.get_bjets(var)
+            ak4 = vmap.get_ak4(var) 
+            ak8 = vmap.get_ak8(var) 
+            met = vmap.get_met(var)
+
             region_weights = copy.deepcopy(weights)
             if not df['is_data']:
                 if re.match(r'cr_(\d+)e.*', region):
@@ -439,8 +450,6 @@ class monojetProcessor(processor.ProcessorABC):
                                     * evaluator[f'wtag_mistag_{wp}'](unmatched_leadak8.pt).prod()
 
                         region_weights.add('wtag_{wp}', matched_weights)
-
-
 
             # Blinding
             if(self._blind and df['is_data'] and region.startswith('sr')):
@@ -510,32 +519,40 @@ class monojetProcessor(processor.ProcessorABC):
             # This is a workaround to create a weight array of the right dimension
             w_alljets = weight_shape(ak4[mask].eta, region_weights.weight()[mask])
 
-            ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
-            ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
+            # Get jet pts
+            ak4_pt = getattr(ak4, f'pt{var}')
+            leadak4_index = ak4_pt.argmax()
+            ak4_pt0 = ak4_pt[leadak4_index]
+
+            ezfill('ak4_eta',     jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
+            ezfill('ak4_phi',     jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
             ezfill('ak4_eta_phi', phi=ak4[mask].phi.flatten(),eta=ak4[mask].eta.flatten(), weight=w_alljets)
-            ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
+            ezfill('ak4_pt',      jetpt=ak4_pt[mask].flatten(),   weight=w_alljets)
 
             # Leading ak4
             w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], region_weights.weight()[mask])
             ezfill('ak4_eta0',   jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_phi0',   jetphi=ak4[leadak4_index].phi[mask].flatten(),    weight=w_leadak4)
-            ezfill('ak4_pt0',    jetpt=ak4[leadak4_index].pt[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_pt0',    jetpt=ak4_pt0[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_ptraw0',    jetpt=ak4[leadak4_index].ptraw[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_chf0',    frac=ak4[leadak4_index].chf[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_nhf0',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
 
-            ezfill('drelejet',    dr=df['dREleJet'][mask],      weight=region_weights.weight()[mask])
-            ezfill('drmuonjet',    dr=df['dRMuonJet'][mask],      weight=region_weights.weight()[mask])
-            ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask],  weight=region_weights.weight()[mask])
+            ezfill('drelejet',    dr=df[f'dREleJet{var}'][mask],      weight=region_weights.weight()[mask])
+            ezfill('drmuonjet',    dr=df[f'dRMuonJet{var}'][mask],      weight=region_weights.weight()[mask])
+            ezfill('drphotonjet',    dr=df[f'dRPhotonJet{var}'][mask],  weight=region_weights.weight()[mask])
 
             # AK8 jets
             if region=='inclusive' or region.endswith('v'):
                 # All
                 w_allak8 = weight_shape(ak8.eta[mask], region_weights.weight()[mask])
+                ak8_pt = getattr(ak8, f'pt{var}')
+                leadak8_index = ak8_pt.argmax()
+                ak8_pt0 = ak8_pt[leadak8_index]
 
                 ezfill('ak8_eta',    jeteta=ak8[mask].eta.flatten(), weight=w_allak8)
                 ezfill('ak8_phi',    jetphi=ak8[mask].phi.flatten(), weight=w_allak8)
-                ezfill('ak8_pt',     jetpt=ak8[mask].pt.flatten(),   weight=w_allak8)
+                ezfill('ak8_pt',     jetpt=ak8_pt[mask].flatten(),   weight=w_allak8)
                 ezfill('ak8_mass',   mass=ak8[mask].mass.flatten(),  weight=w_allak8)
 
                 # Leading
@@ -543,7 +560,7 @@ class monojetProcessor(processor.ProcessorABC):
 
                 ezfill('ak8_eta0',       jeteta=ak8[leadak8_index].eta[mask].flatten(),    weight=w_leadak8)
                 ezfill('ak8_phi0',       jetphi=ak8[leadak8_index].phi[mask].flatten(),    weight=w_leadak8)
-                ezfill('ak8_pt0',        jetpt=ak8[leadak8_index].pt[mask].flatten(),      weight=w_leadak8 )
+                ezfill('ak8_pt0',        jetpt=ak8_pt0[mask].flatten(),      weight=w_leadak8 )
                 ezfill('ak8_mass0',      mass=ak8[leadak8_index].mass[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_tau210',     tau21=ak8[leadak8_index].tau21[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_wvsqcd0',    tagger=ak8[leadak8_index].wvsqcd[mask].flatten(),     weight=w_leadak8)
@@ -571,6 +588,10 @@ class monojetProcessor(processor.ProcessorABC):
                     ezfill('ak8_passtight_mass0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHT, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passloosemd_mass0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.LOOSEMD, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passtightmd_mass0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.TIGHTMD, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
+
+            ####################
+            # FIXME: Update below this line
+            ####################
 
             # MET
             ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=region_weights.weight()[mask] )
