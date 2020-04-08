@@ -248,9 +248,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Already pre-filtered!
         # All leptons are at least loose
         # Check out setup_candidates for filtering details
-        vmap, _, muons, electrons, taus, photons = setup_candidates(df, cfg, variations=self._variations)
+        vmap, muons, electrons, taus, photons = setup_candidates(df, cfg, variations=self._variations)
 
-        # vmap holds information about ak4, met and selection
+        # vmap holds information about ak4, ak8, met and selection
         # packers for each JES/JER variation 
         # Check out monojet/definitions.py for the object definition
 
@@ -373,7 +373,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             elejet_pairs = ak4[:,:1].cross(electrons)
             df[f'dREleJet{var}'] = np.hypot(elejet_pairs.i0.eta-elejet_pairs.i1.eta , dphi(elejet_pairs.i0.phi,elejet_pairs.i1.phi)).min()
             muonjet_pairs = ak4[:,:1].cross(muons)
-            df['dRMuonJet{var}'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
+            df[f'dRMuonJet{var}'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
 
             # Recoil
             df[f'recoil_pt{var}'], df[f'recoil_phi{var}'] = recoil(met_pt, met_phi, electrons, muons, photons)

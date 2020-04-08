@@ -221,22 +221,28 @@ class VarMap:
     def __init__(self, variations):
         self._variations = variations
         self.ak4 = {}
+        self.ak8 = {}
         self.bjets = {}
         self.diak4 = {}
         self.met = {}
         self.selection_packers = {}
-    
-    def fill_mapping(self, ak4, bjets, met, var):
+
+
+    def fill_mapping(self, ak4, bjets, met, var, ak8):
         '''Fill the dictionaries for the relevant variation.'''
         self.ak4[var] = ak4 
-        self.bjets[var] = bjets 
+        self.ak8[var] = ak8
         self.diak4[var] = ak4[:,:2].distincts() # Leading jet pair 
+        self.bjets[var] = bjets 
         self.met[var] = met
    
     # Getter methods
     def get_ak4(self, var):
         return self.ak4[var]
     
+    def get_ak8(self, var):
+        return self.ak8[var]
+
     def get_bjets(self, var):
         return self.bjets[var]
     
@@ -518,12 +524,13 @@ def setup_candidates(df, cfg, variations):
             _ak4 = _ak4[object_overlap(_ak4, photons, dr=cfg.OVERLAP.AK4.PHOTON.DR)]
        
         vmap.fill_mapping(  ak4=_ak4,
+                            ak8=ak8,
                             bjets=_bjets,
                             met=met,
                             var=var
                             )
 
-    return vmap, ak8, muons, electrons, taus, photons
+    return vmap, muons, electrons, taus, photons
 
 def monojet_regions(cfg):
     common_cuts = [
