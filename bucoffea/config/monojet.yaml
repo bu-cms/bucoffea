@@ -223,11 +223,11 @@ era2016:
         loose:  0.5426
         medium: 0.8484
         tight: 0.9535
-  wtag: # https://indico.cern.ch/event/840827/contributions/3527925/attachments/1895214/3126510/DeepAK8_Top_W_SFs_2017_JMAR_PK.pdf
-      loose: 0.526
-      tight: 0.973
-      loosemd: 0.184
-      tightmd: 0.759
+  wtag: # https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3316826/DeepAK8_Top_W_SFs_V2_Training_18Feb.pdf
+      loose: 0.475
+      tight: 0.960
+      loosemd: 0.274
+      tightmd: 0.828
   electron:
     branch:
       id: Electron_cutBased_Sum16
@@ -360,7 +360,7 @@ era2017:
         loose : 0.1522
         medium: 0.4941
         tight: 0.8001
-  wtag: # https://www.dropbox.com/s/z1rnuaxrekmrvlu/DeepAK8_Top_W_SFs_V2_Training_FINAL_w_Tables.pdf?dl=0
+  wtag: # https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3316826/DeepAK8_Top_W_SFs_V2_Training_18Feb.pdf
       loose: 0.467
       tight: 0.964
       loosemd: 0.258
@@ -492,7 +492,7 @@ era2018:
         loose : 0.1241
         medium: 0.4184
         tight: 0.7527
-  wtag: # https://www.dropbox.com/s/z1rnuaxrekmrvlu/DeepAK8_Top_W_SFs_V2_Training_FINAL_w_Tables.pdf?dl=0
+  wtag: # https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3316826/DeepAK8_Top_W_SFs_V2_Training_18Feb.pdf
       loose: 0.458
       tight: 0.961
       loosemd: 0.245
