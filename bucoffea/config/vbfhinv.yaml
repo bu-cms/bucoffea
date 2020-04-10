@@ -34,10 +34,10 @@ default:
           min: 60
           max: 120
       singlemu:
-        mt : 160
+        mt : 9999
       singleel:
-        mt: 160
-        met: 50
+        mt: 9999
+        met: 80
   tau:
     cuts:
       pt: 20
