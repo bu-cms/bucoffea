@@ -372,8 +372,8 @@ def plot_jes_jer_var_ratio(acc, regex1, regex2, region1, region2, tag, out_tag, 
                 transform=ax.transAxes
                 )
 
-    rax.set_ylim(0.9, 1.1)
-    loc = matplotlib.ticker.MultipleLocator(base=0.05)
+    rax.set_ylim(0.94, 1.06)
+    loc = matplotlib.ticker.MultipleLocator(base=0.02)
     rax.yaxis.set_major_locator(loc)
     rax.set_ylabel('Varied / Nominal')
     if analysis == 'vbf':
