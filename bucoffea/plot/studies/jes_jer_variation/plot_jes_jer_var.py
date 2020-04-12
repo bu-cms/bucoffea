@@ -195,7 +195,7 @@ def plot_jes_jer_var(acc, regex, region, tag, out_tag, title, sample_type, analy
                 transform=ax.transAxes
                 )
 
-    rax.set_ylim(0., 2.)
+    rax.set_ylim(0.8, 1.2)
     loc = matplotlib.ticker.MultipleLocator(base=0.2)
     rax.yaxis.set_major_locator(loc)
     rax.set_ylabel('Varied / Nominal')
