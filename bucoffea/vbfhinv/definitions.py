@@ -216,14 +216,13 @@ def vbfhinv_regions(cfg):
         'veto_photon',
         'veto_tau',
         'veto_b',
-        'dpfcalo'
     ]
 
     regions = {}
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts
+    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr']
 
     # For sync mode
     if cfg.RUN.SYNC:
@@ -244,28 +243,29 @@ def vbfhinv_regions(cfg):
         ]
 
     # Dimuon CR
-    cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'veto_ele', 'dimuon_charge'] + common_cuts[1:]
+    cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'veto_ele', 'dimuon_charge'] + common_cuts[1:] + ['dpfcalo_cr']
+
     cr_2m_cuts.remove('veto_muo')
 
     regions['cr_2m_vbf'] = cr_2m_cuts
 
     # Single muon CR
-    cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:]
+    cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']
     cr_1m_cuts.remove('veto_muo')
     regions['cr_1m_vbf'] = cr_1m_cuts 
 
     # Dielectron CR
-    cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'veto_muo', 'dielectron_charge'] + common_cuts[2:]
+    cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'veto_muo', 'dielectron_charge'] + common_cuts[2:] + ['dpfcalo_cr']
     # cr_2e_cuts.remove('veto_ele')
     regions['cr_2e_vbf'] = cr_2e_cuts 
 
     # Single electron CR
-    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:]
+    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:] + ['dpfcalo_cr']
     # cr_1e_cuts.remove('veto_ele')
     regions['cr_1e_vbf'] =  cr_1e_cuts
 
     # Photon CR
-    cr_g_cuts = ['trig_photon', 'one_photon', 'at_least_one_tight_photon','photon_pt'] + common_cuts
+    cr_g_cuts = ['trig_photon', 'one_photon', 'at_least_one_tight_photon','photon_pt'] + common_cuts + ['dpfcalo_cr']
     cr_g_cuts.remove('veto_photon')
 
     regions['cr_g_vbf'] = cr_g_cuts

@@ -291,8 +291,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Recoil
         df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
-        df["dPFCalo"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
-        df["dPFTk"] = (met_pt - df["TkMET_pt"]) / df["recoil_pt"]
+
+        df["dPFCaloSR"] = (met_pt - df["CaloMET_pt"]) / met_pt
+        df["dPFCaloCR"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
+
+        df["dPFTkSR"] = (met_pt - df["TkMET_pt"]) / met_pt
+
         df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30, etamax=5.0)
         df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=5.0)
         selection = processor.PackedSelection()
@@ -313,7 +317,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('veto_b', bjets.counts==0)
         selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
-        selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
+
+        selection.add('dpfcalo_sr',np.abs(df['dPFCaloSR']) < cfg.SELECTION.SIGNAL.DPFCALO)
+        selection.add('dpfcalo_cr',np.abs(df['dPFCaloCR']) < cfg.SELECTION.SIGNAL.DPFCALO)
+
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
 
@@ -340,7 +347,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         leading_jet_in_horn = ((diak4.i0.abseta<3.2) & (diak4.i0.abseta>2.8)).any()
         trailing_jet_in_horn = ((diak4.i1.abseta<3.2) & (diak4.i1.abseta>2.8)).any()
 
-        selection.add('hornveto', (df['dPFTk'] < 0.8) | ~(leading_jet_in_horn | trailing_jet_in_horn))
+        selection.add('hornveto', (df['dPFTkSR'] < 0.8) | ~(leading_jet_in_horn | trailing_jet_in_horn))
 
         if df['year'] == 2018:
             selection.add("metphihemextveto", ((-1.8 > met_phi)|(met_phi>-0.6)))
