@@ -36,8 +36,7 @@ def vbfhinv_accumulator(cfg):
 
     jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
 
-    dpfcalo_ax = Bin("dpfcalo_sr", r"$(PFMET-CaloMET) / PFMET$", 20, -1, 1)
-    dpfcalo_ax = Bin("dpfcalo_cr", r"$(PFMET-CaloMET) / Recoil$", 20, -1, 1)
+    dpfcalo_ax = Bin("dpfcalo", r"$(PFMET-CaloMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
@@ -121,7 +120,8 @@ def vbfhinv_accumulator(cfg):
     items["recoil_mjj"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, mjj_ax)
     items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
 
-    items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    items["dpfcalo_cr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    items["dpfcalo_sr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
 
