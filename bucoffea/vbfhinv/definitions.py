@@ -36,7 +36,8 @@ def vbfhinv_accumulator(cfg):
 
     jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
 
-    dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
+    dpfcalo_ax = Bin("dpfcalo_sr", r"$(PFMET-CaloMET) / PFMET$", 20, -1, 1)
+    dpfcalo_ax = Bin("dpfcalo_cr", r"$(PFMET-CaloMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
