@@ -46,6 +46,9 @@ from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_regions
                                          )
 
+def candidates_in_hem(candidates):
+    return (-3.0 < candidates.eta) & (candidates.eta < -1.3) & (-1.8 < candidates.phi) & (candidates.phi < -0.6)
+
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
     pass_none = ~pass_all
@@ -244,6 +247,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Check out setup_candidates for filtering details
         met_pt, met_phi, ak4, bjets, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
+        # Filter out hem candidates
+        if df["year"] == 2018:
+            ak4       = ak4[~candidates_in_hem(ak4)]
+            bjets     = bjets[~candidates_in_hem(bjets)]
+            muons     = muons[~candidates_in_hem(muons)]
+            electrons = electrons[~candidates_in_hem(electrons)]
+            taus      = taus[~candidates_in_hem(taus)]
+            photons   = photons[~candidates_in_hem(photons)]
+
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]
         bjets = bjets[bjets.puid]
@@ -323,6 +335,16 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['mjj'] = diak4.mass.max()
         df['dphijj'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
         df['detajj'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
+
+        leading_jet_in_horn = ((diak4.i0.abseta<3.2) & (diak4.i0.abseta>2.8)).any()
+        trailing_jet_in_horn = ((diak4.i1.abseta<3.2) & (diak4.i1.abseta>2.8)).any()
+
+        selection.add('hornveto', (df['dPFTk'] < 0.8) | ~(leading_jet_in_horn | trailing_jet_in_horn))
+
+        if df['year'] == 2018:
+            selection.add("metphihemextveto", ((-1.8 > met_phi)|(met_phi>-0.6)))
+        else:
+            selection.add("metphihemextveto", pass_all)
 
         selection.add('two_jets', diak4.counts>0)
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())

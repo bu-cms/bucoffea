@@ -202,7 +202,6 @@ def vbfhinv_regions(cfg):
         'veto_ele',
         'veto_muo',
         'filt_met',
-        'hemveto',
         'mindphijr',
         'recoil',
         'two_jets',
@@ -210,6 +209,7 @@ def vbfhinv_regions(cfg):
         'leadak4_id',
         'trailak4_pt_eta',
         'trailak4_id',
+        'hornveto',
         'hemisphere',
         'mjj',
         'dphijj',
@@ -224,7 +224,7 @@ def vbfhinv_regions(cfg):
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_vbf'] = ['trig_met'] + common_cuts
+    regions['sr_vbf'] = ['trig_met','metphihemextveto'] + common_cuts
 
     # For sync mode
     if cfg.RUN.SYNC:
