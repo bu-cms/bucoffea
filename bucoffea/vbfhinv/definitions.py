@@ -337,16 +337,16 @@ def vbfhinv_regions(cfg, variations):
 
     return regions
 
-def get_met_ratios(varied_met_pt, nominal_met_pt, met_bins):
+def get_met_ratios(varied_met_pt, nominal_met_pt, met_bins, rweight):
     '''Calculate MET ratios: Varied MET pt / Nominal MET pt for different MET bins.'''
     met_ratio = varied_met_pt / nominal_met_pt - 1 
     met_ratio_dict = {}
+    weights = {}
     for idx in range(len(met_bins)-1):
         start, end = met_bins[idx:idx+2]
         mask = (nominal_met_pt >= start) & (nominal_met_pt < end)
         tag = f'{start}To{end}'
         met_ratio_dict[tag] = met_ratio[mask]
+        weights[tag] = rweight[mask]
 
-    pprint(met_ratio_dict)
-
-    return met_ratio_dict
+    return met_ratio_dict, weights

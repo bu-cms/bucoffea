@@ -708,9 +708,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # Look at varied / nominal MET pt for different nominal MET pt bins
             if re.match('cr_(1e|2e|1m|2m)_vbf.*', region) and var != '':
                 met_bins = np.arange(100,350,50)
-                met_ratio_dict = get_met_ratios(met_pt[mask], met_pt_jer[mask], met_bins)
+                met_ratio_dict, weight_dict = get_met_ratios(met_pt[mask], met_pt_jer[mask], met_bins, rweight[mask])
                 for tag, ratio in met_ratio_dict.items():
-                    ezfill('met_ratio', ratio=ratio, metbin=tag)
+                    wratio = weight_dict[tag]
+                    ezfill('met_ratio', ratio=ratio, metbin=tag, weight=wratio)
 
             # Tau
             if 'no_veto' in region:
