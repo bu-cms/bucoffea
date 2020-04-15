@@ -36,7 +36,7 @@ def vbfhinv_accumulator(cfg):
 
     jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
 
-    dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
+    dpfcalo_ax = Bin("dpfcalo", r"$(PFMET-CaloMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
@@ -120,7 +120,8 @@ def vbfhinv_accumulator(cfg):
     items["recoil_mjj"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, mjj_ax)
     items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
 
-    items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    items["dpfcalo_cr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    items["dpfcalo_sr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
 
@@ -202,7 +203,6 @@ def vbfhinv_regions(cfg):
         'veto_ele',
         'veto_muo',
         'filt_met',
-        'hemveto',
         'mindphijr',
         'recoil',
         'two_jets',
@@ -217,14 +217,13 @@ def vbfhinv_regions(cfg):
         'veto_photon',
         'veto_tau',
         'veto_b',
-        'dpfcalo'
     ]
 
     regions = {}
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_vbf'] = ['trig_met'] + common_cuts
+    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr']
 
     # For sync mode
     if cfg.RUN.SYNC:
@@ -245,28 +244,29 @@ def vbfhinv_regions(cfg):
         ]
 
     # Dimuon CR
-    cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'veto_ele', 'dimuon_charge'] + common_cuts[1:]
+    cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'veto_ele', 'dimuon_charge'] + common_cuts[1:] + ['dpfcalo_cr']
+
     cr_2m_cuts.remove('veto_muo')
 
     regions['cr_2m_vbf'] = cr_2m_cuts
 
     # Single muon CR
-    cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:]
+    cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']
     cr_1m_cuts.remove('veto_muo')
     regions['cr_1m_vbf'] = cr_1m_cuts 
 
     # Dielectron CR
-    cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'veto_muo', 'dielectron_charge'] + common_cuts[2:]
+    cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'veto_muo', 'dielectron_charge'] + common_cuts[2:] + ['dpfcalo_cr']
     # cr_2e_cuts.remove('veto_ele')
     regions['cr_2e_vbf'] = cr_2e_cuts 
 
     # Single electron CR
-    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:]
+    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:] + ['dpfcalo_cr']
     # cr_1e_cuts.remove('veto_ele')
     regions['cr_1e_vbf'] =  cr_1e_cuts
 
     # Photon CR
-    cr_g_cuts = ['trig_photon', 'one_photon', 'at_least_one_tight_photon','photon_pt'] + common_cuts
+    cr_g_cuts = ['trig_photon', 'one_photon', 'at_least_one_tight_photon','photon_pt'] + common_cuts + ['dpfcalo_cr']
     cr_g_cuts.remove('veto_photon')
 
     regions['cr_g_vbf'] = cr_g_cuts
