@@ -240,6 +240,14 @@ G1Jet_Pt-650ToInf-amcatnlo_2016:
   gen: 0.2939
 G1Jet_Pt-650ToInf-amcatnlo_ext1_2016:
   gen: 0.2939
+GJets_1j_Gpt-100To250_5f_NLO-amcatnlo_2017:
+  gen: 1.183e+03
+GJets_1j_Gpt-250To400_5f_NLO-amcatnlo_2017:
+  gen: 2.609e+01
+GJets_1j_Gpt-400To650_5f_NLO-amcatnlo_2017:
+  gen: 3.148e+00
+GJets_1j_Gpt-650ToInf_5f_NLO-amcatnlo_2017:
+  gen: 2.887e-01
 GJets_DR-0p4_HT-100To200-MLM_2016:
   gen: 5386.0
 GJets_DR-0p4_HT-100To200-MLM_2018:
