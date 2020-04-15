@@ -9,6 +9,7 @@ WJetsToQQ*qc19*
 
 # Z NLO
 Z*JetsToNuNu_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
+Z*JetsToNuNU_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
 DY*JetsToLL_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
 
 # Z LO
