@@ -19,6 +19,7 @@ def vbfhinv_accumulator(cfg, variations):
     dataset_ax = Cat("dataset", "Primary dataset")
     region_ax = Cat("region", "Selection region")
     type_ax = Cat("type", "Type")
+    met_bin_ax = Cat("metbin", "MET range for the bin")
 
     vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 100, 0, 2000)
 
@@ -101,6 +102,7 @@ def vbfhinv_accumulator(cfg, variations):
 
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_inc"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["met_ratio"] = Hist("Counts", dataset_ax, region_ax, ratio_ax, met_bin_ax)
     
     items["met_jer"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_jer_inc"] = Hist("Counts", dataset_ax, region_ax, met_ax)
@@ -335,4 +337,16 @@ def vbfhinv_regions(cfg, variations):
 
     return regions
 
+def get_met_ratios(varied_met_pt, nominal_met_pt, met_bins):
+    '''Calculate MET ratios: Varied MET pt / Nominal MET pt for different MET bins.'''
+    met_ratio = varied_met_pt / nominal_met_pt - 1 
+    met_ratio_dict = {}
+    for idx in range(len(met_bins)-1):
+        start, end = met_bins[idx:idx+2]
+        mask = (nominal_met_pt >= start) & (nominal_met_pt < end)
+        tag = f'{start}To{end}'
+        met_ratio_dict[tag] = met_ratio[mask]
 
+    pprint(met_ratio_dict)
+
+    return met_ratio_dict

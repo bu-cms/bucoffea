@@ -45,7 +45,8 @@ from bucoffea.monojet.definitions import (
                                           )
 from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,
-                                           vbfhinv_regions
+                                           vbfhinv_regions,
+                                           get_met_ratios
                                          )
 
 from pprint import pprint
@@ -679,7 +680,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
                 ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
                 ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
-
+                
             # Dielectron
             if region in ['cr_2e_vbf']:
                 w_diel = weight_shape(dielectrons.pt[mask], rweight[mask])
@@ -703,6 +704,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 #ezfill('photon_eta_phi',          eta=photons[leadphoton_index].eta[mask].flatten(), phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], rweight[mask])
+        
+            # Look at varied / nominal MET pt for different nominal MET pt bins
+            if re.match('cr_(1e|2e|1m|2m)_vbf.*', region) and var != '':
+                met_bins = np.arange(100,350,50)
+                met_ratio_dict = get_met_ratios(met_pt[mask], met_pt_jer[mask], met_bins)
+                for tag, ratio in met_ratio_dict.items():
+                    ezfill('met_ratio', ratio=ratio, metbin=tag)
 
             # Tau
             if 'no_veto' in region:
