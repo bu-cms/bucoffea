@@ -30,12 +30,6 @@ G*Jet_Pt-*_Tune*_13TeV-amcatnlo-pythia8
 # TT
 TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8
 TTJets_TuneCP5_13TeV-madgraphMLM-pythia8
-TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8
-TTToHadronic_TuneCP5_PSweights_13TeV-powheg-pythia8
-TTTo2L2Nu_TuneCP5_PSweights_13TeV-powheg-pythia8
-TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8
-TTToHadronic_TuneCP5_13TeV-powheg-pythia8
-TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8
 TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 
 # ST
@@ -46,6 +40,8 @@ ST_s-channel_4f_leptonDecays_Tune*_13TeV-*-pythia8
 ST_s-channel_antitop_leptonDecays_13TeV-PSweights_powheg-pythia
 ST_s-channel_top_leptonDecays_13TeV-PSweights_powheg-pythia
 
+ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8
+ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8
 ST_t-channel_top_4f_inclusiveDecays_Tune*_13TeV-powhegV2-madspin-pythia8
 ST_t-channel_antitop_4f_inclusiveDecays_Tune*_13TeV-powhegV2-madspin-pythia8
 ST_tW_top_5f_inclusiveDecays_Tune*_13TeV-powheg-pythia8
