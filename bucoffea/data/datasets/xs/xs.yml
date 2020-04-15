@@ -1,5 +1,7 @@
 AJJ_EWK_amcatnlo_2017:
   gen: 6.096
+AJJ_EWK_amcatnlo_2018:
+  gen: 6.096
 DY1JetsToLL_M-50-MLM_2017:
   gen: 878.6
 DY1JetsToLL_M-50-MLM_2018:
@@ -132,6 +134,8 @@ DYJetsToLL_M-50_HT-400to600-MLM_new_pmx_2017:
   gen: 7.035
 DYJetsToLL_M-50_HT-400to600_PSweights-MLM_ext2_2018:
   gen: 7.005
+DYJetsToLL_M-50_HT-40to70-MLM_2017:
+  gen: 313.3
 DYJetsToLL_M-50_HT-600to800-MLM_2016:
   gen: 1.357
 DYJetsToLL_M-50_HT-600to800-MLM_2017:
@@ -314,12 +318,20 @@ GJets_HT-600ToInf-MLM_ext1_2018:
   gen: 85.34
 GJets_Mjj-500_SM_5f_EWK-mg_2017:
   gen: 4.937
+GJets_Mjj-500_SM_5f_EWK-mg_2018:
+  gen: 4.953
 GJets_Mjj-500_SM_5f_INTERFERENCE-mg_2017:
   gen: 0.6215
+GJets_Mjj-500_SM_5f_INTERFERENCE-mg_2018:
+  gen: 0.6336
 GJets_SM_5f_EWK-mg_2017:
   gen: 32.91
+GJets_SM_5f_EWK-mg_2018:
+  gen: 32.8
 GJets_SM_5f_EWK-mg_ext1_2017:
   gen: 32.91
+GJets_SM_5f_INTERFERENCE-mg_2018:
+  gen: 20.56
 GluGlu_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 21.46
   nnnlo: 4.858E+01
@@ -461,9 +473,13 @@ ST_s-channel_top_leptonDecays-PSweights_pow-pythia_2017:
 ST_s-channel_top_leptonDecays-PSweights_pow-pythia_2018:
   gen: 5.756
   nnlo: 0.6756276131639999
+ST_t-channel_antitop_4f_InclusiveDecays-pow-madspin_2018:
+  gen: 69.09
 ST_t-channel_antitop_4f_inclusiveDecays-powV2-madspin_2017:
   gen: 67.91
   nnlo: 83.0066
+ST_t-channel_top_4f_InclusiveDecays-pow-madspin_2018:
+  gen: 115.3
 ST_t-channel_top_4f_inclusiveDecays-powV2-madspin_2017:
   gen: 113.3
   nnlo: 137.4581
