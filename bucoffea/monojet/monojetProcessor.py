@@ -367,6 +367,14 @@ class monojetProcessor(processor.ProcessorABC):
 
         veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=True)
         for region, cuts in regions.items():
+
+            if re.match('sr_.*', region):
+                recoil_pt = met_pt
+                recoil_phi = met_phi
+            else:
+                recoil_pt = df['recoil_pt']
+                recoil_phi = df['recoil_phi']
+
             exclude = [None]
             region_weights = copy.deepcopy(weights)
 
@@ -379,7 +387,7 @@ class monojetProcessor(processor.ProcessorABC):
                     trigger_weight[np.isnan(trigger_weight)] = 1
                     region_weights.add('trigger', trigger_weight)
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
-                    region_weights.add('trigger_met', evaluator["trigger_met"](df['recoil_pt']))
+                    region_weights.add('trigger_met', evaluator["trigger_met"](recoil_pt))
                 elif re.match(r'cr_g.*', region):
                     photon_trigger_sf(region_weights, photons, df)
 
@@ -395,6 +403,7 @@ class monojetProcessor(processor.ProcessorABC):
                             "ele_id_loose",
                             "tau_id"
                         ]
+                    region_weights.add("vetoweight", veto_weights.partial_weight(include=["nominal"]))
 
             if not df['is_data']:
                 genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
@@ -549,13 +558,13 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('met',                met=met_pt[mask],            weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('met_phi',            phi=met_phi[mask],            weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],      weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('recoil_nopog',    recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(include=['pileup','theory','gen','prefire'])[mask])
-            ezfill('recoil_nopref',    recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=['prefire']+exclude)[mask])
-            ezfill('recoil_nopu',    recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
-            ezfill('recoil_notrg',    recoil=df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=['trigger']+exclude)[mask])
-            ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/df["recoil_pt"][mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
+            ezfill('recoil',             recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask] )
+            ezfill('recoil_phi',         phi=recoil_phi[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask] )
+            ezfill('recoil_nopog',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(include=['pileup','theory','gen','prefire'])[mask])
+            ezfill('recoil_nopref',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['prefire']+exclude)[mask])
+            ezfill('recoil_nopu',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
+            ezfill('recoil_notrg',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['trigger']+exclude)[mask])
+            ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
 
@@ -563,8 +572,8 @@ class monojetProcessor(processor.ProcessorABC):
                 for variation in veto_weights._weights.keys():
                     ezfill(
                             "recoil_veto_weight",
-                            recoil=met_pt[mask],
-                            weight=region_weights.partial_weight(exclude=exclude)[mask]*veto_weights.partial_weight(include=[variation])[mask],
+                            recoil=recoil_pt[mask],
+                            weight=region_weights.partial_weight(exclude=exclude+["vetoweight"])[mask]*veto_weights.partial_weight(include=[variation])[mask],
                             variation=variation
                             )
 
@@ -574,7 +583,7 @@ class monojetProcessor(processor.ProcessorABC):
                 output['recoil'].fill(
                                     dataset=data_driven_qcd_dataset(dataset),
                                     region=region,
-                                    recoil=df["recoil_pt"][mask],
+                                    recoil=recoil_pt[mask],
                                     weight=region_weights.partial_weight(exclude=exclude)[mask] * w_imp
                                 )
 
