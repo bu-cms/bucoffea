@@ -21,7 +21,7 @@ def datasets(year):
                     'cr_2e_j' : f'EGamma_{year}',
                     'cr_g_j' : f'EGamma_{year}',
                     # 'sr_j' : f'MET_{year}',
-                    'sr_j' : f'nomatch',
+                    'sr_j_no_veto_all' : f'nomatch',
                 }
     tmp = {}
     for k, v in list(data.items()):
@@ -38,7 +38,7 @@ def datasets(year):
             'cr_2m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_2e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
-            'sr_j' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
+            'sr_j_no_veto_all' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|W.*HT.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
             }
     for key in list(mc.keys()):
         new_key = key.replace('_j','_v')
@@ -113,7 +113,7 @@ def legacy_limit_input_monojet(acc, outdir='./output'):
         signal = re.compile(f'(GluGlu|WH|ZH|ggZH|VBF).*(I|i)inv.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_monojet_{year}.root'))
         data, mc = datasets(year)
-        for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j','sr_j']:
+        for region in ['cr_2m_j','cr_1m_j','cr_2e_j','cr_1e_j','cr_g_j','sr_j_no_veto_all']:
             print(f'Region {region}')
             # Rebin
             h = copy.deepcopy(acc[distribution])
