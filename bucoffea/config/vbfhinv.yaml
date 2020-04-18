@@ -156,7 +156,7 @@ default:
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
     qcd_nlo_g_2017_2d: # 2D QCD k factor for QCD photon
       histogram: 2d_gjets_vbf
-      file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
+      file: data/sf/theory/vbf_photon_kfac_simple.root
     unc_zoverw_nlo_muf_down:
       histogram: z_over_w_facScaleDown 
       file: data/sf/theory/unc/zoverw_scale_unc.root

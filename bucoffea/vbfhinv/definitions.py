@@ -74,6 +74,9 @@ def vbfhinv_accumulator(cfg):
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
+
+    items["gen_vpt"] = Hist("Counts", dataset_ax, vpt_ax, region_ax)
+    items["gen_mjj"] = Hist("Counts", dataset_ax, mjj_ax, region_ax)
     items["lhe_njets"] = Hist("Counts", dataset_ax, multiplicity_ax)
     items["lhe_ht"] = Hist("Counts", dataset_ax, ht_ax)
     items["lhe_htinc"] = Hist("Counts", dataset_ax, ht_ax)
@@ -95,7 +98,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
-    
+
     items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_ptraw1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta1"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -253,12 +256,12 @@ def vbfhinv_regions(cfg):
     # Single muon CR
     cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']
     cr_1m_cuts.remove('veto_muo')
-    regions['cr_1m_vbf'] = cr_1m_cuts 
+    regions['cr_1m_vbf'] = cr_1m_cuts
 
     # Dielectron CR
     cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'veto_muo', 'dielectron_charge'] + common_cuts[2:] + ['dpfcalo_cr']
     # cr_2e_cuts.remove('veto_ele')
-    regions['cr_2e_vbf'] = cr_2e_cuts 
+    regions['cr_2e_vbf'] = cr_2e_cuts
 
     # Single electron CR
     cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:] + ['dpfcalo_cr']
@@ -309,7 +312,7 @@ def vbfhinv_regions(cfg):
         # Trigger studies
         # num = numerator, den = denominator
         # Single Mu region: Remove mjj cut, add SingleMu trigger, toggle MET trigger
-        tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts) 
+        tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts)
         tr_1m_num_cuts.remove('mjj')
         tr_1m_num_cuts.append('trig_mu')
         tr_1m_num_cuts.append('mu_pt_trig_safe')
@@ -326,7 +329,7 @@ def vbfhinv_regions(cfg):
         regions['tr_1m_den_one_jet_forward_one_jet_central'] = tr_1m_den_cuts + ['one_jet_forward_one_jet_central']
 
         # Double Mu region: Remove mjj cut, toggle MET trigger
-        tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts) 
+        tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts)
         tr_2m_num_cuts.remove('mjj')
         tr_2m_num_cuts.append('trig_mu')
         tr_2m_num_cuts.append('mu_pt_trig_safe')
@@ -373,7 +376,7 @@ def vbfhinv_regions(cfg):
         regions['tr_2e_den_two_central_jets'] = tr_2e_den_cuts + ['two_central_jets']
         regions['tr_2e_den_two_forward_jets'] = tr_2e_den_cuts + ['two_forward_jets']
         regions['tr_2e_den_one_jet_forward_one_jet_central'] = tr_2e_den_cuts + ['one_jet_forward_one_jet_central']
-        
+
 
     return regions
 
