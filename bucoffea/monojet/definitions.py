@@ -28,8 +28,8 @@ def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
     region_ax = Cat("region", "Selection region")
     type_ax = Cat("type", "Type")
+    variation_ax = Cat("variation","Variation")
     wppass_ax = Bin("wppass", "WP Pass",2,-0.5,1.5)
-
     vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 50, 0, 2000)
 
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
@@ -80,6 +80,7 @@ def monojet_accumulator(cfg):
     items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_veto_weight"] = Hist("Counts", dataset_ax, region_ax, recoil_ax,variation_ax)
     items["recoil_nopog"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_notrg"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
@@ -516,6 +517,47 @@ def monojet_regions(cfg):
                 noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
                 regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
 
+    # Veto weight region
+    tmp = {}
+    for region in regions.keys():
+        if not region.startswith("sr_"):
+            continue
+
+        new_region = f"{region}_no_veto_ele"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].remove("veto_ele")
+        tmp[new_region].remove("mindphijr")
+        tmp[new_region].remove("recoil")
+        tmp[new_region].append("met_sr")
+        tmp[new_region].append("mindphijm")
+
+        new_region = f"{region}_no_veto_tau"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].remove("veto_tau")
+        tmp[new_region].remove("mindphijr")
+        tmp[new_region].remove("recoil")
+        tmp[new_region].append("met_sr")
+        tmp[new_region].append("mindphijm")
+
+        new_region = f"{region}_no_veto_muon"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].remove("veto_muo")
+        tmp[new_region].remove("mindphijr")
+        tmp[new_region].remove("recoil")
+        tmp[new_region].append("met_sr")
+        tmp[new_region].append("mindphijm")
+
+        new_region = f"{region}_no_veto_all"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].remove("veto_muo")
+        tmp[new_region].remove("veto_tau")
+        tmp[new_region].remove("veto_ele")
+        tmp[new_region].remove("mindphijr")
+        tmp[new_region].remove("recoil")
+        tmp[new_region].append("met_sr")
+        tmp[new_region].append("mindphijm")
+
+    regions.update(tmp)
 
     if cfg.RUN.TRIGGER_STUDY:
         # Trigger studies

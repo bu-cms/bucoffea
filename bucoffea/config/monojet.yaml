@@ -116,7 +116,7 @@ default:
       photon:
         clean: true
         dr: 0.4
-        
+
   mitigation:
     hem: True
 
@@ -162,7 +162,7 @@ default:
     sync: False
     save:
       passing: False
-      prescale: 1  
+      prescale: 1
       tree: False
     kinematics:
       save: False
@@ -275,6 +275,17 @@ era2016:
     muon_iso_loose:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
       file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
+
+    tau_id:
+      histogram: tau_sf_VLoose_2016_cent
+      file: data/sf/tau/tau_sf.root
+    tau_id_up:
+      histogram: tau_sf_VLoose_2016_up
+      file: data/sf/tau/tau_sf.root
+    tau_id_dn:
+      histogram: tau_sf_VLoose_2016_down
+      file: data/sf/tau/tau_sf.root
+
     pileup:
       histogram: "sf2017_nominal"
       file: "data/sf/pileup/pileup.root"
@@ -399,29 +410,39 @@ era2017:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
       file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
 
+    tau_id:
+      histogram: tau_sf_VLoose_2017_cent
+      file: data/sf/tau/tau_sf.root
+    tau_id_up:
+      histogram: tau_sf_VLoose_2017_up
+      file: data/sf/tau/tau_sf.root
+    tau_id_dn:
+      histogram: tau_sf_VLoose_2017_down
+      file: data/sf/tau/tau_sf.root
+
     wtag_loose: #https://www.dropbox.com/s/z1rnuaxrekmrvlu/DeepAK8_Top_W_SFs_V2_Training_FINAL_w_Tables.pdf?dl=0
         histogram: WTag_2017_loose_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
-    wtag_loosemd: 
+    wtag_loosemd:
         histogram: WTag_2017_loosemd_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
-    wtag_tight: 
+    wtag_tight:
         histogram: WTag_2017_tight_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
-    wtag_tightmd: 
+    wtag_tightmd:
         histogram: WTag_2017_tightmd_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
 
-    wtag_mistag_loose: 
+    wtag_mistag_loose:
         histogram: Wmistag_2017_loose_ak8_pt
         file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_loosemd: 
+    wtag_mistag_loosemd:
         histogram: Wmistag_2017_loosemd_ak8_pt
         file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_tight: 
+    wtag_mistag_tight:
         histogram: Wmistag_2017_tight_ak8_pt
         file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_tightmd: 
+    wtag_mistag_tightmd:
         histogram: Wmistag_2017_tightmd_ak8_pt
         file: data/sf/ak8/wtag_mistag_SF.root
 
@@ -552,29 +573,39 @@ era2018:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_syst
       file: data/sf/muon/2018_RunABCD_SF_ISO.root
 
+    tau_id:
+      histogram: tau_sf_VLoose_2018_cent
+      file: data/sf/tau/tau_sf.root
+    tau_id_up:
+      histogram: tau_sf_VLoose_2018_up
+      file: data/sf/tau/tau_sf.root
+    tau_id_dn:
+      histogram: tau_sf_VLoose_2018_down
+      file: data/sf/tau/tau_sf.root
+
     wtag_loose: #https://www.dropbox.com/s/z1rnuaxrekmrvlu/DeepAK8_Top_W_SFs_V2_Training_FINAL_w_Tables.pdf?dl=0
         histogram: WTag_2018_loose_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
-    wtag_loosemd: 
+    wtag_loosemd:
         histogram: WTag_2018_loosemd_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
-    wtag_tight: 
+    wtag_tight:
         histogram: WTag_2018_tight_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
-    wtag_tightmd: 
+    wtag_tightmd:
         histogram: WTag_2018_tightmd_ak8_pt
         file: data/sf/ak8/wtag_eff_SF.root
 
-    wtag_mistag_loose: 
+    wtag_mistag_loose:
         histogram: Wmistag_2018_loose_ak8_pt
         file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_loosemd: 
+    wtag_mistag_loosemd:
         histogram: Wmistag_2018_loosemd_ak8_pt
         file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_tight: 
+    wtag_mistag_tight:
         histogram: Wmistag_2018_tight_ak8_pt
         file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_tightmd: 
+    wtag_mistag_tightmd:
         histogram: Wmistag_2018_tightmd_ak8_pt
         file: data/sf/ak8/wtag_mistag_SF.root
 

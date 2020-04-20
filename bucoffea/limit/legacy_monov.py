@@ -36,7 +36,7 @@ def legacy_limit_input_monov(acc, outdir='./output'):
             signal = re.compile(f'.*(Hinv|HToInvisible).*{year}')
             f = uproot.recreate(pjoin(outdir, f'legacy_limit_monov_{wp}_{year}.root'))
             data, mc = datasets(year)
-            for region in ['cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','sr_v']:
+            for region in ['cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','sr_v_no_veto_all']:
                 if wp == 'tau21':
                     monov_region_name = region
                 else:
