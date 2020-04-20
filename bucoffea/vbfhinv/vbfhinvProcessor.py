@@ -173,15 +173,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Check out setup_candidates for filtering details
         met_pt, met_phi, ak4, bjets, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
-        # Filter out hem candidates
-        if df["year"] == 2018:
-            ak4       = ak4[~candidates_in_hem(ak4)]
-            bjets     = bjets[~candidates_in_hem(bjets)]
-            muons     = muons[~candidates_in_hem(muons)]
-            electrons = electrons[~candidates_in_hem(electrons)]
-            taus      = taus[~candidates_in_hem(taus)]
-            photons   = photons[~candidates_in_hem(photons)]
-
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]
         bjets = bjets[bjets.puid]
@@ -277,8 +268,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         if df['year'] == 2018:
             selection.add("metphihemextveto", ((-1.8 > met_phi)|(met_phi>-0.6)))
+            selection.add('no_el_in_hem', electrons[candidates_in_hem(electrons)].counts==0)
         else:
             selection.add("metphihemextveto", pass_all)
+            selection.add('no_el_in_hem', pass_all)
 
         selection.add('two_jets', diak4.counts>0)
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
@@ -318,6 +311,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('one_electron', electrons.counts==1)
         selection.add('two_electrons', electrons.counts==2)
         selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
+        
 
         selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
                                         & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
