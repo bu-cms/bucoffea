@@ -233,7 +233,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
             gen_v_pt = df['gen_v_pt_combined']
         elif df['is_lo_g']:
             gen = setup_gen_candidates(df)
-            gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
+            all_gen_photons = gen[(gen.pdg==22)]
+            prompt_mask = (all_gen_photons.status==1)&(all_gen_photons.flag&1==1)
+            stat1_mask = (all_gen_photons.status==1)
+            gen_photons = all_gen_photons[prompt_mask | (~prompt_mask.any()) & stat1_mask ]
+            gen_photon = gen_photons[gen_photons.pt.argmax()]
+
+            gen_v_pt = gen_photon.pt.max()
 
         # Generator-level leading dijet mass
         if df['has_lhe_v_pt']:
@@ -623,6 +629,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
 
 
+            if gen_v_pt is not None:
+                ezfill('gen_vpt', vpt=gen_v_pt[mask], weight=df['Generator_weight'][mask])
+                ezfill('gen_mjj', mjj=df['mjj_gen'][mask], weight=df['Generator_weight'][mask])
+
 
             # Photon CR data-driven QCD estimate
             if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
@@ -631,6 +641,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
                                     dataset=data_driven_qcd_dataset(dataset),
                                     region=region,
                                     mjj=df["mjj"][mask],
+                                    weight=rweight[mask] * w_imp
+                                )
+                output['recoil'].fill(
+                                    dataset=data_driven_qcd_dataset(dataset),
+                                    region=region,
+                                    recoil=df["recoil_pt"][mask],
                                     weight=rweight[mask] * w_imp
                                 )
 
