@@ -261,7 +261,7 @@ def vbfhinv_regions(cfg):
     regions['cr_2e_vbf'] = cr_2e_cuts 
 
     # Single electron CR
-    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:] + ['dpfcalo_cr']
+    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:] + ['dpfcalo_cr','no_el_in_hem']
     # cr_1e_cuts.remove('veto_ele')
     regions['cr_1e_vbf'] =  cr_1e_cuts
 
