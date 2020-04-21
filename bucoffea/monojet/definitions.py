@@ -359,7 +359,7 @@ def setup_candidates(df, cfg):
         chf=df['Jet_chHEF'],
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
         nconst=df['Jet_nConstituents'],
-        hadflav=df['Jet_hadronFlavour']
+        hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour']
     )
     # Before cleaning, apply HEM veto
     hem_ak4 = ak4[ (ak4.pt>30) &
