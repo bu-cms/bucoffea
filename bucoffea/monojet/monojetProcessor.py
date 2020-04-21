@@ -548,9 +548,10 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_chf0',    frac=ak4[leadak4_index].chf[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_nhf0',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
 
-            ezfill('drelejet',    dr=df['dREleJet'][mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
-            ezfill('drmuonjet',    dr=df['dRMuonJet'][mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
-            ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask],  weight=region_weights.partial_weight(exclude=exclude)[mask])
+            rw=region_weights.partial_weight(exclude=exclude)
+            ezfill('drelejet',    dr=df['dREleJet'][mask],      weight=rw[mask])
+            ezfill('drmuonjet',    dr=df['dRMuonJet'][mask],      weight=rw[mask])
+            ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask],  weight=rw[mask])
 
             # AK8 jets
             if region=='inclusive' or region.endswith('v'):
@@ -597,24 +598,26 @@ class monojetProcessor(processor.ProcessorABC):
                     ezfill('ak8_passtightmd_mass0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.TIGHTMD, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
 
             # MET
-            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask],       weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('met',                met=met_pt[mask],            weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('met_phi',            phi=met_phi[mask],            weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('recoil',             recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('recoil_phi',         phi=recoil_phi[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask] )
-            ezfill('recoil_nopog',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(include=['pileup','theory','gen','prefire'])[mask])
-            ezfill('recoil_nopref',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['prefire']+exclude)[mask])
-            ezfill('recoil_nopu',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
-            ezfill('recoil_notrg',    recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['trigger']+exclude)[mask])
-            ezfill('recoil_hardbveto',    recoil=recoil_pt[mask&(bjets.counts==0)],      weight=region_weights.partial_weight(exclude=exclude+['bveto'])[mask&(bjets.counts==0)])
+            rw = region_weights.partial_weight(exclude=exclude)
+            ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask], weight=rw[mask])
+            ezfill('met',                met=met_pt[mask],            weight=rw[mask] )
+            ezfill('met_phi',            phi=met_phi[mask],           weight=rw[mask] )
+            ezfill('recoil',             recoil=recoil_pt[mask],      weight=rw[mask] )
+            ezfill('recoil_phi',         phi=recoil_phi[mask],        weight=rw[mask] )
+            ezfill('recoil_nopog',       recoil=recoil_pt[mask],      weight=region_weights.partial_weight(include=['pileup','theory','gen','prefire'])[mask])
+            ezfill('recoil_nopref',      recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['prefire']+exclude)[mask])
+            ezfill('recoil_nopu',        recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
+            ezfill('recoil_notrg',       recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['trigger']+exclude)[mask])
+            ezfill('recoil_hardbveto',   recoil=recoil_pt[mask&(bjets.counts==0)],      weight=region_weights.partial_weight(exclude=exclude+['bveto'])[mask&(bjets.counts==0)])
 
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
 
             if not df['is_data']:
-                ezfill('recoil_bveto_up',    recoil=recoil_pt,  weight=region_weights.partial_weight(exclude=exclude+['bveto'])*((1-bsf_variations['up']).prod())[mask])
-                ezfill('recoil_bveto_down',  recoil=recoil_pt,  weight=region_weights.partial_weight(exclude=exclude+['bveto'])*((1-bsf_variations['down']).prod())[mask])
+                rw = region_weights.partial_weight(exclude=exclude+['bveto'])
+                ezfill('recoil_bveto_up',    recoil=recoil_pt[mask],  weight=(rw*(1-bsf_variations['up']).prod())[mask])
+                ezfill('recoil_bveto_down',  recoil=recoil_pt[mask],  weight=(rw*(1-bsf_variations['down']).prod())[mask])
 
             if re.match('.*no_veto.*', region):
                 for variation in veto_weights._weights.keys():
