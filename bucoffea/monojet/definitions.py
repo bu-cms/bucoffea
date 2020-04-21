@@ -93,6 +93,7 @@ def monojet_accumulator(cfg):
     items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
 
     items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
 
@@ -344,7 +345,7 @@ def setup_candidates(df, cfg):
         puid=((df['Jet_puId']&2>0) | (df[f'Jet_pt{jes_suffix}']>50)), # medium pileup jet ID
         csvv2=df["Jet_btagCSVV2"],
         deepcsv=df['Jet_btagDeepB'],
-        # nef=df['Jet_neEmEF'],
+        nef=df['Jet_neEmEF'],
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
@@ -439,7 +440,7 @@ def monojet_regions(cfg):
     j_cuts = [
         'leadak4_pt_eta',
         'leadak4_id',
-        # 'veto_vtag'
+        'veto_vtag'
     ]
     # Test out different working point for v tagging
     # the first one is the traditional one used in 2016
@@ -503,19 +504,22 @@ def monojet_regions(cfg):
             regions[newRegionName] = copy.deepcopy(regions[region])
             regions[newRegionName].remove('leadak8_tau21')
             if wp == 'inclusive':
-                regions[newRegionName].remove('leadak8_mass')
+                if cfg.RUN.MONOVMISTAG:
+                    regions[newRegionName].remove('leadak8_mass')
 
-                # add regions: cr_2m_hasmass_inclusive_v, cr_1m_hasmass_inclusive_v, cr_2e_hasmass_inclusive_v, cr_1e_hasmass_inclusive_v
-                # these are regions with mass cut but has no tagger cut
-                hasMassRegionName = region.replace('_v', '_hasmass_'+ wp + '_v')
-                regions[hasMassRegionName] = regions[newRegionName] + ['leadak8_mass']
+                    # add regions: cr_2m_hasmass_inclusive_v, cr_1m_hasmass_inclusive_v, cr_2e_hasmass_inclusive_v, cr_1e_hasmass_inclusive_v
+                    # these are regions with mass cut but has no tagger cut
+                    hasMassRegionName = region.replace('_v', '_hasmass_'+ wp + '_v')
+                    regions[hasMassRegionName] = regions[newRegionName] + ['leadak8_mass']
 
             else:
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
             # save a copy of the v-tagged regions but not applying mistag SFs, for the sake of measuring mistag SF later
-            if wp in ['loose','tight','loosemd','tightmd']:
-                noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
-                regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
+
+            if cfg.RUN.MONOVMISTAG:
+                if wp in ['loose','tight','loosemd','tightmd']:
+                    noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
+                    regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
 
     # Veto weight region
     tmp = {}
@@ -637,7 +641,6 @@ def monojet_regions(cfg):
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_j') or '_j_' in x]
         for key in keys_to_remove:
             regions.pop(key)
-
 
     return regions
 
