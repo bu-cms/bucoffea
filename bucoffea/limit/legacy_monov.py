@@ -40,7 +40,7 @@ def legacy_limit_input_monov(acc, outdir='./output'):
                 if wp == 'tau21':
                     monov_region_name = region
                 else:
-                    monov_region_name = region.replace('_v',f'_{wp}_v')
+                    monov_region_name = region.replace('r_v',f'r_{wp}_v')
                 print(f'Region {region}')
                 # Rebin
                 h = copy.deepcopy(acc[distribution])
