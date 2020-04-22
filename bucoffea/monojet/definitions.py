@@ -202,7 +202,10 @@ def monojet_accumulator(cfg, variations):
     items['kinematics'] = processor.defaultdict_accumulator(list)
 
 
-    items['tree'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_float)
+    items['tree_1e'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_float)
+    items['tree_1m'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_float)
+    items['tree_2e'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_float)
+    items['tree_2m'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_float)
 
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
     items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
