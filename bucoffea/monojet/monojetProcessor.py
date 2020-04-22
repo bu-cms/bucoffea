@@ -493,9 +493,12 @@ class monojetProcessor(processor.ProcessorABC):
                             break
 
                     output[tree][region]["event"] +=  processor.column_accumulator(df["event"][mask])
-                    output[tree][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
-                    output[tree][region]["recoil"] +=  processor.column_accumulator(df["recoil_pt"][mask])
-                    output[tree][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
+                    # output[tree][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
+                    output[tree][region]["met"] += processor.column_accumulator(getattr(met, f'pt{var}')[mask].flatten())
+                    output[tree][region]["met_phi"] += processor.column_accumulator(getattr(met, f'phi{var}')[mask].flatten())
+                    output[tree][region]["recoil"] +=  processor.column_accumulator(df[f"recoil_pt{var}"][mask])
+                    output[tree][region]["recoil_phi"] +=  processor.column_accumulator(df[f"recoil_phi{var}"][mask])
+                    # output[tree][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
     
                     # Leading jet information
                     output[tree][region]['ak4_pt0'] += processor.column_accumulator(ak4_pt0[mask].flatten())
@@ -512,6 +515,10 @@ class monojetProcessor(processor.ProcessorABC):
                             output[tree][region]['muon_eta1'] += processor.column_accumulator(muons[~leadmuon_index].eta[mask].flatten())
                             output[tree][region]['muon_phi1'] += processor.column_accumulator(muons[~leadmuon_index].phi[mask].flatten())
     
+                            output[tree][region]['dimuon_pt'] += processor.column_accumulator(dimuons.pt[mask].flatten())
+                            output[tree][region]['dimuon_eta'] += processor.column_accumulator(dimuons.eta[mask].flatten())
+                            output[tree][region]['dimuon_mass'] += processor.column_accumulator(dimuons.mass[mask].flatten())
+
                     if 'cr_1e_j' in region or 'cr_2e_j' in region:
                         output[tree][region]['electron_pt0'] += processor.column_accumulator(electrons[leadelectron_index].pt[mask].flatten())
                         output[tree][region]['electron_eta0'] += processor.column_accumulator(electrons[leadelectron_index].eta[mask].flatten())
@@ -521,6 +528,10 @@ class monojetProcessor(processor.ProcessorABC):
                             output[tree][region]['electron_pt1'] += processor.column_accumulator(electrons[~leadelectron_index].pt[mask].flatten())
                             output[tree][region]['electron_eta1'] += processor.column_accumulator(electrons[~leadelectron_index].eta[mask].flatten())
                             output[tree][region]['electron_phi1'] += processor.column_accumulator(electrons[~leadelectron_index].phi[mask].flatten())
+
+                            output[tree][region]['dielectron_pt'] += processor.column_accumulator(dielectrons.pt[mask].flatten())
+                            output[tree][region]['dielectron_eta'] += processor.column_accumulator(dielectrons.eta[mask].flatten())
+                            output[tree][region]['dielectron_mass'] += processor.column_accumulator(dielectrons.mass[mask].flatten())
 
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
