@@ -52,7 +52,9 @@ def do_run(args):
     else:
         fileset = files_from_eos(regex=args.dataset)
 
-    print(fileset)
+    ndatasets = len(fileset)
+    nfiles = sum([len(x) for x in fileset.values()])
+    print(f"Running over {ndatasets} datasets with a total of {nfiles} files.")
     for dataset, files in fileset.items():
         output = run_uproot_job_nanoaod({dataset:files},
                                     treename=args.tree,
