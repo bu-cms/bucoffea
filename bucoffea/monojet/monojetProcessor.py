@@ -420,6 +420,10 @@ class monojetProcessor(processor.ProcessorABC):
             ak4 = vmap.get_ak4(var) 
             ak8 = vmap.get_ak8(var) 
             met = vmap.get_met(var)
+            # Get jet pts
+            ak4_pt = getattr(ak4, f'pt{var}')
+            leadak4_index = ak4_pt.argmax()
+            ak4_pt0 = ak4_pt[leadak4_index]
 
             region_weights = copy.deepcopy(weights)
             if not df['is_data']:
@@ -463,21 +467,61 @@ class monojetProcessor(processor.ProcessorABC):
 
             mask = selection.all(*cuts)
 
-
+            # Save information to an output nested dictionary for electron and muon CR
             if cfg.RUN.SAVE.TREE:
+                if re.match('cr_\d(e|m).*', region):
+                    def fill_tree(variable, values):
+                        treeacc = processor.column_accumulator(values)
+                        name = f'tree_{region}_{variable}'
+                        if dataset in output[name].keys():
+                            output[name][dataset] += treeacc
+                        else:
+                            output[name][dataset] = treeacc
+    
+                    # Fill different trees for different regions
+                    trees = {
+                        'cr_1m_.*' : 'tree_1m',
+                        'cr_1e_.*' : 'tree_1e',
+                        'cr_2m_.*' : 'tree_2m',
+                        'cr_2e_.*' : 'tree_2e',
+                    }
 
-                def fill_tree(variable, values):
-                    treeacc = processor.column_accumulator(values)
-                    name = f'tree_{region}_{variable}'
-                    if dataset in output[name].keys():
-                        output[name][dataset] += treeacc
-                    else:
-                        output[name][dataset] = treeacc
-                if region in ['cr_1e_j']:
-                    output['tree'][region]["event"] +=  processor.column_accumulator(df["event"][mask])
-                    output['tree'][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
-                    # output['tree'][region]["recoil"] +=  processor.column_accumulator(df["recoil_pt"][mask])
-                    output['tree'][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
+                    # Pick correct tree for relevant region
+                    for region_name, tree_name in trees.items():
+                        if re.match(region_name, region):
+                            tree = tree_name
+                            break
+
+                    output[tree][region]["event"] +=  processor.column_accumulator(df["event"][mask])
+                    output[tree][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
+                    output[tree][region]["recoil"] +=  processor.column_accumulator(df["recoil_pt"][mask])
+                    output[tree][region]["theory"] +=  processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
+    
+                    # Leading jet information
+                    output[tree][region]['ak4_pt0'] += processor.column_accumulator(ak4_pt0[mask].flatten())
+                    output[tree][region]['ak4_eta0'] += processor.column_accumulator(ak4[leadak4_index].eta[mask].flatten())
+                    output[tree][region]['ak4_phi0'] += processor.column_accumulator(ak4[leadak4_index].phi[mask].flatten())
+    
+                    if 'cr_1m_j' in region or 'cr_2m_j' in region:
+                        output[tree][region]['muon_pt0'] += processor.column_accumulator(muons[leadmuon_index].pt[mask].flatten())
+                        output[tree][region]['muon_eta0'] += processor.column_accumulator(muons[leadmuon_index].eta[mask].flatten())
+                        output[tree][region]['muon_phi0'] += processor.column_accumulator(muons[leadmuon_index].phi[mask].flatten())
+                        
+                        if 'cr_2m_j' in region:
+                            output[tree][region]['muon_pt1'] += processor.column_accumulator(muons[~leadmuon_index].pt[mask].flatten())
+                            output[tree][region]['muon_eta1'] += processor.column_accumulator(muons[~leadmuon_index].eta[mask].flatten())
+                            output[tree][region]['muon_phi1'] += processor.column_accumulator(muons[~leadmuon_index].phi[mask].flatten())
+    
+                    if 'cr_1e_j' in region or 'cr_2e_j' in region:
+                        output[tree][region]['electron_pt0'] += processor.column_accumulator(electrons[leadelectron_index].pt[mask].flatten())
+                        output[tree][region]['electron_eta0'] += processor.column_accumulator(electrons[leadelectron_index].eta[mask].flatten())
+                        output[tree][region]['electron_phi0'] += processor.column_accumulator(electrons[leadelectron_index].phi[mask].flatten())
+                        
+                        if 'cr_2e_j' in region:
+                            output[tree][region]['electron_pt1'] += processor.column_accumulator(electrons[~leadelectron_index].pt[mask].flatten())
+                            output[tree][region]['electron_eta1'] += processor.column_accumulator(electrons[~leadelectron_index].eta[mask].flatten())
+                            output[tree][region]['electron_phi1'] += processor.column_accumulator(electrons[~leadelectron_index].phi[mask].flatten())
+
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 # Save only every Nth event
@@ -518,11 +562,6 @@ class monojetProcessor(processor.ProcessorABC):
             # All ak4
             # This is a workaround to create a weight array of the right dimension
             w_alljets = weight_shape(ak4[mask].eta, region_weights.weight()[mask])
-
-            # Get jet pts
-            ak4_pt = getattr(ak4, f'pt{var}')
-            leadak4_index = ak4_pt.argmax()
-            ak4_pt0 = ak4_pt[leadak4_index]
 
             ezfill('ak4_eta',     jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_phi',     jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
