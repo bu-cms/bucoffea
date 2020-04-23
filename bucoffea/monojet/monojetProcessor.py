@@ -493,7 +493,9 @@ class monojetProcessor(processor.ProcessorABC):
                             break
 
                     output[tree][region]["event"] +=  processor.column_accumulator(df["event"][mask])
-                    # output[tree][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
+                    output[tree][region]["run"] +=  processor.column_accumulator(df["run"][mask])
+                    output[tree][region]["luminosityBlock"] +=  processor.column_accumulator(df["luminosityBlock"][mask])
+                    output[tree][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
                     output[tree][region]["met"] += processor.column_accumulator(getattr(met, f'pt{var}')[mask].flatten())
                     output[tree][region]["met_phi"] += processor.column_accumulator(getattr(met, f'phi{var}')[mask].flatten())
                     output[tree][region]["recoil"] +=  processor.column_accumulator(df[f"recoil_pt{var}"][mask])
