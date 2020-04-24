@@ -412,8 +412,7 @@ class monojetProcessor(processor.ProcessorABC):
                 matched_leadak8 = leadak8[leadak8_matched_mask]
                 unmatched_leadak8 = leadak8[~leadak8_matched_mask]
                 for wp in ['loose','loosemd','tight','tightmd']:
-                    if re.match(r'.*_{wp}_v.*', region):
-
+                    if re.match(f'.*_{wp}_v.*', region):
                         if (wp == 'tight') or ('nomistag' in region): # no mistag SF available for tight cut
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
                         else:
