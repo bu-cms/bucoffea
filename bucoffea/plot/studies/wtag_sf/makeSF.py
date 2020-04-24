@@ -5,7 +5,7 @@ outfilename = "../../../data/sf/ak8/wtag_eff_SF.root"
 #outfilename = "wtag_eff_SF_2017test.root"
 outfile = ROOT.TFile.Open(outfilename, "recreate")
 
-#ref: These numbers are read from https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3316826/DeepAK8_Top_W_SFs_V2_Training_18Feb.pdf
+#ref: These numbers are read from https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
 #loose: 5%, tight: 0.5%
 binning    = [200, 300, 400, 800]
 SFs = {}
