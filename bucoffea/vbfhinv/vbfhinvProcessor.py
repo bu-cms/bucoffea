@@ -468,7 +468,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                                   weight=rweight[mask]
                                   )
 
-            fill_mult('ak4_mult', ak4)
+            fill_mult('ak4_mult', ak4[ak4.pt>30])
             fill_mult('bjet_mult',bjets)
             fill_mult('loose_ele_mult',electrons)
             fill_mult('tight_ele_mult',electrons[df['is_tight_electron']])
