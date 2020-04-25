@@ -145,8 +145,8 @@ default:
       file: data/sf/theory/kfac_znn_filter.root
 
     qcd_nlo_g:
-      histogram: kfactor_monojet_qcd
-      file: data/sf/theory/merged_kfactors_gjets.root
+      histogram: gjets_stat1_monojet
+      file: data/sf/theory/monojet_photon_kfac_new.root
     qcd_nnlo_g:
       histogram: aj
       file: data/sf/theory/lindert_qcd_nnlo_sf.root
