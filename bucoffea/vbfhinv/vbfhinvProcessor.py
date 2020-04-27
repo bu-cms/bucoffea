@@ -453,7 +453,25 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             mask = selection.all(*cuts)
 
+            if cfg.RUN.SAVE.TREE:
+                if region in ['cr_1e_vbf','cr_1m_vbf']:
+                    output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
+                    output['tree_float16'][region]["gen_v_pt"]    +=  processor.column_accumulator(np.float16(gen_v_pt[mask]))
+                    output['tree_float16'][region]["gen_mjj"]     +=  processor.column_accumulator(np.float16(df['mjj_gen'][mask]))
+                    output['tree_float16'][region]["recoil_pt"]   +=  processor.column_accumulator(np.float16(df["recoil_pt"][mask]))
+                    output['tree_float16'][region]["recoil_phi"]  +=  processor.column_accumulator(np.float16(df["recoil_phi"][mask]))
+                    output['tree_float16'][region]["mjj"]         +=  processor.column_accumulator(np.float16(df["mjj"][mask]))
 
+                    if '_1e_' in region:
+                        output['tree_float16'][region]["leadlep_pt"]   +=  processor.column_accumulator(np.float16(electrons.pt.max()[mask]))
+                    elif '_1m_' in region:
+                        output['tree_float16'][region]["leadlep_pt"]   +=  processor.column_accumulator(np.float16(muons.pt.max()[mask]))
+
+                    for name, w in region_weights._weights.items():
+                        output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w))
+                    output['tree_float16'][region][f"weight_total"] += processor.column_accumulator(np.float16(rweight))
+
+            # Save the event numbers of events passing this selection
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 output['selected_events'][region] += list(df['event'][mask])

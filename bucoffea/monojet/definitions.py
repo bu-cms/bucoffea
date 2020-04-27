@@ -15,14 +15,26 @@ Cat = hist.Cat
 def empty_column_accumulator_int():
     return processor.column_accumulator(np.array([],dtype=np.uint64))
 
-def empty_column_accumulator_float():
+def empty_column_accumulator_int64():
+    return processor.column_accumulator(np.array([],dtype=np.int64))
+def empty_column_accumulator_float64():
     return processor.column_accumulator(np.array([],dtype=np.float64))
+def empty_column_accumulator_float32():
+    return processor.column_accumulator(np.array([],dtype=np.float32))
+def empty_column_accumulator_float16():
+    return processor.column_accumulator(np.array([],dtype=np.float16))
 
 def accu_int():
     return processor.defaultdict_accumulator(int)
 
-def defaultdict_accumulator_of_empty_column_accumulator_float():
-    return processor.defaultdict_accumulator(empty_column_accumulator_float)
+def defaultdict_accumulator_of_empty_column_accumulator_int64():
+    return processor.defaultdict_accumulator(empty_column_accumulator_int64)
+def defaultdict_accumulator_of_empty_column_accumulator_float64():
+    return processor.defaultdict_accumulator(empty_column_accumulator_float64)
+def defaultdict_accumulator_of_empty_column_accumulator_float32():
+    return processor.defaultdict_accumulator(empty_column_accumulator_float32)
+def defaultdict_accumulator_of_empty_column_accumulator_float16():
+    return processor.defaultdict_accumulator(empty_column_accumulator_float16)
 
 def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
