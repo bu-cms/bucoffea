@@ -20,7 +20,7 @@ args = parse_cli()
 inpath = args.inpath
 year = args.year
 
-region_labels = ['1m', '2m', '1e', '2e']
+region_labels = ['2m', '2e']
 
 for region_label in region_labels:
     tree_name = f'tree_{region_label}'
