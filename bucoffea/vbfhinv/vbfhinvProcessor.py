@@ -166,6 +166,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             genjets = setup_lhe_cleaned_genjets(df)
             digenjet = genjets[:,:2].distincts()
             df['mjj_gen'] = digenjet.mass.max()
+            df['mjj_gen'] = np.where(df['mjj_gen'] > 0, df['mjj_gen'], 0)
+
 
         # Candidates
         # Already pre-filtered!
@@ -468,8 +470,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         output['tree_float16'][region]["leadlep_pt"]   +=  processor.column_accumulator(np.float16(muons.pt.max()[mask]))
 
                     for name, w in region_weights._weights.items():
-                        output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w))
-                    output['tree_float16'][region][f"weight_total"] += processor.column_accumulator(np.float16(rweight))
+                        output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w[mask]))
+                    output['tree_float16'][region][f"weight_total"] += processor.column_accumulator(np.float16(rweight[mask]))
 
             # Save the event numbers of events passing this selection
             # Save the event numbers of events passing this selection
