@@ -466,8 +466,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                     if '_1e_' in region:
                         output['tree_float16'][region]["leadlep_pt"]   +=  processor.column_accumulator(np.float16(electrons.pt.max()[mask]))
+                        output['tree_float16'][region]["leadlep_eta"]   +=  processor.column_accumulator(np.float16(electrons[electrons.pt.argmax()].eta.max()[mask]))
                     elif '_1m_' in region:
                         output['tree_float16'][region]["leadlep_pt"]   +=  processor.column_accumulator(np.float16(muons.pt.max()[mask]))
+                        output['tree_float16'][region]["leadlep_eta"]   +=  processor.column_accumulator(np.float16(muons[muons.pt.argmax()].eta.max()[mask]))
 
                     for name, w in region_weights._weights.items():
                         output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w[mask]))
