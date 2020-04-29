@@ -18,8 +18,13 @@ def parse_commandline():
 def main():
 
     fileset = {
+<<<<<<< Updated upstream
         "WJetsToLNu_HT-100To200-MLM_2017" : [
             "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/19Feb20/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-100To200-MLM_2017/200219_214925/0000/tree_1.root"
+=======
+        "GJets_HT-100To200-MLM_2017" : [
+            "GJets_HT-100To200-MLM_2017.root"
+>>>>>>> Stashed changes
         ]
     }
 
