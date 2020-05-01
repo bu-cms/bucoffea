@@ -23,6 +23,9 @@ def empty_column_accumulator_float32():
     return processor.column_accumulator(np.array([],dtype=np.float32))
 def empty_column_accumulator_float16():
     return processor.column_accumulator(np.array([],dtype=np.float16))
+def empty_column_accumulator_bool():
+    return processor.column_accumulator(np.array([],dtype=np.bool))
+
 
 def accu_int():
     return processor.defaultdict_accumulator(int)
@@ -35,6 +38,8 @@ def defaultdict_accumulator_of_empty_column_accumulator_float32():
     return processor.defaultdict_accumulator(empty_column_accumulator_float32)
 def defaultdict_accumulator_of_empty_column_accumulator_float16():
     return processor.defaultdict_accumulator(empty_column_accumulator_float16)
+def defaultdict_accumulator_of_empty_column_accumulator_bool():
+    return processor.defaultdict_accumulator(empty_column_accumulator_bool)
 
 def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")

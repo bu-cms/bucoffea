@@ -490,7 +490,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     for name, w in region_weights._weights.items():
                         output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w[mask]))
                     output['tree_float16'][region][f"weight_total"] += processor.column_accumulator(np.float16(rweight[mask]))
-
+                if region=='inclusive':
+                    output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
+                    for name in selection.names:
+                        output['tree_bool'][region][name] += processor.column_accumulator(np.bool_(selection.all(*[name])[mask]))
             # Save the event numbers of events passing this selection
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
