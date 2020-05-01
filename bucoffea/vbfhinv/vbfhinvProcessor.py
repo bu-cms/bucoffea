@@ -319,12 +319,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('one_electron', electrons.counts==1)
         selection.add('two_electrons', electrons.counts==2)
         selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
-        
+
 
         selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
                                         & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
         selection.add('dielectron_charge', (dielectron_charge==0).any())
-        selection.add('two_electrons', electrons.counts==2)
 
         # Single Ele CR
         selection.add('met_el', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
