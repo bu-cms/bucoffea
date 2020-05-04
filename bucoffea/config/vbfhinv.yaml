@@ -83,7 +83,7 @@ default:
       id: Electron_cutBased
   btag:
     pt: 20
-    eta: 2.4
+    eta: 2.5
   overlap:
     electron:
       muon:
