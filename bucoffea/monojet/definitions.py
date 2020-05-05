@@ -384,8 +384,7 @@ def setup_candidates(df, cfg):
     btag_discriminator = getattr(ak4, cfg.BTAG.algo)
     btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
     bjets = ak4[
-        (ak4.looseId) \
-        & (ak4.pt > cfg.BTAG.PT) \
+        (ak4.pt > cfg.BTAG.PT) \
         & (ak4.abseta < cfg.BTAG.ETA) \
         & (btag_discriminator > btag_cut)
     ]
