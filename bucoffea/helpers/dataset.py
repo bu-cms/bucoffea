@@ -1,4 +1,6 @@
 import re
+def is_lo_znunu(dataset):
+    return bool(re.match(r'Z(\d*)Jet.*(mg|MLM|madgraph).*', dataset))
 
 def is_lo_z(dataset):
     return bool(re.match(r'(DY|Z)(\d*)Jet.*(mg|MLM|madgraph).*', dataset))
