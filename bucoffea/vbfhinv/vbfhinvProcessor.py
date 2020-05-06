@@ -166,6 +166,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             genjets = setup_lhe_cleaned_genjets(df)
             digenjet = genjets[:,:2].distincts()
             df['mjj_gen'] = digenjet.mass.max()
+            df['mjj_gen'] = np.where(df['mjj_gen'] > 0, df['mjj_gen'], 0)
+
 
         # Candidates
         # Already pre-filtered!
@@ -173,9 +175,14 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Check out setup_candidates for filtering details
         met_pt, met_phi, ak4, bjets, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
+        # Remove jets in accordance with the noise recipe
+        if df['year'] == 2017:
+            # TODO use raw pt instead
+            ak4   = ak4[(ak4.pt>50) | (ak4.abseta<2.65) | (ak4.abseta>3.139)]
+            bjets = bjets[(bjets.pt>50) | (bjets.abseta<2.65) | (bjets.abseta>3.139)]
+
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]
-        bjets = bjets[bjets.puid]
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
@@ -311,12 +318,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('one_electron', electrons.counts==1)
         selection.add('two_electrons', electrons.counts==2)
         selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
-        
+
 
         selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
                                         & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
         selection.add('dielectron_charge', (dielectron_charge==0).any())
-        selection.add('two_electrons', electrons.counts==2)
 
         # Single Ele CR
         selection.add('met_el', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
@@ -453,7 +459,41 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             mask = selection.all(*cuts)
 
+            if cfg.RUN.SAVE.TREE:
+                if region in ['cr_1e_vbf','cr_1m_vbf']:
+                    output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
+                    output['tree_float16'][region]["gen_v_pt"]    +=  processor.column_accumulator(np.float16(gen_v_pt[mask]))
+                    output['tree_float16'][region]["gen_mjj"]     +=  processor.column_accumulator(np.float16(df['mjj_gen'][mask]))
+                    output['tree_float16'][region]["recoil_pt"]   +=  processor.column_accumulator(np.float16(df["recoil_pt"][mask]))
+                    output['tree_float16'][region]["recoil_phi"]  +=  processor.column_accumulator(np.float16(df["recoil_phi"][mask]))
+                    output['tree_float16'][region]["mjj"]         +=  processor.column_accumulator(np.float16(df["mjj"][mask]))
+                    
+                    output['tree_float16'][region]["leadak4_pt"]         +=  processor.column_accumulator(np.float16(diak4.i0.pt[mask]))
+                    output['tree_float16'][region]["leadak4_eta"]        +=  processor.column_accumulator(np.float16(diak4.i0.eta[mask]))
+                    output['tree_float16'][region]["leadak4_phi"]        +=  processor.column_accumulator(np.float16(diak4.i0.phi[mask]))
 
+                    output['tree_float16'][region]["trailak4_pt"]         +=  processor.column_accumulator(np.float16(diak4.i1.pt[mask]))
+                    output['tree_float16'][region]["trailak4_eta"]        +=  processor.column_accumulator(np.float16(diak4.i1.eta[mask]))
+                    output['tree_float16'][region]["trailak4_phi"]        +=  processor.column_accumulator(np.float16(diak4.i1.phi[mask]))
+
+                    output['tree_float16'][region]["minDPhiJetRecoil"]  +=  processor.column_accumulator(np.float16(df["minDPhiJetRecoil"][mask]))
+                    if '_1e_' in region:
+                        output['tree_float16'][region]["leadlep_pt"]   +=  processor.column_accumulator(np.float16(electrons.pt.max()[mask]))
+                        output['tree_float16'][region]["leadlep_eta"]   +=  processor.column_accumulator(np.float16(electrons[electrons.pt.argmax()].eta.max()[mask]))
+                        output['tree_float16'][region]["leadlep_phi"]   +=  processor.column_accumulator(np.float16(electrons[electrons.pt.argmax()].phi.max()[mask]))
+                    elif '_1m_' in region:
+                        output['tree_float16'][region]["leadlep_pt"]   +=  processor.column_accumulator(np.float16(muons.pt.max()[mask]))
+                        output['tree_float16'][region]["leadlep_eta"]   +=  processor.column_accumulator(np.float16(muons[muons.pt.argmax()].eta.max()[mask]))
+                        output['tree_float16'][region]["leadlep_phi"]   +=  processor.column_accumulator(np.float16(muons[muons.pt.argmax()].phi.max()[mask]))
+
+                    for name, w in region_weights._weights.items():
+                        output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w[mask]))
+                    output['tree_float16'][region][f"weight_total"] += processor.column_accumulator(np.float16(rweight[mask]))
+                if region=='inclusive':
+                    output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
+                    for name in selection.names:
+                        output['tree_bool'][region][name] += processor.column_accumulator(np.bool_(selection.all(*[name])[mask]))
+            # Save the event numbers of events passing this selection
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 output['selected_events'][region] += list(df['event'][mask])

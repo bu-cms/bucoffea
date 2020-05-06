@@ -15,14 +15,31 @@ Cat = hist.Cat
 def empty_column_accumulator_int():
     return processor.column_accumulator(np.array([],dtype=np.uint64))
 
-def empty_column_accumulator_float():
+def empty_column_accumulator_int64():
+    return processor.column_accumulator(np.array([],dtype=np.int64))
+def empty_column_accumulator_float64():
     return processor.column_accumulator(np.array([],dtype=np.float64))
+def empty_column_accumulator_float32():
+    return processor.column_accumulator(np.array([],dtype=np.float32))
+def empty_column_accumulator_float16():
+    return processor.column_accumulator(np.array([],dtype=np.float16))
+def empty_column_accumulator_bool():
+    return processor.column_accumulator(np.array([],dtype=np.bool))
+
 
 def accu_int():
     return processor.defaultdict_accumulator(int)
 
-def defaultdict_accumulator_of_empty_column_accumulator_float():
-    return processor.defaultdict_accumulator(empty_column_accumulator_float)
+def defaultdict_accumulator_of_empty_column_accumulator_int64():
+    return processor.defaultdict_accumulator(empty_column_accumulator_int64)
+def defaultdict_accumulator_of_empty_column_accumulator_float64():
+    return processor.defaultdict_accumulator(empty_column_accumulator_float64)
+def defaultdict_accumulator_of_empty_column_accumulator_float32():
+    return processor.defaultdict_accumulator(empty_column_accumulator_float32)
+def defaultdict_accumulator_of_empty_column_accumulator_float16():
+    return processor.defaultdict_accumulator(empty_column_accumulator_float16)
+def defaultdict_accumulator_of_empty_column_accumulator_bool():
+    return processor.defaultdict_accumulator(empty_column_accumulator_bool)
 
 def monojet_accumulator(cfg):
     dataset_ax = Cat("dataset", "Primary dataset")
@@ -203,7 +220,7 @@ def monojet_accumulator(cfg):
     items['kinematics'] = processor.defaultdict_accumulator(list)
 
 
-    items['tree'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_float)
+    items['tree'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_float16)
 
     items['weights'] = Hist("Weights", dataset_ax, region_ax, weight_type_ax, weight_ax)
     items['npv'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax)
@@ -367,8 +384,7 @@ def setup_candidates(df, cfg):
     btag_discriminator = getattr(ak4, cfg.BTAG.algo)
     btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
     bjets = ak4[
-        (ak4.looseId) \
-        & (ak4.pt > cfg.BTAG.PT) \
+        (ak4.pt > cfg.BTAG.PT) \
         & (ak4.abseta < cfg.BTAG.ETA) \
         & (btag_discriminator > btag_cut)
     ]

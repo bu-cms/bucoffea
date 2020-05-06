@@ -206,6 +206,7 @@ default:
     sync: False
     save:
       passing: False
+      tree: False
     kinematics:
       save: False
       events:
