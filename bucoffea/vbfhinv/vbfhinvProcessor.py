@@ -183,7 +183,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]
-        bjets = bjets[bjets.puid]
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
