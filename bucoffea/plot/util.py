@@ -20,7 +20,8 @@ from bucoffea.helpers.dataset import extract_year, is_data
 from bucoffea.helpers.paths import bucoffea_path
 
 from klepto.archives import dir_archive
-
+import uproot_methods.classes.TH1
+import types
 pjoin = os.path.join
 
 def sha256sum(filelist):
@@ -211,7 +212,7 @@ def merge_datasets(histogram):
 
         'GJets_SM_5f_EWK-mg_2017' : ['GJets_SM_5f_EWK-mg_2017'],
         'GJets_SM_5f_EWK-mg_2018' : ['GJets_SM_5f_EWK-mg_2017'],
-        
+
         'G1Jet_Pt-amcatnlo_2016' : [x for x in all_datasets if re.match('G1Jet_Pt-.*-amcatnlo_2016',x)],
 
         'WNJetsToLNu_LHEWpT-FXFX_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_LHEWpT_(\d+)-.*-FXFX_2017',x)],
@@ -235,6 +236,7 @@ def merge_datasets(histogram):
 
     # Some combinations are the same for all years
     yearly = {
+        'GJets_1j_Gpt_5f_NLO-amcatnlo_{year}' : 'GJets_1j_Gpt-(\d+)To((\d+)|Inf)_5f_NLO-amcatnlo_{year}',
         'GJets_HT_MLM_{year}' : 'GJets_HT-(\d+)To.*-MLM_{year}',
         'GJets_DR-0p4_HT_MLM_{year}' : 'GJets_DR-0p4_HT-(\d+)To.*-MLM_.*{year}',
         'WJetsToQQ_HT_MLM_{year}' : 'WJetsToQQ_HT-?(\d+)(T|t)o.*-MLM_{year}',
@@ -249,6 +251,8 @@ def merge_datasets(histogram):
 
         'EWKW2Jets_WToLNu_M-50-mg_{year}' : 'EWKW(Plus|Minus)2Jets.*-mg_{year}',
         'Diboson_{year}' : '(WW|WZ|ZZ|WW).*_{year}',
+
+        'ZNJetsToNuNu_M-50_LHEZpT-FXFX_{year}' : 'Z\dJetsToNuN(u|U)_M-50_LHEZpT.*FXFX.*{year}',
 
     }
     for year in [2016,2017,2018]:
@@ -329,7 +333,7 @@ def lumi(year):
     if year==2016:
         return 35.9
 
-def scale_xs_lumi(histogram):
+def scale_xs_lumi(histogram, scale_lumi=True):
     """MC normalization so that it's ready to compare to data
 
     :param histogram: Histogram to normalize
@@ -351,8 +355,7 @@ def scale_xs_lumi(histogram):
             print(f"WARNING: Cross section not found for dataset {mc}. Using 0.")
             ixs = 0
         xs_map[mc] = ixs
-
-    norm_dict = {mc : 1e3 * xs_map[mc] * lumi(extract_year(mc)) for mc in mcs}
+    norm_dict = {mc : 1e3 * xs_map[mc] * (lumi(extract_year(mc)) if scale_lumi else 1) for mc in mcs}
     histogram.scale(norm_dict, axis='dataset')
 
 # def merge_and_norm(histogram, acc):
@@ -369,3 +372,59 @@ def fig_ratio():
     """
     fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
     return fig, ax, rax
+
+def fig_double_ratio():
+    """Shortcut to create figure with ratio and main panels
+
+    :return: Figure and axes for main and ratio panels
+    :rtype: tuple(Figure, axes, axes)
+    """
+    fig, (ax, rax1, rax2) = plt.subplots(3, 1, figsize=(7,7), gridspec_kw={"height_ratios": (2,1, 1)}, sharex=True)
+    return fig, ax, rax1, rax2
+
+
+def ratio_unc(num, denom, dnum, ddenom):
+    return np.hypot(
+        dnum * (1/denom),
+        ddenom * num / (denom*denom)
+    )
+
+import uproot_methods
+
+class URTH1(uproot_methods.classes.TH1.Methods, list):
+    def __init__(self, edges, sumw, sumw2, title=""):
+        self._fXaxis = types.SimpleNamespace()
+        self._fXaxis._fNbins = len(edges)-1
+        self._fXaxis._fXmin = edges[0]
+        self._fXaxis._fXmax = edges[-1]
+
+        self._fXaxis._fXbins = edges.astype(">f8")
+
+        centers = (edges[:-1] + edges[1:]) / 2.0
+        self._fEntries = self._fTsumw = self._fTsumw2 = sumw[1:-1].sum()
+        self._fTsumwx = (sumw[1:-1] * centers).sum()
+        self._fTsumwx2 = (sumw[1:-1] * centers**2).sum()
+
+        self._fName = title
+        self._fTitle = title
+
+        self.extend(sumw.astype(">f8"))
+        self._classname = "TH1D"
+        self._fSumw2 = sumw2.astype(">f8")
+
+def load_and_merge(inpath, distributions):
+    if not os.path.exists(inpath):
+        raise IOError("Directory not found: " + inpath)
+
+    acc = klepto_load(inpath)
+    acc.load('sumw')
+    acc.load('sumw_pileup')
+    acc.load('nevents')
+
+    for distribution in distributions:
+        acc.load(distribution)
+        acc[distribution] = merge_extensions(acc[distribution], acc, reweight_pu=not ('nopu' in distribution))
+        scale_xs_lumi(acc[distribution])
+        acc[distribution] = merge_datasets(acc[distribution])
+        acc[distribution].axis('dataset').sorting = 'integral'
+    return acc
