@@ -469,7 +469,8 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Save information to an output nested dictionary for electron and muon CR
             if cfg.RUN.SAVE.TREE:
-                if re.match('cr_\d(e|m).*', region):
+                # if re.match('cr_\d(e|m).*', region):
+                if region in ['cr_2m_j', 'cr_2e_j']:
                     def fill_tree(variable, values):
                         treeacc = processor.column_accumulator(values)
                         name = f'tree_{region}_{variable}'
@@ -496,7 +497,14 @@ class monojetProcessor(processor.ProcessorABC):
                     output[tree][region]["run"] +=  processor.column_accumulator(df["run"][mask])
                     output[tree][region]["luminosityBlock"] +=  processor.column_accumulator(df["luminosityBlock"][mask])
                     output[tree][region]["gen_v_pt"] +=  processor.column_accumulator(gen_v_pt[mask])
-                    output[tree][region]["met"] += processor.column_accumulator(getattr(met, f'pt{var}')[mask].flatten())
+
+                    # output[tree][region]["met"] += processor.column_accumulator(getattr(met, f'pt{var}')[mask].flatten())
+                    output[tree][region]["met_pt_nom"] += processor.column_accumulator(met.pt_nom[mask].flatten())
+                    output[tree][region]["met_pt_jesUp"] += processor.column_accumulator(met.pt_jesup[mask].flatten())
+                    output[tree][region]["met_pt_jesDown"] += processor.column_accumulator(met.pt_jesdown[mask].flatten())
+                    output[tree][region]["met_pt_jerUp"] += processor.column_accumulator(met.pt_jerup[mask].flatten())
+                    output[tree][region]["met_pt_jerDown"] += processor.column_accumulator(met.pt_jerdown[mask].flatten())
+
                     output[tree][region]["met_phi"] += processor.column_accumulator(getattr(met, f'phi{var}')[mask].flatten())
                     output[tree][region]["recoil"] +=  processor.column_accumulator(df[f"recoil_pt{var}"][mask])
                     output[tree][region]["recoil_phi"] +=  processor.column_accumulator(df[f"recoil_phi{var}"][mask])
