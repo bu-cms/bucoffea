@@ -333,7 +333,7 @@ def lumi(year):
     if year==2016:
         return 35.9
 
-def scale_xs_lumi(histogram):
+def scale_xs_lumi(histogram, scale_lumi=True):
     """MC normalization so that it's ready to compare to data
 
     :param histogram: Histogram to normalize
@@ -355,8 +355,7 @@ def scale_xs_lumi(histogram):
             print(f"WARNING: Cross section not found for dataset {mc}. Using 0.")
             ixs = 0
         xs_map[mc] = ixs
-
-    norm_dict = {mc : 1e3 * xs_map[mc] * lumi(extract_year(mc)) for mc in mcs}
+    norm_dict = {mc : 1e3 * xs_map[mc] * (lumi(extract_year(mc)) if scale_lumi else 1) for mc in mcs}
     histogram.scale(norm_dict, axis='dataset')
 
 # def merge_and_norm(histogram, acc):
