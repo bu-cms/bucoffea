@@ -240,6 +240,8 @@ G1Jet_Pt-650ToInf-amcatnlo_2016:
   gen: 0.2939
 G1Jet_Pt-650ToInf-amcatnlo_ext1_2016:
   gen: 0.2939
+GJets_1j_Gpt-50To100_5f_NLO-amcatnlo_2017:
+  gen: 1.4165e+04
 GJets_1j_Gpt-100To250_5f_NLO-amcatnlo_2017:
   gen: 1.183e+03
 GJets_1j_Gpt-250To400_5f_NLO-amcatnlo_2017:
