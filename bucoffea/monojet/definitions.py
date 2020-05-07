@@ -529,7 +529,7 @@ def monojet_regions(cfg):
             regions[newRegionName] = copy.deepcopy(regions[region])
             regions[newRegionName].remove('leadak8_tau21')
             if wp == 'inclusive':
-                if cfg.RUN.MONOVMISTAG:
+                if cfg and cfg.RUN.MONOVMISTAG:
                     regions[newRegionName].remove('leadak8_mass')
 
                     # add regions: cr_2m_hasmass_inclusive_v, cr_1m_hasmass_inclusive_v, cr_2e_hasmass_inclusive_v, cr_1e_hasmass_inclusive_v
@@ -541,7 +541,7 @@ def monojet_regions(cfg):
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
             # save a copy of the v-tagged regions but not applying mistag SFs, for the sake of measuring mistag SF later
 
-            if cfg.RUN.MONOVMISTAG:
+            if cfg and cfg.RUN.MONOVMISTAG:
                 if wp in ['loose','tight','loosemd','tightmd']:
                     noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
                     regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
@@ -588,7 +588,7 @@ def monojet_regions(cfg):
 
     regions.update(tmp)
 
-    if cfg.RUN.TRIGGER_STUDY:
+    if cfg and cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
         # num = numerator, den = denominator
         # Single Mu region: Remove recoil cut, add SingleMu trigger, toggle MET trigger
@@ -658,11 +658,11 @@ def monojet_regions(cfg):
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
 
-    if not cfg.RUN.MONOV:
+    if cfg and not cfg.RUN.MONOV:
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_v') or '_v_' in x]
         for key in keys_to_remove:
             regions.pop(key)
-    if not cfg.RUN.MONOJ:
+    if cfg and not cfg.RUN.MONOJ:
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_j') or '_j_' in x]
         for key in keys_to_remove:
             regions.pop(key)
