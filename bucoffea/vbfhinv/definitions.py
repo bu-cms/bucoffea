@@ -232,7 +232,7 @@ def vbfhinv_regions(cfg):
     regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr']
 
     # For sync mode
-    if cfg.RUN.SYNC:
+    if cfg and cfg.RUN.SYNC:
         regions['cr_sync'] = [
             'trig_met',
             'veto_photon',
@@ -277,7 +277,7 @@ def vbfhinv_regions(cfg):
 
     regions['cr_g_vbf'] = cr_g_cuts
 
-    if cfg.RUN.SYNC:
+    if cfg and cfg.RUN.SYNC:
         regions['sync_sr_vbf_round1'] = [
                                         'filt_met',
                                         'trig_met',
@@ -311,7 +311,7 @@ def vbfhinv_regions(cfg):
 
     regions.update(tmp)
 
-    if cfg.RUN.TRIGGER_STUDY:
+    if cfg and  cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
         # num = numerator, den = denominator
         # Single Mu region: Remove mjj cut, add SingleMu trigger, toggle MET trigger
