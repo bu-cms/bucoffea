@@ -104,9 +104,15 @@ def trigger_selection(selection, df, cfg):
     return selection
 
 def btag_weights(bjets, cfg):
+    # Evaluate weight variations
+    weight_variations = {}
+
     # Only calculate for DeepCSV
     if cfg.BTAG.ALGO != "deepcsv":
-        return bjets.pt.ones_like()
+        weight_variations["central"] = bjets.pt.ones_like()
+        weight_variations["up"] = bjets.pt.ones_like()
+        weight_variations["down"] = bjets.pt.ones_like()
+        return weight_variations
 
     # Heavy lifting done by coffea implementation
     bsf = BTagScaleFactor(
@@ -115,8 +121,6 @@ def btag_weights(bjets, cfg):
                           methods='comb,comb,incl' # Comb for b and c flavors, incl for light
                           )
 
-    # Evaluate weight variations
-    weight_variations = {}
 
     for variation in ["central","up","down"]:
         weight_variations[variation] = bsf.eval(
