@@ -86,10 +86,12 @@ def monojet_accumulator(cfg):
 
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",50,0.5,1.5)
+    sf_ax = Bin("sf", "sf",50,0.8,1.8)
 
     nvtx_ax = Bin('nvtx','Number of vertices',50,-0.5,99.5)
     rho_ax = Bin('rho','Energy density',50, 0, 100)
     frac_ax = Bin('frac','Fraction', 50, 0, 1)
+    deepcsv_ax = Bin('deepcsv','DeepCSV discriminator', 50, 0, 1)
     Hist = hist.Hist
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
@@ -102,6 +104,9 @@ def monojet_accumulator(cfg):
     items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_notrg"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopref"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_hardbveto"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_bveto_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_bveto_down"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["ak4_pt0_over_recoil"] = Hist("Counts", dataset_ax, region_ax, ratio_ax)
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -117,6 +122,11 @@ def monojet_accumulator(cfg):
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["ak4_deepcsv"] = Hist("Counts", dataset_ax, region_ax, deepcsv_ax)
+    items["bjet_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["bjet_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["bjet_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["bjet_sf"] = Hist("Counts", dataset_ax, region_ax, sf_ax)
     items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
@@ -366,9 +376,8 @@ def setup_candidates(df, cfg):
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
-        nconst=df['Jet_nConstituents']
-        # clean=df['Jet_cleanmask']
-        # cef=df['Jet_chEmEF'],
+        nconst=df['Jet_nConstituents'],
+        hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour']
     )
     # Before cleaning, apply HEM veto
     hem_ak4 = ak4[ (ak4.pt>30) &

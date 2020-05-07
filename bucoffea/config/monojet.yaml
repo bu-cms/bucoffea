@@ -240,6 +240,8 @@ era2016:
       id: Tau_idDecayMode
       iso: Tau_idMVAoldDM
   sf:
+    deepcsv:
+      file: data/sf/btag/DeepCSV_102XSF_WP_V1.csv
     qcd_nlo_w_2016: # QCD k factor for QCD W
       histogram: kfactor_monojet_qcd
       file: data/sf/theory/merged_kfactors_wjets.root
@@ -378,6 +380,8 @@ era2017:
       loosemd: 0.258
       tightmd: 0.838
   sf:
+    deepcsv:
+      file: data/sf/btag/DeepCSV_94XSF_WP_V4_B_F.csv
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
@@ -520,6 +524,9 @@ era2018:
       loosemd: 0.245
       tightmd: 0.806
   sf:
+    deepcsv:
+      file: data/sf/btag/DeepCSV_102XSF_WP_V1.csv
+
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_egammaEffi_txt_EGM2D_updatedAll.root
