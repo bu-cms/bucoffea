@@ -211,7 +211,7 @@ def merge_datasets(histogram):
 
         'GJets_SM_5f_EWK-mg_2017' : ['GJets_SM_5f_EWK-mg_2017'],
         'GJets_SM_5f_EWK-mg_2018' : ['GJets_SM_5f_EWK-mg_2017'],
-        
+
         'G1Jet_Pt-amcatnlo_2016' : [x for x in all_datasets if re.match('G1Jet_Pt-.*-amcatnlo_2016',x)],
 
         'WNJetsToLNu_LHEWpT-FXFX_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_LHEWpT_(\d+)-.*-FXFX_2017',x)],
@@ -235,6 +235,7 @@ def merge_datasets(histogram):
 
     # Some combinations are the same for all years
     yearly = {
+        'GJets_1j_Gpt_5f_NLO-amcatnlo_{year}' : 'GJets_1j_Gpt-(\d+)To((\d+)|Inf)_5f_NLO-amcatnlo_{year}',
         'GJets_HT_MLM_{year}' : 'GJets_HT-(\d+)To.*-MLM_{year}',
         'GJets_DR-0p4_HT_MLM_{year}' : 'GJets_DR-0p4_HT-(\d+)To.*-MLM_.*{year}',
         'WJetsToQQ_HT_MLM_{year}' : 'WJetsToQQ_HT-?(\d+)(T|t)o.*-MLM_{year}',
@@ -249,6 +250,8 @@ def merge_datasets(histogram):
 
         'EWKW2Jets_WToLNu_M-50-mg_{year}' : 'EWKW(Plus|Minus)2Jets.*-mg_{year}',
         'Diboson_{year}' : '(WW|WZ|ZZ|WW).*_{year}',
+
+        'ZNJetsToNuNu_M-50_LHEZpT-FXFX_{year}' : 'Z\dJetsToNuN(u|U)_M-50_LHEZpT.*FXFX.*{year}',
 
     }
     for year in [2016,2017,2018]:
