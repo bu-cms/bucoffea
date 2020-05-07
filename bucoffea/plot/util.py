@@ -20,7 +20,8 @@ from bucoffea.helpers.dataset import extract_year, is_data
 from bucoffea.helpers.paths import bucoffea_path
 
 from klepto.archives import dir_archive
-
+import uproot_methods.classes.TH1
+import types
 pjoin = os.path.join
 
 def sha256sum(filelist):
@@ -372,3 +373,59 @@ def fig_ratio():
     """
     fig, (ax, rax) = plt.subplots(2, 1, figsize=(7,7), gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
     return fig, ax, rax
+
+def fig_double_ratio():
+    """Shortcut to create figure with ratio and main panels
+
+    :return: Figure and axes for main and ratio panels
+    :rtype: tuple(Figure, axes, axes)
+    """
+    fig, (ax, rax1, rax2) = plt.subplots(3, 1, figsize=(7,7), gridspec_kw={"height_ratios": (2,1, 1)}, sharex=True)
+    return fig, ax, rax1, rax2
+
+
+def ratio_unc(num, denom, dnum, ddenom):
+    return np.hypot(
+        dnum * (1/denom),
+        ddenom * num / (denom*denom)
+    )
+
+import uproot_methods
+
+class URTH1(uproot_methods.classes.TH1.Methods, list):
+    def __init__(self, edges, sumw, sumw2, title=""):
+        self._fXaxis = types.SimpleNamespace()
+        self._fXaxis._fNbins = len(edges)-1
+        self._fXaxis._fXmin = edges[0]
+        self._fXaxis._fXmax = edges[-1]
+
+        self._fXaxis._fXbins = edges.astype(">f8")
+
+        centers = (edges[:-1] + edges[1:]) / 2.0
+        self._fEntries = self._fTsumw = self._fTsumw2 = sumw[1:-1].sum()
+        self._fTsumwx = (sumw[1:-1] * centers).sum()
+        self._fTsumwx2 = (sumw[1:-1] * centers**2).sum()
+
+        self._fName = title
+        self._fTitle = title
+
+        self.extend(sumw.astype(">f8"))
+        self._classname = "TH1D"
+        self._fSumw2 = sumw2.astype(">f8")
+
+def load_and_merge(inpath, distributions):
+    if not os.path.exists(inpath):
+        raise IOError("Directory not found: " + inpath)
+
+    acc = klepto_load(inpath)
+    acc.load('sumw')
+    acc.load('sumw_pileup')
+    acc.load('nevents')
+
+    for distribution in distributions:
+        acc.load(distribution)
+        acc[distribution] = merge_extensions(acc[distribution], acc, reweight_pu=not ('nopu' in distribution))
+        scale_xs_lumi(acc[distribution])
+        acc[distribution] = merge_datasets(acc[distribution])
+        acc[distribution].axis('dataset').sorting = 'integral'
+    return acc
