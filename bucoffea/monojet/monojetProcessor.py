@@ -50,6 +50,8 @@ from bucoffea.helpers.gen import (
                                   fill_gen_v_info
                                  )
 
+from buoffea.vbfhinv.vbfhinvProcessor import candidates_in_hem
+
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
     pass_none = ~pass_all
@@ -259,10 +261,13 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
 
-        if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
-            selection.add('hemveto', df['hemveto'])
+
+        if df['year'] == 2018:
+            selection.add("metphihemextveto", ((-1.8 > met_phi)|(met_phi>-0.6)))
+            selection.add('no_el_in_hem', electrons[candidates_in_hem(electrons)].counts==0)
         else:
-            selection.add('hemveto', np.ones(df.size)==1)
+            selection.add("metphihemextveto", pass_all)
+            selection.add('no_el_in_hem', pass_all)
 
         # AK4 Jet
         leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \

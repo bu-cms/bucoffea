@@ -117,9 +117,6 @@ default:
         clean: true
         dr: 0.4
 
-  mitigation:
-    hem: True
-
   sf:
     qcd_ew_nlo_w: # QCD x EW k factor for QCD Z
       histogram: kfactor_monojet_qcd_ewk
