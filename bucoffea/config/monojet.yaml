@@ -139,9 +139,13 @@ default:
     qcd_nlo_w_2017: # QCD k factor for QCD W
       histogram: wjet_dress_monojet
       file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
-    qcd_nlo_z_2017: # QCD k factor for QCD Z
-      histogram: dy_dress_monojet
-      file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
+
+    qcd_nlo_dy_2017: # QCD k factor for QCD Z
+      histogram: kfac_dy_filter
+      file: data/sf/theory/kfac_dy_filter.root
+    qcd_nlo_znn_2017: # QCD k factor for QCD Z
+      histogram: kfac_znn_filter
+      file: data/sf/theory/kfac_znn_filter.root
 
     qcd_nlo_g:
       histogram: kfactor_monojet_qcd

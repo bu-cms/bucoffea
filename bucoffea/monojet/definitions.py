@@ -689,10 +689,10 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
             qcd_nlo = fitfun(gen_v_pt, 1.053, 3.163e-3, 0.746)
         theory_weights =  qcd_nlo * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
-        if extract_year(df['dataset']) == 2016:
-            qcd_nlo = evaluator["qcd_nlo_z_2016"](gen_v_pt)
+        if df['is_lo_znunu']:
+            qcd_nlo = evaluator["qcd_nlo_znn_2017"](gen_v_pt)
         else:
-            qcd_nlo = fitfun(gen_v_pt, 1.434, 2.210e-3, 0.443)
+            qcd_nlo = evaluator["qcd_nlo_dy_2017"](gen_v_pt)
         theory_weights =  qcd_nlo * evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_nlo_w']:
         theory_weights = evaluator["ewk_nlo_w"](gen_v_pt)
