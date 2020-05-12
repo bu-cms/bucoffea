@@ -557,24 +557,30 @@ def monojet_regions(cfg):
         tmp[new_region].remove("veto_ele")
         tmp[new_region].remove("mindphijr")
         tmp[new_region].remove("recoil")
+        tmp[new_region].remove("dpfcalo")
         tmp[new_region].append("met_sr")
         tmp[new_region].append("mindphijm")
+        tmp[new_region].append("dpfcalo_sr")
 
         new_region = f"{region}_no_veto_tau"
         tmp[new_region] = copy.deepcopy(regions[region])
         tmp[new_region].remove("veto_tau")
         tmp[new_region].remove("mindphijr")
         tmp[new_region].remove("recoil")
+        tmp[new_region].remove("dpfcalo")
         tmp[new_region].append("met_sr")
         tmp[new_region].append("mindphijm")
+        tmp[new_region].append("dpfcalo_sr")
 
         new_region = f"{region}_no_veto_muon"
         tmp[new_region] = copy.deepcopy(regions[region])
         tmp[new_region].remove("veto_muo")
         tmp[new_region].remove("mindphijr")
         tmp[new_region].remove("recoil")
+        tmp[new_region].remove("dpfcalo")
         tmp[new_region].append("met_sr")
         tmp[new_region].append("mindphijm")
+        tmp[new_region].append("dpfcalo_sr")
 
         new_region = f"{region}_no_veto_all"
         tmp[new_region] = copy.deepcopy(regions[region])
@@ -583,8 +589,10 @@ def monojet_regions(cfg):
         tmp[new_region].remove("veto_ele")
         tmp[new_region].remove("mindphijr")
         tmp[new_region].remove("recoil")
+        tmp[new_region].remove("dpfcalo")
         tmp[new_region].append("met_sr")
         tmp[new_region].append("mindphijm")
+        tmp[new_region].append("dpfcalo_sr")
 
     regions.update(tmp)
 
