@@ -50,7 +50,7 @@ from bucoffea.helpers.gen import (
                                   fill_gen_v_info
                                  )
 
-from buoffea.vbfhinv.vbfhinvProcessor import candidates_in_hem
+from bucoffea.vbfhinv.vbfhinvProcessor import candidates_in_hem
 
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
