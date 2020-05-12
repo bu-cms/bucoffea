@@ -224,11 +224,11 @@ era2016:
         loose:  0.5426
         medium: 0.8484
         tight: 0.9535
-  wtag: # https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3316826/DeepAK8_Top_W_SFs_V2_Training_18Feb.pdf
-      loose: 0.475
-      tight: 0.960
-      loosemd: 0.274
-      tightmd: 0.828
+  wtag: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
+    loose: 0.475
+    tight: 0.960
+    loosemd: 0.274
+    tightmd: 0.828
   electron:
     branch:
       id: Electron_cutBased_Sum16
@@ -374,11 +374,11 @@ era2017:
         loose : 0.1522
         medium: 0.4941
         tight: 0.8001
-  wtag: # https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3316826/DeepAK8_Top_W_SFs_V2_Training_18Feb.pdf
-      loose: 0.467
-      tight: 0.964
-      loosemd: 0.258
-      tightmd: 0.838
+  wtag: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
+    loose: 0.467
+    tight: 0.964
+    loosemd: 0.258
+    tightmd: 0.838
   sf:
     deepcsv:
       file: data/sf/btag/DeepCSV_94XSF_WP_V4_B_F.csv
@@ -425,31 +425,31 @@ era2017:
       histogram: tau_sf_VLoose_2017_down
       file: data/sf/tau/tau_sf.root
 
-    wtag_loose: #https://www.dropbox.com/s/z1rnuaxrekmrvlu/DeepAK8_Top_W_SFs_V2_Training_FINAL_w_Tables.pdf?dl=0
-        histogram: WTag_2017_loose_ak8_pt
-        file: data/sf/ak8/wtag_eff_SF.root
+    wtag_loose: #https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
+      histogram: WTag_2017_loose_ak8_pt
+      file: data/sf/ak8/wtag_eff_SF.root
     wtag_loosemd:
-        histogram: WTag_2017_loosemd_ak8_pt
-        file: data/sf/ak8/wtag_eff_SF.root
+      histogram: WTag_2017_loosemd_ak8_pt
+      file: data/sf/ak8/wtag_eff_SF.root
     wtag_tight:
-        histogram: WTag_2017_tight_ak8_pt
-        file: data/sf/ak8/wtag_eff_SF.root
+      histogram: WTag_2017_tight_ak8_pt
+      file: data/sf/ak8/wtag_eff_SF.root
     wtag_tightmd:
-        histogram: WTag_2017_tightmd_ak8_pt
-        file: data/sf/ak8/wtag_eff_SF.root
+      histogram: WTag_2017_tightmd_ak8_pt
+      file: data/sf/ak8/wtag_eff_SF.root
 
     wtag_mistag_loose:
-        histogram: Wmistag_2017_loose_ak8_pt
-        file: data/sf/ak8/wtag_mistag_SF.root
+      histogram: Wmistag_2017_loose_ak8_pt
+      file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_loosemd:
-        histogram: Wmistag_2017_loosemd_ak8_pt
-        file: data/sf/ak8/wtag_mistag_SF.root
+      histogram: Wmistag_2017_loosemd_ak8_pt
+      file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_tight:
-        histogram: Wmistag_2017_tight_ak8_pt
-        file: data/sf/ak8/wtag_mistag_SF.root
+      histogram: Wmistag_2017_tight_ak8_pt
+      file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_tightmd:
-        histogram: Wmistag_2017_tightmd_ak8_pt
-        file: data/sf/ak8/wtag_mistag_SF.root
+      histogram: Wmistag_2017_tightmd_ak8_pt
+      file: data/sf/ak8/wtag_mistag_SF.root
 
     pileup:
       histogram: "sf2017_nominal"
@@ -518,11 +518,11 @@ era2018:
         loose : 0.1241
         medium: 0.4184
         tight: 0.7527
-  wtag: # https://indico.cern.ch/event/877167/contributions/3744193/attachments/1989744/3316826/DeepAK8_Top_W_SFs_V2_Training_18Feb.pdf
-      loose: 0.458
-      tight: 0.961
-      loosemd: 0.245
-      tightmd: 0.806
+  wtag: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
+    loose: 0.458
+    tight: 0.961
+    loosemd: 0.245
+    tightmd: 0.806
   sf:
     deepcsv:
       file: data/sf/btag/DeepCSV_102XSF_WP_V1.csv
@@ -591,31 +591,31 @@ era2018:
       histogram: tau_sf_VLoose_2018_down
       file: data/sf/tau/tau_sf.root
 
-    wtag_loose: #https://www.dropbox.com/s/z1rnuaxrekmrvlu/DeepAK8_Top_W_SFs_V2_Training_FINAL_w_Tables.pdf?dl=0
-        histogram: WTag_2018_loose_ak8_pt
-        file: data/sf/ak8/wtag_eff_SF.root
+    wtag_loose: #https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
+      histogram: WTag_2018_loose_ak8_pt
+      file: data/sf/ak8/wtag_eff_SF.root
     wtag_loosemd:
-        histogram: WTag_2018_loosemd_ak8_pt
-        file: data/sf/ak8/wtag_eff_SF.root
+      histogram: WTag_2018_loosemd_ak8_pt
+      file: data/sf/ak8/wtag_eff_SF.root
     wtag_tight:
-        histogram: WTag_2018_tight_ak8_pt
-        file: data/sf/ak8/wtag_eff_SF.root
+      histogram: WTag_2018_tight_ak8_pt
+      file: data/sf/ak8/wtag_eff_SF.root
     wtag_tightmd:
-        histogram: WTag_2018_tightmd_ak8_pt
-        file: data/sf/ak8/wtag_eff_SF.root
+      histogram: WTag_2018_tightmd_ak8_pt
+      file: data/sf/ak8/wtag_eff_SF.root
 
     wtag_mistag_loose:
-        histogram: Wmistag_2018_loose_ak8_pt
-        file: data/sf/ak8/wtag_mistag_SF.root
+      histogram: Wmistag_2018_loose_ak8_pt
+      file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_loosemd:
-        histogram: Wmistag_2018_loosemd_ak8_pt
-        file: data/sf/ak8/wtag_mistag_SF.root
+      histogram: Wmistag_2018_loosemd_ak8_pt
+      file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_tight:
-        histogram: Wmistag_2018_tight_ak8_pt
-        file: data/sf/ak8/wtag_mistag_SF.root
+      histogram: Wmistag_2018_tight_ak8_pt
+      file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_tightmd:
-        histogram: Wmistag_2018_tightmd_ak8_pt
-        file: data/sf/ak8/wtag_mistag_SF.root
+      histogram: Wmistag_2018_tightmd_ak8_pt
+      file: data/sf/ak8/wtag_mistag_SF.root
 
     pileup:
       histogram: "sf2018_nominal"

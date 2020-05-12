@@ -49,6 +49,9 @@ def _load_and_plot(args):
     except AssertionError:
         print("invalid input: "+str(args))
         raise AssertionError
+    except ValueError:
+        print("invalid input: "+str(args))
+        raise ValueError
     return 0
 
     
@@ -86,11 +89,11 @@ def main(sysargs):
     args_list = []
     for year in [2017,2018]:
         mc_map = {
-            'cr_1m_v'      : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_DR.*HT).*{year}'),
+            'cr_1m_v'      : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT).*{year}'),
             'cr_1e_v'      : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_DR.*HT).*{year}'),
-            'cr_2m_v'      : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM).*{year}'),
-            'cr_2e_v'      : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|GJets_DR.*HT).*{year}'),
-            'cr_g_v'       : re.compile(f'(Diboson|QCD_HT|GJets_DR.*HT|WJets.*HT).*{year}'),
+            'cr_2m_v'      : re.compile(f'(Top.*FXFX|Diboson|DYJetsToLL_M-50_HT_MLM).*{year}'),
+            'cr_2e_v'      : re.compile(f'(Top.*FXFX|Diboson|DYJetsToLL_M-50_HT_MLM).*{year}'),
+            'cr_g_v'       : re.compile(f'(Diboson|QCD_HT|GJets_DR.*HT|WJetsToLNu.*HT).*{year}'),
             #'cr_g_v'       : re.compile(f'(TTJets.*FXFX|Diboson|ST|QCD_HT|GJets_DR.*HT|WJets.*HT).*{year}'),
             'cr_nobveto_v' : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_DR.*HT|ZJetsToNuNu).*{year}'),
             'sr_v'         : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_DR.*HT|ZJetsToNuNu).*{year}'),
@@ -111,7 +114,7 @@ def main(sysargs):
 
                 mc = mc_map[raw_region]
 
-                distributions=['recoil','met','ak8_pt0','ak8_eta0','ak8_tau210','ak8_mass0','ak8_wvsqcd0','ak8_wvsqcdmd0','ak8_wvstqcd0','ak8_wvstqcdmd0','ak8_tvsqcd0','ak8_tvsqcdmd0']
+                distributions=['recoil','met','ak8_pt0','ak8_eta0','ak8_tau210','ak8_mass0','ak8_wvsqcd0','ak8_wvsqcdmd0']
                 if '_2m_' in region: distributions.append('dimuon_pt')
                 if '_1m_' in region: distributions+=['muon_pt0','muon_eta0','muon_phi0']
                 if '_1e_' in region: distributions+=['electron_pt0','electron_eta0','electron_phi0']
