@@ -285,6 +285,8 @@ era2016:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_ElectronTight.root
 
+    photon:
+      usetnp: False
     photon_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_PhotonsMedium_capped.root
@@ -420,6 +422,8 @@ era2017:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_ElectronTight.root
 
+    photon:
+      usetnp: False
     photon_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_PhotonsMedium_capped.root
@@ -529,6 +533,8 @@ era2018:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_ElectronTight.root
 
+    photon:
+      usetnp: False
     photon_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_PhotonsMedium_capped.root

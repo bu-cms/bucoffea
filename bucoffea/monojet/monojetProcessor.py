@@ -367,7 +367,7 @@ class monojetProcessor(processor.ProcessorABC):
             except KeyError:
                 weights.add('prefire', np.ones(df.size))
 
-            weights = candidate_weights(weights, df, evaluator, muons, electrons, photons)
+            weights = candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg)
 
             # B jet veto weights
             bsf_variations = btag_weights(bjets,cfg)
