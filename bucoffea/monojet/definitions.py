@@ -700,6 +700,8 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
         theory_weights = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
         theory_weights = fitfun(gen_v_pt, 1.159, 1.944e-3, 1.0) * evaluator["ewk_nlo_g"](gen_v_pt)
+    elif df['is_nlo_g']:
+        theory_weights = evaluator["ewk_nlo_g"](gen_v_pt)
     else:
         theory_weights = np.ones(df.size)
 

@@ -40,6 +40,7 @@ from bucoffea.helpers.dataset import (
                                       is_lo_g,
                                       is_nlo_z,
                                       is_nlo_w,
+                                      is_nlo_g,
                                       has_v_jet,
                                       is_data,
                                       extract_year
@@ -169,6 +170,7 @@ class monojetProcessor(processor.ProcessorABC):
         df['is_lo_g'] = is_lo_g(dataset)
         df['is_nlo_z'] = is_nlo_z(dataset)
         df['is_nlo_w'] = is_nlo_w(dataset)
+        df['is_nlo_g'] = is_nlo_g(dataset)
         df['has_v_jet'] = has_v_jet(dataset)
         df['has_lhe_v_pt'] = df['is_lo_w'] | df['is_lo_z'] | df['is_nlo_z'] | df['is_nlo_w'] | df['is_lo_g']
         df['is_data'] = is_data(dataset)
@@ -180,9 +182,14 @@ class monojetProcessor(processor.ProcessorABC):
             dressed = setup_dressed_gen_candidates(df)
             fill_gen_v_info(df, gen, dressed)
             gen_v_pt = df['gen_v_pt_combined']
-        elif df['is_lo_g']:
-            gen_v_pt = gen[(gen.pdg==22) & (gen.status==1)].pt.max()
+        elif df['is_lo_g'] or df['is_nlo_g']:
+            all_gen_photons = gen[(gen.pdg==22)]
+            prompt_mask = (all_gen_photons.status==1)&(all_gen_photons.flag&1==1)
+            stat1_mask = (all_gen_photons.status==1)
+            gen_photons = all_gen_photons[prompt_mask | (~prompt_mask.any()) & stat1_mask ]
+            gen_photon = gen_photons[gen_photons.pt.argmax()]
 
+            gen_v_pt = gen_photon.pt.max()
         # Candidates
         # Already pre-filtered!
         # All leptons are at least loose
