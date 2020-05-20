@@ -148,6 +148,8 @@ def evaluator_from_config(cfg):
     ext = extractor()
 
     for sfname, definition in cfg.SF.items():
+        if not 'file' in definition:
+            continue
         fpath = bucoffea_path(definition['file'])
 
         if fpath.endswith(".root"):
