@@ -694,7 +694,7 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
     elif df['is_nlo_z']:
         theory_weights = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
-        theory_weights = evaluator["gjets_stat1_monojet"](gen_v_pt) * evaluator["ewk_nlo_g"](gen_v_pt)
+        theory_weights = evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["ewk_nlo_g"](gen_v_pt)
     elif df['is_nlo_g']:
         theory_weights = evaluator["ewk_nlo_g"](gen_v_pt)
     else:
@@ -801,7 +801,7 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
 
     # Photon ID and electron veto
     if cfg.SF.PHOTON.USETNP:
-        weights.add("photon_id_tight", evaluator['photon_id_tight'](np.abs(photons[df['is_tight_photon']].eta)).prod())
+        weights.add("photon_id_tight", evaluator['photon_id_tight_tnp'](np.abs(photons[df['is_tight_photon']].eta)).prod())
     else:
         weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
 

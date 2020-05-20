@@ -638,9 +638,9 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('recoil_bveto_up',    recoil=recoil_pt[mask],  weight=(rw*(1-bsf_variations['up']).prod())[mask])
                 ezfill('recoil_bveto_down',  recoil=recoil_pt[mask],  weight=(rw*(1-bsf_variations['down']).prod())[mask])
 
-            if (not df['is_data']) and ('cr_g' in region):
-                photon_id_sf_nom = evaluator['photon_id_tight'](np.abs(photons[df['is_tight_photon']].eta))
-                photon_id_sf_err = evaluator['photon_id_tight_error'](np.abs(photons[df['is_tight_photon']].eta))
+            if (not df['is_data']) and ('cr_g' in region) and (df['year']!=2016):
+                photon_id_sf_nom = evaluator['photon_id_tight_tnp'](np.abs(photons[df['is_tight_photon']].eta))
+                photon_id_sf_err = evaluator['photon_id_tight_tnp_error'](np.abs(photons[df['is_tight_photon']].eta))
 
                 rw = region_weights.partial_weight(exclude=exclude+['photon_id_tight'])
                 ezfill('recoil_photon_id_up', recoil=recoil_pt[mask], weight=(rw * (photon_id_sf_nom+photon_id_sf_err).prod())[mask])
