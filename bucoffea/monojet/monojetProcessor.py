@@ -27,7 +27,8 @@ from bucoffea.helpers import (
                               dphi,
                               mask_and,
                               mask_or,
-                              evaluator_from_config
+                              evaluator_from_config,
+                              candidates_in_hem
                              )
 from bucoffea.helpers.weights import (
                               get_veto_weights
@@ -49,8 +50,6 @@ from bucoffea.helpers.gen import (
                                   setup_dressed_gen_candidates,
                                   fill_gen_v_info
                                  )
-
-from bucoffea.vbfhinv.vbfhinvProcessor import candidates_in_hem
 
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
