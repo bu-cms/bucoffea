@@ -379,14 +379,6 @@ def setup_candidates(df, cfg):
         nconst=df['Jet_nConstituents'],
         hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour']
     )
-    # Before cleaning, apply HEM veto
-    hem_ak4 = ak4[ (ak4.pt>30) &
-        (-3.0 < ak4.eta) &
-        (ak4.eta < -1.3) &
-        (-1.57 < ak4.phi) &
-        (ak4.phi < -0.87)
-        ]
-    df['hemveto'] = hem_ak4.counts == 0
 
     # B jets have their own overlap cleaning,
     # so deal with them before applying filtering to jets
@@ -452,7 +444,6 @@ def setup_candidates(df, cfg):
 def monojet_regions(cfg):
     common_cuts = [
         'filt_met',
-        'hemveto',
         'veto_ele',
         'veto_muo',
         'veto_photon',
@@ -479,8 +470,8 @@ def monojet_regions(cfg):
     regions = {}
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_v'] = ['trig_met'] + common_cuts + v_cuts
-    regions['sr_j'] = ['trig_met'] + common_cuts + j_cuts
+    regions['sr_v'] = ['trig_met', 'metphihemextveto'] + common_cuts + v_cuts
+    regions['sr_j'] = ['trig_met', 'metphihemextveto'] + common_cuts + j_cuts
 
     regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
     regions['cr_nofilt_j'].remove('filt_met')
@@ -505,7 +496,7 @@ def monojet_regions(cfg):
     regions['cr_2e_v'] = cr_2e_cuts + v_cuts
 
     # Single electron CR
-    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'met_el','mt_el'] + common_cuts
+    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'met_el','mt_el'] + common_cuts + ['no_el_in_hem']
     cr_1e_cuts.remove('veto_ele')
     regions['cr_1e_j'] =  cr_1e_cuts + j_cuts
     regions['cr_1e_v'] =  cr_1e_cuts + v_cuts

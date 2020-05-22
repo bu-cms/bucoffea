@@ -169,3 +169,8 @@ def sigmoid(x,a,b,c,d):
 def exponential(x, a, b, c):
     """Exponential function for scale factor fits."""
     return a * np.exp(-b * x) + c
+
+
+def candidates_in_hem(candidates):
+    """Returns a mask telling you which candidates are in the HEM region"""
+    return (-3.0 < candidates.eta) & (candidates.eta < -1.3) & (-1.8 < candidates.phi) & (candidates.phi < -0.6)

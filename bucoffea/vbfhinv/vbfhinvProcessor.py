@@ -13,7 +13,8 @@ from bucoffea.helpers import (
                               min_dphi_jet_met,
                               mt,
                               recoil,
-                              weight_shape
+                              weight_shape,
+                              candidates_in_hem
                               )
 from bucoffea.helpers.dataset import (
                                       extract_year,
@@ -49,9 +50,6 @@ from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,
                                            vbfhinv_regions
                                          )
-
-def candidates_in_hem(candidates):
-    return (-3.0 < candidates.eta) & (candidates.eta < -1.3) & (-1.8 < candidates.phi) & (candidates.phi < -0.6)
 
 def trigger_selection(selection, df, cfg):
     pass_all = np.zeros(df.size) == 0
@@ -248,11 +246,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
-
-        if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
-            selection.add('hemveto', df['hemveto'])
-        else:
-            selection.add('hemveto', np.ones(df.size)==1)
 
         # AK4 dijet
         diak4 = ak4[:,:2].distincts()
