@@ -248,11 +248,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
 
-        if(cfg.MITIGATION.HEM and extract_year(df['dataset']) == 2018 and not cfg.RUN.SYNC):
-            selection.add('hemveto', df['hemveto'])
-        else:
-            selection.add('hemveto', np.ones(df.size)==1)
-
         # AK4 dijet
         diak4 = ak4[:,:2].distincts()
         leadak4_pt_eta = (diak4.i0.pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (np.abs(diak4.i0.eta) < cfg.SELECTION.SIGNAL.LEADAK4.ETA)
