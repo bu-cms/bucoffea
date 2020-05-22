@@ -133,11 +133,7 @@ def btag_weights(bjets, cfg):
                         pt=bjets.pt)
 
         # Cap the weights just in case
-        weights = np.where(
-            weights < 5,
-            weights,
-            np.ones(len(weights))
-        )
+        weights[np.abs(weights)>5] = 1
 
         weight_variations[variation] = weights
 
