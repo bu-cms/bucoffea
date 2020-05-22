@@ -23,7 +23,7 @@ pjoin = os.path.join
 #suppress true_divide warnings
 np.seterr(divide='ignore', invalid='ignore')
 import matplotlib.pylab as pylab
-params = {'legend.fontsize': 'medium',
+params = {'legend.fontsize': 'small',
         #   'figure.figsize': (15, 5),
          'axes.labelsize': 'x-large',
          'axes.titlesize':'x-large',
@@ -48,6 +48,17 @@ colors = {
     'ZJetsToNuNu.*' : '#31a354',
     'ZNuNuGJets_.*' : '#0050ec'
 }
+legend_labels = {
+    'GJets.*' : "$\\gamma$+jets",
+    'DY.*' : "Z$\\rightarrow\\ell\\ell$",
+    'Top.*' : "Top quark",
+    'WN*J.*LNu.*' : "W$\\rightarrow\\ell\\nu$",
+    'QCD.*' : "QCD",
+    'Diboson.*' : "WW/WZ/ZZ",
+    'ZJetsToNuNu.*.*' : "Z$\\rightarrow\\nu\\nu$",
+    'MET|Single(Electron|Photon|Muon)|EGamma.*' : "Data"
+
+}
 class Style():
     def __init__(self):
         self.region_names = {
@@ -56,6 +67,7 @@ class Style():
             'cr_1e_j' : 'Single-e CR, monojet',
             'cr_2e_j' : 'Di-e CR, monojet',
             'cr_g_j' : 'Single-Photon CR, monojet',
+            'sr_j' : 'Signal region, monojet',
             'cr_1m_v' : 'Single-$\mu$ CR, mono-v',
             'cr_2m_v' : 'Di-$\mu$ CR, mono-v',
             'cr_1e_v' : 'Single-e CR, mono-v',
@@ -76,10 +88,16 @@ class Style():
                     'dielectron_mass' : hist.Bin('dilepton_mass',r'M($e^{+}e^{-}$)',30,60,120),
                     # 'recoil' : hist.Bin('recoil','recoil',list(range(250,300,50)) + list(range(300,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,200))),
                     'recoil' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
+                    'recoil_hardbveto' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
                     'recoil_nopog' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
                     'recoil_nopu' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
                     'recoil_nopref' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
+                    'recoil_notheory' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
+                    'recoil_recosfrecoil' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
                     'met' : hist.Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
+                    'calomet' : hist.Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
+                    'puppimet' : hist.Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
+                    'tkmet' : hist.Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
                     'ak4_pt0' : hist.Bin('jetpt',r'Leading AK4 jet $p_{T}$ (GeV)',list(range(80,600,20)) + list(range(600,1000,20)) ),
                     'ak4_pt1' : hist.Bin('jetpt',r'Trailing AK4 jet $p_{T}$ (GeV)',list(range(40,600,20)) + list(range(600,1000,20)) ),
                     'ak4_pt' : hist.Bin('jetpt',r'All AK4 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,20)) ),
@@ -99,7 +117,12 @@ class Style():
                     'muon_pt' : hist.Bin('pt',r'All muon $p_{T}$ (GeV)',list(range(0,600,20))),
                     'dielectron_pt' : hist.Bin('pt',r'Dielectron $p_{T}$ (GeV)',list(range(0,400,20)) + list(range(400,800,40)) + list(range(800,1100,100))),
                     'dimuon_pt' : hist.Bin('pt',r'Dimuon $p_{T}$ (GeV)',list(range(0,400,20)) + list(range(400,800,40)) + list(range(800,1100,100))),
-                    'mjj' : hist.Bin('mjj', r'$M_{jj}$ (GeV)', list(range(200,800,300)) + list(range(800,2000,400)) + [2000, 2750, 3500])
+                    'mjj' : hist.Bin('mjj', r'$M_{jj}$ (GeV)', list(range(200,800,300)) + list(range(800,2000,400)) + [2000, 2750, 3500]),
+                    'softjet_pt' : hist.Bin("pt","Sum $p_{T}$ (GeV)", list(range(80,600,20))),
+                    'softjet_hem_pt_sum' : hist.Bin("pt","Sum $p_{T}$ (GeV)", 20,0,400),
+                    'softjet_anti_hem_pt_sum' : hist.Bin("pt","Sum $p_{T}$ (GeV)", 20,0,400),
+                    'isotrack_hem_pt_sum' : hist.Bin("pt","Sum $p_{T}$ (GeV)", [0,10,20,30,40,50]),
+                    'isotrack_anti_hem_pt_sum' : hist.Bin("pt","Sum $p_{T}$ (GeV)", [0,10,20,30,40,50]),
                     }
         }
         # binning for all monov regions:
@@ -167,10 +190,8 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         'elinewidth': 1,
     }
     signal_err_opts = {
-        'linestyle':'none',
-        'marker': '.',
-        'markersize': 10.,
-        'color':'r',
+        'linestyle':'-',
+        'color':'crimson',
         'elinewidth': 1,
     }
 
@@ -192,7 +213,8 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
             error_opts=signal_err_opts,
             ax=ax,
             overflow='all',
-            binwnorm=1)
+            binwnorm=1,
+            clear=False)
 
     # Plot MC background samples
     # Here we use a regular expression to match
@@ -208,6 +230,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
 
     # Apply correct colors to BG histograms
     handles, labels = ax.get_legend_handles_labels()
+    new_labels = []
     for handle, label in zip(handles, labels):
         col = None
         for k, v in colors.items():
@@ -219,13 +242,18 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
             handle.set_linestyle('-')
             handle.set_edgecolor('k')
 
+        l = None
+        for k, v in legend_labels.items():
+            if re.match(k, label):
+                l = v
+        new_labels.append(l if l else label)
 
     # Update legend
     try:
         region_name = s.region_names[region]
     except KeyError:
         region_name = region
-    ax.legend(title=region_name,ncol=1)
+    ax.legend(title=region_name,ncol=2,handles=handles, labels=new_labels)
 
     # Ratio plot
     if data:
@@ -266,7 +294,26 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     if distribution in plot_settings.keys():
         plot_settings=plot_settings[distribution]
     if ylim:
-        ax.set_ylim(ylim[0],ylim[1])
+        if ylim=="auto":
+            width = np.diff([x for x in h.axes() if "dataset" not in x.name][0].edges())
+            vmc = h[mc].integrate("dataset").values()[()] / width
+            try:
+                vdata = h[data].integrate("dataset").values()[()] / width
+            except:
+                vdata = vmc
+            if signal:
+                vsig = h[signal].integrate("dataset").values()[()] / width
+            else:
+                vsig = vmc
+
+
+            ax.set_ylim(
+                0.5*min([np.min(vmc[vmc>0]), np.min(vdata[vdata>0]), np.min(vsig[vsig>0])]),
+                1e2*max([np.max(vmc), np.max(vdata), np.min(vsig)]),
+            )
+
+        else:
+            ax.set_ylim(ylim[0],ylim[1])
     elif 'ylim' in plot_settings.keys():
         ax.set_ylim(plot_settings['ylim'])
     else:

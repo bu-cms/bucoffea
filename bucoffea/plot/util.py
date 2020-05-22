@@ -238,12 +238,12 @@ def merge_datasets(histogram):
     yearly = {
         'GJets_1j_Gpt_5f_NLO-amcatnlo_{year}' : 'GJets_1j_Gpt-(\d+)To((\d+)|Inf)_5f_NLO-amcatnlo_{year}',
         'GJets_HT_MLM_{year}' : 'GJets_HT-(\d+)To.*-MLM_{year}',
-        'GJets_DR-0p4_HT_MLM_{year}' : 'GJets_DR-0p4_HT-(\d+)To.*-MLM_.*{year}',
+        'GJets_DR-0p4_HT_MLM_{year}'    : 'GJets_DR-0p4_HT-(\d+)To.*-MLM_.*{year}',
         'WJetsToQQ_HT_MLM_{year}' : 'WJetsToQQ_HT-?(\d+)(T|t)o.*-MLM_{year}',
         'DYJetsToLL_M-50_HT_MLM_{year}' : 'DYJetsToLL_M-50_HT-(\d+)to.*-MLM_{year}',
         'WJetsToLNu_HT_MLM_{year}' : 'WJetsToLNu_HT-(\d+)To.*-MLM_{year}',
 
-        'Top_FXFX_{year}' : '(TTJets-amcatnloFXFX|ST_((s|t)-channel|tW)_(anti)?top).*_{year}',
+        'Top_FXFX_{year}' : '(TTJets-amcatnloFXFX|ST_((s|t)-channel|tW)_(anti)?top.*inclusiveDecays.*).*_{year}',
         'Top_MLM_{year}' : '(TTJets.*MLM|ST_((s|t)-channel|tW)_(anti)?top).*_{year}',
         'TT_pow_{year}' : '(TTTo.*pow|ST).*{year}',
 
