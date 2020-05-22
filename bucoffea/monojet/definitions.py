@@ -739,12 +739,21 @@ def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
     return weights
 
 def pileup_weights(weights, df, evaluator, cfg):
+
     if cfg.SF.PILEUP.MODE == 'nano':
-                weights.add("pileup", df['puWeight'])
+        pu_weight = df['puWeight']
     elif cfg.SF.PILEUP.MODE == 'manual':
-        weights.add("pileup", evaluator['pileup'](df['Pileup_nTrueInt']))
+        pu_weight = evaluator['pileup'](df['Pileup_nTrueInt'])
     else:
         raise RuntimeError(f"Unknown value for cfg.PILEUP.MODE: {cfg.PILEUP.MODE}.")
+
+    # Cap weights just in case
+    pu_weight = np.where(
+        np.abs(pu_weight) < 5,
+        pu_weight,
+        1
+    )
+    weights.add("pileup", pu_weight)
     return weights
 
 def photon_trigger_sf(weights, photons, df):

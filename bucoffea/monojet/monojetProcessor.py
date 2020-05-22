@@ -126,11 +126,20 @@ def btag_weights(bjets, cfg):
 
 
     for variation in ["central","up","down"]:
-        weight_variations[variation] = bsf.eval(
+        weights = bsf.eval(
                         systematic=variation,
                         flavor=bjets.hadflav,
                         abseta=bjets.abseta,
                         pt=bjets.pt)
+
+        # Cap the weights just in case
+        weights = np.where(
+            weights < 5,
+            weights,
+            1
+        )
+
+        weight_variations[variation] = weights
 
     return weight_variations
 
