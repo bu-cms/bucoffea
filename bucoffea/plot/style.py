@@ -37,7 +37,16 @@ def plot_settings():
                 'ylim' : (1e-3,1e3)
             },
             'met' : {
-                'ylim' : (1e-3,1e3)
+                'ylim' : (1e-6,1e3)
+            },
+            'puppimet' : {
+                'ylim' : (1e-6,1e3)
+            },
+            'tkmet' : {
+                'ylim' : (1e-6,1e3)
+            },
+            'calomet' : {
+                'ylim' : (1e-6,1e3)
             },
             'ak4_phi0' : {
                 'ylim' : (1e0,1e7)
@@ -49,21 +58,51 @@ def plot_settings():
                 'ylim' : (1e0,1e7)
             },
             'ak4_eta0' : {
-                'ylim' : (1e0,1e6)
+                'ylim' : (1e-3,1e4)
             },
             'ak4_eta1' : {
-                'ylim' : (1e0,1e6)
+                'ylim' : (1e-3,1e4)
             },
+            'hem_ht' : {
+                'ylim' : (1e-1,1e5)
+            },
+            'hem_pt_max' : {
+                'ylim' : (1e-1,1e5)
+            },
+            'photon_raw_hem_pt_sum' : {
+                'xlim' : (0,300)
+            },
+            'photon_raw_anti_hem_pt_sum' : {
+                'xlim' : (0,300)
+            },
+            'photon_raw_anti_hem_mult' : {
+                'ylim' : (1e-3,1e4)
+            },
+            'photon_raw' : {
+                'ylim' : (1e-3,1e4)
+            },
+            'photon_raw_hem_mult' : {
+                'ylim' : (1e-3,1e4)
+            },
+
             'ak4_eta' : {
                 'ylim' : (1e0,1e8)
             },
             'ak4_chf0' : {
                 'xlim' : (0,1),
-                'ylim' : (1e0,1e6)
+                'ylim' : (1e1,1e8)
             },
             'ak4_nhf0' : {
                 'xlim' : (0,1),
-                'ylim' : (1e0,1e6)
+                'ylim' : (1e1,1e8)
+            },
+            'ak4_chf1' : {
+                'xlim' : (0,1),
+                'ylim' : (1e1,1e8)
+            },
+            'ak4_nhf1' : {
+                'xlim' : (0,1),
+                'ylim' : (1e1,1e8)
             },
             'dpfcalo' : {
                 'xlim' : (-0.75,0.75),
@@ -89,12 +128,27 @@ def plot_settings():
             },
             'dphijj' : {
                 'ylim' : (1e-1,1e6)
+            },
+            'recoil_phi' : {
+                'ylim' : (1e-1,1e6)
+            },
+            'met_phi' : {
+                'ylim' : (1e-1,1e6)
             }
         },
         'sr_j' : {
             'recoil' : {
-                'ylim' : (1e-3,1e5)
-                }
+                'ylim' : (1e-3,1e4)
+                },
+            'recoil_phi' : {
+                'ylim' : (1e3,1e6)
+                },
+            'ak4_eta0' : {
+                'xlim' : (-2.5,2.5)
+            },
+            'dpfcalo' : {
+                'xlim' : (-0.5,0.5)
+            }
             },
         'cr_2m_vbf' : {
             'recoil' : {
@@ -314,6 +368,14 @@ def plot_settings():
                 'ylim' : (1e0,1e6)
             },
             'ak4_nhf0' : {
+                'xlim' : (0,1),
+                'ylim' : (1e0,1e6)
+            },
+            'ak4_chf1' : {
+                'xlim' : (0,1),
+                'ylim' : (1e0,1e6)
+            },
+            'ak4_nhf1' : {
                 'xlim' : (0,1),
                 'ylim' : (1e0,1e6)
             },
@@ -711,6 +773,10 @@ def plot_settings():
                 'xlim' : (0,1),
                 'ylim' : (1e2,1e6)
             },
+            'ak4_nef0' : {
+                'xlim' : (0,1),
+                'ylim' : (1e0,1e4)
+            },
             'drmuonjet' : {
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
@@ -833,6 +899,10 @@ def plot_settings():
                 'xlim' : (0,1),
                 'ylim' : (1e2,1e6)
             },
+            'ak4_nef0' : {
+                'xlim' : (0,1),
+                'ylim' : (1e0,1e4)
+            },
             'drelejet' : {
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e5)
@@ -906,6 +976,10 @@ def plot_settings():
             'ak4_chf0' : {
                 'xlim' : (0,1),
                 'ylim' : (1e3,1e8)
+            },
+            'ak4_nef0' : {
+                'xlim' : (0,1),
+                'ylim' : (1e0,1e5)
             },
             'ak4_nhf0' : {
                 'xlim' : (0,1),
@@ -1001,6 +1075,10 @@ def plot_settings():
                 'xlim' : (0,1),
                 'ylim' : (1e3,1e8)
             },
+            'ak4_nef0' : {
+                'xlim' : (0,1),
+                'ylim' : (1e0,1e5)
+            },
             'electron_mt' : {
                 'xlim' : (0,180),
                 'ylim' : (1e1,1e5)
@@ -1077,6 +1155,10 @@ def plot_settings():
             'ak4_nhf0' : {
                 'xlim' : (0,1),
                 'ylim' : (1e3,1e8)
+            },
+            'ak4_nef0' : {
+                'xlim' : (0,1),
+                'ylim' : (1e0,1e5)
             },
             'drphotonjet' : {
                 'xlim' : (0,2),
