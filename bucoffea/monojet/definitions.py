@@ -751,7 +751,7 @@ def pileup_weights(weights, df, evaluator, cfg):
     pu_weight = np.where(
         np.abs(pu_weight) < 5,
         pu_weight,
-        1
+        np.ones(pu_weight)
     )
     weights.add("pileup", pu_weight)
     return weights

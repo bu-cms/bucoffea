@@ -136,7 +136,7 @@ def btag_weights(bjets, cfg):
         weights = np.where(
             weights < 5,
             weights,
-            1
+            np.ones(len(weights))
         )
 
         weight_variations[variation] = weights
