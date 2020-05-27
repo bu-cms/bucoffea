@@ -275,7 +275,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         if df['year'] == 2018:
             selection.add('hemveto',df['hemveto'])
-            selection.add('hemveto_metphi', (met_pt>470) | (met_phi>-0.67) | (met_phi<-1.57))
+            selection.add('hemveto_metphi', (met_pt>470) | (met_phi>-0.62) | (met_phi<-1.62))
         else:
             selection.add('hemveto',pass_all)
             selection.add('hemveto_metphi', pass_all)
