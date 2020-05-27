@@ -274,11 +274,9 @@ class monojetProcessor(processor.ProcessorABC):
 
 
         if df['year'] == 2018:
-            selection.add("metphihemextveto", ((-1.8 > met_phi)|(met_phi>-0.6)))
-            selection.add('no_el_in_hem', electrons[candidates_in_hem(electrons)].counts==0)
+            selection.add('hemveto',df['hemveto'])
         else:
-            selection.add("metphihemextveto", pass_all)
-            selection.add('no_el_in_hem', pass_all)
+            selection.add('hemveto',pass_all)
 
         # AK4 Jet
         leadak4_pt_eta = (ak4.pt.max() > cfg.SELECTION.SIGNAL.leadak4.PT) \
