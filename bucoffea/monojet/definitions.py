@@ -104,13 +104,16 @@ def monojet_accumulator(cfg):
     items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_notrg"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopref"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_hardbveto"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_bveto_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_bveto_down"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_photon_id_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_photon_id_dn"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_photon_id_extrap_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_photon_id_extrap_dn"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+
+    if cfg and cfg.RUN.BTAG_STUDY:
+        items["recoil_hardbveto"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_bveto_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_bveto_down"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    if cfg and cfg.RUN.PHOTON_ID_STUDY:
+        items["recoil_photon_id_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_photon_id_dn"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_photon_id_extrap_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_photon_id_extrap_dn"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["ak4_pt0_over_recoil"] = Hist("Counts", dataset_ax, region_ax, ratio_ax)
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -147,14 +150,16 @@ def monojet_accumulator(cfg):
     items["ak8_tvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvstqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvstqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
-    items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
-    items["ak8_passtight_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
-    items["ak8_passloosemd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
-    items["ak8_passtightmd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
-    items["ak8_passloose_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
-    items["ak8_passtight_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
-    items["ak8_passloosemd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
-    items["ak8_passtightmd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+
+    if cfg and cfg.RUN.MONOVMISTAG:
+        items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+        items["ak8_passtight_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+        items["ak8_passloosemd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+        items["ak8_passtightmd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+        items["ak8_passloose_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+        items["ak8_passtight_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+        items["ak8_passloosemd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+        items["ak8_passtightmd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
     items["ak8_Vmatched_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
 
     items["ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -557,35 +562,36 @@ def monojet_regions(cfg):
         if not region.startswith("sr_"):
             continue
 
-        new_region = f"{region}_no_veto_ele"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].remove("veto_ele")
-        tmp[new_region].remove("mindphijr")
-        tmp[new_region].remove("recoil")
-        tmp[new_region].remove("dpfcalo")
-        tmp[new_region].append("met_sr")
-        tmp[new_region].append("mindphijm")
-        tmp[new_region].append("dpfcalo_sr")
+        if cfg and cfg.RUN.VETO_STUDY:
+            new_region = f"{region}_no_veto_ele"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].remove("veto_ele")
+            tmp[new_region].remove("mindphijr")
+            tmp[new_region].remove("recoil")
+            tmp[new_region].remove("dpfcalo")
+            tmp[new_region].append("met_sr")
+            tmp[new_region].append("mindphijm")
+            tmp[new_region].append("dpfcalo_sr")
 
-        new_region = f"{region}_no_veto_tau"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].remove("veto_tau")
-        tmp[new_region].remove("mindphijr")
-        tmp[new_region].remove("recoil")
-        tmp[new_region].remove("dpfcalo")
-        tmp[new_region].append("met_sr")
-        tmp[new_region].append("mindphijm")
-        tmp[new_region].append("dpfcalo_sr")
+            new_region = f"{region}_no_veto_tau"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].remove("veto_tau")
+            tmp[new_region].remove("mindphijr")
+            tmp[new_region].remove("recoil")
+            tmp[new_region].remove("dpfcalo")
+            tmp[new_region].append("met_sr")
+            tmp[new_region].append("mindphijm")
+            tmp[new_region].append("dpfcalo_sr")
 
-        new_region = f"{region}_no_veto_muon"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].remove("veto_muo")
-        tmp[new_region].remove("mindphijr")
-        tmp[new_region].remove("recoil")
-        tmp[new_region].remove("dpfcalo")
-        tmp[new_region].append("met_sr")
-        tmp[new_region].append("mindphijm")
-        tmp[new_region].append("dpfcalo_sr")
+            new_region = f"{region}_no_veto_muon"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].remove("veto_muo")
+            tmp[new_region].remove("mindphijr")
+            tmp[new_region].remove("recoil")
+            tmp[new_region].remove("dpfcalo")
+            tmp[new_region].append("met_sr")
+            tmp[new_region].append("mindphijm")
+            tmp[new_region].append("dpfcalo_sr")
 
         new_region = f"{region}_no_veto_all"
         tmp[new_region] = copy.deepcopy(regions[region])

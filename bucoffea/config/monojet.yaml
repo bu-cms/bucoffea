@@ -175,7 +175,10 @@ default:
         - 79123963
         - 51393664
     trigger_study: False
-    monov: False
+    veto_study: False
+    photon_id_study: False
+    btag_study: False
+    monov: True
     monovmistag: False
     monoj: True
   triggers:

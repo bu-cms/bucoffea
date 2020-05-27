@@ -610,7 +610,7 @@ class monojetProcessor(processor.ProcessorABC):
 
 
                 # Dimuon specifically for deepak8 mistag rate measurement
-                if 'inclusive_v' in region:
+                if cfg.RUN.MONOVMISTAG and 'inclusive_v' in region:
                     ezfill('ak8_passloose_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passtight_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHT, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passloosemd_pt0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.LOOSEMD, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
@@ -631,18 +631,18 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('recoil_nopref',      recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['prefire']+exclude)[mask])
             ezfill('recoil_nopu',        recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
             ezfill('recoil_notrg',       recoil=recoil_pt[mask],      weight=region_weights.partial_weight(exclude=['trigger']+exclude)[mask])
-            ezfill('recoil_hardbveto',   recoil=recoil_pt[mask&(bjets.counts==0)],      weight=region_weights.partial_weight(exclude=exclude+['bveto'])[mask&(bjets.counts==0)])
-
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
 
-            if not df['is_data']:
-                rw = region_weights.partial_weight(exclude=exclude+['bveto'])
-                ezfill('recoil_bveto_up',    recoil=recoil_pt[mask],  weight=(rw*(1-bsf_variations['up']).prod())[mask])
-                ezfill('recoil_bveto_down',  recoil=recoil_pt[mask],  weight=(rw*(1-bsf_variations['down']).prod())[mask])
+            if cfg.RUN.BTAG_STUDY:
+                ezfill('recoil_hardbveto',   recoil=recoil_pt[mask&(bjets.counts==0)],      weight=region_weights.partial_weight(exclude=exclude+['bveto'])[mask&(bjets.counts==0)])
+                if not df['is_data']:
+                    rw = region_weights.partial_weight(exclude=exclude+['bveto'])
+                    ezfill('recoil_bveto_up',    recoil=recoil_pt[mask],  weight=(rw*(1-bsf_variations['up']).prod())[mask])
+                    ezfill('recoil_bveto_down',  recoil=recoil_pt[mask],  weight=(rw*(1-bsf_variations['down']).prod())[mask])
 
-            if (not df['is_data']) and ('cr_g' in region) and (df['year']!=2016):
+            if cfg.RUN.PHOTON_ID_STUDY and (not df['is_data']) and ('cr_g' in region) and (df['year']!=2016):
                 photon_id_sf_nom = evaluator['photon_id_tight_tnp'](np.abs(photons[df['is_tight_photon']].eta))
                 photon_id_sf_err = evaluator['photon_id_tight_tnp_error'](np.abs(photons[df['is_tight_photon']].eta))
 
