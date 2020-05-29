@@ -464,7 +464,7 @@ class monojetProcessor(processor.ProcessorABC):
                         ]
                     region_weights.add("vetoweight", veto_weights.partial_weight(include=["nominal"]))
 
-            if not df['is_data']:
+            if not (df['is_data'] or df['year']==2016):
                 genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
                 leadak8 = ak8[ak8.pt.argmax()]
                 leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
