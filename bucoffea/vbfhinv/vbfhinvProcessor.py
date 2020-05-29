@@ -358,7 +358,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             except KeyError:
                 weights.add('prefire', np.ones(df.size))
 
-            weights = candidate_weights(weights, df, evaluator, muons, electrons, photons)
+            weights = candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg)
             weights = pileup_weights(weights, df, evaluator, cfg)
             if not (gen_v_pt is None):
                 weights = theory_weights_vbf(weights, df, evaluator, gen_v_pt, df['mjj_gen'])

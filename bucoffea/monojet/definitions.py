@@ -104,9 +104,16 @@ def monojet_accumulator(cfg):
     items["recoil_nopu"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_notrg"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopref"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_hardbveto"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_bveto_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_bveto_down"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+
+    if cfg and cfg.RUN.BTAG_STUDY:
+        items["recoil_hardbveto"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_bveto_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_bveto_down"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    if cfg and cfg.RUN.PHOTON_ID_STUDY:
+        items["recoil_photon_id_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_photon_id_dn"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_photon_id_extrap_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_photon_id_extrap_dn"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["ak4_pt0_over_recoil"] = Hist("Counts", dataset_ax, region_ax, ratio_ax)
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -143,14 +150,16 @@ def monojet_accumulator(cfg):
     items["ak8_tvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvstqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvstqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
-    items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
-    items["ak8_passtight_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
-    items["ak8_passloosemd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
-    items["ak8_passtightmd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
-    items["ak8_passloose_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
-    items["ak8_passtight_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
-    items["ak8_passloosemd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
-    items["ak8_passtightmd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+
+    if cfg and cfg.RUN.MONOVMISTAG:
+        items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+        items["ak8_passtight_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+        items["ak8_passloosemd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+        items["ak8_passtightmd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+        items["ak8_passloose_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+        items["ak8_passtight_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+        items["ak8_passloosemd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+        items["ak8_passtightmd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
     items["ak8_Vmatched_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
 
     items["ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -380,6 +389,15 @@ def setup_candidates(df, cfg):
         hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour']
     )
 
+    # Before cleaning, apply HEM veto
+    hem_ak4 = ak4[ (ak4.pt>30) &
+        (-3.0 < ak4.eta) &
+        (ak4.eta < -1.3) &
+        (-1.57 < ak4.phi) &
+        (ak4.phi < -0.87)
+        ]
+    df['hemveto'] = hem_ak4.counts == 0
+
     # B jets have their own overlap cleaning,
     # so deal with them before applying filtering to jets
     btag_discriminator = getattr(ak4, cfg.BTAG.algo)
@@ -451,7 +469,8 @@ def monojet_regions(cfg):
         'veto_b',
         'mindphijr',
         'dpfcalo',
-        'recoil'
+        'recoil',
+        'hemveto'
     ]
     j_cuts = [
         'leadak4_pt_eta',
@@ -470,8 +489,8 @@ def monojet_regions(cfg):
     regions = {}
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_v'] = ['trig_met', 'metphihemextveto'] + common_cuts + v_cuts
-    regions['sr_j'] = ['trig_met', 'metphihemextveto'] + common_cuts + j_cuts
+    regions['sr_v'] = ['trig_met','hemveto_metphi'] + common_cuts + v_cuts
+    regions['sr_j'] = ['trig_met','hemveto_metphi'] + common_cuts + j_cuts
 
     regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
     regions['cr_nofilt_j'].remove('filt_met')
@@ -496,7 +515,7 @@ def monojet_regions(cfg):
     regions['cr_2e_v'] = cr_2e_cuts + v_cuts
 
     # Single electron CR
-    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'met_el','mt_el'] + common_cuts + ['no_el_in_hem']
+    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'met_el','mt_el'] + common_cuts
     cr_1e_cuts.remove('veto_ele')
     regions['cr_1e_j'] =  cr_1e_cuts + j_cuts
     regions['cr_1e_v'] =  cr_1e_cuts + v_cuts
@@ -543,35 +562,36 @@ def monojet_regions(cfg):
         if not region.startswith("sr_"):
             continue
 
-        new_region = f"{region}_no_veto_ele"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].remove("veto_ele")
-        tmp[new_region].remove("mindphijr")
-        tmp[new_region].remove("recoil")
-        tmp[new_region].remove("dpfcalo")
-        tmp[new_region].append("met_sr")
-        tmp[new_region].append("mindphijm")
-        tmp[new_region].append("dpfcalo_sr")
+        if cfg and cfg.RUN.VETO_STUDY:
+            new_region = f"{region}_no_veto_ele"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].remove("veto_ele")
+            tmp[new_region].remove("mindphijr")
+            tmp[new_region].remove("recoil")
+            tmp[new_region].remove("dpfcalo")
+            tmp[new_region].append("met_sr")
+            tmp[new_region].append("mindphijm")
+            tmp[new_region].append("dpfcalo_sr")
 
-        new_region = f"{region}_no_veto_tau"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].remove("veto_tau")
-        tmp[new_region].remove("mindphijr")
-        tmp[new_region].remove("recoil")
-        tmp[new_region].remove("dpfcalo")
-        tmp[new_region].append("met_sr")
-        tmp[new_region].append("mindphijm")
-        tmp[new_region].append("dpfcalo_sr")
+            new_region = f"{region}_no_veto_tau"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].remove("veto_tau")
+            tmp[new_region].remove("mindphijr")
+            tmp[new_region].remove("recoil")
+            tmp[new_region].remove("dpfcalo")
+            tmp[new_region].append("met_sr")
+            tmp[new_region].append("mindphijm")
+            tmp[new_region].append("dpfcalo_sr")
 
-        new_region = f"{region}_no_veto_muon"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].remove("veto_muo")
-        tmp[new_region].remove("mindphijr")
-        tmp[new_region].remove("recoil")
-        tmp[new_region].remove("dpfcalo")
-        tmp[new_region].append("met_sr")
-        tmp[new_region].append("mindphijm")
-        tmp[new_region].append("dpfcalo_sr")
+            new_region = f"{region}_no_veto_muon"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].remove("veto_muo")
+            tmp[new_region].remove("mindphijr")
+            tmp[new_region].remove("recoil")
+            tmp[new_region].remove("dpfcalo")
+            tmp[new_region].append("met_sr")
+            tmp[new_region].append("mindphijm")
+            tmp[new_region].append("dpfcalo_sr")
 
         new_region = f"{region}_no_veto_all"
         tmp[new_region] = copy.deepcopy(regions[region])
@@ -690,7 +710,7 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
     elif df['is_nlo_z']:
         theory_weights = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
-        theory_weights = fitfun(gen_v_pt, 1.159, 1.944e-3, 1.0) * evaluator["ewk_nlo_g"](gen_v_pt)
+        theory_weights = evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["ewk_nlo_g"](gen_v_pt)
     elif df['is_nlo_g']:
         theory_weights = evaluator["ewk_nlo_g"](gen_v_pt)
     else:
@@ -735,12 +755,17 @@ def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
     return weights
 
 def pileup_weights(weights, df, evaluator, cfg):
+
     if cfg.SF.PILEUP.MODE == 'nano':
-                weights.add("pileup", df['puWeight'])
+        pu_weight = df['puWeight']
     elif cfg.SF.PILEUP.MODE == 'manual':
-        weights.add("pileup", evaluator['pileup'](df['Pileup_nTrueInt']))
+        pu_weight = evaluator['pileup'](df['Pileup_nTrueInt'])
     else:
         raise RuntimeError(f"Unknown value for cfg.PILEUP.MODE: {cfg.PILEUP.MODE}.")
+
+    # Cap weights just in case
+    pu_weight[np.abs(pu_weight)>5] = 1
+    weights.add("pileup", pu_weight)
     return weights
 
 def photon_trigger_sf(weights, photons, df):
@@ -771,7 +796,7 @@ def photon_trigger_sf(weights, photons, df):
 
     weights.add("trigger_photon", sf)
 
-def candidate_weights(weights, df, evaluator, muons, electrons, photons):
+def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     year = extract_year(df['dataset'])
     # Muon ID and Isolation for tight and loose WP
     # Function of pT, eta (Order!)
@@ -796,7 +821,10 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons):
     weights.add("ele_id_loose", evaluator['ele_id_loose'](electrons[~df['is_tight_electron']].etasc, electrons[~df['is_tight_electron']].pt).prod())
 
     # Photon ID and electron veto
-    weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
+    if cfg.SF.PHOTON.USETNP:
+        weights.add("photon_id_tight", evaluator['photon_id_tight_tnp'](np.abs(photons[df['is_tight_photon']].eta)).prod())
+    else:
+        weights.add("photon_id_tight", evaluator['photon_id_tight'](photons[df['is_tight_photon']].eta, photons[df['is_tight_photon']].pt).prod())
 
     if year == 2016:
         csev_weight = evaluator["photon_csev"](photons.abseta, photons.pt).prod()
