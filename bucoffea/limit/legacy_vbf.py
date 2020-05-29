@@ -13,7 +13,7 @@ from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
 from legacy_monojet import suppress_negative_bins
 pjoin = os.path.join
 
-def datasets(year):
+def datasets(year, unblind=False):
 
     data = {
                     'cr_1m_vbf' : f'MET_{year}',
@@ -21,9 +21,10 @@ def datasets(year):
                     'cr_1e_vbf' : f'EGamma_{year}',
                     'cr_2e_vbf' : f'EGamma_{year}',
                     'cr_g_vbf' : f'EGamma_{year}',
-                    # 'sr_vbf' : f'MET_{year}',
                     'sr_vbf_no_veto_all' : f'nomatch',
                 }
+    if unblind:
+        data['sr_vbf'] = f'MET_{year}'
     mc = {
             'sr_vbf_no_veto_all' : re.compile(f'W(minus|plus)H_.*|((VBF|GluGlu)_HToInvisible.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
@@ -31,6 +32,7 @@ def datasets(year):
             'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_2e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
+            'sr_vbf' : re.compile('nomatch'),
           }
         
     tmp = {}
@@ -91,7 +93,7 @@ def mjj_bins_2016():
     return [200., 400., 600., 900., 1200., 1500.,
             2000., 2750., 3500., 5000.]
 
-def legacy_limit_input_vbf(acc, outdir='./output'):
+def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
@@ -101,6 +103,17 @@ def legacy_limit_input_vbf(acc, outdir='./output'):
     """
     distribution = 'mjj'
 
+    regions = [
+                'cr_2m_vbf',
+                'cr_1m_vbf',
+                'cr_2e_vbf',
+                'cr_1e_vbf',
+                'cr_g_vbf',
+                'sr_vbf_no_veto_all'
+                ]
+    if unblind:
+        regions.append("sr_vbf")
+
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
@@ -108,7 +121,7 @@ def legacy_limit_input_vbf(acc, outdir='./output'):
         signal = re.compile(f'VBF_HToInvisible.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_vbf_{year}.root'))
         data, mc = datasets(year)
-        for region in ['cr_2m_vbf','cr_1m_vbf','cr_2e_vbf','cr_1e_vbf','cr_g_vbf','sr_vbf_no_veto_all']:
+        for region in regions:
             print(f'Region {region}')
             tag = region.split('_')[0]
             # Rebin
@@ -146,7 +159,8 @@ def legacy_limit_input_vbf(acc, outdir='./output'):
                     print(f"Skipping {dataset}")
                     continue
                 f[histo_name] = th1
-        #f[f'{legacy_region_name("sr_vbf")}_data'] = f[f'{legacy_region_name("sr_vbf")}_zjets']
+        if not unblind:
+            f[f'{legacy_region_name("sr_vbf")}_data'] = f[f'{legacy_region_name("sr_vbf")}_zjets']
     merge_legacy_inputs(outdir)
 
 def merge_legacy_inputs(outdir):
