@@ -178,7 +178,7 @@ default:
     veto_study: False
     photon_id_study: False
     btag_study: False
-    monov: True
+    monov: False
     monovmistag: False
     monoj: True
   triggers:
