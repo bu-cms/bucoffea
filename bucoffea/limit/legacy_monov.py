@@ -18,7 +18,7 @@ def recoil_bins_2016():
     return [250,300,350,400,500,600,750,1000]
 
 
-def legacy_limit_input_monov(acc, outdir='./output'):
+def legacy_limit_input_monov(acc, outdir='./output', unblind=False):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
@@ -28,6 +28,17 @@ def legacy_limit_input_monov(acc, outdir='./output'):
     """
     distribution = 'recoil'
 
+    regions = [
+                'cr_2m_v',
+                'cr_1m_v',
+                'cr_2e_v',
+                'cr_1e_v',
+                'cr_g_v',
+                'sr_v_no_veto_all'
+                ]
+    if unblind:
+        regions.append("sr_v")
+
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
@@ -35,8 +46,8 @@ def legacy_limit_input_monov(acc, outdir='./output'):
         for year in [2017,2018]:
             signal = re.compile(f'.*(Hinv|HToInvisible).*{year}')
             f = uproot.recreate(pjoin(outdir, f'legacy_limit_monov_{wp}_{year}.root'))
-            data, mc = datasets(year)
-            for region in ['cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','sr_v_no_veto_all']:
+            data, mc = datasets(year, unblind)
+            for region in regions:
                 if wp == 'tau21':
                     monov_region_name = region
                 else:
@@ -61,7 +72,6 @@ def legacy_limit_input_monov(acc, outdir='./output'):
                 
                 for dataset in map(str, h.axis('dataset').identifiers()):
                     if not (data[region].match(dataset) or mc[region].match(dataset) or signal.match(dataset)):
-                        print(f"Skip dataset: {dataset}")
                         continue
                     print(f"   Dataset: {dataset}")
 
@@ -72,7 +82,8 @@ def legacy_limit_input_monov(acc, outdir='./output'):
                         print(f"Skipping {dataset}")
                         continue
                     f[histo_name] = th1
-            f[f'{legacy_region_name("sr_v")}_data'] = f[f'{legacy_region_name("sr_v")}_zjets']
+            if not unblind:
+                f[f'{legacy_region_name("sr_v")}_data'] = f[f'{legacy_region_name("sr_v")}_zjets']
     merge_legacy_inputs(outdir)
 
 

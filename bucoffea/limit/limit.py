@@ -10,6 +10,7 @@ def parse_commandline():
     parser = argparse.ArgumentParser()
     parser.add_argument('inpath', type=str, help='Input path to use.')
     parser.add_argument('--channel', type=str, help='Channel to make inputs for.', default='monojet')
+    parser.add_argument('--unblind', action='store_true', help='Include signal region data')
     args = parser.parse_args()
 
     if not os.path.isdir(args.inpath):
@@ -36,13 +37,13 @@ def main():
         print(channel)
         if channel == 'monojet':
             from legacy_monojet import legacy_limit_input_monojet
-            legacy_limit_input_monojet(acc, outdir=outdir)
+            legacy_limit_input_monojet(acc, outdir=outdir, unblind=args.unblind)
         elif channel == 'monov':
             from legacy_monov import legacy_limit_input_monov
-            legacy_limit_input_monov(acc, outdir=outdir)
+            legacy_limit_input_monov(acc, outdir=outdir, unblind=args.unblind)
         elif channel == 'vbfhinv':
             from legacy_vbf import legacy_limit_input_vbf
-            legacy_limit_input_vbf(acc, outdir=outdir)
+            legacy_limit_input_vbf(acc, outdir=outdir, unblind=args.unblind)
 
 
 if __name__ == "__main__":
