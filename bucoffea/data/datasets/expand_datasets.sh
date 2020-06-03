@@ -2,16 +2,25 @@
 
 
 expand(){
+    # Loops over a file with one data set name stub per line
+    # And finds all datasets from DAS matching the name 
+    # with the given condition string
     INFILE=${1}
     COND=${2}
+
+    # Ensure that the list ends with a newline
+    # To avoid throwing off the 'read' statement below
+    sed -i  -e '$a\' ${INFILE}
+
     # for STUB in $(cat ${INFILE}); do
     while read STUB; do
+        # Skip commented or empty lines
         if [[ $STUB = \#* ]]; then
             echo $STUB
         elif [ -z "${STUB}" ]; then
             echo ""
         else
-            # echo $STUB
+            # Expand the stub into a full dataset name in DAS
             dasgoclient --query="dataset=/${STUB}/${COND}/NANOAOD*"
         fi
     done < ${INFILE}
@@ -19,7 +28,7 @@ expand(){
 
 INFILE="dataset_names_mc.txt"
 expand "${INFILE}" "RunIISummer16*1June*" | tee datasets_2016.txt
-expand "${INFILE}" "RunIIFall17*1June*" | tee datasets_2017.txt
+expand "${INFILE}" "RunIIFall17*1June*"   | tee datasets_2017.txt
 expand "${INFILE}" "RunIIAutumn18*1June*" | tee datasets_2018.txt
 
 INFILE="dataset_names_data.txt"
@@ -27,6 +36,8 @@ expand "${INFILE}" "Run2016*1June*" | tee -a datasets_2016.txt
 expand "${INFILE}" "Run2017*1June*" | tee -a datasets_2017.txt
 expand "${INFILE}" "Run2018*1June*" | tee -a datasets_2018.txt
 
+# The wildcarded strings in our input lists sometimes match stuff we do not want
+# So we do some postprocessing to throw out unwanted datasets. Can be adapted at will.
 sed -i '/BGen/d' datasets_201*.txt
 sed -i '/DYBBJet/d' datasets_201*.txt
 sed -i '/DoubleEMEnriched/d' datasets_201*.txt
