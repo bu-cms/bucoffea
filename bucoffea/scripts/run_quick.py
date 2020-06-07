@@ -20,7 +20,7 @@ def main():
 
     fileset = {
         "WJetsToLNu_HT-100To200-MLM_2017" : [
-            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/19Feb20/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-100To200-MLM_2017/200219_214925/0000/tree_1.root"
+            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/05Jun20v5/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-100To200-MLM_2017/200605_215802/0000g/tree_1.root"
         ]
     }
 
