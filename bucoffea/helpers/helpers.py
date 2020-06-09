@@ -165,7 +165,11 @@ def evaluator_from_config(cfg):
 
 
 def sigmoid(x,a,b,c,d):
-    """Sigmoid function for trigger turn-on fits."""
+    """
+    Sigmoid function for trigger turn-on fits.
+
+    f(x) = c + (d-c) / (1 + np.exp(-a * (x-b)))
+    """
     return c + (d-c) / (1 + np.exp(-a * (x-b)))
 
 def exponential(x, a, b, c):
