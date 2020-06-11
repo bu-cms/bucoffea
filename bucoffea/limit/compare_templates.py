@@ -93,7 +93,7 @@ def main():
         valid = h1[key].values!=0
 
         rax.plot(
-                x, 
+                x[valid], 
                 h2[key].values[valid] / h1[key].values[valid],
                 's',
                 color="crimson",
