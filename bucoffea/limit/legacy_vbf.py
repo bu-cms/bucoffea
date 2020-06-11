@@ -160,7 +160,7 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
                     continue
                 f[histo_name] = th1
         if not unblind:
-            f[f'{legacy_region_name("sr_vbf")}_data'] = f[f'{legacy_region_name("sr_vbf")}_zjets']
+            f[f'{legacy_region_name("sr_vbf")}_data'] = f[f'{legacy_region_name("sr_vbf")}_qcdzjets']
     merge_legacy_inputs(outdir)
 
 def merge_legacy_inputs(outdir):
