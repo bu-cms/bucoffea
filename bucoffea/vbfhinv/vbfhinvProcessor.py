@@ -104,7 +104,7 @@ def trigger_selection(selection, df, cfg):
 
 
 class vbfhinvProcessor(processor.ProcessorABC):
-    def __init__(self, blind=True):
+    def __init__(self, blind=False):
         self._year=None
         self._blind=blind
         self._configure()
