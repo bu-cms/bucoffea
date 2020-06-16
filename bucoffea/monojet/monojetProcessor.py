@@ -500,6 +500,7 @@ class monojetProcessor(processor.ProcessorABC):
 
                     # output[tree][region]["met"] += processor.column_accumulator(getattr(met, f'pt{var}')[mask].flatten())
                     output[tree][region]["met_pt_nom"] += processor.column_accumulator(met.pt_nom[mask].flatten())
+                    output[tree][region]["met_pt_jer"] += processor.column_accumulator(met.pt[mask].flatten())
                     output[tree][region]["met_pt_jesUp"] += processor.column_accumulator(met.pt_jesup[mask].flatten())
                     output[tree][region]["met_pt_jesDown"] += processor.column_accumulator(met.pt_jesdown[mask].flatten())
                     output[tree][region]["met_pt_jerUp"] += processor.column_accumulator(met.pt_jerup[mask].flatten())
