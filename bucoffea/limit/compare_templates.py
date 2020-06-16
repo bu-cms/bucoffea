@@ -160,10 +160,14 @@ def main():
         rax.set_ylabel("Ratio")
         ax.set_ylabel("Events / bin")
         ax.set_yscale("log")
-        ax.set_ylim(
-            0.5*min(h2[key].values[h2[key].values>0]),
-            1.5*max(h2[key].values),
-        )
+
+        try:
+            ax.set_ylim(
+                0.5*min(h2[key].values[h2[key].values>0]),
+                1.5*max(h2[key].values),
+            )
+        except ValueError:
+            continue
         rax.grid(linestyle='--')
         fig.savefig(pjoin(args.outdir, f"{key}.png"))
         plt.close(fig)
