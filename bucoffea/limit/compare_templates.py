@@ -1,12 +1,17 @@
 #!/usr/bin/env python
-import numpy as np
-from matplotlib import pyplot as plt 
-from bucoffea.plot.util import fig_ratio
-import uproot
-import sys
+import argparse
 import os
 import re
+import sys
+
+import mplhep as hep
+import numpy as np
 import tqdm
+import uproot
+from matplotlib import pyplot as plt
+
+from bucoffea.plot.util import fig_ratio
+
 pjoin = os.path.join
 
 
@@ -36,6 +41,42 @@ def make_dict(fname):
             hists[f"{category}_{hname}"] = h
     return hists
 
+
+
+def parse_commandline():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "fname1",
+        type=str,
+        help="First template file.",
+    )
+    parser.add_argument(
+        "fname2",
+        type=str,
+        help="Second template file.",
+    )
+
+    parser.add_argument(
+        "--outdir",
+        "-o",
+        type=str,
+        default="./plots",
+        help="The output directory to use.",
+    )
+    parser.add_argument(
+        "--rlim",
+        type=str,
+        default="0.9,1.1",
+        help="Lower/upper limit of ratio panel. Comma separated.",
+    )
+
+    args = parser.parse_args()
+    if "INDIR" in args.outdir:
+        args.outdir = args.outdir.replace("INDIR", args.indir)
+
+
+    return args
+
 def main():
     """
     A script to easily compare template files between different runs.
@@ -46,64 +87,66 @@ def main():
     All plots are dumped into a folder for inspection.
     """
 
-    # The two input files to compare are read off the commandline
-    fname1 = sys.argv[1]
-    fname2 = sys.argv[2]
+    args = parse_commandline()
 
-    # Based on their locations, derive tag names to identify the files
-    tag1 = os.path.basename(os.path.dirname(fname1))
-    tag2 = os.path.basename(os.path.dirname(fname2))
+    # Based on input locations, derive tag names to identify the files
+    tag1 = os.path.basename(os.path.dirname(args.fname1))
+    tag2 = os.path.basename(os.path.dirname(args.fname2))
 
     # Convert to dictionary
-    h1 = make_dict(fname1)
-    h2 = make_dict(fname2)
+    h1 = make_dict(args.fname1)
+    h2 = make_dict(args.fname2)
 
     # Make sure the two files have consistent keys
     assert(h1.keys()==h2.keys())
 
     # Create plot folder
-    outdir = "./plots/"
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    if not os.path.exists(args.outdir):
+        os.makedirs(args.outdir)
 
     # Do the actual plotting
     for key in tqdm.tqdm(h1.keys()):
         fig, ax, rax = fig_ratio()
-        x = np.sum(h1[key].bins,axis=1)
-        
-        # Top panel with asbolute comparison
-        ax.plot(
-                x, 
-                h1[key].values,
-                'o',
-                color="dodgerblue",
-                label=f"{tag1}, Integral={np.sum(h1[key].values):.1f}"
-                )
-        ax.plot(
-                x,
-                h2[key].values,
-                's',
-                color="crimson",
-                fillstyle="none",
-                label=f"{tag2}, Integral={np.sum(h2[key].values):.1f}"
-                )
+        x = 0.5 * np.sum(h1[key].bins,axis=1)
+        edges = np.unique(h1[key].bins)
+        hep.histplot(
+            h1[key].values,
+            edges,
+            ax=ax,
+            label=f"{tag1}, Integral={np.sum(h1[key].values):.1f}",
+            color='navy',
+            )
+
+        hep.histplot(
+            h2[key].values,
+            edges,
+            yerr=np.sqrt(h2[key].variances),
+            ax=ax,
+            label=f"{tag2}, Integral={np.sum(h2[key].values):.1f}",
+            color='crimson',
+            marker='o',
+            markersize=5,
+            histtype='errorbar'
+            )
+
         ax.legend()
 
         # Bottom panel: ratio plot
         valid = h1[key].values!=0
 
-        rax.plot(
-                x[valid], 
+        rax.errorbar(
+                x[valid],
                 h2[key].values[valid] / h1[key].values[valid],
-                's',
+                np.sqrt(h2[key].variances[valid]) / h1[key].values[valid],
+                linestyle='none',
+                marker='o',
                 color="crimson",
-                fillstyle="none"
                 )
 
         # Add indicators for bins where we could not calculate the ratio
         if np.any(~valid):
             rax.plot(
-                    np.sum(h1[key].bins,axis=1)[~valid],
+                    0.5*np.sum(h1[key].bins,axis=1)[~valid],
                     np.ones(np.sum(~valid)),
                     'x',
                     color="k",
@@ -112,10 +155,21 @@ def main():
 
         # Aesthetics
         ax.set_title(key)
-        rax.set_ylim(0,2)
-        rax.set_ylabel("Recoil (GeV)")
+        rax.set_ylim(*map(float, args.rlim.split(",")))
+        rax.set_xlabel("Recoil (GeV)")
+        rax.set_ylabel("Ratio")
         ax.set_ylabel("Events / bin")
-        fig.savefig(pjoin(outdir, f"{key}.png"))
+        ax.set_yscale("log")
+
+        try:
+            ax.set_ylim(
+                0.5*min(h2[key].values[h2[key].values>0]),
+                1.5*max(h2[key].values),
+            )
+        except ValueError:
+            continue
+        rax.grid(linestyle='--')
+        fig.savefig(pjoin(args.outdir, f"{key}.png"))
         plt.close(fig)
 
 if __name__ == "__main__":
