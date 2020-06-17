@@ -81,7 +81,8 @@ def make_trees(args):
                     lengths.add(len(v))
 
                 # write
-                f[f'{region}'].extend(d)
+                if len(d):
+                    f[f'{region}'].extend(d)
 
 
 def commandline():
