@@ -495,39 +495,54 @@ class monojetProcessor(processor.ProcessorABC):
 
 
             if cfg.RUN.SAVE.TREE:
-                if region in ['cr_1e_j']:
-                    if region in ['cr_2m_j','cr_1e_j']:
-                        output['tree_int64'][region]["event"]                   += processor.column_accumulator(df["event"][mask])
-                        output['tree_int64'][region]["run"]                     += processor.column_accumulator(df["run"][mask])
-                        output['tree_int64'][region]["lumi"]                    += processor.column_accumulator(df["luminosityBlock"][mask])
-                        output['tree_float16'][region]["gen_v_pt"]              += processor.column_accumulator(gen_v_pt[mask] if gen_v_pt is not None else np.zeros(len(df["event"][mask])))
-                        output['tree_float16'][region]["recoil_pt"]             += processor.column_accumulator(recoil_pt[mask])
-                        output['tree_float16'][region]["recoil_phi"]            += processor.column_accumulator(recoil_phi[mask])
-                        output['tree_float16'][region]["weight_pileup"]         += processor.column_accumulator(region_weights.partial_weight(include=["pileup"])[mask])
-                        output['tree_float16'][region]["weight_trigger_met"]    += processor.column_accumulator(region_weights.partial_weight(include=["trigger_met"])[mask])
-                        output['tree_float16'][region]["weight_trigger_ele"]    += processor.column_accumulator(region_weights.partial_weight(include=["trigger_ele"])[mask])
-                        output['tree_float16'][region]["weight_bveto"]          += processor.column_accumulator(region_weights.partial_weight(include=["bveto"])[mask])
-                        output['tree_float16'][region]["weight_gen"]            += processor.column_accumulator(region_weights.partial_weight(include=["gen"])[mask])
-                        output['tree_float16'][region]["weight_total"]          += processor.column_accumulator(region_weights.weight()[mask])
-                        output['tree_float16'][region]["weight_theory"]         += processor.column_accumulator(region_weights.partial_weight(include=["theory"])[mask])
-                    if region in ['cr_2m_j']:
-                        output['tree_float16'][region]["mu0pt"]  += processor.column_accumulator(muons.pt[leadmuon_index][mask].max())
-                        output['tree_float16'][region]["mu0eta"] += processor.column_accumulator(muons.eta[leadmuon_index][mask].max())
-                        output['tree_float16'][region]["mu1pt"]  += processor.column_accumulator(muons.pt[~leadmuon_index][mask].max())
-                        output['tree_float16'][region]["mu1eta"] += processor.column_accumulator(muons.eta[~leadmuon_index][mask].max())
-                        output['tree_float16'][region]["weight_muon_id_tight"]  += processor.column_accumulator(region_weights.partial_weight(include=["muon_id_tight"])[mask])
-                        output['tree_float16'][region]["weight_muon_id_loose"]  += processor.column_accumulator(region_weights.partial_weight(include=["muon_id_loose"])[mask])
-                        output['tree_float16'][region]["weight_muon_iso_tight"] += processor.column_accumulator(region_weights.partial_weight(include=["muon_iso_tight"])[mask])
-                        output['tree_float16'][region]["weight_muon_iso_loose"] += processor.column_accumulator(region_weights.partial_weight(include=["muon_iso_loose"])[mask])
-                    if region in ['cr_1e_j']:
-                        output['tree_float16'][region]["el0pt"]  += processor.column_accumulator(electrons.pt[leadelectron_index][mask].max())
-                        output['tree_float16'][region]["el0eta"] += processor.column_accumulator(electrons.eta[leadelectron_index][mask].max())
-                        output['tree_float16'][region]["weight_electron_id_tight"]  += processor.column_accumulator(region_weights.partial_weight(include=["ele_id_tight"])[mask])
-                        output['tree_float16'][region]["weight_electron_id_loose"]  += processor.column_accumulator(region_weights.partial_weight(include=["ele_id_loose"])[mask])
+                if re.match(cfg.RUN.SAVE.TREEREGIONS, region):
+                    # General properties
+                    output['tree_int64'][region]["event"]                   += processor.column_accumulator(df["event"][mask])
+                    output['tree_int64'][region]["run"]                     += processor.column_accumulator(df["run"][mask])
+                    output['tree_int64'][region]["lumi"]                    += processor.column_accumulator(df["luminosityBlock"][mask])
+                    output['tree_float16'][region]["recoil_pt"]             += processor.column_accumulator(recoil_pt[mask])
+                    output['tree_float16'][region]["recoil_phi"]            += processor.column_accumulator(recoil_phi[mask])
+
+                    # Selection bits
                     if region=='inclusive':
                         output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
                         for name in selection.names:
                             output['tree_bool'][region][name] += processor.column_accumulator(np.bool_(selection.all(*[name])[mask]))
+
+                    # MC quantities
+                    if not df['is_data']:
+                        if gen_v_pt is not None:
+                            output['tree_float16'][region]["gen_v_pt"]              += processor.column_accumulator(gen_v_pt[mask] if gen_v_pt is not None else np.zeros(len(df["event"][mask])))
+
+                        for name, w in region_weights._weights.items():
+                            output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w[mask]))
+
+                    # Leading muon
+                    if re.match('.*_(\d)m_.*', region):
+                        output['tree_float16'][region]["mu0pt"]  += processor.column_accumulator(muons.pt[leadmuon_index][mask].max())
+                        output['tree_float16'][region]["mu0eta"] += processor.column_accumulator(muons.eta[leadmuon_index][mask].max())
+                        output['tree_float16'][region]["mu0tight"] += processor.column_accumulator(muons.tightId[leadmuon_index][mask].max())
+
+                    # Trailing muon
+                    if re.match('.*_2m_.*', region):
+                        output['tree_float16'][region]["mu1pt"]  += processor.column_accumulator(muons.pt[~leadmuon_index][mask].max())
+                        output['tree_float16'][region]["mu1eta"] += processor.column_accumulator(muons.eta[~leadmuon_index][mask].max())
+                        output['tree_float16'][region]["mu1tight"] += processor.column_accumulator(muons.tightId[~leadmuon_index][mask].max())
+
+                    # Leading electron
+                    if re.match('.*_(\d)e_.*', region):
+                        output['tree_float16'][region]["el0pt"]  += processor.column_accumulator(electrons.pt[leadelectron_index][mask].max())
+                        output['tree_float16'][region]["el0eta"] += processor.column_accumulator(electrons.eta[leadelectron_index][mask].max())
+                        output['tree_float16'][region]["el0tight"] += processor.column_accumulator(electrons.tightId[leadelectron_index][mask].max())
+
+                    # Trailing electron
+                    if re.match('.*_2e_.*', region):
+                        output['tree_float16'][region]["el0pt"]  += processor.column_accumulator(electrons.pt[~leadelectron_index][mask].max())
+                        output['tree_float16'][region]["el0eta"] += processor.column_accumulator(electrons.eta[~leadelectron_index][mask].max())
+                        output['tree_float16'][region]["el0tight"] += processor.column_accumulator(electrons.tightId[~leadelectron_index][mask].max())
+
+
+
             if region=='inclusive':
                 continue
             # Save the event numbers of events passing this selection
