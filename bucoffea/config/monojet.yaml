@@ -165,7 +165,7 @@ default:
       passing: False
       prescale: 1
       tree: False
-      treeregions: "(sr|cr)_.*_j$"
+      treeregions: "(sr|cr_.*)_j$"
     kinematics:
       save: False
       events:
