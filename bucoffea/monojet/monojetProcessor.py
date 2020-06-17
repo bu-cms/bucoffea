@@ -502,6 +502,13 @@ class monojetProcessor(processor.ProcessorABC):
                     output['tree_int64'][region]["lumi"]                    += processor.column_accumulator(df["luminosityBlock"][mask])
                     output['tree_float16'][region]["recoil_pt"]             += processor.column_accumulator(recoil_pt[mask])
                     output['tree_float16'][region]["recoil_phi"]            += processor.column_accumulator(recoil_phi[mask])
+                    output['tree_float16'][region]["leadak4_pt"]            += processor.column_accumulator(ak4[leadak4_index].pt.max()[mask])
+                    output['tree_float16'][region]["leadak4_eta"]           += processor.column_accumulator(ak4[leadak4_index].eta.max()[mask])
+                    output['tree_float16'][region]["leadak4_phi"]           += processor.column_accumulator(ak4[leadak4_index].phi.max()[mask])
+
+                    output['tree_float16'][region]["mindphijr"]            += processor.column_accumulator(df['minDPhiJetRecoil'][mask])
+
+                    output['tree_float16'][region]["calomet_pt"]            += processor.column_accumulator(df['CaloMET_pt'][mask])
 
                     # Selection bits
                     if region=='inclusive':

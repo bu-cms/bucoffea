@@ -494,8 +494,8 @@ def monojet_regions(cfg):
     regions['sr_v'] = ['trig_met','hemveto_metphi'] + common_cuts + v_cuts
     regions['sr_j'] = ['trig_met','hemveto_metphi'] + common_cuts + j_cuts
 
-    regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
-    regions['cr_nofilt_j'].remove('filt_met')
+    # regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
+    # regions['cr_nofilt_j'].remove('filt_met')
 
     # Dimuon CR
     cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
