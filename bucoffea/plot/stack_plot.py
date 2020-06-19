@@ -49,13 +49,17 @@ colors = {
     'ZNuNuGJets_.*' : '#0050ec'
 }
 legend_labels = {
-    'GJets.*' : "$\\gamma$+jets",
-    'DY.*' : "Z$\\rightarrow\\ell\\ell$",
+    'GJets_DR-0p4.*' : "QCD $\\gamma$+jets",
+    'GJets_SM.*' : "EWK $\\gamma$+jets",
+    'DY.*' : "QCD Z$\\rightarrow\\ell\\ell$",
+    'EWKZ.*ZToLL.*' : "EWK Z$\\rightarrow\\ell\\ell$",
     'Top.*' : "Top quark",
-    'WN*J.*LNu.*' : "W$\\rightarrow\\ell\\nu$",
+    'WN*J.*LNu.*' : "QCD W$\\rightarrow\\ell\\nu$",
+    'EWKW.*LNu.*' : "EWK W$\\rightarrow\\ell\\nu$",
     'QCD.*' : "QCD",
     'Diboson.*' : "WW/WZ/ZZ",
-    'ZJetsToNuNu.*.*' : "Z$\\rightarrow\\nu\\nu$",
+    'ZJetsToNuNu.*.*' : "QCD Z$\\rightarrow\\nu\\nu$",
+    'EWKZ.*ZToNuNu.*' : "EWK Z$\\rightarrow\\nu\\nu$",
     'MET|Single(Electron|Photon|Muon)|EGamma.*' : "Data"
 
 }
