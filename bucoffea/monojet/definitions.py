@@ -819,7 +819,27 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
         ele_reco_sf = evaluator['ele_reco'](electrons.etasc, electrons.pt).prod()
     weights.add("ele_reco", ele_reco_sf)
     # ID/iso SF is not split
-    weights.add("ele_id_tight", evaluator['ele_id_tight'](electrons[df['is_tight_electron']].etasc, electrons[df['is_tight_electron']].pt).prod())
+    # in case of 2 tight electrons, we want to apply 0.5*(T1L2+T2L1) instead of T1T2
+    weights_electrons_tight = evaluator['ele_id_tight'](electrons[df['is_tight_electron']].etasc, electrons[df['is_tight_electron']].pt).prod()
+    tight_dielectrons = electrons[df["is_tight_electron"]].distincts()
+    weights_2e_tight = 0.5*(evaluator['ele_id_tight'](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod()*evaluator['ele_id_loose'](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod() \
+            + evaluator['ele_id_tight'](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod()*evaluator['ele_id_loose'](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod())
+    print("====debugging electron tight ID weights====\n")
+    print("\n**number of tight electron pairs**\n")
+    print(str(tight_dielectrons.counts[:20]))
+    print("\n**first electron tight weights**\n")
+    print(str(evaluator['ele_id_tight'](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod()[:20]))
+    print("\n**first electron loose weights**\n")
+    print(str(evaluator['ele_id_loose'](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod()[:20]))
+    print("\n**second electron tight weights**\n")
+    print(str(evaluator['ele_id_tight'](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod()[:20]))
+    print("\n**second electron loose weights**\n")
+    print(str(evaluator['ele_id_loose'](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod()[:20]))
+    print("\n**2 tight electrons weights**\n")
+    print(str(weights_2e_tight[:20]))
+    print("\n**new tight electrons weights**\n")
+    print(str((weights_electrons_tight*(tight_dielectrons.counts==0) + weights_2e_tight*(tight_dielectrons.counts==1))[:20]))
+    weights.add("ele_id_tight", weights_electrons_tight*(tight_dielectrons.counts!=1) + weights_2e_tight*(tight_dielectrons.counts==1))
     weights.add("ele_id_loose", evaluator['ele_id_loose'](electrons[~df['is_tight_electron']].etasc, electrons[~df['is_tight_electron']].pt).prod())
 
     # Photon ID and electron veto
