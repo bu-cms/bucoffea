@@ -45,7 +45,7 @@ def plot(args):
             # electron+photon regions use EGamma
             # ( EGamma = SingleElectron+SinglePhoton for 2017)
             data = {
-                'sr_vbf' : None,
+                'sr_vbf' : f'MET_{year}',
                 'cr_1m_vbf' : f'MET_{year}',
                 'cr_2m_vbf' : f'MET_{year}',
                 'cr_1e_vbf' : f'EGamma_{year}',
@@ -75,7 +75,8 @@ def plot(args):
             for region in mc_lo.keys():
                 if not re.match(args.region, region):
                         continue
-                ratio = True if region != 'sr_vbf' else False 
+                # Plot ratio pads for all regions (now that we're unblinded)
+                ratio = True 
                 # Make separate output direcotry for each region
                 outdir = f'./output/{os.path.basename(indir)}/{region}'
                 # Settings for this region
