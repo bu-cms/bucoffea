@@ -16,7 +16,7 @@ def files_by_dataset(filelist):
     # Split input files by dataset by dataset
     datasets = defaultdict(list)
     for ifile in filelist:
-        m = re.match("(vbfhinv|monojet)_(.*)_(\d)*.coffea", os.path.basename(ifile))
+        m = re.match("(vbfhinv|monojet)_(.*_201(6|7|8)([A-Z])?)(_\d*)?.coffea", os.path.basename(ifile))
 
         if not m:
             print(f"Skipping file {ifile}")
@@ -29,36 +29,36 @@ def files_by_dataset(filelist):
     return datasets
 
 def make_trees(args):
-    # Find region and branch names
-    datatypes = {}
-    tree_by_variable = {}
-    variables = []
-    regions = []
 
 
 
     filelists = files_by_dataset(args.files)
     # The output for each dataset will be written into a separate file
     for dataset, files in filelists.items():
+        # Find region and branch names
+        datatypes = {}
+        tree_by_variable = {}
+        variables = []
+        regions = []
+
+        # Scout out what branches there are
+        for fname in files:
+            acc = load(fname)
+            
+            treenames = [x for x in map(str,acc.keys()) if x.startswith("tree")]
+
+            for tn in treenames:
+                datatype = tn.split("_")[-1]
+                for region in acc[tn].keys():
+                    vars = acc[tn][region].keys()
+                    regions.append(region)
+                    variables.extend(vars)
+                    for v in vars:
+                        datatypes[v] = np.float64 #getattr(np, datatype)
+                        tree_by_variable[v] = tn
+
+        # Combine
         with uproot.recreate(pjoin(args.outdir, f"tree_{dataset}.root"),compression=uproot.ZLIB(4)) as f:
-
-            # Scout out what branches there are
-            for fname in files:
-                acc = load(fname)
-                
-                treenames = [x for x in map(str,acc.keys()) if x.startswith("tree")]
-
-                for tn in treenames:
-                    datatype = tn.split("_")[-1]
-                    for region in acc[tn].keys():
-                        vars = acc[tn][region].keys()
-                        regions.append(region)
-                        variables.extend(vars)
-                        for v in vars:
-                            datatypes[v] = np.float64 #getattr(np, datatype)
-                            tree_by_variable[v] = tn
-
-            # Combine
             for region in set(regions):
                 for fname in files:
                     acc = load(fname)
@@ -72,18 +72,17 @@ def make_trees(args):
                     for k in to_remove:
                         d.pop(k)
 
-                # d.pop('two_electrons')
-                if not (region in [re.sub(";.*","",x.decode("utf-8")) for x in f.keys()]):
-                    f[f'{region}'] = uproot.newtree({x : np.float64 for x in d.keys()})
+                    if not len(d):
+                        continue
+                    if not (region in [re.sub(";.*","",x.decode("utf-8")) for x in f.keys()]):
+                        f[region] = uproot.newtree({x : np.float64 for x in d.keys()})
 
-                lengths = set()
-                for k,v in d.items():
-                    lengths.add(len(v))
-
-                # write
-                if len(d):
-                    f[f'{region}'].extend(d)
-
+                    lengths = set()
+                    for k,v in d.items():
+                        lengths.add(len(v))
+                    assert(len(lengths) == 1)
+                    # write
+                    f[region].extend(d)
 
 def commandline():
     parser = argparse.ArgumentParser(prog='Convert coffea files to TTrees.')
