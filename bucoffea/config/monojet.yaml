@@ -158,6 +158,8 @@ default:
       file: data/sf/theory/lindert_qcd_nnlo_sf.root
     pileup:
       mode: nano
+    diele_id_sf:
+      use_average: true
 
   run:
     sync: False
