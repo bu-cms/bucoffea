@@ -9,7 +9,8 @@ from bucoffea.helpers.dataset import (
                                       is_lo_z,
                                       is_lo_z_ewk,
                                       is_nlo_w,
-                                      is_nlo_z
+                                      is_nlo_z,
+                                      is_lo_znunu
                                       )
 
 def find_first_parent(in_mother, in_pdg, maxgen=10):
@@ -85,7 +86,7 @@ def stat1_dilepton(df, gen):
     elif is_lo_w(df['dataset']) or  is_lo_w_ewk(df['dataset']) or is_nlo_w(df['dataset']):
         pdgsum = 1
         target = 81
-    gen_dilep = find_gen_dilepton(gen, pdgsum)
+    gen_dilep = find_gen_dilepton(gen[(gen.flag&1)==1], pdgsum)
     gen_dilep = gen_dilep[(np.abs(gen_dilep.mass-target)).argmin()]
     return gen_dilep.pt.max(), gen_dilep.phi.max()
 
@@ -151,23 +152,31 @@ def dressed_dilep(df, gen, dressed):
     :rtype: tuple of two 1D arrays
     """
     # Dressed leptons
-    neutrinos = gen[(gen.status==1) & isnu(gen.pdg)]
+    neutrinos = gen[(gen.status==1) & isnu(gen.pdg) & ((gen.flag&1)==1)]
     if is_lo_z(df['dataset']) or is_nlo_z(df['dataset']) or is_lo_z_ewk(df['dataset']):
         target = 91
+
+        # nu
+        dilep_nu = find_gen_dilepton(neutrinos, 0)
+        dilep_nu = dilep_nu[np.abs(dilep_nu.mass-target).argmin()]
+
+        # For Z(nunu), we are done here
+        if is_lo_znunu(df['dataset']):
+            return dilep_nu.pt.max(), dilep_nu.phi.max()
+
+        # For DY, we have to deal with ele/mu decays as well as
+        # with leptonic tau decays
         # e, mu
         dilep_dress = find_gen_dilepton(dressed, 0)
         dilep_dress = dilep_dress[np.abs(dilep_dress.mass-target).argmin()]
-
-        #nu
-        dilep_nu = find_gen_dilepton(neutrinos, 0)
-        dilep_nu = dilep_nu[np.abs(dilep_nu.mass-target).argmin()]
 
         # tau
         dilep_tau = find_gen_dilepton(gen[np.abs(gen.pdg)==15], 0)
         dilep_tau = dilep_tau[np.abs(dilep_tau.mass-target).argmin()]
 
+
         # Merge by taking higher-mass
-        return merge_dileptons(dilep_tau, dilep_dress, dilepton3=dilep_nu, target=target)
+        return merge_dileptons(dilep_tau, dilep_dress, target=target)
 
     elif is_lo_w(df['dataset']) or is_nlo_w(df['dataset']) or is_lo_w_ewk(df['dataset']):
         target = 81
