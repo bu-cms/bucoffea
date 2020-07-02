@@ -204,6 +204,8 @@ default:
       file: data/sf/theory/unc/wtoz_unc.root
     pileup:
       mode: nano
+    diele_id_sf:
+      use_average: False
 
   run:
     sync: False
