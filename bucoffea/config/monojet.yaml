@@ -180,6 +180,7 @@ default:
     trigger_study: False
     veto_study: False
     photon_id_study: False
+    ele_id_study: False
     btag_study: False
     monov: False
     monovmistag: False
