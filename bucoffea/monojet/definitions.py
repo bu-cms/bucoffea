@@ -269,7 +269,10 @@ def setup_candidates(df, cfg):
     else:
         # MC, all years
         jes_suffix = '_nom'
-        jes_suffix_met = '_nom'
+        if cfg.MET.JER:
+            jes_suffix_met = '_jer'
+        else:
+            jes_suffix_met = '_nom'
 
     muons = JaggedCandidateArray.candidatesfromcounts(
         df['nMuon'],
@@ -373,7 +376,7 @@ def setup_candidates(df, cfg):
 
     ak4 = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'],
-        pt=df[f'Jet_pt{jes_suffix}'] if df['is_data'] else df[f'Jet_pt{jes_suffix}']/df['Jet_corr_JER'],
+        pt=df[f'Jet_pt{jes_suffix}'] if (df['is_data'] or cfg.AK4.JER) else df[f'Jet_pt{jes_suffix}']/df['Jet_corr_JER'],
         eta=df['Jet_eta'],
         abseta=np.abs(df['Jet_eta']),
         phi=df['Jet_phi'],
@@ -429,11 +432,11 @@ def setup_candidates(df, cfg):
 
     ak8 = JaggedCandidateArray.candidatesfromcounts(
         df['nFatJet'],
-        pt=df[f'FatJet_pt{jes_suffix}'] if df['is_data'] else df[f'FatJet_pt{jes_suffix}']/df['FatJet_corr_JER'],
+        pt=df[f'FatJet_pt{jes_suffix}'] if (df['is_data'] or cfg.AK8.JER) else df[f'FatJet_pt{jes_suffix}']/df['FatJet_corr_JER'],
         eta=df['FatJet_eta'],
         abseta=np.abs(df['FatJet_eta']),
         phi=df['FatJet_phi'],
-        mass=df[f'FatJet_msoftdrop{jes_suffix}'] if df['is_data'] else df[f'FatJet_msoftdrop{jes_suffix}']/df['FatJet_corr_JER'],
+        mass=df[f'FatJet_msoftdrop{jes_suffix}'] if (df['is_data'] or cfg.AK8.JER) else df[f'FatJet_msoftdrop{jes_suffix}']/df['FatJet_corr_JER'],
         tightId=(df['FatJet_jetId']&2) == 2, # Tight
         csvv2=df["FatJet_btagCSVV2"],
         deepcsv=df['FatJet_btagDeepB'],
