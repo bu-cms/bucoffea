@@ -38,6 +38,12 @@ default:
       singleel:
         mt: 9999
         met: 80
+  ak4:
+    jer: false
+  ak8:
+    jer: false
+  met:
+    jer: false
   tau:
     cuts:
       pt: 20
