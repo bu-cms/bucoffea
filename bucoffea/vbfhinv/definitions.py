@@ -30,7 +30,8 @@ def vbfhinv_accumulator(cfg, variations):
 
     mjj_ax = Bin("mjj", r"$M_{jj}$ (GeV)", 150, 0, 7500)
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 100, 0, 1000)
-
+    jet_eta_ax = Bin("jeteta", r"$\eta$", 50, -5, 5)
+    
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 100, 0, 1000)
@@ -121,6 +122,8 @@ def vbfhinv_accumulator(cfg, variations):
 
     items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak4_eta1"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
 
     items["tau_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax_tau)

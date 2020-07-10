@@ -19,8 +19,8 @@ def main():
 
 
     fileset = {
-        "WJetsToLNu_HT-100To200-MLM_2017" : [
-            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/05Jun20v5/WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/WJetsToLNu_HT-100To200-MLM_2017/200605_215802/0000g/tree_1.root"
+        "VBF_HToInvisible_M125_pow_pythia8_2017" : [
+            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/05Jun20v5/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/VBF_HToInvisible_M125_pow_pythia8_2017/200605_233117/0000/tree_1.root"
         ]
     }
 
