@@ -1159,3 +1159,9 @@ ggZH_ZToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.085780797
 WQQGamma_5f_NLO_FXFX-amcatnlo_2017:
   gen: 1.05859
+WQQGamma_5f_NLO_FXFX-amcatnlo_2018:
+  gen: 1.05859
+ZQQGamma_5f_NLO_FXFX-amcatnlo_2017:
+  gen: 0.482123
+ZQQGamma_5f_NLO_FXFX-amcatnlo_2018:
+  gen: 0.482123
