@@ -426,6 +426,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 # Veto weights
                 if re.match('.*no_veto.*', region):
                     exclude = [
+                            "muon_id_iso_tight",
                             "muon_id_tight",
                             "muon_iso_tight",
                             "muon_id_loose",
