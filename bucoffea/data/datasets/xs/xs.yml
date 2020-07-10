@@ -1062,13 +1062,13 @@ Z2JetsToNuNU_M-50_LHEZpT_400-inf-FXFX_2017:
   gen: 8.472e-01
 ZH_ZToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.554
-  nnlo: 0.617943329
+  nnlo: 0.532
 ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2017:
   gen: 0.554
-  nnlo: 0.617943329
+  nnlo: 0.532
 ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.554
-  nnlo: 0.617943329
+  nnlo: 0.532
 ZJetsToNuNu_HT-100To200-mg_2016:
   gen: 93.51
 ZJetsToNuNu_HT-100To200-mg_2017:
