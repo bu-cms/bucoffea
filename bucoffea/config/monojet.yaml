@@ -48,6 +48,7 @@ default:
         pttrig: 230
     branch:
       id: Photon_cutBasedBitmap
+      idv7: Photon_cutBasedBitmap
   muon:
     cuts:
       tight:
