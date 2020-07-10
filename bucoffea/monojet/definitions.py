@@ -349,6 +349,11 @@ def setup_candidates(df, cfg):
     if cfg.OVERLAP.TAU.ELECTRON.CLEAN:
         taus = taus[object_overlap(taus, electrons, dr=cfg.OVERLAP.TAU.ELECTRON.DR)]
 
+    # choose the right branch name for photon ID bitmap depending on the actual name in the file (different between nano v5 and v7)
+    if cfg.PHOTON.BRANCH.ID in df.keys():
+        PHOTON_BRANCH_ID = cfg.PHOTON.BRANCH.ID
+    else:
+        PHOTON_BRANCH_ID = cfg.PHOTON.BRANCH.IDV7
     photons = JaggedCandidateArray.candidatesfromcounts(
         df['nPhoton'],
         pt=df['Photon_pt'],
@@ -356,8 +361,8 @@ def setup_candidates(df, cfg):
         abseta=np.abs(df['Photon_eta']),
         phi=df['Photon_phi'],
         mass=0*df['Photon_pt'],
-        looseId=(df[cfg.PHOTON.BRANCH.ID]>=1) & df['Photon_electronVeto'],
-        mediumId=(df[cfg.PHOTON.BRANCH.ID]>=2) & df['Photon_electronVeto'],
+        looseId= (df[PHOTON_BRANCH_ID]>=1) & df['Photon_electronVeto'],
+        mediumId=(df[PHOTON_BRANCH_ID]>=2) & df['Photon_electronVeto'],
         r9=df['Photon_r9'],
         barrel=df['Photon_isScEtaEB'],
     )
