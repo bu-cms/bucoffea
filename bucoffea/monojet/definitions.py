@@ -118,6 +118,8 @@ def monojet_accumulator(cfg):
         items["recoil_ele_id_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
         items["recoil_ele_id_dn"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
         items["recoil_ele_id_nm"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_ele_reco_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+        items["recoil_ele_reco_dn"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["ak4_pt0_over_recoil"] = Hist("Counts", dataset_ax, region_ax, ratio_ax)
     items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)

@@ -9,6 +9,9 @@ import time
 import copy
 import sys,os
 import uproot
+#for smoothing
+from scipy.signal import savgol_filter
+from scipy.interpolate import interp1d
 
 
 # set acc as global variable
@@ -40,7 +43,7 @@ def main(sysargs):
     print("preparing the acc for plotting ... ")
     recoil_binning = [ 250., 280., 310., 340., 370., 400., 430., 470., 510., 550., 590., 640., 690., 740., 790., 840., 900., 960., 1020., 1090., 1160., 1250., 1400.]
     recoil_bin = hist.Bin("recoil", "Recoil (GeV)", recoil_binning)
-    for distribution in ['recoil','recoil_ele_id_nm','recoil_ele_id_up','recoil_ele_id_dn']:
+    for distribution in ['recoil','recoil_ele_id_nm','recoil_ele_id_up','recoil_ele_id_dn','recoil_ele_reco_up','recoil_ele_reco_dn']:
         try:
             acc.load(distribution)
             acc[distribution] = merge_extensions(acc[distribution], acc, reweight_pu=not ('nopu' in distribution))
@@ -121,25 +124,40 @@ def main(sysargs):
 
                 mc = mc_map[raw_region]
                 hists = {
-                        "nm"    :       acc["recoil_ele_id_nm"],
-                        "up"    :       acc["recoil_ele_id_up"],
-                        "dn"    :       acc["recoil_ele_id_dn"],
+                        "df"      : acc["recoil"],
+                        "nm"      : acc["recoil_ele_id_nm"],
+                        "id_up"   : acc["recoil_ele_id_up"],
+                        "id_dn"   : acc["recoil_ele_id_dn"],
+                        "reco_up" : acc["recoil_ele_reco_up"],
+                        "reco_dn" : acc["recoil_ele_reco_dn"],
                         }
                 x = hists["nm"].axis("recoil").centers()
                 y_nm = hists["nm"].integrate("dataset",mc).integrate("region",region).values()[()]
+                y_df = hists["df"].integrate("dataset",mc).integrate("region",region).values()[()]
                 fig,ax = plt.subplots(1,1)
-                for tag in ["up","dn"]:
+                for tag in ["id_up","id_dn","reco_up","reco_dn"]:
                     y = hists[tag].integrate("dataset",mc).integrate("region",region).values()[()]
-                    y = y/y_nm
-                    ax.plot(x,y, label="electron ID weight "+tag)
+                    if "id" in tag:
+                        y = y/y_nm
+                    elif "reco" in tag:
+                        y = y/y_df #no crack removal for reco variation
+                    line = ax.plot(x,y, label="electron ID weight "+tag)
+                    ### smoothing
+                    y_filtered = savgol_filter(y, 9, 2)
+                    finterp = interp1d(x, y_filtered, bounds_error=False, fill_value=1)
+                    y_smooth = finterp(x)
+                    ax.plot(x,y_smooth, label="electron ID weight "+tag+" smoothed", color=line[0].get_color(), ls='--')
                     ### store as histogram
-                    outfile[basename+tag] = np.array(y), np.array(recoil_binning,dtype=float)
-                ax.set_xlim(250,2000)
-                ax.set_ylim(0.9,1.05)
+                    outfile[basename+tag+f"_{year}"] = np.array(y), np.array(recoil_binning,dtype=float)
+                ax.plot(x, np.ones_like(x))
+                ax.set_xlim(250,1400)
+                ax.set_ylim(0.95,1.05)
                 ax.legend()
+                ax.grid()
                 ax.set_xlabel("recoil (GeV)")
                 ax.set_ylabel("weight scale")
-                fig.savefig(outdir+"/weight_scale_"+region+".png")
+                fig.suptitle(f"{region} {year}")
+                fig.savefig(outdir+"/weight_scale_"+region+f"_{year}.png")
 
 
     

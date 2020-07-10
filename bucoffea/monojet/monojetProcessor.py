@@ -757,6 +757,21 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('recoil_ele_id_dn', recoil=recoil_pt[mask], weight=(rw * eletight_id_sf["dn"].prod() * eleloose_id_sf["dn"].prod())[mask])
                 ezfill('recoil_ele_id_nm', recoil=recoil_pt[mask], weight=(rw * eletight_id_sf["nm"].prod() * eleloose_id_sf["nm"].prod())[mask])
 
+                ### Electron Reco efficiency up&down variations
+                ele_reco_sf = {}
+                if df['year']==2017:
+                    high_et = electrons.pt>20
+                    ele_reco_sf["up"] = (evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et]) + evaluator['ele_reco_error'](electrons.etasc[high_et], electrons.pt[high_et])).prod()
+                    ele_reco_sf["dn"] = (evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et]) - evaluator['ele_reco_error'](electrons.etasc[high_et], electrons.pt[high_et])).prod()
+                    ele_reco_sf["up"] *= (evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et]) + evaluator['ele_reco_pt_lt_20_error'](electrons.etasc[~high_et], electrons.pt[~high_et])).prod()
+                    ele_reco_sf["dn"] *= (evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et]) - evaluator['ele_reco_pt_lt_20_error'](electrons.etasc[~high_et], electrons.pt[~high_et])).prod()
+                else:
+                    ele_reco_sf["up"] = (evaluator['ele_reco'](electrons.etasc, electrons.pt) + evaluator['ele_reco_error'](electrons.etasc, electrons.pt)).prod()
+                    ele_reco_sf["dn"] = (evaluator['ele_reco'](electrons.etasc, electrons.pt) - evaluator['ele_reco_error'](electrons.etasc, electrons.pt)).prod()
+                rw = region_weights.partial_weight(exclude=exclude+['ele_reco'])
+                ezfill('recoil_ele_reco_up', recoil=recoil_pt[mask], weight=(rw * ele_reco_sf["up"])[mask])
+                ezfill('recoil_ele_reco_dn', recoil=recoil_pt[mask], weight=(rw * ele_reco_sf["dn"])[mask])
+
             if re.match('.*no_veto.*', region):
                 for variation in veto_weights._weights.keys():
                     ezfill(
