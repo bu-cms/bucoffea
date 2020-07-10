@@ -206,6 +206,8 @@ default:
       mode: nano
     diele_id_sf:
       use_average: False
+    dimuo_id_sf:
+      use_average: False
 
   run:
     sync: False

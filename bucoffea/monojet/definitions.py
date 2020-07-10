@@ -802,8 +802,24 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     year = extract_year(df['dataset'])
     # Muon ID and Isolation for tight and loose WP
     # Function of pT, eta (Order!)
-    weights.add("muon_id_tight", evaluator['muon_id_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod())
-    weights.add("muon_iso_tight", evaluator['muon_iso_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod())
+    weight_muons_id_tight = evaluator['muon_id_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod()
+    weight_muons_iso_tight = evaluator['muon_iso_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod()
+
+    if cfg.SF.DIMUO_ID_SF.USE_AVERAGE:
+        tight_dimuons = muons[df["is_tight_muon"]].distincts()
+        t0 = (evaluator['muon_id_tight'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta) \
+             * evaluator['muon_iso_tight'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta)).prod()
+        t1 = (evaluator['muon_id_tight'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta) \
+             * evaluator['muon_iso_tight'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta)).prod()
+        l0 = (evaluator['muon_id_loose'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta) \
+             * evaluator['muon_iso_loose'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta)).prod()
+        l1 = (evaluator['muon_id_loose'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta) \
+             * evaluator['muon_iso_loose'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta)).prod()
+        weights_2m_tight = 0.5*( l0 * t1 + l1 * t0)
+        weights.add("muon_id_iso_tight", weight_muons_id_tight*weight_muons_iso_tight*(tight_dimuons.counts!=1) + weights_2m_tight*(tight_dimuons.counts==1))
+    else:
+        weights.add("muon_id_iso_tight", weight_muons_id_tight*weight_muons_iso_tight )
+
     weights.add("muon_id_loose", evaluator['muon_id_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
     weights.add("muon_iso_loose", evaluator['muon_iso_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
 
@@ -823,8 +839,11 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     weights_electrons_tight = evaluator['ele_id_tight'](electrons[df['is_tight_electron']].etasc, electrons[df['is_tight_electron']].pt).prod()
     if cfg.SF.DIELE_ID_SF.USE_AVERAGE:
         tight_dielectrons = electrons[df["is_tight_electron"]].distincts()
-        weights_2e_tight = 0.5*(evaluator['ele_id_tight'](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod()*evaluator['ele_id_loose'](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod() \
-                + evaluator['ele_id_tight'](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod()*evaluator['ele_id_loose'](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod())
+        l0 = evaluator['ele_id_loose'](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod()
+        t0 = evaluator['ele_id_tight'](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod()
+        l1 = evaluator['ele_id_loose'](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod()
+        t1 = evaluator['ele_id_tight'](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod()
+        weights_2e_tight = 0.5*( l0 * t1 + l1 * t0)
         weights.add("ele_id_tight", weights_electrons_tight*(tight_dielectrons.counts!=1) + weights_2e_tight*(tight_dielectrons.counts==1))
     else:
         weights.add("ele_id_tight", weights_electrons_tight)
