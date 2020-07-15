@@ -720,6 +720,59 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('recoil_photon_id_extrap_up', recoil=recoil_pt[mask], weight=(rw * (photon_id_sf_nom+photon_id_sf_err_extrap_err)).prod()[mask])
                 ezfill('recoil_photon_id_extrap_dn', recoil=recoil_pt[mask], weight=(rw * (photon_id_sf_nom-photon_id_sf_err_extrap_err)).prod()[mask])
 
+            if cfg.RUN.ELE_ID_STUDY and (not df['is_data']) and ('cr_1e' in region or 'cr_2e' in region) and (df['year']!=2016):
+                # note that electrons in the gap do not count in this study, the "nominal recoil" distribution is different from the default "recoil" distribution
+                mask_electron_nogap = (np.abs(electrons.etasc)<1.4442) | (np.abs(electrons.etasc)>1.566)
+                electrons_nogap = electrons[mask_electron_nogap]
+                electron_is_tight_electron = df['is_tight_electron'][mask_electron_nogap]
+                electrons_nogap_tight = electrons_nogap[ electron_is_tight_electron]
+                electrons_nogap_loose = electrons_nogap[~electron_is_tight_electron]
+                eletight_id_sf = {
+                        "up": evaluator['ele_id_tight'](electrons_nogap_tight.etasc, electrons_nogap_tight.pt) + evaluator['ele_id_tight_error'](electrons_nogap_tight.etasc, electrons_nogap_tight.pt),
+                        "dn": evaluator['ele_id_tight'](electrons_nogap_tight.etasc, electrons_nogap_tight.pt) - evaluator['ele_id_tight_error'](electrons_nogap_tight.etasc, electrons_nogap_tight.pt),
+                        "nm": evaluator['ele_id_tight'](electrons_nogap_tight.etasc, electrons_nogap_tight.pt)}
+                eleloose_id_sf = {
+                        "up": evaluator['ele_id_loose'](electrons_nogap_loose.etasc, electrons_nogap_loose.pt) + evaluator['ele_id_loose_error'](electrons_nogap_loose.etasc, electrons_nogap_loose.pt),
+                        "dn": evaluator['ele_id_loose'](electrons_nogap_loose.etasc, electrons_nogap_loose.pt) - evaluator['ele_id_loose_error'](electrons_nogap_loose.etasc, electrons_nogap_loose.pt),
+                        "nm": evaluator['ele_id_loose'](electrons_nogap_loose.etasc, electrons_nogap_loose.pt)}
+                if cfg.SF.DIELE_ID_SF.USE_AVERAGE:
+                    tight_dielectrons = electrons_nogap[electron_is_tight_electron].distincts()
+                    eletight0_sf = evaluator['ele_id_tight'       ](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod()
+                    eletight0_er = evaluator['ele_id_tight_error' ](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod()
+                    eleloose0_sf = evaluator['ele_id_loose'       ](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod()
+                    eleloose0_er = evaluator['ele_id_loose_error' ](tight_dielectrons.i0.etasc, tight_dielectrons.i0.pt).prod()
+                    eletight1_sf = evaluator['ele_id_tight'       ](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod()
+                    eletight1_er = evaluator['ele_id_tight_error' ](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod()
+                    eleloose1_sf = evaluator['ele_id_loose'       ](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod()
+                    eleloose1_er = evaluator['ele_id_loose_error' ](tight_dielectrons.i1.etasc, tight_dielectrons.i1.pt).prod()
+                    weights_2e_tight_up = 0.5*((eletight0_sf+eletight0_er)*(eleloose1_sf+eleloose1_er) + (eletight1_sf+eletight1_er)*(eleloose0_sf+eleloose0_er))
+                    weights_2e_tight_dn = 0.5*((eletight0_sf-eletight0_er)*(eleloose1_sf-eleloose1_er) + (eletight1_sf-eletight1_er)*(eleloose0_sf-eleloose0_er))
+                    weights_2e_tight_nm = 0.5*((eletight0_sf)*(eleloose1_sf) + (eletight1_sf)*(eleloose0_sf))
+
+                    eletight_id_sf["up"] = eletight_id_sf["up"]*(tight_dielectrons.counts != 1) + weights_2e_tight_up*(tight_dielectrons.counts == 1)
+                    eletight_id_sf["dn"] = eletight_id_sf["dn"]*(tight_dielectrons.counts != 1) + weights_2e_tight_dn*(tight_dielectrons.counts == 1)
+                    eletight_id_sf["nm"] = eletight_id_sf["nm"]*(tight_dielectrons.counts != 1) + weights_2e_tight_nm*(tight_dielectrons.counts == 1)
+
+                rw = region_weights.partial_weight(exclude=exclude+['ele_id_tight','ele_id_loose'])
+                ezfill('recoil_ele_id_up', recoil=recoil_pt[mask], weight=(rw * eletight_id_sf["up"].prod() * eleloose_id_sf["up"].prod())[mask])
+                ezfill('recoil_ele_id_dn', recoil=recoil_pt[mask], weight=(rw * eletight_id_sf["dn"].prod() * eleloose_id_sf["dn"].prod())[mask])
+                ezfill('recoil_ele_id_nm', recoil=recoil_pt[mask], weight=(rw * eletight_id_sf["nm"].prod() * eleloose_id_sf["nm"].prod())[mask])
+
+                ### Electron Reco efficiency up&down variations
+                ele_reco_sf = {}
+                if df['year']==2017:
+                    high_et = electrons.pt>20
+                    ele_reco_sf["up"] = (evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et]) + evaluator['ele_reco_error'](electrons.etasc[high_et], electrons.pt[high_et])).prod()
+                    ele_reco_sf["dn"] = (evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et]) - evaluator['ele_reco_error'](electrons.etasc[high_et], electrons.pt[high_et])).prod()
+                    ele_reco_sf["up"] *= (evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et]) + evaluator['ele_reco_pt_lt_20_error'](electrons.etasc[~high_et], electrons.pt[~high_et])).prod()
+                    ele_reco_sf["dn"] *= (evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et]) - evaluator['ele_reco_pt_lt_20_error'](electrons.etasc[~high_et], electrons.pt[~high_et])).prod()
+                else:
+                    ele_reco_sf["up"] = (evaluator['ele_reco'](electrons.etasc, electrons.pt) + evaluator['ele_reco_error'](electrons.etasc, electrons.pt)).prod()
+                    ele_reco_sf["dn"] = (evaluator['ele_reco'](electrons.etasc, electrons.pt) - evaluator['ele_reco_error'](electrons.etasc, electrons.pt)).prod()
+                rw = region_weights.partial_weight(exclude=exclude+['ele_reco'])
+                ezfill('recoil_ele_reco_up', recoil=recoil_pt[mask], weight=(rw * ele_reco_sf["up"])[mask])
+                ezfill('recoil_ele_reco_dn', recoil=recoil_pt[mask], weight=(rw * ele_reco_sf["dn"])[mask])
+
             if re.match('.*no_veto.*', region):
                 for variation in veto_weights._weights.keys():
                     ezfill(
