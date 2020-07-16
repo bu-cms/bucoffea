@@ -247,7 +247,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
 
-        # AK4 dijet
+                # AK4 dijet
         diak4 = ak4[:,:2].distincts()
         leadak4_pt_eta = (diak4.i0.pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (np.abs(diak4.i0.eta) < cfg.SELECTION.SIGNAL.LEADAK4.ETA)
         trailak4_pt_eta = (diak4.i1.pt > cfg.SELECTION.SIGNAL.TRAILAK4.PT) & (np.abs(diak4.i1.eta) < cfg.SELECTION.SIGNAL.TRAILAK4.ETA)
@@ -283,6 +283,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('mjj', df['mjj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.MASS)
         selection.add('dphijj', df['dphijj'] < cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DPHI)
         selection.add('detajj', df['detajj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DETA)
+
+
+        selection.add("leadak4_nef", (diak4.i0.nef < 0.7).any())
+        selection.add("trailak4_nef", (diak4.i1.nef < 0.7).any())
+        dphitkpf = dphi(met_phi, df['TkMET_phi'])
+        both_jets_in_hf = (diak4.i0.abseta>3.0).any() & (diak4.i1.abseta>3.0).any()
+        selection.add("eemitigation",both_jets_in_hf | ((dphitkpf<0.75)&(diak4.i0.pt>100).any()) )
 
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:

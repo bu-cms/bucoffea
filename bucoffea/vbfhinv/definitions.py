@@ -229,7 +229,7 @@ def vbfhinv_regions(cfg):
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr']
+    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr'] + ['leadak4_nef','trailak4_nef','eemitigation']
 
     # For sync mode
     if cfg and cfg.RUN.SYNC:
