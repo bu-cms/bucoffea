@@ -41,8 +41,6 @@ def main(sysargs):
     acc.load('nevents')
 
     print("preparing the acc for plotting ... ")
-    recoil_binning = [ 250., 280., 310., 340., 370., 400., 430., 470., 510., 550., 590., 640., 690., 740., 790., 840., 900., 960., 1020., 1090., 1160., 1250., 1400.]
-    recoil_bin = hist.Bin("recoil", "Recoil (GeV)", recoil_binning)
     for distribution in ['recoil','recoil_ele_id_nm','recoil_ele_id_up','recoil_ele_id_dn','recoil_ele_reco_up','recoil_ele_reco_dn']:
         try:
             acc.load(distribution)
@@ -50,8 +48,6 @@ def main(sysargs):
             scale_xs_lumi(acc[distribution])
             acc[distribution] = merge_datasets(acc[distribution])
             acc[distribution].axis('dataset').sorting = 'integral'
-            # rebin
-            acc[distribution] = acc[distribution].rebin("recoil",recoil_bin)
         except KeyError:
             print("key error with distribution: "+str(distribution))
             return -2
@@ -114,9 +110,10 @@ def main(sysargs):
 
                 ### name for histogram
                 if "_v" in region:
-                    basename = "monov"+wp.replace("_","")
+                    basename = "monov"
                 else:
-                    basename = "monoj"
+                    basename = "monojet"
+                basename = f"{basename}_{year}"
                 if "1e" in region:
                     basename = basename+"_1e_"
                 elif "2e" in region:
@@ -131,24 +128,39 @@ def main(sysargs):
                         "reco_up" : acc["recoil_ele_reco_up"],
                         "reco_dn" : acc["recoil_ele_reco_dn"],
                         }
+                ### Rebinning recoil for monojet and monoV
+                if "_j" in region:
+                    recoil_binning = [ 250., 280., 310., 340., 370., 400., 430., 470., 510., 550., 590., 640., 690., 740., 790., 840., 900., 960., 1020., 1090., 1160., 1250., 1400.]
+                else:
+                    recoil_binning = [250,300,350,400,500,600,750,1000]
+                recoil_bin = hist.Bin("recoil", "Recoil (GeV)", recoil_binning)
+                for key in hists.keys():
+                    hists[key] = hists[key].rebin("recoil",recoil_bin)
+                ### Always use monojet to derive the uncertainty for stat power
+                ### already verified that they are compatible between channels
+                j_region = region.replace("_tight_v","_j").replace("_loose_v","_j")
                 x = hists["nm"].axis("recoil").centers()
-                y_nm = hists["nm"].integrate("dataset",mc).integrate("region",region).values()[()]
-                y_df = hists["df"].integrate("dataset",mc).integrate("region",region).values()[()]
+                y_nm = hists["nm"].integrate("dataset",mc).integrate("region",j_region).values()[()]
+                y_df = hists["df"].integrate("dataset",mc).integrate("region",j_region).values()[()]
                 fig,ax = plt.subplots(1,1)
                 for tag in ["id_up","id_dn","reco_up","reco_dn"]:
-                    y = hists[tag].integrate("dataset",mc).integrate("region",region).values()[()]
+                    y = hists[tag].integrate("dataset",mc).integrate("region",j_region).values()[()]
                     if "id" in tag:
                         y = y/y_nm
                     elif "reco" in tag:
                         y = y/y_df #no crack removal for reco variation
                     line = ax.plot(x,y, label="electron ID weight "+tag)
                     ### smoothing
-                    y_filtered = savgol_filter(y, 9, 2)
+                    if "_j" in region:
+                        y_filtered = savgol_filter(y, 9, 2)
+                    else:
+                        y_filtered = savgol_filter(y, 5, 2)
                     finterp = interp1d(x, y_filtered, bounds_error=False, fill_value=1)
                     y_smooth = finterp(x)
                     ax.plot(x,y_smooth, label="electron ID weight "+tag+" smoothed", color=line[0].get_color(), ls='--')
                     ### store as histogram
-                    outfile[basename+tag+f"_{year}"] = np.array(y), np.array(recoil_binning,dtype=float)
+                    if "_j" in region or "tight_v" in region:
+                        outfile[basename+tag] = np.array(y), np.array(recoil_binning,dtype=float)
                 ax.plot(x, np.ones_like(x))
                 ax.set_xlim(250,1400)
                 ax.set_ylim(0.95,1.05)
