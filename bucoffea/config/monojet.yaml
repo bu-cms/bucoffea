@@ -31,6 +31,12 @@ default:
       singleel:
         mt: 160
         met: 50
+  ak4:
+    jer: false
+  ak8:
+    jer: false
+  met:
+    jer: false
   tau:
     cuts:
       pt: 18
@@ -169,7 +175,7 @@ default:
     save:
       passing: False
       prescale: 1
-      tree: False 
+      tree: False
       treeregions: "((sr|cr_.*)_j|inclusive)$"
     kinematics:
       save: False
