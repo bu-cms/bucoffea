@@ -40,7 +40,7 @@ def datasets(year, unblind=False):
             'cr_1e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*|GJets_DR-0p4.*).*{year}'),
             'cr_2m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_2e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-            'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|VQQGamma|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
             'sr_j_no_veto_all' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
             'sr_j' : re.compile('nomatch'),
             }
@@ -60,6 +60,8 @@ def legacy_dataset_name(dataset):
         'WJetsToLNu.*' : 'wjets',
         'ZJetsToNuNu.*' : 'zjets',
         'GJets_DR-0p4.*HT.*' : 'gjets',
+        'GJets.*NLO.*' : 'gjets',
+        'VQQGamma.*' : 'vgamma',
         'WH.*Hinv.*' : 'wh',
         'ZH.*HToInvisible.*' : 'zh',
         'VBF.*HToInvisible.*' : 'vbf',

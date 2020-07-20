@@ -237,6 +237,7 @@ def merge_datasets(histogram):
     # Some combinations are the same for all years
     yearly = {
         'GJets_1j_Gpt_5f_NLO-amcatnlo_{year}' : 'GJets_1j_Gpt-(\d+)To((\d+)|Inf)_5f_NLO-amcatnlo_{year}',
+        'GJets_1j_Gpt_5f_NLO_{year}' : 'GJets_1j_Gpt-(\d+)To((\d+)|Inf)_5f_NLO_{year}',
         'GJets_HT_MLM_{year}' : 'GJets_HT-(\d+)To.*-MLM_{year}',
         'GJets_DR-0p4_HT_MLM_{year}'    : 'GJets_DR-0p4_HT-(\d+)To.*-MLM_.*{year}',
         'WJetsToQQ_HT_MLM_{year}' : 'WJetsToQQ_HT-?(\d+)(T|t)o.*-MLM_{year}',
@@ -253,6 +254,7 @@ def merge_datasets(histogram):
         'Diboson_{year}' : '(WW|WZ|ZZ|WW).*_{year}',
 
         'ZNJetsToNuNu_M-50_LHEZpT-FXFX_{year}' : 'Z\dJetsToNuN(u|U)_M-50_LHEZpT.*FXFX.*{year}',
+        'VQQGamma_FXFX_{year}' : '(W|Z)QQGamma_5f_NLO_FXFX-amcatnlo_{year}',
 
     }
     for year in [2016,2017,2018]:
