@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import itertools
 import os
 import re
 import sys
@@ -9,6 +10,7 @@ from pprint import pprint
 import numpy as np
 import uproot
 from coffea.util import load
+from tqdm import tqdm
 
 pjoin = os.path.join
 
@@ -59,8 +61,7 @@ def make_trees(args):
 
         # Combine
         with uproot.recreate(pjoin(args.outdir, f"tree_{dataset}.root"),compression=uproot.ZLIB(4)) as f:
-            for region in set(regions):
-                for fname in files:
+            for region, fname in tqdm(list(itertools.product(set(regions), files)), desc=dataset):
                     acc = load(fname)
                     d = {x: acc[tree_by_variable[x]][region][x].value for x in variables}
 
