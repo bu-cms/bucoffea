@@ -93,8 +93,7 @@ def main(sysargs):
             'cr_1e_v'      : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_DR.*HT).*{year}'),
             'cr_2m_v'      : re.compile(f'(Top.*FXFX|Diboson|DYJetsToLL_M-50_HT_MLM).*{year}'),
             'cr_2e_v'      : re.compile(f'(Top.*FXFX|Diboson|DYJetsToLL_M-50_HT_MLM).*{year}'),
-            'cr_g_v'       : re.compile(f'(Diboson|QCD_HT|GJets_DR.*HT|WJetsToLNu.*HT).*{year}'),
-            #'cr_g_v'       : re.compile(f'(TTJets.*FXFX|Diboson|ST|QCD_HT|GJets_DR.*HT|WJets.*HT).*{year}'),
+            'cr_g_v'       : re.compile(f'(Diboson|QCD_HT|GJets_DR.*HT|VQQGamma_FXFX|WJetsToLNu.*HT).*{year}'),
             'cr_nobveto_v' : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_DR.*HT|ZJetsToNuNu).*{year}'),
             'sr_v'         : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_DR.*HT|ZJetsToNuNu).*{year}'),
         }
