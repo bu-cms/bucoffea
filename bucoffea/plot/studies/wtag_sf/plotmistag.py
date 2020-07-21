@@ -9,23 +9,25 @@ colors={
         '2m':7,
         '1e':8,
         '2e':9,
+        'g':11,
         'combined':46,
         }
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(ROOT.kFALSE)
 
 canv = ROOT.TCanvas('canv','canv',800,800)
-for year in [2017]:
-    for wp in ['loose', 'loosemd','tightmd']:
+for year in [2017,2018]:
+    for wp in ['loose', 'tight']:
         # plot the mistag rates 
         for prefix in ['mistag_rate_data','mistag_rate_mc']:
             canv.Clear()
             canvEmpty=True
-            for lepton_flag in ['1m','2m','1e','2e','combined']:
+            for lepton_flag in ['1m','2m','1e','2e','g','combined']:
                 if lepton_flag=='combined':
                     htmp = inputfile.Get(f'{prefix}_{wp}_{year}')
                 else:
                     htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
+                    htmp.SetLineStyle(2)
                 htmp.SetTitle(lepton_flag) # for the legend builder
                 htmp.SetLineColor(colors[lepton_flag])
                 htmp.SetLineWidth(3)
@@ -37,10 +39,10 @@ for year in [2017]:
                     while not gtmp:
                         time.sleep(1)
                         gtmp=htmp.GetPaintedGraph()
-                    if wp =='tightmd':
-                        gtmp.GetYaxis().SetRangeUser(0,0.1)
+                    if 'tight' in wp:
+                        gtmp.GetYaxis().SetRangeUser(0,0.14)
                     else:
-                        gtmp.GetYaxis().SetRangeUser(0,1)
+                        gtmp.GetYaxis().SetRangeUser(0,0.8)
                     gtmp.GetYaxis().SetTitle('mistagging rate')
                     gtmp.GetXaxis().SetTitle('AK8 Jet p_{T}')
                     canv.Draw()
@@ -54,16 +56,17 @@ for year in [2017]:
         for prefix in ['mistag_SF']:
             canv.Clear()
             canvEmpty=True
-            for lepton_flag in ['1m','2m','1e','2e','combined']:
+            for lepton_flag in ['1m','2m','1e','2e','g','combined']:
                 if lepton_flag=='combined':
                     htmp = inputfile.Get(f'Wmistag_{year}_{wp}_ak8_pt')
                 else:
                     htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
+                    htmp.SetLineStyle(2)
                 htmp.SetTitle(lepton_flag) # for the legend builder
                 htmp.SetLineColor(colors[lepton_flag])
                 htmp.SetLineWidth(3)
                 if canvEmpty:
-                    htmp.GetYaxis().SetRangeUser(0.5,1.6)
+                    htmp.GetYaxis().SetRangeUser(0.5,1.7)
                     htmp.GetYaxis().SetTitle('mistagging SF')
                     htmp.GetXaxis().SetTitle('AK8 Jet p_{T}')
                     htmp.Draw('e1')
