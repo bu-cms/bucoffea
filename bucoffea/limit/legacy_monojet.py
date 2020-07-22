@@ -64,7 +64,8 @@ def legacy_dataset_name(dataset):
         'ZH.*HToInvisible.*' : 'zh',
         'VBF.*HToInvisible.*' : 'vbf',
         'GluGlu.*HToInvisible.*' : 'ggh',
-        'ggZH*HToInvisible.*' : 'ggzh',
+        'ggZH.*HToInvisible.*' : 'ggzh',
+        'VQQGamma.*' : 'vgamma'
     }
 
     for pat, ret in patterns.items():
