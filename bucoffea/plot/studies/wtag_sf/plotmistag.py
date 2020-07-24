@@ -1,7 +1,8 @@
 import ROOT
 import time
+from mistagSF import outdir
 
-inputfilename = "wtag_mistag_SF.root"
+inputfilename = f"{outdir}/wtag_mistag_SF.root"
 inputfile = ROOT.TFile.Open(inputfilename,'read')
 
 colors={
@@ -51,7 +52,7 @@ for year in [2017,2018]:
                     htmp.Draw('P same')
             canv.BuildLegend()
             canv.Update()
-            canv.Print(f'output/{prefix}_{wp}_{year}.png')
+            canv.Print(f'{outdir}/{prefix}_{wp}_{year}.png')
         # plot the mistag SF 
         for prefix in ['mistag_SF']:
             canv.Clear()
@@ -75,4 +76,4 @@ for year in [2017,2018]:
                     htmp.Draw('e1 same')
             canv.BuildLegend()
             canv.Update()
-            canv.Print(f'output/{prefix}_{wp}_{year}.png')
+            canv.Print(f'{outdir}/{prefix}_{wp}_{year}.png')

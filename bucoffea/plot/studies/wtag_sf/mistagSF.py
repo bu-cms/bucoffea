@@ -4,8 +4,12 @@ from coffea.hist.plot import clopper_pearson_interval
 from klepto.archives import dir_archive
 import ROOT
 
+outdir = 'output'
+if not os.path.exists(outdir):
+    os.makedirs(outdir)
+
 #outfilename = "../../../data/sf/ak8/wtag_mistag_SF.root"
-outfilename = "wtag_mistag_SF.root"
+outfilename = f"{outdir}/wtag_mistag_SF.root"
 # set to True if want to update the mistag root file
 # otherwise just make the plots
 if True:
@@ -14,10 +18,6 @@ else:
     outfile = None
 newbin = hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [200,300,400,800])
 inpath = "../../../input/merged_2020_07_20_revisit_Wmistag_master"
-
-plot_dir = 'output/'
-if not os.path.exists(plot_dir):
-    os.makedirs(plot_dir)
 
 # Prepare the acc
 acc = dir_archive(
@@ -156,9 +156,9 @@ for lepton_flag in ['1m','2m','1e','2e','g']:
             #############
             #make stack_plot for all and pass
             try:
-                make_plot(acc, region=region_all, distribution=distribution, year=year, data=data, mc=mc_All, outdir='./output/stack_plots', output_format='png')
-                make_plot(acc, region=region_pass, distribution=distribution, year=year, data=data, mc=mc_All, outdir='./output/stack_plots', output_format='png', ylim=(10e-3,10e3))
-                make_plot(acc, region=region_pass, distribution=distribution_Vmatched, year=year, data=None, mc=mc_Real, outdir='./output/stack_plots', output_format='png', ylim=(10e-4,5e3))
+                make_plot(acc, region=region_all, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png')
+                make_plot(acc, region=region_pass, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-3,10e3))
+                make_plot(acc, region=region_pass, distribution=distribution_Vmatched, year=year, data=None, mc=mc_Real, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
             except ValueError:
                 print(f"Warning: skipping plots for lepton_flag={lepton_flag} year={year} wp={wp} due to negative or zero bins")
 
