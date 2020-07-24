@@ -9,6 +9,7 @@ import numpy as np
 import tqdm
 import uproot
 from matplotlib import pyplot as plt
+from tabulate import tabulate
 
 from bucoffea.plot.util import fig_ratio
 
@@ -98,17 +99,22 @@ def main():
     h2 = make_dict(args.fname2)
 
     # Make sure the two files have consistent keys
-    assert(h1.keys()==h2.keys())
+    # assert(h1.keys()==h2.keys())
 
     # Create plot folder
     if not os.path.exists(args.outdir):
         os.makedirs(args.outdir)
 
     # Do the actual plotting
+    table = []
     for key in tqdm.tqdm(h1.keys()):
+        if key not in h2:
+            print("Found missing key ", key)
         fig, ax, rax = fig_ratio()
         x = 0.5 * np.sum(h1[key].bins,axis=1)
         edges = np.unique(h1[key].bins)
+
+        table.append([key, np.sum(h1[key].values), np.sum(h2[key].values)])
         hep.histplot(
             h1[key].values,
             edges,
@@ -171,6 +177,6 @@ def main():
         rax.grid(linestyle='--')
         fig.savefig(pjoin(args.outdir, f"{key}.png"))
         plt.close(fig)
-
+    print(tabulate(table))
 if __name__ == "__main__":
     main()
