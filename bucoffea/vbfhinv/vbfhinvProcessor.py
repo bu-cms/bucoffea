@@ -287,9 +287,33 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         selection.add("leadak4_nef", (diak4.i0.nef < 0.7).any())
         selection.add("trailak4_nef", (diak4.i1.nef < 0.7).any())
+
+        mht_p4 = ak4[ak4.pt>30].p4.sum()
+        mht_x = - mht_p4.pt * np.cos(mht_p4.phi)
+        mht_y = - mht_p4.pt * np.sin(mht_p4.phi)
+        met_x = met_pt * np.cos(met_phi)
+        met_y = met_pt * np.sin(met_phi)
+        vec_b = np.hypot(met_x-mht_x, met_y-mht_y) / np.hypot(met_x+mht_x, met_y+mht_y)
         dphitkpf = dphi(met_phi, df['TkMET_phi'])
-        both_jets_in_hf = (diak4.i0.abseta>3.0).any() & (diak4.i1.abseta>3.0).any()
-        selection.add("eemitigation",both_jets_in_hf | ((dphitkpf<0.75)&(diak4.i0.pt>100).any()) )
+
+        vec_dphi = np.hypot(3.33 * vec_b, dphitkpf)
+
+
+        no_jet_in_trk = (diak4.i0.abseta>2.5).any() & (diak4.i1.abseta>2.5).any()
+        no_jet_in_hf = (diak4.i0.abseta<3.0).any() & (diak4.i1.abseta<3.0).any()
+
+
+        at_least_one_jet_in_hf = (diak4.i0.abseta>3.0).any() | (diak4.i1.abseta>3.0).any()
+        at_least_one_jet_in_trk = (diak4.i0.abseta<2.5).any() | (diak4.i1.abseta<2.5).any()
+
+        eemitigation = (
+                            (no_jet_in_hf | at_least_one_jet_in_trk) & (vec_dphi < 1)
+                        ) | (
+                            (no_jet_in_trk & at_least_one_jet_in_hf) & (vec_b < 0.2)
+                        )
+
+        selection.add("eemitigation", eemitigation )
+
 
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
@@ -582,6 +606,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('dphijj',             dphi=df["dphijj"][mask],   weight=rweight[mask] )
             ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
+
+
+            ezfill('dphitkpf',                dphi=dphitkpf[mask],      weight=rweight[mask] )
+            ezfill('vec_dphi',                vec=vec_dphi[mask],      weight=rweight[mask] )
+            ezfill('vec_b',                   vec=vec_b[mask],      weight=rweight[mask] )
 
 
             if gen_v_pt is not None:

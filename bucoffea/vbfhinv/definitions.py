@@ -41,6 +41,7 @@ def vbfhinv_accumulator(cfg):
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
+    vec_ax = Bin("vec", r"vec", 50, 0, 2)
     deta_ax = Bin("deta", r"$\Delta\eta$", 50, 0, 10)
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
 
@@ -127,6 +128,10 @@ def vbfhinv_accumulator(cfg):
     items["dpfcalo_sr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
+    
+    items["dphitkpf"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
+    items["vec_b"] = Hist("Counts", dataset_ax, region_ax, vec_ax)
+    items["vec_dphi"] = Hist("Counts", dataset_ax, region_ax, vec_ax)
 
     # Multiplicity histograms
     for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
@@ -223,13 +228,13 @@ def vbfhinv_regions(cfg):
         'veto_photon',
         'veto_tau',
         'veto_b',
-    ]
+    ] + ['leadak4_nef','trailak4_nef','eemitigation']
 
     regions = {}
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr'] + ['leadak4_nef','trailak4_nef','eemitigation']
+    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr']
 
     # For sync mode
     if cfg and cfg.RUN.SYNC:
