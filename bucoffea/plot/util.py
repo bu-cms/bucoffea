@@ -418,13 +418,17 @@ def load_and_merge(inpath, distributions):
     if not os.path.exists(inpath):
         raise IOError("Directory not found: " + inpath)
 
-    acc = klepto_load(inpath)
-    acc.load('sumw')
-    acc.load('sumw_pileup')
-    acc.load('nevents')
+    if inpath.endswith(".coffea"):
+        acc = load(inpath)
+    else:
+        acc = klepto_load(inpath)
+        acc.load('sumw')
+        acc.load('sumw_pileup')
+        acc.load('nevents')
+        for distribution in distributions:
+            acc.load(distribution)
 
     for distribution in distributions:
-        acc.load(distribution)
         acc[distribution] = merge_extensions(acc[distribution], acc, reweight_pu=not ('nopu' in distribution))
         scale_xs_lumi(acc[distribution])
         acc[distribution] = merge_datasets(acc[distribution])

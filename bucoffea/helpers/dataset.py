@@ -1,4 +1,7 @@
 import re
+
+from bucoffea.execute.dataset_definitions import short_name
+
 def is_lo_znunu(dataset):
     return bool(re.match(r'Z(\d*)Jet.*(mg|MLM|madgraph).*', dataset))
 
@@ -49,3 +52,20 @@ def extract_year(dataset):
         if f"201{x}" in dataset:
             return 2010+x
     raise RuntimeError("Could not determine dataset year")
+
+def rand_dataset_dict(keys, year):
+    '''
+    Creates a map of dataset names -> short dataset names for randomized parameter samples
+    '''
+    if year==2016:
+        conditions = 'RunIISummer16'
+    elif year==2017:
+        conditions = 'RunIIFall17'
+    elif year==2018:
+        conditions = 'RunIIAutumn18'
+    else:
+        raise RuntimeError("Cannot recognize year: {year}")
+
+    datasets = [x.replace("GenModel_","") for x in keys if "GenModel" in x]
+
+    return {x : short_name(f"/{x}/{conditions}/NANOAODSIM") for x in datasets}

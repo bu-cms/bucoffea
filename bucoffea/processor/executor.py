@@ -99,24 +99,27 @@ def _work_function_nanoaod(item, processor_instance, flatten=False, savemetrics=
                 # The different cases in the loop represent the different formats and accordingly
                 # different ways of dealing with the provided values.
                 for name in map(lambda x: x.decode('utf-8'), file['Runs'].keys()):
-                    arr = file['Runs'][name].array()
                     if name.startswith('n'):
+                        arr = file['Runs'][name].array()
                         # Check that all instances are the same, then save that value
                         tmp = set([])
                         for entry in arr:
                             tmp.add(entry)
                         assert(len(tmp)==1)
                         df[name] = list(tmp)[0]
-                    elif name in ['genEventCount','genEventSumw','genEventSumw2']:
+                    elif any([x in name for x in ['genEventSumw','genEventSumw2']]):
+                        arr = file['Runs'][name].array()
                         # One entry per run -> just sum
                         df[name] = int(item.entrystart==0) * arr.sum()
-                    elif name in ['LHEScaleSumw','LHEPdfSumw']:
-                        # Sum per variation, conserve number of variations
-                        tmp = 0 * arr[0]
-                        for i in range(len(arr)):
-                            for j in range(len(arr[i])):
-                                tmp[j] += arr[i][j]
-                        df[name] = int(item.entrystart==0) * tmp
+                    elif any([x in name for x in ['LHEScaleSumw','LHEPdfSumw']]):
+                        # # Sum per variation, conserve number of variations
+                        # tmp = 0 * arr[0]
+                        # for i in range(len(arr)):
+                        #     for j in range(len(arr[i])):
+                        #         tmp[j] += arr[i][j]
+                        # df[name] = int(item.entrystart==0) * tmp
+                        pass
+
                 ### END NANOAOD
                 df['dataset'] = item.dataset
                 df['filename'] = item.filename

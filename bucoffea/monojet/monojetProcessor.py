@@ -44,7 +44,8 @@ from bucoffea.helpers.dataset import (
                                       is_nlo_g,
                                       has_v_jet,
                                       is_data,
-                                      extract_year
+                                      extract_year,
+                                      rand_dataset_dict
                                      )
 from bucoffea.helpers.gen import (
                                   setup_gen_candidates,
@@ -413,14 +414,34 @@ class monojetProcessor(processor.ProcessorABC):
                 output['kinematics']['geta0'] += [photons[leadphoton_index][mask].eta.flatten()]
 
 
+        # Randomized Parameter data sets
+        # keep track of the mapping
+        rand_datasets = rand_dataset_dict(df.keys(), df['year'])
+
         # Sum of all weights to use for normalization
-        # TODO: Deal with systematic variations
         output['nevents'][dataset] += df.size
         if not df['is_data']:
-            output['sumw'][dataset] +=  df['genEventSumw']
-            output['sumw2'][dataset] +=  df['genEventSumw2']
-            output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
+            if len(rand_datasets):
+                # For randomized datasets, save the normalization separately per sub-dataset
+                # but also integread for the whole dataset, so that we can use both the sub
+                # and total datasets for plotting
+                for ds, short in rand_datasets.items():
+                    dsmask = df[f'GenModel_{ds}']
+                    output['nevents'][short] += dsmask.sum()
+                    # Split per sub-dataset
+                    output['sumw'][short] +=  df[f'genEventSumw_{ds}']
+                    output['sumw2'][short] +=  df[f'genEventSumw2_{ds}']
+                    output['sumw_pileup'][short] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
 
+                    # Integrated for the whole dataset
+                    output['sumw'][dataset] +=  df[f'genEventSumw_{ds}']
+                    output['sumw2'][dataset] +=  df[f'genEventSumw2_{ds}']
+                    output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
+            else:
+                # For normal datasets, no splitting is necessary
+                output['sumw'][dataset] +=  df[f'genEventSumw']
+                output['sumw2'][dataset] +=  df[f'genEventSumw2']
+                output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
         regions = monojet_regions(cfg)
 
         veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=True)
@@ -602,8 +623,9 @@ class monojetProcessor(processor.ProcessorABC):
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
+                if not ('dataset' in kwargs):
+                    kwargs['dataset'] = dataset
                 output[name].fill(
-                                  dataset=dataset,
                                   region=region,
                                   **kwargs
                                   )
@@ -699,6 +721,12 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
+
+            # Randomized parameter samples
+            for ds, short in rand_datasets.items():
+                dsmask = df[f'GenModel_{ds}']
+                print(dsmask)
+                ezfill('recoil', recoil=recoil_pt[mask&dsmask],      weight=rw[mask&dsmask], dataset=short )
 
             if cfg.RUN.BTAG_STUDY:
                 ezfill('recoil_hardbveto',   recoil=recoil_pt[mask&(bjets.counts==0)],      weight=region_weights.partial_weight(exclude=exclude+['bveto'])[mask&(bjets.counts==0)])
