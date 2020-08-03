@@ -1,49 +1,157 @@
+ADDMonoJet_MD_10_d_2_pythia8_2017:
+  gen: 0.2785
 ADDMonoJet_MD_10_d_2_pythia8_2018:
   gen: 0.2782
+ADDMonoJet_MD_10_d_3_pythia8_2017:
+  gen: 0.04484
 ADDMonoJet_MD_10_d_3_pythia8_2018:
   gen: 0.04475
+ADDMonoJet_MD_10_d_4_pythia8_2017:
+  gen: 0.01038
+ADDMonoJet_MD_10_d_4_pythia8_2018:
+  gen: 0.0104
+ADDMonoJet_MD_11_d_2_pythia8_2017:
+  gen: 0.1896
+ADDMonoJet_MD_11_d_2_pythia8_2018:
+  gen: 0.1892
+ADDMonoJet_MD_11_d_3_pythia8_2017:
+  gen: 0.02784
 ADDMonoJet_MD_11_d_3_pythia8_2018:
   gen: 0.02772
+ADDMonoJet_MD_11_d_4_pythia8_2017:
+  gen: 0.005886
 ADDMonoJet_MD_11_d_4_pythia8_2018:
   gen: 0.005881
+ADDMonoJet_MD_12_d_2_pythia8_2017:
+  gen: 0.1337
+ADDMonoJet_MD_12_d_2_pythia8_2018:
+  gen: 0.1334
+ADDMonoJet_MD_12_d_3_pythia8_2017:
+  gen: 0.01801
+ADDMonoJet_MD_12_d_3_pythia8_2018:
+  gen: 0.01805
+ADDMonoJet_MD_13_d_2_pythia8_2017:
+  gen: 0.09772
 ADDMonoJet_MD_13_d_2_pythia8_2018:
   gen: 0.09752
+ADDMonoJet_MD_13_d_3_pythia8_2017:
+  gen: 0.01203
 ADDMonoJet_MD_13_d_3_pythia8_2018:
   gen: 0.01205
+ADDMonoJet_MD_14_d_2_pythia8_2017:
+  gen: 0.0726
 ADDMonoJet_MD_14_d_2_pythia8_2018:
   gen: 0.07225
+ADDMonoJet_MD_15_d_2_pythia8_2017:
+  gen: 0.05483
 ADDMonoJet_MD_15_d_2_pythia8_2018:
   gen: 0.05485
+ADDMonoJet_MD_4_d_7_pythia8_2017:
+  gen: 0.9125
 ADDMonoJet_MD_4_d_7_pythia8_2018:
   gen: 0.9019
+ADDMonoJet_MD_5_d_4_pythia8_2017:
+  gen: 0.653
 ADDMonoJet_MD_5_d_4_pythia8_2018:
   gen: 0.6532
+ADDMonoJet_MD_5_d_5_pythia8_2017:
+  gen: 0.3679
 ADDMonoJet_MD_5_d_5_pythia8_2018:
   gen: 0.3689
+ADDMonoJet_MD_5_d_6_pythia8_2017:
+  gen: 0.2331
 ADDMonoJet_MD_5_d_6_pythia8_2018:
   gen: 0.2341
+ADDMonoJet_MD_5_d_7_pythia8_2017:
+  gen: 0.1569
 ADDMonoJet_MD_5_d_7_pythia8_2018:
   gen: 0.1551
+ADDMonoJet_MD_6_d_3_pythia8_2017:
+  gen: 0.577
 ADDMonoJet_MD_6_d_3_pythia8_2018:
   gen: 0.5751
+ADDMonoJet_MD_6_d_4_pythia8_2017:
+  gen: 0.2226
 ADDMonoJet_MD_6_d_4_pythia8_2018:
   gen: 0.2212
+ADDMonoJet_MD_6_d_5_pythia8_2017:
+  gen: 0.1055
+ADDMonoJet_MD_6_d_5_pythia8_2018:
+  gen: 0.1061
+ADDMonoJet_MD_6_d_6_pythia8_2017:
+  gen: 0.05733
+ADDMonoJet_MD_6_d_7_pythia8_2017:
+  gen: 0.03357
+ADDMonoJet_MD_6_d_7_pythia8_2018:
+  gen: 0.03368
+ADDMonoJet_MD_7_d_2_pythia8_2017:
+  gen: 1.161
 ADDMonoJet_MD_7_d_2_pythia8_2018:
   gen: 1.154
+ADDMonoJet_MD_7_d_3_pythia8_2017:
+  gen: 0.2675
+ADDMonoJet_MD_7_d_3_pythia8_2018:
+  gen: 0.2666
+ADDMonoJet_MD_7_d_4_pythia8_2017:
+  gen: 0.08856
 ADDMonoJet_MD_7_d_4_pythia8_2018:
   gen: 0.08842
+ADDMonoJet_MD_7_d_5_pythia8_2017:
+  gen: 0.03633
 ADDMonoJet_MD_7_d_5_pythia8_2018:
   gen: 0.03626
+ADDMonoJet_MD_7_d_6_pythia8_2017:
+  gen: 0.017
 ADDMonoJet_MD_7_d_6_pythia8_2018:
   gen: 0.0171
+ADDMonoJet_MD_7_d_7_pythia8_2017:
+  gen: 0.008616
+ADDMonoJet_MD_7_d_7_pythia8_2018:
+  gen: 0.008716
+ADDMonoJet_MD_8_d_2_pythia8_2017:
+  gen: 0.6768
 ADDMonoJet_MD_8_d_2_pythia8_2018:
   gen: 0.6758
+ADDMonoJet_MD_8_d_3_pythia8_2017:
+  gen: 0.137
+ADDMonoJet_MD_8_d_3_pythia8_2018:
+  gen: 0.1367
+ADDMonoJet_MD_8_d_4_pythia8_2017:
+  gen: 0.03959
+ADDMonoJet_MD_8_d_4_pythia8_2018:
+  gen: 0.03964
+ADDMonoJet_MD_8_d_5_pythia8_2017:
+  gen: 0.0143
 ADDMonoJet_MD_8_d_5_pythia8_2018:
   gen: 0.01436
+ADDMonoJet_MD_8_d_6_pythia8_2017:
+  gen: 0.005902
+ADDMonoJet_MD_8_d_6_pythia8_2018:
+  gen: 0.00587
+ADDMonoJet_MD_8_d_7_pythia8_2017:
+  gen: 0.002644
 ADDMonoJet_MD_8_d_7_pythia8_2018:
   gen: 0.002648
+ADDMonoJet_MD_9_d_2_pythia8_2017:
+  gen: 0.4226
+ADDMonoJet_MD_9_d_2_pythia8_2018:
+  gen: 0.4233
+ADDMonoJet_MD_9_d_3_pythia8_2017:
+  gen: 0.07592
+ADDMonoJet_MD_9_d_3_pythia8_2018:
+  gen: 0.07575
+ADDMonoJet_MD_9_d_4_pythia8_2017:
+  gen: 0.0197
+ADDMonoJet_MD_9_d_5_pythia8_2017:
+  gen: 0.006278
 ADDMonoJet_MD_9_d_5_pythia8_2018:
   gen: 0.006237
+ADDMonoJet_MD_9_d_6_pythia8_2017:
+  gen: 0.002282
+ADDMonoJet_MD_9_d_6_pythia8_2018:
+  gen: 0.00231
+ADDMonoJet_MD_9_d_7_pythia8_2017:
+  gen: 0.0009088
 ADDMonoJet_MD_9_d_7_pythia8_2018:
   gen: 0.0009168
 AJJ_EWK_amcatnlo_2017:
@@ -633,6 +741,8 @@ ScalarFirstGenLeptoquarkToQNu_Mlq-1000_Ylq-0p25_mg_2017:
   gen: 0.007515
 ScalarFirstGenLeptoquarkToQNu_Mlq-1000_Ylq-0p25_mg_2018:
   gen: 0.007525
+ScalarFirstGenLeptoquarkToQNu_Mlq-1000_Ylq-0p5_mg_2017:
+  gen: 0.02173
 ScalarFirstGenLeptoquarkToQNu_Mlq-1000_Ylq-0p5_mg_2018:
   gen: 0.02173
 ScalarFirstGenLeptoquarkToQNu_Mlq-1250_Ylq-0p25_mg_2017:
