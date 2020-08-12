@@ -1,49 +1,223 @@
+ADDMonoJet_MD-10_d-2_2016:
+  gen: 0.2777
+ADDMonoJet_MD-10_d-3_2016:
+  gen: 0.04509
+ADDMonoJet_MD-11_d-2_2016:
+  gen: 0.1902
+ADDMonoJet_MD-11_d-3_2016:
+  gen: 0.02784
+ADDMonoJet_MD-12_d-2_2016:
+  gen: 0.1345
+ADDMonoJet_MD-3_d-4_2016:
+  gen: 11.46
+ADDMonoJet_MD-3_d-5_2016:
+  gen: 9.096
+ADDMonoJet_MD-3_d-6_2016:
+  gen: 7.904
+ADDMonoJet_MD-4_d-3_2016:
+  gen: 4.28
+ADDMonoJet_MD-4_d-4_2016:
+  gen: 2.374
+ADDMonoJet_MD-4_d-5_2016:
+  gen: 1.585
+ADDMonoJet_MD-4_d-6_2016:
+  gen: 1.168
+ADDMonoJet_MD-5_d-2_2016:
+  gen: 4.445
+ADDMonoJet_MD-5_d-3_2016:
+  gen: 1.434
+ADDMonoJet_MD-5_d-4_2016:
+  gen: 0.6575
+ADDMonoJet_MD-5_d-5_2016:
+  gen: 0.3698
+ADDMonoJet_MD-5_d-6_2016:
+  gen: 0.2331
+ADDMonoJet_MD-6_d-2_2016:
+  gen: 2.153
+ADDMonoJet_MD-6_d-3_2016:
+  gen: 0.5772
+ADDMonoJet_MD-6_d-4_2016:
+  gen: 0.2226
+ADDMonoJet_MD-6_d-5_2016:
+  gen: 0.1068
+ADDMonoJet_MD-6_d-6_2016:
+  gen: 0.05744
+ADDMonoJet_MD-7_d-2_2016:
+  gen: 1.161
+ADDMonoJet_MD-7_d-3_2016:
+  gen: 0.2664
+ADDMonoJet_MD-7_d-4_2016:
+  gen: 0.08851
+ADDMonoJet_MD-7_d-5_2016:
+  gen: 0.03633
+ADDMonoJet_MD-7_d-6_2016:
+  gen: 0.01702
+ADDMonoJet_MD-8_d-2_2016:
+  gen: 0.6814
+ADDMonoJet_MD-8_d-3_2016:
+  gen: 0.1376
+ADDMonoJet_MD-8_d-4_2016:
+  gen: 0.03988
+ADDMonoJet_MD-9_d-2_2016:
+  gen: 0.4248
+ADDMonoJet_MD-9_d-3_2016:
+  gen: 0.07593
+ADDMonoJet_MD-9_d-4_2016:
+  gen: 0.01967
+ADDMonoJet_MD_10_d_2_pythia8_2017:
+  gen: 0.2785
 ADDMonoJet_MD_10_d_2_pythia8_2018:
   gen: 0.2782
+ADDMonoJet_MD_10_d_3_pythia8_2017:
+  gen: 0.04484
 ADDMonoJet_MD_10_d_3_pythia8_2018:
   gen: 0.04475
+ADDMonoJet_MD_10_d_4_pythia8_2017:
+  gen: 0.01038
+ADDMonoJet_MD_10_d_4_pythia8_2018:
+  gen: 0.0104
+ADDMonoJet_MD_11_d_2_pythia8_2017:
+  gen: 0.1896
+ADDMonoJet_MD_11_d_2_pythia8_2018:
+  gen: 0.1892
+ADDMonoJet_MD_11_d_3_pythia8_2017:
+  gen: 0.02784
 ADDMonoJet_MD_11_d_3_pythia8_2018:
   gen: 0.02772
+ADDMonoJet_MD_11_d_4_pythia8_2017:
+  gen: 0.005886
 ADDMonoJet_MD_11_d_4_pythia8_2018:
   gen: 0.005881
+ADDMonoJet_MD_12_d_2_pythia8_2017:
+  gen: 0.1337
+ADDMonoJet_MD_12_d_2_pythia8_2018:
+  gen: 0.1334
+ADDMonoJet_MD_12_d_3_pythia8_2017:
+  gen: 0.01801
+ADDMonoJet_MD_12_d_3_pythia8_2018:
+  gen: 0.01805
+ADDMonoJet_MD_13_d_2_pythia8_2017:
+  gen: 0.09772
 ADDMonoJet_MD_13_d_2_pythia8_2018:
   gen: 0.09752
+ADDMonoJet_MD_13_d_3_pythia8_2017:
+  gen: 0.01203
 ADDMonoJet_MD_13_d_3_pythia8_2018:
   gen: 0.01205
+ADDMonoJet_MD_14_d_2_pythia8_2017:
+  gen: 0.0726
 ADDMonoJet_MD_14_d_2_pythia8_2018:
   gen: 0.07225
+ADDMonoJet_MD_15_d_2_pythia8_2017:
+  gen: 0.05483
 ADDMonoJet_MD_15_d_2_pythia8_2018:
   gen: 0.05485
+ADDMonoJet_MD_4_d_7_pythia8_2017:
+  gen: 0.9125
 ADDMonoJet_MD_4_d_7_pythia8_2018:
   gen: 0.9019
+ADDMonoJet_MD_5_d_4_pythia8_2017:
+  gen: 0.653
 ADDMonoJet_MD_5_d_4_pythia8_2018:
   gen: 0.6532
+ADDMonoJet_MD_5_d_5_pythia8_2017:
+  gen: 0.3679
 ADDMonoJet_MD_5_d_5_pythia8_2018:
   gen: 0.3689
+ADDMonoJet_MD_5_d_6_pythia8_2017:
+  gen: 0.2331
 ADDMonoJet_MD_5_d_6_pythia8_2018:
   gen: 0.2341
+ADDMonoJet_MD_5_d_7_pythia8_2017:
+  gen: 0.1569
 ADDMonoJet_MD_5_d_7_pythia8_2018:
   gen: 0.1551
+ADDMonoJet_MD_6_d_3_pythia8_2017:
+  gen: 0.577
 ADDMonoJet_MD_6_d_3_pythia8_2018:
   gen: 0.5751
+ADDMonoJet_MD_6_d_4_pythia8_2017:
+  gen: 0.2226
 ADDMonoJet_MD_6_d_4_pythia8_2018:
   gen: 0.2212
+ADDMonoJet_MD_6_d_5_pythia8_2017:
+  gen: 0.1055
+ADDMonoJet_MD_6_d_5_pythia8_2018:
+  gen: 0.1061
+ADDMonoJet_MD_6_d_6_pythia8_2017:
+  gen: 0.05733
+ADDMonoJet_MD_6_d_7_pythia8_2017:
+  gen: 0.03357
+ADDMonoJet_MD_6_d_7_pythia8_2018:
+  gen: 0.03368
+ADDMonoJet_MD_7_d_2_pythia8_2017:
+  gen: 1.161
 ADDMonoJet_MD_7_d_2_pythia8_2018:
   gen: 1.154
+ADDMonoJet_MD_7_d_3_pythia8_2017:
+  gen: 0.2675
+ADDMonoJet_MD_7_d_3_pythia8_2018:
+  gen: 0.2666
+ADDMonoJet_MD_7_d_4_pythia8_2017:
+  gen: 0.08856
 ADDMonoJet_MD_7_d_4_pythia8_2018:
   gen: 0.08842
+ADDMonoJet_MD_7_d_5_pythia8_2017:
+  gen: 0.03633
 ADDMonoJet_MD_7_d_5_pythia8_2018:
   gen: 0.03626
+ADDMonoJet_MD_7_d_6_pythia8_2017:
+  gen: 0.017
 ADDMonoJet_MD_7_d_6_pythia8_2018:
   gen: 0.0171
+ADDMonoJet_MD_7_d_7_pythia8_2017:
+  gen: 0.008616
+ADDMonoJet_MD_7_d_7_pythia8_2018:
+  gen: 0.008716
+ADDMonoJet_MD_8_d_2_pythia8_2017:
+  gen: 0.6768
 ADDMonoJet_MD_8_d_2_pythia8_2018:
   gen: 0.6758
+ADDMonoJet_MD_8_d_3_pythia8_2017:
+  gen: 0.137
+ADDMonoJet_MD_8_d_3_pythia8_2018:
+  gen: 0.1367
+ADDMonoJet_MD_8_d_4_pythia8_2017:
+  gen: 0.03959
+ADDMonoJet_MD_8_d_4_pythia8_2018:
+  gen: 0.03964
+ADDMonoJet_MD_8_d_5_pythia8_2017:
+  gen: 0.0143
 ADDMonoJet_MD_8_d_5_pythia8_2018:
   gen: 0.01436
+ADDMonoJet_MD_8_d_6_pythia8_2017:
+  gen: 0.005902
+ADDMonoJet_MD_8_d_6_pythia8_2018:
+  gen: 0.00587
+ADDMonoJet_MD_8_d_7_pythia8_2017:
+  gen: 0.002644
 ADDMonoJet_MD_8_d_7_pythia8_2018:
   gen: 0.002648
+ADDMonoJet_MD_9_d_2_pythia8_2017:
+  gen: 0.4226
+ADDMonoJet_MD_9_d_2_pythia8_2018:
+  gen: 0.4233
+ADDMonoJet_MD_9_d_3_pythia8_2017:
+  gen: 0.07592
+ADDMonoJet_MD_9_d_3_pythia8_2018:
+  gen: 0.07575
+ADDMonoJet_MD_9_d_4_pythia8_2017:
+  gen: 0.0197
+ADDMonoJet_MD_9_d_5_pythia8_2017:
+  gen: 0.006278
 ADDMonoJet_MD_9_d_5_pythia8_2018:
   gen: 0.006237
+ADDMonoJet_MD_9_d_6_pythia8_2017:
+  gen: 0.002282
+ADDMonoJet_MD_9_d_6_pythia8_2018:
+  gen: 0.00231
+ADDMonoJet_MD_9_d_7_pythia8_2017:
+  gen: 0.0009088
 ADDMonoJet_MD_9_d_7_pythia8_2018:
   gen: 0.0009168
 AJJ_EWK_amcatnlo_2017:
@@ -633,6 +807,8 @@ ScalarFirstGenLeptoquarkToQNu_Mlq-1000_Ylq-0p25_mg_2017:
   gen: 0.007515
 ScalarFirstGenLeptoquarkToQNu_Mlq-1000_Ylq-0p25_mg_2018:
   gen: 0.007525
+ScalarFirstGenLeptoquarkToQNu_Mlq-1000_Ylq-0p5_mg_2017:
+  gen: 0.02173
 ScalarFirstGenLeptoquarkToQNu_Mlq-1000_Ylq-0p5_mg_2018:
   gen: 0.02173
 ScalarFirstGenLeptoquarkToQNu_Mlq-1250_Ylq-0p25_mg_2017:
@@ -2217,4 +2393,520 @@ DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1p0_mg_pythia8_2018 :
 DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_600p0_mg_pythia8_2018 :
    gen: 0.00181018
 DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_30p0_mg_pythia8_2018 :
+   gen: 0.825127
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.00196977
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0679656
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_750p0_mg_pythia8_2016 :
+   gen: 0.000197824
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.0576903
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1200p0_mg_pythia8_2016 :
+   gen: 6.93138e-07
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_60p0_mg_pythia8_2016 :
+   gen: 0.00757334
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_800p0_mg_pythia8_2016 :
+   gen: 0.000567031
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.000346641
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.43475
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_60p0_mg_pythia8_2016 :
+   gen: 6.42973
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1100p0_mg_pythia8_2016 :
+   gen: 5.24397e-06
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_55p0_mg_pythia8_2016 :
+   gen: 0.0256963
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_55p0_mg_pythia8_2016 :
+   gen: 3.31533
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_30p0_mg_pythia8_2016 :
+   gen: 118.937
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.130863
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.000327385
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.000446829
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.00199503
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 20.3778
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.00540765
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.152801
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.180028
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 7.34106
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00197355
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 5.86115e-05
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.0739004
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.838286
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.169031
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_70p0_mg_pythia8_2016 :
+   gen: 1.47054
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_450p0_mg_pythia8_2016 :
+   gen: 0.166979
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_30p0_mg_pythia8_2016 :
+   gen: 0.585157
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_1500p0_mg_pythia8_2016 :
+   gen: 1.18427e-05
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 0.547101
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.00122407
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0593609
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1200p0_mg_pythia8_2016 :
+   gen: 0.000363374
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.00538949
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.0547606
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1400p0_mg_pythia8_2016 :
+   gen: 7.11796e-05
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1100p0_mg_pythia8_2016 :
+   gen: 1.2968e-05
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_55p0_mg_pythia8_2016 :
+   gen: 0.0662389
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.0214715
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 3.89953e-06
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 0.0430946
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_45p0_mg_pythia8_2016 :
+   gen: 32.5791
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.430551
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.00191124
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.544205
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0205402
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00130964
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_70p0_mg_pythia8_2016 :
+   gen: 3.53698
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.036793
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.169711
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.000129144
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 0.167661
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_750p0_mg_pythia8_2016 :
+   gen: 0.000586872
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 53.1655
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_75p0_mg_pythia8_2016 :
+   gen: 0.171057
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_30p0_mg_pythia8_2016 :
+   gen: 0.335054
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00653419
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0100565
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.0651321
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 0.0671035
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 1.23992
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.000506554
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_450p0_mg_pythia8_2016 :
+   gen: 0.00632118
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_70p0_mg_pythia8_2016 :
+   gen: 0.00534183
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 8.76088
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_45p0_mg_pythia8_2016 :
+   gen: 0.0685104
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 0.00256473
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.00442742
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 0.381332
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.0008498
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00251259
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0227468
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.134977
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_60p0_mg_pythia8_2016 :
+   gen: 2.37073
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0572647
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0700932
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_750p0_mg_pythia8_2016 :
+   gen: 0.000390108
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 165.139
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.541208
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_60p0_mg_pythia8_2016 :
+   gen: 0.0174414
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.188077
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.02171
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.201345
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_45p0_mg_pythia8_2016 :
+   gen: 0.261308
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 9.93757e-05
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1400p0_mg_pythia8_2016 :
+   gen: 1.27924e-05
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.346085
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 1.08746e-05
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.0422012
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.819225
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_45p0_mg_pythia8_2016 :
+   gen: 0.165735
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_70p0_mg_pythia8_2016 :
+   gen: 0.0275406
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_75p0_mg_pythia8_2016 :
+   gen: 0.299755
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_450p0_mg_pythia8_2016 :
+   gen: 0.00159215
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00196903
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.00082745
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.00103428
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.343416
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.000718892
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 3.87922
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.439138
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_40p0_mg_pythia8_2016 :
+   gen: 0.302754
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_1000p0_mg_pythia8_2016 :
+   gen: 0.00048785
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.0607124
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1400p0_mg_pythia8_2016 :
+   gen: 4.88291e-07
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0261524
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.00577123
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 2.16841e-05
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.040626
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_40p0_mg_pythia8_2016 :
+   gen: 0.332858
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.0675627
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0265205
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_1500p0_mg_pythia8_2016 :
+   gen: 2.93747e-06
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_450p0_mg_pythia8_2016 :
+   gen: 0.00422542
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 171.352
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.0135014
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00357772
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_45p0_mg_pythia8_2016 :
+   gen: 128.409
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 46.5031
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1400p0_mg_pythia8_2016 :
+   gen: 8.60648e-07
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00129279
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 10.0318
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 3.40332
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.000405031
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.00906271
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_75p0_mg_pythia8_2016 :
+   gen: 0.423324
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 0.0127674
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_1500p0_mg_pythia8_2016 :
+   gen: 1.48998e-07
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_40p0_mg_pythia8_2016 :
+   gen: 0.749399
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1200p0_mg_pythia8_2016 :
+   gen: 4.11221e-06
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 2.83125e-05
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.000641211
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 0.000276638
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.00355652
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_800p0_mg_pythia8_2016 :
+   gen: 0.0518825
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.0440391
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 0.0094123
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.102177
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.00257513
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.427291
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.000588291
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0100665
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.00224245
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_75p0_mg_pythia8_2016 :
+   gen: 0.119193
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_40p0_mg_pythia8_2016 :
+   gen: 0.135934
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 0.00125496
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_60p0_mg_pythia8_2016 :
+   gen: 0.0441325
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.00281946
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_40p0_mg_pythia8_2016 :
+   gen: 148.169
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00477262
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1200p0_mg_pythia8_2016 :
+   gen: 5.7698e-05
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0225726
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_75p0_mg_pythia8_2016 :
+   gen: 51.1097
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_1000p0_mg_pythia8_2016 :
+   gen: 6.80868e-05
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 0.00631264
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.00126093
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 1.02709
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_1000p0_mg_pythia8_2016 :
+   gen: 0.00600344
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00112767
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_40p0_mg_pythia8_2016 :
+   gen: 65.678
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0560463
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 0.00515772
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 10.3562
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0381146
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.000402115
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_800p0_mg_pythia8_2016 :
+   gen: 0.000228178
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.0246985
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0129828
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_1000p0_mg_pythia8_2016 :
+   gen: 0.000171828
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_750p0_mg_pythia8_2016 :
+   gen: 0.0121933
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.122195
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00666893
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_750p0_mg_pythia8_2016 :
+   gen: 0.0179916
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1200p0_mg_pythia8_2016 :
+   gen: 2.02038e-06
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.0176689
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.053935
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1100p0_mg_pythia8_2016 :
+   gen: 0.00115008
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 7.48938e-05
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_750p0_mg_pythia8_2016 :
+   gen: 0.00013587
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.142511
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 11.4262
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.179139
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 0.151197
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_1000p0_mg_pythia8_2016 :
+   gen: 0.0153451
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 0.00195959
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_100p0_mg_pythia8_2016 :
+   gen: 1.26349
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.00116344
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1400p0_mg_pythia8_2016 :
+   gen: 2.6398e-06
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 1.17094
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_70p0_mg_pythia8_2016 :
+   gen: 0.0111649
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1100p0_mg_pythia8_2016 :
+   gen: 3.66299e-05
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.00120783
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_70p0_mg_pythia8_2016 :
+   gen: 0.0133584
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 0.000346924
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0126745
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.0134953
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.00677857
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 52.7861
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.0859307
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.00814863
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_250p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 1.17978
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_800p0_mg_pythia8_2016 :
+   gen: 0.00152506
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_55p0_mg_pythia8_2016 :
+   gen: 10.2837
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_55p0_mg_pythia8_2016 :
+   gen: 0.00977679
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_1000p0_mg_pythia8_2016 :
+   gen: 0.000195864
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_55p0_mg_pythia8_2016 :
+   gen: 0.0247288
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_1200p0_mg_pythia8_2016 :
+   gen: 1.22578e-05
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.343277
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_30p0_mg_pythia8_2016 :
+   gen: 0.243602
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_1500p0_mg_pythia8_2016 :
+   gen: 4.6714e-07
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.00295572
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.256937
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.0021779
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_45p0_mg_pythia8_2016 :
+   gen: 0.638882
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0592262
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.0483408
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 1.27598
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.0662727
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_60p0_mg_pythia8_2016 :
+   gen: 0.0193935
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.0016356
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.134594
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_150p0_mg_pythia8_2016 :
+   gen: 0.00178928
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.0217586
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 3.20047
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_400p0_mg_pythia8_2016 :
+   gen: 0.000690309
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_100p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.850566
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.00071059
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00497052
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.000231106
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00065375
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_1500p0_mg_pythia8_2016 :
+   gen: 9.70162e-07
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00250056
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_500p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.00308742
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1100p0_mg_pythia8_2016 :
+   gen: 0.000157455
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1400p0_mg_pythia8_2016 :
+   gen: 1.60252e-07
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1000p0_MXd_300p0_mg_pythia8_2016 :
+   gen: 0.00969001
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1750p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00356538
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_1500p0_mg_pythia8_2016 :
+   gen: 7.86016e-05
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_30p0_mg_pythia8_2016 :
+   gen: 162.051
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_900p0_mg_pythia8_2016 :
+   gen: 0.00046132
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_800p0_mg_pythia8_2016 :
+   gen: 0.021699
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_800p0_mg_pythia8_2016 :
+   gen: 0.000623713
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_1500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.263558
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.000679816
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_200p0_mg_pythia8_2016 :
+   gen: 0.00187879
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_450p0_mg_pythia8_2016 :
+   gen: 0.0022899
+DMSimp_monow_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2250p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00110745
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2500p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.00023058
+DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.000657708
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1100p0_mg_pythia8_2016 :
+   gen: 1.8068e-06
+DMSimp_monojet_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_1500p0_MXd_450p0_mg_pythia8_2016 :
+   gen: 0.235833
+DMSimp_monojet_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_250p0_MXd_75p0_mg_pythia8_2016 :
+   gen: 36.9074
+DMSimp_monoz_NLO_FXFX_Axial_GQ0p25_GDM1p0_MY1_2000p0_MXd_1p0_mg_pythia8_2016 :
+   gen: 0.000710151
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_600p0_mg_pythia8_2016 :
+   gen: 0.00181018
+DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_30p0_mg_pythia8_2016 :
    gen: 0.825127
