@@ -42,7 +42,7 @@ def legacy_limit_input_monov(acc, outdir='./output', unblind=False):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    for wp in ['tau21','loosemd','tightmd','loose','tight']:
+    for wp in ['tau21','loose','tight']:
         for year in [2017,2018]:
             signal = re.compile(f'.*(Hinv|HToInvisible).*{year}')
             f = uproot.recreate(pjoin(outdir, f'legacy_limit_monov_{wp}_{year}.root'))
@@ -74,7 +74,6 @@ def legacy_limit_input_monov(acc, outdir='./output', unblind=False):
                     if not (data[region].match(dataset) or mc[region].match(dataset) or signal.match(dataset)):
                         continue
                     print(f"   Dataset: {dataset}")
-
                     th1 = export1d(h.integrate('dataset', dataset))
                     try:
                         histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name(dataset)}'
