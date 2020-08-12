@@ -41,7 +41,7 @@ def datasets(year, unblind=False):
             'cr_2m_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_2e_j' : re.compile(f'(Top_FXFX|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_g_j' : re.compile(f'(GJets_DR-0p4.*|VQQGamma|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
-            'sr_j_no_veto_all' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*).*{year}'),
+            'sr_j_no_veto_all' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|ADD|ScalarFirstGenLeptoquark).*{year}'),
             'sr_j' : re.compile('nomatch'),
             }
     for key in list(mc.keys()):
@@ -51,6 +51,23 @@ def datasets(year, unblind=False):
 
 
 def legacy_dataset_name(dataset):
+
+    m = re.match(f"DMSimp_(monojet|monow|monoz)_NLO_FXFX_(Axial|Vector)_GQ([0-9,p]*)_GDM([0-9,p]*)_MY1_([0-9,p]*)_MXd_([0-9,p]*)_mg_pythia8.*", dataset)
+    if m:
+        channel, coupling, gq, gdm, mmed, mdm = m.groups()
+        return f"{coupling.lower()}_{channel}_mmed{mmed}_mdm{mdm}_gq{gq}_gdm{gdm}"
+
+    m = re.match(f"ADDMonoJet_MD_(\d+)_d_(\d+)_pythia8_.*", dataset)
+    if m:
+        md, d = m.groups()
+        return f"add_md{md}_d{d}"
+
+    m = re.match(f"ScalarFirstGenLeptoquarkToQNu_Mlq-(\d+)_Ylq-([0-9,p]*)_mg_.*", dataset)
+    if m:
+        mlq, ylq = m.groups()
+        return f"lq_m{mlq}_d{ylq}"
+
+
     patterns = {
         '.*DY.*' : 'zll',
         'QCD.*' : 'qcd',
@@ -63,16 +80,17 @@ def legacy_dataset_name(dataset):
         'GJets.*NLO.*' : 'gjets',
         'VQQGamma.*' : 'vgamma',
         'WH.*Hinv.*' : 'wh',
-        'ZH.*HToInvisible.*' : 'zh',
-        'VBF.*HToInvisible.*' : 'vbf',
-        'GluGlu.*HToInvisible.*' : 'ggh',
-        'ggZH.*HToInvisible.*' : 'ggzh',
+        'ZH.*HToInvisible_M125.*' : 'zh',
+        'VBF.*HToInvisible_M125.*' : 'vbf',
+        'GluGlu_HToInvisible_M125*' : 'ggh',
+        'ggZH.*HToInvisible_M125.*' : 'ggzh',
         'VQQGamma.*' : 'vgamma'
     }
 
     for pat, ret in patterns.items():
         if re.match(pat, dataset):
             return ret
+
     raise RuntimeError(f'Cannot find legacy region name for dataset :"{dataset}"')
 
 def legacy_region_name(region):
@@ -156,7 +174,7 @@ def legacy_limit_input_monojet(acc, outdir='./output', unblind=False):
                 th1 = export1d(h.integrate('dataset', dataset))
                 try:
                     histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name(dataset)}'
-                except:
+                except RuntimeError:
                     print(f"Skipping {dataset}")
                     continue
                 f[histo_name] = th1
