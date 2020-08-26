@@ -7,3 +7,4 @@ gitpython
 tabulate
 klepto
 pycairo>=1.18.2
+numba==0.50.1
