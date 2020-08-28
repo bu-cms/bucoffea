@@ -429,13 +429,13 @@ class monojetProcessor(processor.ProcessorABC):
                     dsmask = df[f'GenModel_{ds}']
                     output['nevents'][short] += dsmask.sum()
                     # Split per sub-dataset
-                    output['sumw'][short] +=  df[f'genEventSumw_{ds}']
-                    output['sumw2'][short] +=  df[f'genEventSumw2_{ds}']
+                    output['sumw'][short] +=  getattr(df, f'genEventSumw_{ds}', 0)
+                    output['sumw2'][short] +=  getattr(df,f'genEventSumw2_{ds}', 0)
                     output['sumw_pileup'][short] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
 
                     # Integrated for the whole dataset
-                    output['sumw'][dataset] +=  df[f'genEventSumw_{ds}']
-                    output['sumw2'][dataset] +=  df[f'genEventSumw2_{ds}']
+                    output['sumw'][dataset] +=  getattr(df, f'genEventSumw_{ds}', 0)
+                    output['sumw2'][dataset] +=  getattr(df,f'genEventSumw2_{ds}', 0)
                     output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
             else:
                 # For normal datasets, no splitting is necessary
@@ -725,7 +725,6 @@ class monojetProcessor(processor.ProcessorABC):
             # Randomized parameter samples
             for ds, short in rand_datasets.items():
                 dsmask = df[f'GenModel_{ds}']
-                print(dsmask)
                 ezfill('recoil', recoil=recoil_pt[mask&dsmask],      weight=rw[mask&dsmask], dataset=short )
 
             if cfg.RUN.BTAG_STUDY:
