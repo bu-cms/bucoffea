@@ -725,7 +725,6 @@ class monojetProcessor(processor.ProcessorABC):
             # Randomized parameter samples
             for ds, short in rand_datasets.items():
                 dsmask = df[f'GenModel_{ds}']
-                print(dsmask)
                 ezfill('recoil', recoil=recoil_pt[mask&dsmask],      weight=rw[mask&dsmask], dataset=short )
 
             if cfg.RUN.BTAG_STUDY:
