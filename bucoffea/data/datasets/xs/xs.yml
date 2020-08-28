@@ -146,6 +146,8 @@ ADDMonoJet_MD_6_d_5_pythia8_2018:
   gen: 0.1061
 ADDMonoJet_MD_6_d_6_pythia8_2017:
   gen: 0.05733
+ADDMonoJet_MD_6_d_6_pythia8_2018:
+  gen: 0.0571
 ADDMonoJet_MD_6_d_7_pythia8_2017:
   gen: 0.03357
 ADDMonoJet_MD_6_d_7_pythia8_2018:
