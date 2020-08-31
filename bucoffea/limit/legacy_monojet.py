@@ -52,7 +52,7 @@ def datasets(year, unblind=False):
 
 def legacy_dataset_name(dataset):
 
-    m = re.match(f"DMSimp_(monojet|monow|monoz)_NLO_FXFX_(Axial|Vector)_GQ([0-9,p]*)_GDM([0-9,p]*)_MY1_([0-9,p]*)_MXd_([0-9,p]*)_mg_pythia8.*", dataset)
+    m = re.match(f"DMSimp_(monojet|monow|monoz)_NLO_FXFX_(Axial|Vector)_GQ([0-9,p]*)_GDM([0-9,p]*)_MY1[_,-]([0-9,p]*)_MXd[_,-]([0-9,p]*).*", dataset)
     if m:
         channel, coupling, gq, gdm, mmed, mdm = m.groups()
         return f"{coupling.lower()}_{channel}_mmed{mmed}_mdm{mdm}_gq{gq}_gdm{gdm}"
