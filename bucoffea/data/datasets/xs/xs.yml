@@ -593,6 +593,13 @@ GluGlu_HToInvisible_M125_pow_pythia8_2017:
 GluGlu_HToInvisible_M125_pow_pythia8_2018:
   gen: 21.46
   nnnlo: 4.858E+01
+GluGlu_HToInvisible_M125_HiggspTgt190_pow_pythia8_2018:
+  gen: 0.341214 # 21.46 * 0.0159
+  nnnlo: 0.772422 # 4.858E+01 * 0.0159
+GluGlu_HToInvisible_M125_HiggspTgt190_pow_pythia8_2017:
+  gen: 0.341214 # 21.46 * 0.0159
+  nnnlo: 0.772422 # 4.858E+01 * 0.0159
+
 QCD_HT1000to1500-MLM_2016:
   gen: 1209.0
 QCD_HT1000to1500-MLM_2018:
