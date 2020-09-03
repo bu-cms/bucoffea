@@ -45,20 +45,32 @@ colors = {
     'GJets_HT.*' : '#fc4e2a',
     'GJets_DR-0p4.*' : '#fc4e2a',
     'GJets_SM.*' : '#a76b51',
-    'VQQGamma.*' : '#51b84f',
     'ZJetsToNuNu.*' : '#31a354',
     'ZNuNuGJets_.*' : '#0050ec'
 }
 legend_labels = {
-    'GJets.*' : "$\\gamma$+jets",
-    'DY.*' : "Z$\\rightarrow\\ell\\ell$",
-    'Top.*' : "Top quark",
-    'WN*J.*LNu.*' : "W$\\rightarrow\\ell\\nu$",
-    'QCD.*' : "QCD",
-    'Diboson.*' : "WW/WZ/ZZ",
-    'ZJetsToNuNu.*.*' : "Z$\\rightarrow\\nu\\nu$",
-    'MET|Single(Electron|Photon|Muon)|EGamma.*' : "Data"
-
+    'VBF': {
+        'GJets_DR-0p4.*' : "QCD $\\gamma$+jets",
+        'GJets_SM.*' : "EWK $\\gamma$+jets",
+        'DY.*' : "QCD Z$\\rightarrow\\ell\\ell$",
+        'EWKZ.*ZToLL.*' : "EWK Z$\\rightarrow\\ell\\ell$",
+        'WN*J.*LNu.*' : "QCD W$\\rightarrow\\ell\\nu$",
+        'EWKW.*LNu.*' : "EWK W$\\rightarrow\\ell\\nu$",
+        'ZJetsToNuNu.*.*' : "QCD Z$\\rightarrow\\nu\\nu$",
+        'EWKZ.*ZToNuNu.*' : "EWK Z$\\rightarrow\\nu\\nu$"
+    },
+    'Monojet/Mono-V': {
+        'GJets_DR-0p4.*' : "$\\gamma$+jets",
+        'DY.*' : "Z$\\rightarrow\\ell\\ell$",
+        'WN*J.*LNu.*' : "W$\\rightarrow\\ell\\nu$",
+        'ZJetsToNuNu.*.*' : "Z$\\rightarrow\\nu\\nu$"
+    },
+    'Common': {
+        'QCD.*' : "QCD",
+        'Top.*' : "Top quark",
+        'Diboson.*' : "WW/WZ/ZZ",
+        'MET|Single(Electron|Photon|Muon)|EGamma.*' : "Data"
+    }
 }
 class Style():
     def __init__(self):
@@ -74,16 +86,6 @@ class Style():
             'cr_1e_v' : 'Single-e CR, mono-v',
             'cr_2e_v' : 'Di-e CR, mono-v',
             'cr_g_v' : 'Single-Photon CR, mono-v',
-            'cr_1m_tight_v' : 'Single-$\mu$ CR, mono-v tight',
-            'cr_2m_tight_v' : 'Di-$\mu$ CR, mono-v tight',
-            'cr_1e_tight_v' : 'Single-e CR, mono-v tight',
-            'cr_2e_tight_v' : 'Di-e CR, mono-v tight',
-            'cr_g_tight_v' : 'Single-Photon CR, mono-v tight',
-            'cr_1m_loose_v' : 'Single-$\mu$ CR, mono-v loose',
-            'cr_2m_loose_v' : 'Di-$\mu$ CR, mono-v loose',
-            'cr_1e_loose_v' : 'Single-e CR, mono-v loose',
-            'cr_2e_loose_v' : 'Di-e CR, mono-v loose',
-            'cr_g_loose_v' : 'Single-Photon CR, mono-v loose',
             'sr_vbf' : 'Signal region, vbfhinv',
             'cr_1m_vbf' : 'Single-$\mu$ CR, vbfhinv',
             'cr_2m_vbf' : 'Di-$\mu$ CR, vbfhinv',
@@ -254,7 +256,18 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
             handle.set_edgecolor('k')
 
         l = None
-        for k, v in legend_labels.items():
+
+        channel = channel_name(region)
+        # Pick the proper legend labels for the channel
+        if channel == 'VBF':
+            legend_labels_to_use = legend_labels['VBF']
+        elif channel in ['Monojet', 'Mono-V']:
+            legend_labels_to_use = legend_labels['Monojet/Mono-V']
+
+        # Add in the common labels
+        legend_labels_to_use.update(legend_labels['Common'])
+
+        for k, v in legend_labels_to_use.items():
             if re.match(k, label):
                 l = v
         new_labels.append(l if l else label)
@@ -290,7 +303,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
                 transform=ax.transAxes
                )
 
-    fig.text(1., 1., f'{channel_name(region)}, {lumi(year)} fb$^{{-1}}$ ({year})',
+    fig.text(1., 1., f'{channel}, {lumi(year)} fb$^{{-1}}$ ({year})',
                 fontsize=14,
                 horizontalalignment='right',
                 verticalalignment='bottom',
@@ -298,7 +311,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
                )
     # Aesthetics
     ax.set_yscale("log")
-    ax.set_ylabel('Events / GeV')
+    ax.set_ylabel('Events / Bin width')
     plot_settings=style.plot_settings()
     if region in plot_settings.keys():
         plot_settings=plot_settings[region]
