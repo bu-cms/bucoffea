@@ -14,7 +14,9 @@ from bucoffea.helpers import (
                               mt,
                               recoil,
                               weight_shape,
-                              candidates_in_hem
+                              candidates_in_hem,
+                              calculate_vecB,
+                              calculate_vecDPhi
                               )
 from bucoffea.helpers.dataset import (
                                       extract_year,
@@ -283,6 +285,28 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('mjj', df['mjj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.MASS)
         selection.add('dphijj', df['dphijj'] < cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DPHI)
         selection.add('detajj', df['detajj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DETA)
+        
+        # Cleaning cuts for signal region
+        max_neEmEF = np.maximum(diak4.i0.nef, diak4.i1.nef)
+        selection.add('max_neEmEF', (max_neEmEF < 0.7).any())
+        
+        vec_b = calculate_vecB(ak4, met_pt, met_phi)
+        vec_dphi = calculate_vecDPhi(ak4, met_pt, met_phi, df['TkMET_phi'])
+
+        no_jet_in_trk = (diak4.i0.abseta>2.5).any() & (diak4.i1.abseta>2.5).any()
+        no_jet_in_hf = (diak4.i0.abseta<3.0).any() & (diak4.i1.abseta<3.0).any()
+
+        at_least_one_jet_in_hf = (diak4.i0.abseta>3.0).any() | (diak4.i1.abseta>3.0).any()
+        at_least_one_jet_in_trk = (diak4.i0.abseta<2.5).any() | (diak4.i1.abseta<2.5).any()
+
+        # Categorized cleaning cuts
+        eemitigation = (
+                        (no_jet_in_hf | at_least_one_jet_in_trk) & (vec_dphi < 1.0)
+                    ) | (
+                        (no_jet_in_trk & at_least_one_jet_in_hf) & (vec_b < 0.2)
+                    )
+
+        selection.add('eemitigation', eemitigation)
 
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
