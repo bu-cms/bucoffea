@@ -308,6 +308,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         selection.add('eemitigation', eemitigation)
 
+        # HF-HF veto in SR
+        both_jets_in_hf = (diak4.i0.abseta > 3.0) & (diak4.i1.abseta > 3.0)
+        selection.add('veto_hfhf', ~both_jets_in_hf.any())
+
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
             two_central_jets = (np.abs(diak4.i0.eta) <= 2.4) & (np.abs(diak4.i1.eta) <= 2.4)
