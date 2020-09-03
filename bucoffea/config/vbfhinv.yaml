@@ -39,11 +39,11 @@ default:
         mt: 9999
         met: 80
   ak4:
-    jer: true
+    jer: false
   ak8:
-    jer: true
+    jer: false
   met:
-    jer: true
+    jer: false
   tau:
     cuts:
       pt: 20
