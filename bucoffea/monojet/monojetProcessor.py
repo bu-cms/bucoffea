@@ -31,7 +31,8 @@ from bucoffea.helpers import (
                               candidates_in_hem
                              )
 from bucoffea.helpers.weights import (
-                              get_veto_weights
+                              get_veto_weights,
+                              diboson_nlo_weights
                              )
 
 from bucoffea.helpers.dataset import (
@@ -381,6 +382,10 @@ class monojetProcessor(processor.ProcessorABC):
             if not (gen_v_pt is None):
                 weights = theory_weights_monojet(weights, df, evaluator, gen_v_pt)
 
+            # Diboson NLO
+            diboson_nlo_weights(df, evaluator, gen)
+            weights.add('weight_diboson_nlo', df['weight_diboson_nlo'])
+
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
             for event in cfg.RUN.KINEMATICS.EVENTS:
@@ -721,6 +726,23 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
+
+            # Diboson NLO
+            ezfill(
+                    'recoil_nodibosonnlo',
+                    recoil=recoil_pt[mask],
+                    weight=region_weights.partial_weight(exclude=['weight_diboson_nlo']+exclude)[mask]
+                    )
+            ezfill(
+                    'recoil_dibosonnlo_up',
+                    recoil=recoil_pt[mask],
+                    weight=(region_weights.partial_weight(exclude=exclude)*(1+df['weight_diboson_nlo_rel_unc']))[mask]
+                    )
+            ezfill(
+                    'recoil_dibosonnlo_dn',
+                    recoil=recoil_pt[mask],
+                    weight=(region_weights.partial_weight(exclude=exclude)*(1-df['weight_diboson_nlo_rel_unc']))[mask]
+                    )
 
             # Randomized parameter samples
             for ds, short in rand_datasets.items():

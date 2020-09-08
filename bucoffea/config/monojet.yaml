@@ -170,6 +170,19 @@ default:
     dimuo_id_sf:
       use_average: true
 
+    total_nlo_zz_ptz:
+      histogram: total_nlo_zz_ptz
+      file: data/sf/theory/diboson_kfactors.root
+    total_nlo_ww_ptwp:
+      histogram: total_nlo_ww_ptwp
+      file: data/sf/theory/diboson_kfactors.root
+    total_nlo_wpz_ptwp:
+      histogram: total_nlo_wpz_ptwp
+      file: data/sf/theory/diboson_kfactors.root
+    total_nlo_wmz_ptwm:
+      histogram: total_nlo_wmz_ptwm
+      file: data/sf/theory/diboson_kfactors.root
+
   run:
     sync: False
     save:
