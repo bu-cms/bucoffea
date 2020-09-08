@@ -351,7 +351,7 @@ def setup_candidates(df, cfg):
     taus = taus[ (taus.decaymode) \
                 & (taus.pt > cfg.TAU.CUTS.PT)\
                 & (taus.abseta < cfg.TAU.CUTS.ETA) \
-                & (taus.iso>=2)]
+                & ((taus.iso&2)==2)]
 
     if cfg.OVERLAP.TAU.MUON.CLEAN:
         taus = taus[object_overlap(taus, muons, dr=cfg.OVERLAP.TAU.MUON.DR)]
