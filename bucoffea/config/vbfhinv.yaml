@@ -49,8 +49,8 @@ default:
       pt: 20
       eta: 2.3
     branch:
-      id: Tau_idDecayMode
-      iso: Tau_idMVAoldDM2017v2
+      id: Tau_idDecayModeNewDMs
+      iso: Tau_idDeepTau2017v2p1VSjet
   photon:
     cuts:
       loose:
@@ -60,7 +60,7 @@ default:
         pt: 230
         pttrig: 230
     branch: # No eta cut here bc we use "isScEtaEB"
-      id: Photon_cutBasedBitmap
+      id: Photon_cutBased_Fall17V1Bitmap
   muon:
     cuts:
       tight:
@@ -282,8 +282,8 @@ era2016:
       id: Photon_cutBased17Bitmap
   tau:
     branch:
-      id: Tau_idDecayMode
-      iso: Tau_idMVAoldDM
+      id: Tau_idDecayModeNewDMs
+      iso: Tau_idDeepTau2017v2p1VSjet
   sf:
     ele_reco:
       histogram: EGamma_SF2D

@@ -42,8 +42,8 @@ default:
       pt: 18
       eta: 2.3
     branch:
-      id: Tau_idDecayMode
-      iso: Tau_idMVAoldDM2017v2
+      id: Tau_idDecayModeNewDMs
+      iso: Tau_idDeepTau2017v2p1VSjet
   photon:
     cuts:
       loose:
@@ -53,7 +53,7 @@ default:
         pt: 230
         pttrig: 230
     branch:
-      id: Photon_cutBasedBitmap
+      id: Photon_cutBased_Fall17V1Bitmap
       idv7: Photon_cutBased
   muon:
     cuts:
@@ -254,8 +254,8 @@ era2016:
       id: Photon_cutBased
   tau:
     branch:
-      id: Tau_idDecayMode
-      iso: Tau_idMVAoldDM
+      id: Tau_idDecayModeNewDMs
+      iso: Tau_idDeepTau2017v2p1VSjet
   sf:
     deepcsv:
       file: data/sf/btag/DeepCSV_102XSF_WP_V1.csv
