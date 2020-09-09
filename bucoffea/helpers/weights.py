@@ -98,13 +98,13 @@ def get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=False)
 
 def diboson_nlo_weights(df, evaluator, gen):
 
-    if re.match(df['dataset'], 'WW_201(6|7|8)'):
+    if re.match('WW_201(6|7|8)',df['dataset']):
         gen_wp = gen[(gen.status==62) & (gen.pdg==24)]
         pt = gen_wp.pt.max()
-        w = evaluator['total_nlo_ww_ptwp'][pt]
-        dw = evaluator['total_nlo_ww_ptwp_error'][pt]
+        w = evaluator['total_nlo_ww_ptwp'](pt)
+        dw = evaluator['total_nlo_ww_ptwp_error'](pt)
 
-    elif re.match(df['dataset'], 'WZ_201(6|7|8)'):
+    elif re.match('WZ_201(6|7|8)',df['dataset']):
         gen_wp = gen[(gen.status==62) & (gen.pdg==24)]
         gen_wm = gen[(gen.status==62) & (gen.pdg==-24)]
 
@@ -126,11 +126,11 @@ def diboson_nlo_weights(df, evaluator, gen):
             dw1,
             dw2
         )
-    elif re.match(df['dataset'], 'ZZ_201(6|7|8)'):
+    elif re.match('ZZ_201(6|7|8)',df['dataset']):
         gen_z = gen[(gen.status==62) & (np.abs(gen.pdg)==23)]
         pt = gen_z.pt.max()
-        w = evaluator['total_nlo_zz_ptz'][pt]
-        dw = evaluator['total_nlo_zz_ptz_error'][pt]
+        w = evaluator['total_nlo_zz_ptz'](pt)
+        dw = evaluator['total_nlo_zz_ptz_error'](pt)
     else:
         w = np.ones(df.size)
         pt = w
@@ -138,6 +138,5 @@ def diboson_nlo_weights(df, evaluator, gen):
 
     w[pt<0] = 1
     dw[pt<0] = 0
-
     df['weight_diboson_nlo'] = w
     df['weight_diboson_nlo_rel_unc'] = dw/w
