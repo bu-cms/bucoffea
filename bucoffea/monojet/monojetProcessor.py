@@ -51,7 +51,8 @@ from bucoffea.helpers.dataset import (
 from bucoffea.helpers.gen import (
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
-                                  fill_gen_v_info
+                                  fill_gen_v_info,
+                                  get_gen_photon_pt
                                  )
 
 def trigger_selection(selection, df, cfg):
@@ -191,13 +192,8 @@ class monojetProcessor(processor.ProcessorABC):
             fill_gen_v_info(df, gen, dressed)
             gen_v_pt = df['gen_v_pt_combined']
         elif df['is_lo_g'] or df['is_nlo_g']:
-            all_gen_photons = gen[(gen.pdg==22)]
-            prompt_mask = (all_gen_photons.status==1)&(all_gen_photons.flag&1==1)
-            stat1_mask = (all_gen_photons.status==1)
-            gen_photons = all_gen_photons[prompt_mask | (~prompt_mask.any()) & stat1_mask ]
-            gen_photon = gen_photons[gen_photons.pt.argmax()]
+            gen_v_pt = get_gen_photon_pt(gen)
 
-            gen_v_pt = gen_photon.pt.max()
         # Candidates
         # Already pre-filtered!
         # All leptons are at least loose
@@ -733,16 +729,18 @@ class monojetProcessor(processor.ProcessorABC):
                     recoil=recoil_pt[mask],
                     weight=region_weights.partial_weight(exclude=['weight_diboson_nlo']+exclude)[mask]
                     )
-            ezfill(
-                    'recoil_dibosonnlo_up',
-                    recoil=recoil_pt[mask],
-                    weight=(region_weights.partial_weight(exclude=exclude)*(1+df['weight_diboson_nlo_rel_unc']))[mask]
-                    )
-            ezfill(
-                    'recoil_dibosonnlo_dn',
-                    recoil=recoil_pt[mask],
-                    weight=(region_weights.partial_weight(exclude=exclude)*(1-df['weight_diboson_nlo_rel_unc']))[mask]
-                    )
+
+            if not df['is_data']:
+                ezfill(
+                        'recoil_dibosonnlo_up',
+                        recoil=recoil_pt[mask],
+                        weight=(region_weights.partial_weight(exclude=exclude)*(1+df['weight_diboson_nlo_rel_unc']))[mask]
+                        )
+                ezfill(
+                        'recoil_dibosonnlo_dn',
+                        recoil=recoil_pt[mask],
+                        weight=(region_weights.partial_weight(exclude=exclude)*(1-df['weight_diboson_nlo_rel_unc']))[mask]
+                        )
 
             # Randomized parameter samples
             for ds, short in rand_datasets.items():

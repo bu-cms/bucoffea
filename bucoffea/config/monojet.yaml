@@ -182,6 +182,12 @@ default:
     total_nlo_wmz_ptwm:
       histogram: total_nlo_wmz_ptwm
       file: data/sf/theory/diboson_kfactors.root
+    total_nlo_wg_ptg:
+      histogram: total_nlo_wg_ptg
+      file: data/sf/theory/diboson_kfactors.root
+    total_nlo_zg_ptg:
+      histogram: total_nlo_wg_ptg
+      file: data/sf/theory/diboson_kfactors.root
 
   run:
     sync: False
