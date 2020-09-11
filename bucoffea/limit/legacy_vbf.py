@@ -90,7 +90,7 @@ def recoil_bins_2016():
              1020., 1090., 1160., 1250., 1400.]
 
 def mjj_bins_2016():
-    return [200., 400., 600., 900., 1200., 1500.,
+    return [200., 500., 800., 1200., 1600.,
             2000., 2750., 3500., 5000.]
 
 def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
