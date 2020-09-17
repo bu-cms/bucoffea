@@ -39,11 +39,11 @@ default:
         mt: 9999
         met: 80
   ak4:
-    jer: true
+    jer: false
   ak8:
-    jer: true
+    jer: false
   met:
-    jer: true
+    jer: false
   tau:
     cuts:
       pt: 20
@@ -60,7 +60,8 @@ default:
         pt: 230
         pttrig: 230
     branch: # No eta cut here bc we use "isScEtaEB"
-      id: Photon_cutBased_Fall17V1Bitmap
+      id: Photon_cutBasedBitmap
+      idv7: Photon_cutBased
   muon:
     cuts:
       tight:
@@ -279,7 +280,7 @@ era2016:
       id: Electron_cutBased_Sum16
   photon:
     branch:
-      id: Photon_cutBased17Bitmap
+      id: Photon_cutBased
   tau:
     branch:
       id: Tau_idDecayModeNewDMs

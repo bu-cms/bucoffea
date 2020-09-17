@@ -336,7 +336,6 @@ def setup_candidates(df, cfg):
     if cfg.OVERLAP.ELECTRON.MUON.CLEAN:
         electrons = electrons[object_overlap(electrons, muons, dr=cfg.OVERLAP.ELECTRON.MUON.DR)]
 
-
     taus = JaggedCandidateArray.candidatesfromcounts(
         df['nTau'],
         pt=df['Tau_pt'],
