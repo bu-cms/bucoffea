@@ -299,3 +299,11 @@ def isnu(pdg):
     """Returns True if the PDG ID represents a neutrino."""
     abspdg = np.abs(pdg)
     return (12==abspdg) | (14==abspdg) | (16==abspdg)
+
+def get_gen_photon_pt(gen):
+    """Pt of gen photon for theory corrections."""
+    all_gen_photons = gen[(gen.pdg==22)]
+    prompt_mask = (all_gen_photons.status==1)&(all_gen_photons.flag&1==1)
+    stat1_mask = (all_gen_photons.status==1)
+    gen_photons = all_gen_photons[prompt_mask | (~prompt_mask.any()) & stat1_mask ]
+    return gen_photons.pt.max()

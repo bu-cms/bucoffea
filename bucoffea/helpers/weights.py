@@ -4,7 +4,7 @@ import coffea.processor as processor
 import numpy as np
 
 from bucoffea.helpers.dataset import extract_year
-
+from bucoffea.helpers.gen import get_gen_photon_pt
 
 def get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=False):
     """
@@ -94,3 +94,57 @@ def get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=False)
         veto_weights.add(variation, total)
 
     return veto_weights
+
+
+def diboson_nlo_weights(df, evaluator, gen):
+
+    if re.match('WW_(PSweights_)?201(6|7|8)',df['dataset']):
+        gen_wp = gen[(gen.status==62) & (gen.pdg==24)]
+        pt = gen_wp.pt.max()
+        w = evaluator['total_nlo_ww_ptwp'](pt)
+        dw = evaluator['total_nlo_ww_ptwp_error'](pt)
+
+    elif re.match('WZ_(PSweights_)?201(6|7|8)',df['dataset']):
+        gen_wp = gen[(gen.status==62) & (gen.pdg==24)]
+        gen_wm = gen[(gen.status==62) & (gen.pdg==-24)]
+
+        pt1 = gen_wp.pt.max()
+        pt2 = gen_wm.pt.max()
+
+        w1 = evaluator['total_nlo_wpz_ptwp'](pt1)
+        w2 = evaluator['total_nlo_wmz_ptwm'](pt2)
+        dw1 = evaluator['total_nlo_wpz_ptwp_error'](pt1)
+        dw2 = evaluator['total_nlo_wmz_ptwm_error'](pt2)
+        pt = np.where(pt1>0,pt1,pt2)
+        w = np.where(
+            pt1 > 0,
+            w1,
+            w2
+        )
+        dw = np.where(
+            pt1 > 0,
+            dw1,
+            dw2
+        )
+    elif re.match('ZZ_(PSweights_)?201(6|7|8)',df['dataset']):
+        gen_z = gen[(gen.status==62) & (np.abs(gen.pdg)==23)]
+        pt = gen_z.pt.max()
+        w = evaluator['total_nlo_zz_ptz'](pt)
+        dw = evaluator['total_nlo_zz_ptz_error'](pt)
+    elif re.match("WQQGamma_5f_NLO_FXFX-amcatnlo_201(6|7|8)", df['dataset']):
+        pt = get_gen_photon_pt(gen)
+        w = evaluator['total_nlo_wg_ptg'](pt)
+        dw = evaluator['total_nlo_wg_ptg_error'](pt)
+    elif re.match("ZQQGamma_5f_NLO_FXFX-amcatnlo_201(6|7|8)", df['dataset']):
+        pt = get_gen_photon_pt(gen)
+        w = evaluator['total_nlo_zg_ptg'](pt)
+        dw = evaluator['total_nlo_zg_ptg_error'](pt)
+    else:
+        w = np.ones(df.size)
+        pt = w
+        dw = np.zeros(df.size)
+
+    w[pt<0] = 1
+    dw[pt<0] = 0
+    df['weight_diboson_nlo'] = w
+    df['weight_diboson_nlo_rel_unc'] = dw/w

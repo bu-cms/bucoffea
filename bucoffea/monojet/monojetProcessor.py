@@ -31,7 +31,8 @@ from bucoffea.helpers import (
                               candidates_in_hem
                              )
 from bucoffea.helpers.weights import (
-                              get_veto_weights
+                              get_veto_weights,
+                              diboson_nlo_weights
                              )
 
 from bucoffea.helpers.dataset import (
@@ -50,7 +51,8 @@ from bucoffea.helpers.dataset import (
 from bucoffea.helpers.gen import (
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
-                                  fill_gen_v_info
+                                  fill_gen_v_info,
+                                  get_gen_photon_pt
                                  )
 
 def trigger_selection(selection, df, cfg):
@@ -190,13 +192,8 @@ class monojetProcessor(processor.ProcessorABC):
             fill_gen_v_info(df, gen, dressed)
             gen_v_pt = df['gen_v_pt_combined']
         elif df['is_lo_g'] or df['is_nlo_g']:
-            all_gen_photons = gen[(gen.pdg==22)]
-            prompt_mask = (all_gen_photons.status==1)&(all_gen_photons.flag&1==1)
-            stat1_mask = (all_gen_photons.status==1)
-            gen_photons = all_gen_photons[prompt_mask | (~prompt_mask.any()) & stat1_mask ]
-            gen_photon = gen_photons[gen_photons.pt.argmax()]
+            gen_v_pt = get_gen_photon_pt(gen)
 
-            gen_v_pt = gen_photon.pt.max()
         # Candidates
         # Already pre-filtered!
         # All leptons are at least loose
@@ -381,6 +378,10 @@ class monojetProcessor(processor.ProcessorABC):
             if not (gen_v_pt is None):
                 weights = theory_weights_monojet(weights, df, evaluator, gen_v_pt)
 
+            # Diboson NLO
+            diboson_nlo_weights(df, evaluator, gen)
+            weights.add('weight_diboson_nlo', df['weight_diboson_nlo'])
+
         # Save per-event values for synchronization
         if cfg.RUN.KINEMATICS.SAVE:
             for event in cfg.RUN.KINEMATICS.EVENTS:
@@ -485,13 +486,13 @@ class monojetProcessor(processor.ProcessorABC):
                         ]
                     region_weights.add("vetoweight", veto_weights.partial_weight(include=["nominal"]))
 
-            if not (df['is_data'] or df['year']==2016):
+            if not (df['is_data']):
                 genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
                 leadak8 = ak8[ak8.pt.argmax()]
                 leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
                 matched_leadak8 = leadak8[leadak8_matched_mask]
                 unmatched_leadak8 = leadak8[~leadak8_matched_mask]
-                for wp in ['loose','loosemd','tight','tightmd']:
+                for wp in ['loose','tight']:
                     if re.match(f'.*_{wp}_v.*', region):
                         if (wp == 'tight') or ('nomistag' in region): # no mistag SF available for tight cut
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
@@ -721,6 +722,25 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
+
+            # Diboson NLO
+            ezfill(
+                    'recoil_nodibosonnlo',
+                    recoil=recoil_pt[mask],
+                    weight=region_weights.partial_weight(exclude=['weight_diboson_nlo']+exclude)[mask]
+                    )
+
+            if not df['is_data']:
+                ezfill(
+                        'recoil_dibosonnlo_up',
+                        recoil=recoil_pt[mask],
+                        weight=(region_weights.partial_weight(exclude=exclude)*(1+df['weight_diboson_nlo_rel_unc']))[mask]
+                        )
+                ezfill(
+                        'recoil_dibosonnlo_dn',
+                        recoil=recoil_pt[mask],
+                        weight=(region_weights.partial_weight(exclude=exclude)*(1-df['weight_diboson_nlo_rel_unc']))[mask]
+                        )
 
             # Randomized parameter samples
             for ds, short in rand_datasets.items():

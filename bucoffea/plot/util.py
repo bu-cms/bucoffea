@@ -251,11 +251,16 @@ def merge_datasets(histogram):
         'QCD_HT_{year}' : 'QCD_HT.*_{year}',
 
         'EWKW2Jets_WToLNu_M-50-mg_{year}' : 'EWKW(Plus|Minus)2Jets.*-mg_{year}',
-        'Diboson_{year}' : '(WW|WZ|ZZ|WW).*_{year}',
+
+        'Diboson_{year}' : '((W|Z)|(W|Z))(_PSweights)?_{year}',
+        'WW_{year}' : 'WW(_PSweights)?_{year}',
+        'ZZ_{year}' : 'ZZ(_PSweights)?_{year}',
+        'WZ_{year}' : 'WZ(_PSweights)?_{year}',
 
         'ZNJetsToNuNu_M-50_LHEZpT-FXFX_{year}' : 'Z\dJetsToNuN(u|U)_M-50_LHEZpT.*FXFX.*{year}',
         'VQQGamma_FXFX_{year}' : '(W|Z)QQGamma_5f_NLO_FXFX-amcatnlo_{year}',
-
+        'WQQGamma_FXFX_{year}' : 'WQQGamma_5f_NLO_FXFX-amcatnlo_{year}',
+        'ZQQGamma_FXFX_{year}' : 'ZQQGamma_5f_NLO_FXFX-amcatnlo_{year}',
     }
     for year in [2016,2017,2018]:
         for name, regex in yearly.items():

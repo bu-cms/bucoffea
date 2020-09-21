@@ -105,6 +105,10 @@ def monojet_accumulator(cfg):
     items["recoil_notrg"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_nopref"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
 
+    items["recoil_nodibosonnlo"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_dibosonnlo_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    items["recoil_dibosonnlo_dn"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+
     if cfg and cfg.RUN.BTAG_STUDY:
         items["recoil_hardbveto"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
         items["recoil_bveto_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
@@ -336,7 +340,6 @@ def setup_candidates(df, cfg):
     if cfg.OVERLAP.ELECTRON.MUON.CLEAN:
         electrons = electrons[object_overlap(electrons, muons, dr=cfg.OVERLAP.ELECTRON.MUON.DR)]
 
-
     taus = JaggedCandidateArray.candidatesfromcounts(
         df['nTau'],
         pt=df['Tau_pt'],
@@ -543,13 +546,9 @@ def monojet_regions(cfg):
     regions['cr_g_j'] = cr_g_cuts + j_cuts
     regions['cr_g_v'] = cr_g_cuts + v_cuts
 
-    # a tt-bar populated region by removing b veto
-    regions['cr_nobveto_v'] = copy.deepcopy(regions['sr_v'])
-    regions['cr_nobveto_v'].remove('veto_b')
-
     # additional regions to test out deep ak8 WvsQCD tagger
-    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v','cr_nobveto_v']:
-        for wp in ['inclusive', 'loose', 'tight','loosemd','tightmd']:
+    for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
+        for wp in ['loose', 'tight']:
             # the new region name will be, for example, cr_2m_loose_v
             newRegionName=region.replace('_v','_'+wp+'_v')
             regions[newRegionName] = copy.deepcopy(regions[region])
@@ -568,7 +567,7 @@ def monojet_regions(cfg):
             # save a copy of the v-tagged regions but not applying mistag SFs, for the sake of measuring mistag SF later
 
             if cfg and cfg.RUN.MONOVMISTAG:
-                if wp in ['loose','tight','loosemd','tightmd']:
+                if wp in ['loose','tight']:
                     noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
                     regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
 
@@ -692,6 +691,15 @@ def monojet_regions(cfg):
 
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
+
+    tmp = {}
+    for name, cuts in regions.items():
+        if not name.startswith("cr"):
+            continue
+        cuts = copy.deepcopy(cuts)
+        cuts.remove("dpfcalo")
+        tmp [f"{name}_nodpfcalo"] = cuts
+    regions.update(tmp)
 
     if cfg and not cfg.RUN.MONOV:
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_v') or '_v_' in x]
