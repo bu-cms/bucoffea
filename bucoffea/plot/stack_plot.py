@@ -38,6 +38,9 @@ colors = {
     'EWKZ.*ZToNuNu.*' : '#c4cae2',
     'EWK_V.*' : '#deebf7',
     '.*Diboson.*' : '#4292c6',
+    '.*WZ.*' : '#a6bddb',
+    '.*ZZ.*' : '#3690c0',
+    '.*WW.*' : '#034e7b',
     'Top.*' : '#6a51a3',
     '.*TT.*' : '#6a51a3',
     '.*ST.*' : '#9e9ac8',
@@ -46,6 +49,8 @@ colors = {
     'GJets_DR-0p4.*' : '#fc4e2a',
     'GJets_SM.*' : '#a76b51',
     'VQQGamma.*' : '#51b84f',
+    'ZQQGamma.*' : '#3a8739',
+    'WQQGamma.*' : '#51b84f',
     'ZJetsToNuNu.*' : '#31a354',
     'ZNuNuGJets_.*' : '#0050ec'
 }
@@ -57,6 +62,9 @@ legend_labels = {
     'QCD.*' : "QCD",
     'Diboson.*' : "WW/WZ/ZZ",
     'ZJetsToNuNu.*.*' : "Z$\\rightarrow\\nu\\nu$",
+    'ZQQGamma.*' : 'Z(qq)$\gamma$',
+    'WQQGamma.*' : 'W(qq)$\gamma$',
+    'VQQGamma.*' : 'V(qq)$\gamma$',
     'MET|Single(Electron|Photon|Muon)|EGamma.*' : "Data"
 
 }
@@ -105,6 +113,7 @@ class Style():
                     'recoil_nopref' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
                     'recoil_notheory' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
                     'recoil_recosfrecoil' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
+                    'recoil_nodibosonnnlo' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
                     'met' : hist.Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
                     'calomet' : hist.Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
                     'puppimet' : hist.Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
@@ -142,6 +151,7 @@ class Style():
                 new_region_name = region.replace('_v', wp+'_v')
                 self.binnings[new_region_name] = {
                         'recoil' : hist.Bin('recoil','Recoil (GeV)', recoil_monov_bins_2016),
+                        'recoil_nodibosonnlo' : hist.Bin('recoil','Recoil (GeV)', recoil_monov_bins_2016),
                         }
 
     def get_binning(self, distribution, region='default'):
