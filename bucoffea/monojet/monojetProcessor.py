@@ -486,13 +486,13 @@ class monojetProcessor(processor.ProcessorABC):
                         ]
                     region_weights.add("vetoweight", veto_weights.partial_weight(include=["nominal"]))
 
-            if not (df['is_data'] or df['year']==2016):
+            if not (df['is_data']):
                 genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
                 leadak8 = ak8[ak8.pt.argmax()]
                 leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
                 matched_leadak8 = leadak8[leadak8_matched_mask]
                 unmatched_leadak8 = leadak8[~leadak8_matched_mask]
-                for wp in ['loose','loosemd','tight','tightmd']:
+                for wp in ['loose','tight']:
                     if re.match(f'.*_{wp}_v.*', region):
                         if (wp == 'tight') or ('nomistag' in region): # no mistag SF available for tight cut
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
