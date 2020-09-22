@@ -77,6 +77,12 @@ legend_labels = {
         'QCD.*' : "QCD",
         'Top.*' : "Top quark",
         'Diboson.*' : "WW/WZ/ZZ",
+        'ZQQGamma.*' : 'Z(qq)$\gamma$',
+        'WQQGamma.*' : 'W(qq)$\gamma$',
+        'VQQGamma.*' : 'V(qq)$\gamma$',
+        'WW.*' : 'WW',
+        'ZZ.*' : 'ZZ',
+        'WZ.*' : 'WZ',
         'MET|Single(Electron|Photon|Muon)|EGamma.*' : "Data"
     }
 }
@@ -313,7 +319,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
                 transform=ax.transAxes
                )
 
-    fig.text(1., 1., f'{channel}, {lumi(year)} fb$^{{-1}}$ ({year})',
+    fig.text(1., 1., f'{channel_name(region)}, {lumi(year):.1f} fb$^{{-1}}$ ({year})',
                 fontsize=14,
                 horizontalalignment='right',
                 verticalalignment='bottom',
