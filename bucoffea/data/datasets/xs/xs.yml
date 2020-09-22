@@ -210,6 +210,8 @@ ADDMonoJet_MD_9_d_3_pythia8_2018:
   gen: 0.07575
 ADDMonoJet_MD_9_d_4_pythia8_2017:
   gen: 0.0197
+ADDMonoJet_MD_9_d_4_pythia8_2018:
+  gen: 0.0197
 ADDMonoJet_MD_9_d_5_pythia8_2017:
   gen: 0.006278
 ADDMonoJet_MD_9_d_5_pythia8_2018:
@@ -840,6 +842,8 @@ ScalarFirstGenLeptoquarkToQNu_Mlq-1500_Ylq-0p7_mg_2017:
   gen: 0.004088
 ScalarFirstGenLeptoquarkToQNu_Mlq-1500_Ylq-0p7_mg_2018:
   gen: 0.004073
+ScalarFirstGenLeptoquarkToQNu_Mlq-1500_Ylq-1_mg_2017:
+  gen: 0.008728
 ScalarFirstGenLeptoquarkToQNu_Mlq-1500_Ylq-1_mg_2018:
   gen: 0.008728
 ScalarFirstGenLeptoquarkToQNu_Mlq-1750_Ylq-0p7_mg_2017:
@@ -2919,3 +2923,281 @@ DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_2000p0_MXd_600p0_mg_pythia8_2016 
    gen: 0.00181018
 DMSimp_monow_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_100p0_MXd_30p0_mg_pythia8_2016 :
    gen: 0.825127
+Scalar_MonoJ_LO_Mphi-100_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 1.463
+Scalar_MonoJ_LO_Mphi-100_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 1.464
+Scalar_MonoJ_LO_Mphi-100_Mchi-40_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 1.49
+Scalar_MonoJ_LO_Mphi-100_Mchi-40_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 1.494
+Scalar_MonoJ_LO_Mphi-100_Mchi-40_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 1.495
+Scalar_MonoJ_LO_Mphi-100_Mchi-45_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 1.497
+Scalar_MonoJ_LO_Mphi-100_Mchi-45_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 1.503
+Scalar_MonoJ_LO_Mphi-100_Mchi-45_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 1.502
+Scalar_MonoJ_LO_Mphi-100_Mchi-55_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.03117
+Scalar_MonoJ_LO_Mphi-100_Mchi-55_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.03114
+Scalar_MonoJ_LO_Mphi-100_Mchi-55_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.03112
+Scalar_MonoJ_LO_Mphi-10_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 2.17
+Scalar_MonoJ_LO_Mphi-10_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 2.183
+Scalar_MonoJ_LO_Mphi-10_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 2.18
+Scalar_MonoJ_LO_Mphi-10_Mchi-4_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 2.198
+Scalar_MonoJ_LO_Mphi-10_Mchi-4_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 2.205
+Scalar_MonoJ_LO_Mphi-10_Mchi-4_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 2.219
+Scalar_MonoJ_LO_Mphi-10_Mchi-6_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.1283
+Scalar_MonoJ_LO_Mphi-10_Mchi-6_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.1283
+Scalar_MonoJ_LO_Mphi-10_Mchi-6_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.1281
+Scalar_MonoJ_LO_Mphi-200_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.8415
+Scalar_MonoJ_LO_Mphi-200_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.8414
+Scalar_MonoJ_LO_Mphi-300_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.577
+Scalar_MonoJ_LO_Mphi-300_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.5766
+Scalar_MonoJ_LO_Mphi-300_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.5772
+Scalar_MonoJ_LO_Mphi-350_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.5731
+Scalar_MonoJ_LO_Mphi-350_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.5714
+Scalar_MonoJ_LO_Mphi-400_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.4594
+Scalar_MonoJ_LO_Mphi-400_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.4599
+Scalar_MonoJ_LO_Mphi-400_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.4597
+Scalar_MonoJ_LO_Mphi-450_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.3113
+Scalar_MonoJ_LO_Mphi-450_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.3122
+Scalar_MonoJ_LO_Mphi-500_Mchi-150_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.1539
+Scalar_MonoJ_LO_Mphi-500_Mchi-150_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.1543
+Scalar_MonoJ_LO_Mphi-500_Mchi-150_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.1544
+Scalar_MonoJ_LO_Mphi-500_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.2064
+Scalar_MonoJ_LO_Mphi-500_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.2064
+Scalar_MonoJ_LO_Mphi-500_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.2063
+Scalar_MonoJ_LO_Mphi-500_Mchi-200_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.09102
+Scalar_MonoJ_LO_Mphi-500_Mchi-200_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.09118
+Scalar_MonoJ_LO_Mphi-500_Mchi-200_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.09115
+Scalar_MonoJ_LO_Mphi-500_Mchi-225_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.0442
+Scalar_MonoJ_LO_Mphi-500_Mchi-225_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.04421
+Scalar_MonoJ_LO_Mphi-500_Mchi-275_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.001085
+Scalar_MonoJ_LO_Mphi-500_Mchi-275_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.001084
+Scalar_MonoJ_LO_Mphi-500_Mchi-275_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.001085
+Scalar_MonoJ_LO_Mphi-500_Mchi-50_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.2015
+Scalar_MonoJ_LO_Mphi-500_Mchi-50_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.2016
+Scalar_MonoJ_LO_Mphi-500_Mchi-50_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.2014
+Scalar_MonoJ_LO_Mphi-50_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 1.9
+Scalar_MonoJ_LO_Mphi-50_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 1.901
+Scalar_MonoJ_LO_Mphi-50_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 1.906
+Scalar_MonoJ_LO_Mphi-50_Mchi-20_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 1.933
+Scalar_MonoJ_LO_Mphi-50_Mchi-20_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 1.939
+Scalar_MonoJ_LO_Mphi-50_Mchi-20_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 1.939
+Scalar_MonoJ_LO_Mphi-50_Mchi-22_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 1.937
+Scalar_MonoJ_LO_Mphi-50_Mchi-22_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 1.944
+Scalar_MonoJ_LO_Mphi-50_Mchi-22_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 1.944
+Scalar_MonoJ_LO_Mphi-50_Mchi-28_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.0567
+Scalar_MonoJ_LO_Mphi-50_Mchi-28_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.05681
+Scalar_MonoJ_LO_Mphi-50_Mchi-28_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.0568
+Scalar_MonoJ_LO_Mphi-600_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.09378
+Scalar_MonoJ_LO_Mphi-600_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.09376
+Scalar_MonoJ_LO_Mphi-700_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.04575
+Scalar_MonoJ_LO_Mphi-700_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.04561
+Scalar_MonoJ_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.0237
+Scalar_MonoJ_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.02372
+Scalar_MonoJ_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.02371
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 3.362
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 3.366
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 3.365
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-40_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 3.361
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-40_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 3.369
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-40_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 3.372
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-45_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 3.352
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-45_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 3.362
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-45_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 3.368
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-55_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.1611
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-55_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.1616
+Pseudoscalar_MonoJ_LO_Mphi-100_Mchi-55_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.1611
+Pseudoscalar_MonoJ_LO_Mphi-10_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 4.915
+Pseudoscalar_MonoJ_LO_Mphi-10_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 4.941
+Pseudoscalar_MonoJ_LO_Mphi-10_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 4.933
+Pseudoscalar_MonoJ_LO_Mphi-10_Mchi-4_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 4.898
+Pseudoscalar_MonoJ_LO_Mphi-10_Mchi-4_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 4.94
+Pseudoscalar_MonoJ_LO_Mphi-10_Mchi-4_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 4.936
+Pseudoscalar_MonoJ_LO_Mphi-10_Mchi-6_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.3949
+Pseudoscalar_MonoJ_LO_Mphi-10_Mchi-6_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.3936
+Pseudoscalar_MonoJ_LO_Mphi-10_Mchi-6_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.3942
+Pseudoscalar_MonoJ_LO_Mphi-200_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 2.062
+Pseudoscalar_MonoJ_LO_Mphi-200_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 2.062
+Pseudoscalar_MonoJ_LO_Mphi-200_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 2.06
+Pseudoscalar_MonoJ_LO_Mphi-300_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 1.718
+Pseudoscalar_MonoJ_LO_Mphi-300_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 1.721
+Pseudoscalar_MonoJ_LO_Mphi-300_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 1.721
+Pseudoscalar_MonoJ_LO_Mphi-350_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 1.931
+Pseudoscalar_MonoJ_LO_Mphi-350_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 1.932
+Pseudoscalar_MonoJ_LO_Mphi-350_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 1.935
+Pseudoscalar_MonoJ_LO_Mphi-400_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.9317
+Pseudoscalar_MonoJ_LO_Mphi-400_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.9324
+Pseudoscalar_MonoJ_LO_Mphi-450_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.5272
+Pseudoscalar_MonoJ_LO_Mphi-450_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.5286
+Pseudoscalar_MonoJ_LO_Mphi-450_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.527
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-150_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.2765
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-150_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.2764
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.3203
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.3205
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.3201
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-200_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.2214
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-200_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.2218
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-225_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.1707
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-225_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.1709
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-225_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.1709
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-275_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.007509
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-275_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.007525
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-50_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.3166
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-50_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.3159
+Pseudoscalar_MonoJ_LO_Mphi-500_Mchi-50_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.3165
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 4.306
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 4.316
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 4.32
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-20_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 4.3
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-20_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 4.322
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-20_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 4.316
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-22_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 4.291
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-22_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 4.308
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-22_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 4.302
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-28_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.2402
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-28_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.2407
+Pseudoscalar_MonoJ_LO_Mphi-50_Mchi-28_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.2407
+Pseudoscalar_MonoJ_LO_Mphi-600_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.1342
+Pseudoscalar_MonoJ_LO_Mphi-600_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.1338
+Pseudoscalar_MonoJ_LO_Mphi-600_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.1341
+Pseudoscalar_MonoJ_LO_Mphi-700_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.06287
+Pseudoscalar_MonoJ_LO_Mphi-700_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.06279
+Pseudoscalar_MonoJ_LO_Mphi-700_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.06282
+Pseudoscalar_MonoJ_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2016:
+  gen: 0.03186
+Pseudoscalar_MonoJ_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
+  gen: 0.03192
+Pseudoscalar_MonoJ_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
+  gen: 0.03191
