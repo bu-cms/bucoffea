@@ -26,7 +26,7 @@ def datasets(year, unblind=False):
     if unblind:
         data['sr_vbf'] = f'MET_{year}'
     mc = {
-            'sr_vbf_no_veto_all' : re.compile(f'W(minus|plus)H_.*|((VBF|GluGlu)_HToInvisible.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
+            'sr_vbf_no_veto_all' : re.compile(f'W(minus|plus)H_.*M125.*|((VBF|GluGlu)_HToInvisible.*M125.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
@@ -57,10 +57,10 @@ def legacy_dataset_name_vbf(dataset):
         'DYJets.*' : 'qcdzll',
         'GJets_DR-0p4.*' : 'qcdgjets',
         'GJets_SM.*' : 'ewkgjets',
-        'VBF_HToInv.*' : 'vbf',
-        'GluGlu_HToInv.*' : 'ggh',
-        'ggZH_.*' : 'zh',
-        'W(minus|plus)H_.*' : 'wh'
+        'VBF_HToInv.*M125.*' : 'vbf',
+        'GluGlu_HToInv.*M125_HiggspTgt190.*' : 'ggh',
+        'ggZH_.*M125.*' : 'zh',
+        'W(minus|plus)H_.*M125.*' : 'wh'
     }
 
     for pat, ret in patterns.items():
