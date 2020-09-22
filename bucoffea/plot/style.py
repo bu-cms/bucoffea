@@ -58,10 +58,10 @@ def plot_settings():
                 'ylim' : (1e0,1e7)
             },
             'ak4_eta0' : {
-                'ylim' : (1e-3,1e4)
+                'ylim' : (1e-3,1e8)
             },
             'ak4_eta1' : {
-                'ylim' : (1e-3,1e4)
+                'ylim' : (1e-3,1e8)
             },
             'hem_ht' : {
                 'ylim' : (1e-1,1e5)
