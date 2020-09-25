@@ -252,7 +252,7 @@ def merge_datasets(histogram):
 
         'EWKW2Jets_WToLNu_M-50-mg_{year}' : 'EWKW(Plus|Minus)2Jets.*-mg_{year}',
 
-        'Diboson_{year}' : '((W|Z)|(W|Z))(_PSweights)?_{year}',
+        'Diboson_{year}' : '((W|Z)(W|Z))(_PSweights)?_{year}',
         'WW_{year}' : 'WW(_PSweights)?_{year}',
         'ZZ_{year}' : 'ZZ(_PSweights)?_{year}',
         'WZ_{year}' : 'WZ(_PSweights)?_{year}',
