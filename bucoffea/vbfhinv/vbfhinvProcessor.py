@@ -270,7 +270,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('hornveto', (df['dPFTkSR'] < 0.8) | ~(leading_jet_in_horn | trailing_jet_in_horn))
 
         if df['year'] == 2018:
-            selection.add("metphihemextveto", ((-1.8 > met_phi)|(met_phi>-0.6)))
+            if df['is_data']:
+                metphihem_mask = ~((met_phi > -1.8) & (met_phi < -0.6) & (df['run'] > 319077))
+            else:
+                metphihem_mask = pass_all
+            selection.add("metphihemextveto", metphihem_mask)
             selection.add('no_el_in_hem', electrons[candidates_in_hem(electrons)].counts==0)
         else:
             selection.add("metphihemextveto", pass_all)
@@ -465,6 +469,16 @@ class vbfhinvProcessor(processor.ProcessorABC):
                             "tau_id"
                         ]
                     region_weights.add("veto",veto_weights.partial_weight(include=["nominal"]))
+
+                # HEM-veto weights for signal region MC
+                if re.match('^sr_vbf.*', region) and df['year'] == 2018:
+                    # Events that lie in the HEM-veto region
+                    events_to_weight_mask = (met_phi > -1.8) & (met_phi < -0.6)
+                    # Weight is the "good lumi fraction" for 2018
+                    weight = 21.1/59.7
+                    hem_weight = np.where(events_to_weight_mask, weight, 1.0)
+
+                    region_weights.add("hem_weight", hem_weight)
 
 
             # This is the default weight for this region
