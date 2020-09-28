@@ -19,7 +19,7 @@ def main():
 
     fileset = {
         "VBF_HToInvisible_M125_pow_pythia8_2017" : [
-            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/05Jun20v5/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/VBF_HToInvisible_M125_pow_pythia8_2017/200605_233117/0000/tree_1.root"
+            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/03Sep20v7/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/VBF_HToInvisible_M125_pow_pythia8_2017/200925_184136/0000/tree_1.root"
         ]
     }
 
