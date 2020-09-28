@@ -26,12 +26,13 @@ def datasets(year, unblind=False):
     if unblind:
         data['sr_vbf'] = f'MET_{year}'
     mc = {
-            'sr_vbf' : re.compile(f'(WH_WToQQ_Hinv_M125.*|(VBF|GluGlu)_HToInvisible.*M125.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
+            'sr_vbf_no_veto_all' : re.compile(f'(WH_WToQQ_Hinv_M125.*|(VBF|GluGlu)_HToInvisible.*M125.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_2e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
+            'sr_vbf' : re.compile('nomatch')
           }
         
     tmp = {}
@@ -107,7 +108,8 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
                 'cr_1m_vbf',
                 'cr_2e_vbf',
                 'cr_1e_vbf',
-                'cr_g_vbf'
+                'cr_g_vbf',
+                'sr_vbf_no_veto_all'
                 ]
     if unblind:
         regions.append("sr_vbf")
