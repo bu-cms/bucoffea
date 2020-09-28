@@ -31,10 +31,10 @@ def main():
 
     if processor_class == 'monojet':
         from bucoffea.monojet import monojetProcessor
-        processorInstance = monojetProcessor(years[0])
+        processorInstance = monojetProcessor()
     elif processor_class == 'vbfhinv':
         from bucoffea.vbfhinv import vbfhinvProcessor
-        processorInstance = vbfhinvProcessor(years[0])
+        processorInstance = vbfhinvProcessor()
     elif processor_class == 'lhe':
         from bucoffea.gen.lheVProcessor import lheVProcessor
         processorInstance = lheVProcessor()
