@@ -141,7 +141,7 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
             h = h.integrate(h.axis('region'),region)
             
             for dataset in map(str, h.axis('dataset').identifiers()):
-                if not (data[region].match(dataset) or mc[region].match(dataset) or signal.match(dataset)):
+                if not (data[region].match(dataset) or mc[region].match(dataset)):
                     # Insert dummy data for the signal region
                     if region == 'sr_vbf' and re.match('ZJetsToNuNu.*', dataset) and not unblind:
                         th1 = export1d(h.integrate('dataset', dataset))    
