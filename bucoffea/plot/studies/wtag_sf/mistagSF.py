@@ -4,7 +4,7 @@ from coffea.hist.plot import clopper_pearson_interval
 from klepto.archives import dir_archive
 import ROOT
 
-outdir = 'output'
+outdir = 'output_bin1_gvsothers'
 if not os.path.exists(outdir):
     os.makedirs(outdir)
 
@@ -16,7 +16,7 @@ if True:
     outfile = ROOT.TFile.Open(outfilename,'recreate')
 else:
     outfile = None
-newbin = hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [200,300,400,800])
+newbin = hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [240,400,800])
 inpath = "../../../input/merged_2020_07_20_revisit_Wmistag_master"
 
 # Prepare the acc
@@ -208,10 +208,10 @@ for year in [2017,2018]:
         teff_mistag_rate_mc_2m = outfile.Get(f'mistag_rate_mc_2m_{wp}_{year}')
         teff_mistag_rate_mc_g = outfile.Get(f'mistag_rate_mc_g_{wp}_{year}')
         teff_mistag_rate_data = teff_mistag_rate_data_1e + teff_mistag_rate_data_2e\
-                + teff_mistag_rate_data_1m + teff_mistag_rate_data_2m + teff_mistag_rate_data_g
+                + teff_mistag_rate_data_1m + teff_mistag_rate_data_2m
         teff_mistag_rate_data.SetNameTitle(f'mistag_rate_data_{wp}_{year}', 'souped mistagging rate')
         teff_mistag_rate_mc = teff_mistag_rate_mc_1e + teff_mistag_rate_mc_2e\
-                + teff_mistag_rate_mc_1m + teff_mistag_rate_mc_2m + teff_mistag_rate_mc_g
+                + teff_mistag_rate_mc_1m + teff_mistag_rate_mc_2m
         teff_mistag_rate_mc.SetNameTitle(f'mistag_rate_mc_{wp}_{year}', 'souped mistagging rate')
         th1_mistag_SF = ratio_of_efficiencies(f'Wmistag_{year}_{wp}_ak8_pt', 'souped mistag scale factor', teff_mistag_rate_data, teff_mistag_rate_mc)
         if outfile:

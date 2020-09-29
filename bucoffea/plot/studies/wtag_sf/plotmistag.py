@@ -23,13 +23,14 @@ for year in [2017,2018]:
         for prefix in ['mistag_rate_data','mistag_rate_mc']:
             canv.Clear()
             canvEmpty=True
-            for lepton_flag in ['1m','2m','1e','2e','g','combined']:
+            for lepton_flag in ['g','combined']:
                 if lepton_flag=='combined':
                     htmp = inputfile.Get(f'{prefix}_{wp}_{year}')
+                    htmp.SetTitle('combined except g') # for the legend builder
                 else:
                     htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
                     htmp.SetLineStyle(2)
-                htmp.SetTitle(lepton_flag) # for the legend builder
+                    htmp.SetTitle(lepton_flag) # for the legend builder
                 htmp.SetLineColor(colors[lepton_flag])
                 htmp.SetLineWidth(3)
                 if canvEmpty:
@@ -57,17 +58,21 @@ for year in [2017,2018]:
         for prefix in ['mistag_SF']:
             canv.Clear()
             canvEmpty=True
-            for lepton_flag in ['1m','2m','1e','2e','g','combined']:
+            for lepton_flag in ['g','combined']:
                 if lepton_flag=='combined':
                     htmp = inputfile.Get(f'Wmistag_{year}_{wp}_ak8_pt')
+                    htmp.SetTitle("combined except g")
                 else:
                     htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
                     htmp.SetLineStyle(2)
-                htmp.SetTitle(lepton_flag) # for the legend builder
+                    htmp.SetTitle(lepton_flag) # for the legend builder
                 htmp.SetLineColor(colors[lepton_flag])
                 htmp.SetLineWidth(3)
                 if canvEmpty:
-                    htmp.GetYaxis().SetRangeUser(0.5,1.7)
+                    if 'tight' in wp:
+                        htmp.GetYaxis().SetRangeUser(0.5,1.7)
+                    else:
+                        htmp.GetYaxis().SetRangeUser(1,1.3)
                     htmp.GetYaxis().SetTitle('mistagging SF')
                     htmp.GetXaxis().SetTitle('AK8 Jet p_{T}')
                     htmp.Draw('e1')
