@@ -201,7 +201,7 @@ def merge_datasets(histogram):
         'JetHT_2016' : [x for x in all_datasets if re.match('JetHT_.*2016[A-Z]+',x)],
 
         'SingleMuon_2017' : [x for x in all_datasets if re.match('SingleMuon_.*2017[A-Z]+',x)],
-        'EGamma_2017' : [x for x in all_datasets if re.match('SingleElectron_.*2017[A-Z]+',x) or re.match('SinglePhoton_2017[A-Z]+',x)],
+        'EGamma_2017' : [x for x in all_datasets if re.match('SingleElectron_.*2017[A-Z]+',x) or re.match('SinglePhoton_.*2017[A-Z]+',x)],
         'MET_2017' : [x for x in all_datasets if re.match('MET_.*2017[A-Z]+',x)],
         'JetHT_2017' : [x for x in all_datasets if re.match('JetHT_.*2017[A-Z]+',x)],
 
@@ -252,7 +252,7 @@ def merge_datasets(histogram):
 
         'EWKW2Jets_WToLNu_M-50-mg_{year}' : 'EWKW(Plus|Minus)2Jets.*-mg_{year}',
 
-        'Diboson_{year}' : '((W|Z)|(W|Z))(_PSweights)?_{year}',
+        'Diboson_{year}' : '((W|Z)(W|Z))(_PSweights)?_{year}',
         'WW_{year}' : 'WW(_PSweights)?_{year}',
         'ZZ_{year}' : 'ZZ(_PSweights)?_{year}',
         'WZ_{year}' : 'WZ(_PSweights)?_{year}',
