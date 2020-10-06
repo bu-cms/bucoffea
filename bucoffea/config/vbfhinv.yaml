@@ -455,14 +455,14 @@ era2017:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
       file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
     tau_id:
-      histogram: VVLoose_cent
-      file: data/sf/tau/TauID_SF_pt_DeepTau2017v2p1VSjet_2017ReReco.root
+      histogram: tau_sf_2017_central
+      file: data/sf/tau/tau_sf_deepTau.root
     tau_id_up:
-      histogram: VVLoose_up
-      file: data/sf/tau/TauID_SF_pt_DeepTau2017v2p1VSjet_2017ReReco.root
+      histogram: tau_sf_2017_up
+      file: data/sf/tau/tau_sf_deepTau.root
     tau_id_dn:
-      histogram: VVLoose_down
-      file: data/sf/tau/TauID_SF_pt_DeepTau2017v2p1VSjet_2017ReReco.root
+      histogram: tau_sf_2017_down
+      file: data/sf/tau/tau_sf_deepTau.root
 
     pileup:
       histogram: "sf2017_nominal"
@@ -590,14 +590,14 @@ era2018:
       histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_syst
       file: data/sf/muon/2018_RunABCD_SF_ISO.root
     tau_id:
-      histogram: VVLoose_cent
-      file: data/sf/tau/TauID_SF_pt_DeepTau2017v2p1VSjet_2018ReReco.root
+      histogram: tau_sf_2018_central
+      file: data/sf/tau/tau_sf_deepTau.root
     tau_id_up:
-      histogram: VVLoose_up
-      file: data/sf/tau/TauID_SF_pt_DeepTau2017v2p1VSjet_2018ReReco.root
+      histogram: tau_sf_2018_up
+      file: data/sf/tau/tau_sf_deepTau.root
     tau_id_dn:
-      histogram: VVLoose_down
-      file: data/sf/tau/TauID_SF_pt_DeepTau2017v2p1VSjet_2018ReReco.root
+      histogram: tau_sf_2018_down
+      file: data/sf/tau/tau_sf_deepTau.root
     pileup:
       histogram: "sf2018_nominal"
       file: "data/sf/pileup/pileup.root"
