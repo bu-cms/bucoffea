@@ -6,5 +6,5 @@ pyyaml
 gitpython
 tabulate
 klepto
-pycairo>=1.18.2
+pycairo==1.19.1
 numba==0.50.1
