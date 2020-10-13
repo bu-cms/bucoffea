@@ -348,9 +348,13 @@ def setup_candidates(df, cfg):
         phi=df['Tau_phi'],
         mass=0 * df['Tau_pt'],
         decaymode=df[cfg.TAU.BRANCH.ID],
-        iso=df[cfg.TAU.BRANCH.ISO],
-        genpartflav=df['Tau_genPartFlav']
+        iso=df[cfg.TAU.BRANCH.ISO]
     )
+
+    # For MC, add the matched gen-particle info for checking
+    if not df['is_data']:
+        kwargs = {'genpartflav' : df['Tau_genPartFlav']}
+        taus.add_attributes(**kwargs) 
 
     taus = taus[ (taus.decaymode) \
                 & (taus.pt > cfg.TAU.CUTS.PT)\

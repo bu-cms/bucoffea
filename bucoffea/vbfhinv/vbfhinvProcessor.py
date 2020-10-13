@@ -433,7 +433,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         regions = vbfhinv_regions(cfg)
 
-        veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus)
+        # Get veto weights (only for MC)
+        if not df['is_data']:
+            veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus)
+        
         for region, cuts in regions.items():
             exclude = [None]
             region_weights = copy.deepcopy(weights)
