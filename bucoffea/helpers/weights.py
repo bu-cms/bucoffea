@@ -86,8 +86,14 @@ def get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=False)
             tau_sf_name = "tau_id"
         veto_weight_tau = (1 - evaluator[tau_sf_name](taus.pt)).prod()
 
+        # If event has at least one tau and it does NOT match to a gen-level tau 
+        # with Tau_genPartFlav == 5, assign a weight of 0 and discard that event
+        tau_match_ok = (taus.counts == 0) | ((taus.genpartflav==5).all() )
+
+        veto_weight_tau_updated = np.where(tau_match_ok, veto_weight_tau, 0.)
+
         ### Combine
-        total = veto_weight_ele * veto_weight_muo * veto_weight_tau
+        total = veto_weight_ele * veto_weight_muo * veto_weight_tau_updated
 
         # Cap weights just in case
         total[np.abs(total)>5] = 1

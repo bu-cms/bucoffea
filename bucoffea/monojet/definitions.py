@@ -349,6 +349,7 @@ def setup_candidates(df, cfg):
         mass=0 * df['Tau_pt'],
         decaymode=df[cfg.TAU.BRANCH.ID],
         iso=df[cfg.TAU.BRANCH.ISO],
+        genpartflav=df['Tau_genPartFlav']
     )
 
     taus = taus[ (taus.decaymode) \
