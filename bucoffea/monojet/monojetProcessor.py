@@ -445,7 +445,10 @@ class monojetProcessor(processor.ProcessorABC):
                 output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
         regions = monojet_regions(cfg)
 
-        veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=True)
+        # Get veto weights (only for MC)
+        if not df['is_data']:
+            veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=True)
+
         for region, cuts in regions.items():
 
             if re.match('sr_.*', region):
@@ -820,7 +823,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('recoil_ele_reco_up', recoil=recoil_pt[mask], weight=(rw * ele_reco_sf["up"])[mask])
                 ezfill('recoil_ele_reco_dn', recoil=recoil_pt[mask], weight=(rw * ele_reco_sf["dn"])[mask])
 
-            if re.match('.*no_veto.*', region):
+            if re.match('.*no_veto.*', region) and not df['is_data']:
                 for variation in veto_weights._weights.keys():
                     ezfill(
                             "recoil_veto_weight",
