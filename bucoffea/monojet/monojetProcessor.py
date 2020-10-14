@@ -447,7 +447,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # Get veto weights (only for MC)
         if not df['is_data']:
-            veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=True)
+            veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=True)
 
         for region, cuts in regions.items():
 

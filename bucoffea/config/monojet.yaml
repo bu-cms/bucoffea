@@ -44,6 +44,7 @@ default:
     branch:
       id: Tau_idDecayMode
       iso: Tau_idMVAoldDM2017v2
+    gencheck: False
   photon:
     cuts:
       loose:

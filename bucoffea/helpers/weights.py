@@ -6,7 +6,7 @@ import numpy as np
 from bucoffea.helpers.dataset import extract_year
 from bucoffea.helpers.gen import get_gen_photon_pt
 
-def get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=False):
+def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=False):
     """
     Calculate veto weights for SR W
 
@@ -88,12 +88,14 @@ def get_veto_weights(df, evaluator, electrons, muons, taus, do_variations=False)
 
         # If event has at least one tau and it does NOT match to a gen-level tau 
         # with Tau_genPartFlav == 5, assign a weight of 0 and discard that event
-        tau_match_ok = (taus.counts == 0) | ((taus.genpartflav==5).all() )
-
-        veto_weight_tau_updated = np.where(tau_match_ok, veto_weight_tau, 0.)
+        # Right now we're only doing this for VBF (specified in config)
+        if cfg.TAU.GENCHECK:
+            tau_match_ok = (taus.counts == 0) | ((taus.genpartflav==5).all() )
+    
+            veto_weight_tau = np.where(tau_match_ok, veto_weight_tau, 0.)
 
         ### Combine
-        total = veto_weight_ele * veto_weight_muo * veto_weight_tau_updated
+        total = veto_weight_ele * veto_weight_muo * veto_weight_tau
 
         # Cap weights just in case
         total[np.abs(total)>5] = 1
