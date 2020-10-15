@@ -15,6 +15,7 @@ from bucoffea.helpers import (
                               recoil,
                               weight_shape,
                               candidates_in_hem,
+                              electrons_in_hem,
                               calculate_vecB,
                               calculate_vecDPhi
                               )
@@ -275,7 +276,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             else:
                 metphihem_mask = pass_all
             selection.add("metphihemextveto", metphihem_mask)
-            selection.add('no_el_in_hem', electrons[candidates_in_hem(electrons)].counts==0)
+            selection.add('no_el_in_hem', electrons[electrons_in_hem(electrons)].counts==0)
         else:
             selection.add("metphihemextveto", pass_all)
             selection.add('no_el_in_hem', pass_all)
@@ -437,7 +438,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         regions = vbfhinv_regions(cfg)
 
-        veto_weights = get_veto_weights(df, evaluator, electrons, muons, taus)
+        # Get veto weights (only for MC)
+        if not df['is_data']:
+            veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus)
+        
         for region, cuts in regions.items():
             exclude = [None]
             region_weights = copy.deepcopy(weights)

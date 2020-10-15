@@ -181,6 +181,10 @@ def candidates_in_hem(candidates):
     """Returns a mask telling you which candidates are in the HEM region"""
     return (-3.0 < candidates.eta) & (candidates.eta < -1.3) & (-1.8 < candidates.phi) & (candidates.phi < -0.6)
 
+def electrons_in_hem(electrons):
+    """Returns a mask telling you which electrons (different region def compared to jets) are in the HEM region"""
+    return (-3.0 < electrons.eta) & (electrons.eta < -1.39) & (-1.6 < electrons.phi) & (electrons.phi < -0.9)
+
 def calculate_vecB(ak4, met_pt, met_phi):
     '''Calculate vecB (balance) quantity, based on jets and MET.'''
     mht_p4 = ak4[ak4.pt>30].p4.sum()
