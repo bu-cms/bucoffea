@@ -12,6 +12,7 @@ colors={
         '2e':9,
         'g':11,
         'combined':46,
+        'wz':46,
         }
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptTitle(ROOT.kFALSE)
@@ -23,14 +24,10 @@ for year in [2017,2018]:
         for prefix in ['mistag_rate_data','mistag_rate_mc']:
             canv.Clear()
             canvEmpty=True
-            for lepton_flag in ['g','combined']:
-                if lepton_flag=='combined':
-                    htmp = inputfile.Get(f'{prefix}_{wp}_{year}')
-                    htmp.SetTitle('combined except g') # for the legend builder
-                else:
-                    htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
-                    htmp.SetLineStyle(2)
-                    htmp.SetTitle(lepton_flag) # for the legend builder
+            for lepton_flag in ['g','wz']:
+                htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
+                #htmp.SetLineStyle(2)
+                htmp.SetTitle(lepton_flag) # for the legend builder
                 htmp.SetLineColor(colors[lepton_flag])
                 htmp.SetLineWidth(3)
                 if canvEmpty:
@@ -58,14 +55,10 @@ for year in [2017,2018]:
         for prefix in ['mistag_SF']:
             canv.Clear()
             canvEmpty=True
-            for lepton_flag in ['g','combined']:
-                if lepton_flag=='combined':
-                    htmp = inputfile.Get(f'Wmistag_{year}_{wp}_ak8_pt')
-                    htmp.SetTitle("combined except g")
-                else:
-                    htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
-                    htmp.SetLineStyle(2)
-                    htmp.SetTitle(lepton_flag) # for the legend builder
+            for lepton_flag in ['g','wz']:
+                htmp = inputfile.Get(f'{prefix}_{lepton_flag}_{wp}_{year}')
+                #htmp.SetLineStyle(2)
+                htmp.SetTitle(lepton_flag) # for the legend builder
                 htmp.SetLineColor(colors[lepton_flag])
                 htmp.SetLineWidth(3)
                 if canvEmpty:
