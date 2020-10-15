@@ -488,27 +488,15 @@ era2017:
     wtag_mistag_wz_loose:
       histogram: mistag_SF_wz_loose_2017
       file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_wz_loosemd:
-      histogram: mistag_SF_wz_loosemd_2017
-      file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_wz_tight:
       histogram: mistag_SF_wz_tight_2017
-      file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_wz_tightmd:
-      histogram: mistag_SF_wz_tightmd_2017
       file: data/sf/ak8/wtag_mistag_SF.root
     # for photon region
     wtag_mistag_g_loose:
       histogram: mistag_SF_g_loose_2017
       file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_g_loosemd:
-      histogram: mistag_SF_g_loosemd_2017
-      file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_g_tight:
       histogram: mistag_SF_g_tight_2017
-      file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_g_tightmd:
-      histogram: mistag_SF_g_tightmd_2017
       file: data/sf/ak8/wtag_mistag_SF.root
 
     pileup:
@@ -675,27 +663,15 @@ era2018:
     wtag_mistag_wz_loose:
       histogram: mistag_SF_wz_loose_2018
       file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_wz_loosemd:
-      histogram: mistag_SF_wz_loosemd_2018
-      file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_wz_tight:
       histogram: mistag_SF_wz_tight_2018
-      file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_wz_tightmd:
-      histogram: mistag_SF_wz_tightmd_2018
       file: data/sf/ak8/wtag_mistag_SF.root
     # for photon region
     wtag_mistag_g_loose:
       histogram: mistag_SF_g_loose_2018
       file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_g_loosemd:
-      histogram: mistag_SF_g_loosemd_2018
-      file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_g_tight:
       histogram: mistag_SF_g_tight_2018
-      file: data/sf/ak8/wtag_mistag_SF.root
-    wtag_mistag_g_tightmd:
-      histogram: mistag_SF_g_tightmd_2018
       file: data/sf/ak8/wtag_mistag_SF.root
 
     pileup:
