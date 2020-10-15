@@ -26,13 +26,13 @@ def datasets(year, unblind=False):
     if unblind:
         data['sr_vbf'] = f'MET_{year}'
     mc = {
-            'sr_vbf_no_veto_all' : re.compile(f'W(minus|plus)H_.*M125.*|((VBF|GluGlu)_HToInvisible.*M125.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
+            'sr_vbf_no_veto_all' : re.compile(f'(WH_WToQQ_Hinv_M125.*|(VBF|GluGlu)_HToInvisible.*M125.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_2e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
-            'sr_vbf' : re.compile('nomatch'),
+            'sr_vbf' : re.compile('nomatch')
           }
         
     tmp = {}
@@ -60,7 +60,7 @@ def legacy_dataset_name_vbf(dataset):
         'VBF_HToInv.*M125.*' : 'vbf',
         'GluGlu_HToInv.*M125_HiggspTgt190.*' : 'ggh',
         'ggZH_.*M125.*' : 'zh',
-        'W(minus|plus)H_.*M125.*' : 'wh'
+        'WH_.*M125.*' : 'wh'
     }
 
     for pat, ret in patterns.items():
@@ -120,9 +120,11 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
     for year in [2017,2018]:
         signal = re.compile(f'VBF_HToInvisible.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_vbf_{year}.root'))
-        data, mc = datasets(year)
+        data, mc = datasets(year, unblind=unblind)
         for region in regions:
+            print('='*20)
             print(f'Region {region}')
+            print('='*20)
             tag = region.split('_')[0]
             # Rebin
             h = copy.deepcopy(acc[distribution])
@@ -139,25 +141,26 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
             h = h.integrate(h.axis('region'),region)
             
             for dataset in map(str, h.axis('dataset').identifiers()):
-                if not (data[region].match(dataset) or mc[region].match(dataset) or signal.match(dataset)):
+                if not (data[region].match(dataset) or mc[region].match(dataset)):
                     # Insert dummy data for the signal region
-                    if region == 'sr_vbf' and re.match('ZJetsToNuNu.*', dataset):
+                    if region == 'sr_vbf' and re.match('ZJetsToNuNu.*', dataset) and not unblind:
                         th1 = export1d(h.integrate('dataset', dataset))    
                         histo_name = 'signal_data'
                         f[histo_name] = th1
                         continue
                     else:
-                        print(f"Skip dataset: {dataset}")
                         continue
-                print(f"   Dataset: {dataset}")
+                print(f"Dataset: {dataset}")
 
                 th1 = export1d(h.integrate('dataset', dataset))
                 try:
                     histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name_vbf(dataset)}'
-                    print(histo_name)
+                    print(f'Saved under histogram: {histo_name}')
                 except:
                     print(f"Skipping {dataset}")
                     continue
+                
+                print('-'*20)
                 f[histo_name] = th1
         if not unblind:
             f[f'{legacy_region_name("sr_vbf")}_data'] = f[f'{legacy_region_name("sr_vbf")}_qcdzjets']
