@@ -51,6 +51,7 @@ default:
     branch:
       id: Tau_idDecayModeNewDMs
       iso: Tau_idDeepTau2017v2p1VSjet
+    gencheck: True
   photon:
     cuts:
       loose:
