@@ -502,11 +502,14 @@ class monojetProcessor(processor.ProcessorABC):
                 unmatched_leadak8 = leadak8[~leadak8_matched_mask]
                 for wp in ['loose','tight']:
                     if re.match(f'.*_{wp}_v.*', region):
-                        if (wp == 'tight') or ('nomistag' in region): # no mistag SF available for tight cut
+                        if ('nomistag' in region): 
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
+                        elif re.match(r'cr_g.*', region):
+                            matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
+                                    * evaluator[f'wtag_mistag_g_{wp}'](unmatched_leadak8.pt).prod()
                         else:
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
-                                    * evaluator[f'wtag_mistag_{wp}'](unmatched_leadak8.pt).prod()
+                                    * evaluator[f'wtag_mistag_wz_{wp}'](unmatched_leadak8.pt).prod()
 
                         region_weights.add('wtag_{wp}', matched_weights)
 
@@ -705,7 +708,7 @@ class monojetProcessor(processor.ProcessorABC):
                     ezfill('ak8_Vmatched_pt0', jetpt=matched_leadak8.pt[mask].flatten(),      weight=w_matchedleadak8 )
 
 
-                # Dimuon specifically for deepak8 mistag rate measurement
+                # specifically for deepak8 mistag rate measurement
                 if cfg.RUN.MONOVMISTAG and 'inclusive_v' in region:
                     ezfill('ak8_passloose_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passtight_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHT, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
