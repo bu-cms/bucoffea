@@ -292,10 +292,10 @@ era2016:
       file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
     ele_id_loose:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2.root
+      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2_BU.root
     ele_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronTight.root
+      file: data/sf/egamma/2017_ElectronTight_Fall17V2_BU.root
 
     photon:
       usetnp: False
@@ -428,11 +428,11 @@ era2017:
 
     ele_id_loose:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2.root
+      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2_BU.root
 
     ele_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronTight.root
+      file: data/sf/egamma/2017_ElectronTight_Fall17V2_BU.root
 
     photon:
       usetnp: False
@@ -539,11 +539,11 @@ era2018:
 
     ele_id_loose:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_ElectronWPVeto_Fall17V2.root
+      file: data/sf/egamma/2018_ElectronWPVeto_Fall17V2_BU.root
 
     ele_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_ElectronTight.root
+      file: data/sf/egamma/2018_ElectronTight_Fall17V2_BU.root
 
     photon:
       usetnp: False
