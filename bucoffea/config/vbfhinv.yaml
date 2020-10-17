@@ -435,10 +435,16 @@ era2017:
       file: data/sf/egamma/2017_ElectronTight_Fall17V2_BU.root
 
     photon:
-      usetnp: False
+      usetnp: True
     photon_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_PhotonsMedium_capped.root
+    photon_id_tight_tnp:
+      histogram: photon_medium_id_sf_2017
+      file: data/sf/egamma/photon_medium_id_sf_v0.root
+    photon_id_tight_tnp_extrap_unc_slope:
+      histogram: photon_medium_id_extrap_unc_2017
+      file: data/sf/egamma/photon_medium_id_sf_v0.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
       histogram: Tight_ID
       file: data/sf/egamma/CSEV_ScaleFactors_2017.root
@@ -546,10 +552,16 @@ era2018:
       file: data/sf/egamma/2018_ElectronTight_Fall17V2_BU.root
 
     photon:
-      usetnp: False
+      usetnp: True
     photon_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_PhotonsMedium_capped.root
+    photon_id_tight_tnp:
+      histogram: photon_medium_id_sf_2018
+      file: data/sf/egamma/photon_medium_id_sf_v0.root
+    photon_id_tight_tnp_extrap_unc_slope:
+      histogram: photon_medium_id_extrap_unc_2018
+      file: data/sf/egamma/photon_medium_id_sf_v0.root
     photon_csev: # https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2#Electron_Veto_CSEV_or_pixel_seed
       histogram: Tight_ID
       file: data/sf/egamma/CSEV_ScaleFactors_2017.root # TODO: Update to 2018 when available!
