@@ -389,16 +389,8 @@ def ak4_em_frac_weights(weights, diak4, evaluator):
     '''Apply SF for EM fraction cut on jets. Event weight = (Leading jet weight) * (Trailing jet weight)'''
     # Separate weights for the two leading jets:
     # If jet pt < 100 GeV, use the SF from the lowest pt bin
-    w_ak40 = np.where(
-        diak4.i0.pt > 100,
-        evaluator['ak4_em_frac_sf'](diak4.i0.pt, diak4.i0.eta).prod(),
-        evaluator['ak4_em_frac_sf'](100, diak4.i0.eta).prod()
-    )
-    w_ak41 = np.where(
-        diak4.i1.pt > 100,
-        evaluator['ak4_em_frac_sf'](diak4.i1.pt, diak4.i1.eta).prod(),
-        evaluator['ak4_em_frac_sf'](100, diak4.i1.eta).prod()
-    )
+    w_ak40 = evaluator['ak4_em_frac_sf'](diak4.i0.pt, diak4.i0.eta).prod()
+    w_ak41 = evaluator['ak4_em_frac_sf'](diak4.i1.pt, diak4.i1.eta).prod()
 
     em_frac_weight = w_ak40 * w_ak41
 
