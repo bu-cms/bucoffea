@@ -494,6 +494,10 @@ era2017:
       histogram: EGamma_EffMC2D
       file: data/sf/trigger/electron_trigger_sf_2017.root
 
+    ak4_em_frac_sf:
+      histogram: sf_2017
+      file: data/sf/ak4/jet_em_frac_eff_sf.root
+
 era2018:
   triggers:
     met:
@@ -633,3 +637,7 @@ era2018:
     trigger_electron_eff_mc:
       histogram: EGamma_EffMC2D
       file: data/sf/trigger/electron_trigger_sf_2018.root
+
+    ak4_em_frac_sf:
+      histogram: sf_2018
+      file: data/sf/ak4/jet_em_frac_eff_sf.root

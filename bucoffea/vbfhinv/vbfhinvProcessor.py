@@ -51,7 +51,8 @@ from bucoffea.monojet.definitions import (
                                           )
 from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,
-                                           vbfhinv_regions
+                                           vbfhinv_regions,
+                                           ak4_em_frac_weights
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -393,6 +394,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg)
             weights = pileup_weights(weights, df, evaluator, cfg)
+            weights = ak4_em_frac_weights(weights, diak4, evaluator)
             if not (gen_v_pt is None):
                 weights = theory_weights_vbf(weights, df, evaluator, gen_v_pt, df['mjj_gen'])
 
