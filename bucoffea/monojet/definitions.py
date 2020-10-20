@@ -449,13 +449,20 @@ def setup_candidates(df, cfg):
         ak4 = ak4[object_overlap(ak4, photons, dr=cfg.OVERLAP.AK4.PHOTON.DR)]
 
 
+    if df['is_data']:
+        msd = df[f'FatJet_msoftdrop{jes_suffix}']
+    else:
+        msd = df[f'FatJet_msoftdrop{jes_suffix}'] / (df['FatJet_msoftdrop_corr_JMR'] * df['FatJet_msoftdrop_corr_JMS'])
+        if not cfg.AK8.JER:
+            msd = msd / df['FatJet_corr_JER']
+
     ak8 = JaggedCandidateArray.candidatesfromcounts(
         df['nFatJet'],
         pt=df[f'FatJet_pt{jes_suffix}'] if (df['is_data'] or cfg.AK8.JER) else df[f'FatJet_pt{jes_suffix}']/df['FatJet_corr_JER'],
         eta=df['FatJet_eta'],
         abseta=np.abs(df['FatJet_eta']),
         phi=df['FatJet_phi'],
-        mass=df[f'FatJet_msoftdrop{jes_suffix}'] if (df['is_data'] or cfg.AK8.JER) else df[f'FatJet_msoftdrop{jes_suffix}']/df['FatJet_corr_JER'],
+        mass=msd,
         tightId=(df['FatJet_jetId']&2) == 2, # Tight
         csvv2=df["FatJet_btagCSVV2"],
         deepcsv=df['FatJet_btagDeepB'],
