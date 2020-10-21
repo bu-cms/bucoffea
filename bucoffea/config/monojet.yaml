@@ -211,7 +211,7 @@ default:
     photon_id_study: False
     ele_id_study: False
     btag_study: False
-    monov: False
+    monov: True
     monovmistag: False
     monoj: True
   triggers:
