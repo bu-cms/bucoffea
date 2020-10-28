@@ -39,6 +39,7 @@ TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8
 ST_s-channel_antitop_leptonDecays_13TeV-PSweights_powheg-pythia
 ST_s-channel_top_leptonDecays_13TeV-PSweights_powheg-pythia
 ST_s-channel_4f_leptonDecays_TuneCP5_PSweights_13TeV-amcatnlo-pythia8
+ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8
 ST_s-channel_4f_hadronicDecays_TuneCP5_13TeV*
 
 ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8
