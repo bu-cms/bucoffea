@@ -189,7 +189,6 @@ def create_dataset_mapping(all_datasets):
     #   * Factor mapping out to configuration file?
     #   * Fill in more data sets
     #   * lots of duplicate code (re.match etc) -> simplify
-    # Remove empty lists
     mapping = {
         'SingleMuon_2016' : [x for x in all_datasets if re.match('SingleMuon_2016[A-Z]+',x)],
         'EGamma_2016' : [x for x in all_datasets if re.match('SingleElectron_.*2016[A-Z]+',x) or re.match('SinglePhoton_2016[A-Z]+',x)],
@@ -262,6 +261,13 @@ def create_dataset_mapping(all_datasets):
         for name, regex in yearly.items():
             mapping[name.format(year=year)] = [x for x in all_datasets if re.match(regex.format(year=year), x)]
 
+    # Remove empty lists
+    tmp = {}
+    for k, v in mapping.items():
+        if len(v):
+            tmp[k] = v
+    mapping = tmp
+
     # Mapping good to go to be used in "merge_datasets" function
     return mapping
 
@@ -277,13 +283,6 @@ def merge_datasets(histogram):
     # Create the mapping for the datasets in this histogram
     mapping = create_dataset_mapping(all_datasets)
     
-    # Remove empty lists
-    tmp = {}
-    for k, v in mapping.items():
-        if len(v):
-            tmp[k] = v
-    mapping = tmp
-
     # Add datasets we didn't catch yet
     mapped_datasets =  []
     for val in mapping.values():
