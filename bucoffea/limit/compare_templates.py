@@ -78,6 +78,12 @@ def parse_commandline():
 
     return args
 
+def sum_overflow_into_last_bin(all_values):
+    values = all_values[1:-1]
+    values[-1] = values[-1] + all_values[-1]
+    values[0] = values[0] + all_values[0]
+    return values
+
 def main():
     """
     A script to easily compare template files between different runs.
@@ -114,9 +120,21 @@ def main():
         x = 0.5 * np.sum(h1[key].bins,axis=1)
         edges = np.unique(h1[key].bins)
 
-        table.append([key, np.sum(h1[key].values), np.sum(h2[key].values)])
+        try:
+            v1 = np.sum(h1[key].allvalues)
+            v2 = np.sum(h2[key].allvalues)
+            if v2==v1:
+                ratio = 1
+            elif v1==0:
+                ratio = "-"
+            else:
+                ratio = v2/v1
+            table.append([key, v1, v2, ratio ])
+        except KeyError:
+            plt.close(fig)
+            continue
         hep.histplot(
-            h1[key].values,
+            sum_overflow_into_last_bin(h1[key].allvalues),
             edges,
             ax=ax,
             label=f"{tag1}, Integral={np.sum(h1[key].values):.1f}",
@@ -124,7 +142,7 @@ def main():
             )
 
         hep.histplot(
-            h2[key].values,
+            sum_overflow_into_last_bin(h2[key].allvalues),
             edges,
             yerr=np.sqrt(h2[key].variances),
             ax=ax,
@@ -173,6 +191,7 @@ def main():
                 1.5*max(h2[key].values),
             )
         except ValueError:
+            plt.close(fig)
             continue
         rax.grid(linestyle='--')
         fig.savefig(pjoin(args.outdir, f"{key}.png"))
