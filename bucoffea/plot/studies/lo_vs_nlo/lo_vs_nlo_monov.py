@@ -90,12 +90,12 @@ def main(sysargs):
     for year in [2017,2018]:
         mc_map = {
             'cr_1m_v'      : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT).*{year}'),
-            'cr_1e_v'      : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_DR.*HT).*{year}'),
+            'cr_1e_v'      : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_1j).*{year}'),
             'cr_2m_v'      : re.compile(f'(Top.*FXFX|Diboson|DYJetsToLL_M-50_HT_MLM).*{year}'),
             'cr_2e_v'      : re.compile(f'(Top.*FXFX|Diboson|DYJetsToLL_M-50_HT_MLM).*{year}'),
-            'cr_g_v'       : re.compile(f'(Diboson|QCD_HT|GJets_DR.*HT|VQQGamma_FXFX|WJetsToLNu.*HT).*{year}'),
-            'cr_nobveto_v' : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_DR.*HT|ZJetsToNuNu).*{year}'),
-            'sr_v'         : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_DR.*HT|ZJetsToNuNu).*{year}'),
+            'cr_g_v'       : re.compile(f'(Diboson|QCD_HT|GJets_1j|VQQGamma_FXFX|WJetsToLNu.*HT).*{year}'),
+            'cr_nobveto_v' : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_1j|ZJetsToNuNu).*{year}'),
+            'sr_v'         : re.compile(f'(Top.*FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM|WJetsToLNu.*HT|GJets_1j|ZJetsToNuNu).*{year}'),
         }
         #for raw_region in ['cr_1m_v','cr_2m_v','cr_1e_v','cr_2e_v','cr_g_v']:
         for raw_region in ['cr_1m_v','cr_2m_v','cr_1e_v','cr_2e_v','cr_g_v','sr_v','cr_nobveto_v']:
