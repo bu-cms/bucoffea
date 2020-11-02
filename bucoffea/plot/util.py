@@ -268,6 +268,17 @@ def create_dataset_mapping(all_datasets):
             tmp[k] = v
     mapping = tmp
 
+    # Add datasets we didn't catch yet
+    mapped_datasets =  []
+    for val in mapping.values():
+        mapped_datasets.extend(val)
+
+    for ds in all_datasets:
+        if ds in mapped_datasets:
+            continue
+        else:
+            mapping[ds] = [ds]
+    
     # Mapping good to go to be used in "merge_datasets" function
     return mapping
 
@@ -282,17 +293,6 @@ def merge_datasets(histogram):
     all_datasets = list(map(str, histogram.identifiers('dataset')))
     # Create the mapping for the datasets in this histogram
     mapping = create_dataset_mapping(all_datasets)
-    
-    # Add datasets we didn't catch yet
-    mapped_datasets =  []
-    for val in mapping.values():
-        mapped_datasets.extend(val)
-
-    for ds in all_datasets:
-        if ds in mapped_datasets:
-            continue
-        else:
-            mapping[ds] = [ds]
     
     # Apply the mapping
     histogram = histogram.group("dataset",hist.Cat("dataset", "Primary dataset"),  mapping)
