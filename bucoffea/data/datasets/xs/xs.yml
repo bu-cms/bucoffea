@@ -1189,6 +1189,7 @@ WJetsToQQ_HT600to800_qc19_3j-MLM_2018:
   gen: 68.43
 WW_2016:
   gen: 64.29
+  nnlo: 118.7
 WW_2017:
   gen: 75.91
   nnlo: 118.7
@@ -1216,6 +1217,8 @@ WZTo3LNu_3Jets_MLL-4to50-MLM_2018:
   gen: 0.07125
 WZ_2016:
   gen: 23.43
+  nlo: 47.13
+
 WZ_2017:
   gen: 27.56
   nlo: 47.13
@@ -1354,6 +1357,8 @@ ZZTo2Q2Nu_amcatnloFXFX_madspin_pythia8_2018:
   gen: 4.595
 ZZ_2016:
   gen: 10.16
+  nlo: 16.523
+
 ZZ_2017:
   gen: 12.14
   nlo: 16.523
@@ -3503,3 +3508,12 @@ Scalar_MonoV_LO_Mphi-700_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
   gen: 0.0005454
 Scalar_MonoV_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
   gen: 0.0003139
+
+WH_HToInv_JHU_2017:
+  gen: 1.373E+00
+WH_HToInv_JHU_ptH150_2017:
+  gen: 0.1997715
+ZH_HToInv_JHU_2017:
+  gen: 0.7612
+ZH_HToInv_JHU_ptH150_2017:
+  gen: 0.114
