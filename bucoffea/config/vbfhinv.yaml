@@ -73,6 +73,7 @@ default:
         pt : 10
         eta : 2.4
         iso : 0.25
+    gencheck: True
   electron:
     cuts:
       tight:
@@ -89,6 +90,7 @@ default:
           endcap: 0.20
     branch:
       id: Electron_cutBased
+    gencheck: True
   btag:
     pt: 20
     eta: 2.5

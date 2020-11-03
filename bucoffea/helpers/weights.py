@@ -72,9 +72,17 @@ def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=F
             # Combine
             veto_weight_ele = (1 - ele_id_sf*ele_reco_sf).prod()
 
+        # Gen-checking for electrons
+        if cfg.ELECTRON.GENCHECK:
+            veto_weight_ele = gen_check_for_leptons(electrons, veto_weight_ele)
+
         ### Muons
         args = (muons.pt, muons.abseta)
         veto_weight_muo = (1 - varied_weight("muon_id_loose", *args)*varied_weight("muon_iso_loose", *args)).prod()
+
+        # Gen-checking for muons
+        if cfg.MUON.GENCHECK:
+            veto_weight_muo = gen_check_for_leptons(muons, veto_weight_muo)
 
         ### Taus
         # Taus have their variations saves as separate histograms,
@@ -90,9 +98,7 @@ def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=F
         # with Tau_genPartFlav == 5, assign a weight of 0 and discard that event
         # Right now we're only doing this for VBF (specified in config)
         if cfg.TAU.GENCHECK:
-            tau_match_ok = (taus.counts == 0) | ((taus.genpartflav==5).all() )
-    
-            veto_weight_tau = np.where(tau_match_ok, veto_weight_tau, 0.)
+            veto_weight_tau = gen_check_for_leptons(taus, veto_weight_tau, tau=True)
 
         ### Combine
         total = veto_weight_ele * veto_weight_muo * veto_weight_tau
@@ -103,6 +109,22 @@ def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=F
 
     return veto_weights
 
+def gen_check_for_leptons(leptons, veto_weights, tau=False):
+    '''
+    Return a mask containing information whether the event passed the lepton gen-matching or not.
+    For gen-matching on taus, use tau=True, otherwise use tau=False.
+    '''
+    # For muons and electrons, we require the gen particle flavor to be non-zero
+    if not tau:
+        gen_match_ok = (leptons.counts == 0) | ((leptons.genpartflav != 0).all() )
+    # For taus, we require the gen particle flavor to be exactly 5
+    else:
+        gen_match_ok = (leptons.counts == 0) | ((leptons.genpartflav == 5).all() )
+
+    # If an event does not pass lepton gen-matching, assign a weight of 0
+    new_veto_weights = np.where(gen_match_ok, veto_weights, 0.)
+
+    return new_veto_weights
 
 def diboson_nlo_weights(df, evaluator, gen):
 
