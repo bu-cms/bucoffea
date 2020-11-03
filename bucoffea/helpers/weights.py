@@ -111,7 +111,7 @@ def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=F
 
 def gen_check_for_leptons(leptons, veto_weights, tau=False):
     '''
-    Return a mask containing information whether the event passed the lepton gen-matching or not.
+    Return the veto weights after checking if the leptons in the event are matched to a proper GEN-level lepton.
     For gen-matching on taus, use tau=True, otherwise use tau=False.
     '''
     # For muons and electrons, we require the gen particle flavor to be non-zero
