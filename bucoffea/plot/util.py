@@ -180,16 +180,11 @@ def merge_extensions(histogram, acc, reweight_pu=True, noscale=False):
 
     return histogram
 
-
-def merge_datasets(histogram):
-    """Merge datasets that belong same physics process
-
-    :param histogram: The histogram to modify
-    :type histogram: Coffea histogram
-    :return: Modified histogram
-    :rtype: Coffea histogram
-    """
-    all_datasets = list(map(str, histogram.identifiers('dataset')))
+def create_dataset_mapping(all_datasets):
+    '''
+    Given the input of all datasets in the histogram, create a mapping
+    to merge datasets that belong to the same physics process.
+    '''
     # TODO:
     #   * Factor mapping out to configuration file?
     #   * Fill in more data sets
@@ -283,6 +278,22 @@ def merge_datasets(histogram):
             continue
         else:
             mapping[ds] = [ds]
+    
+    # Mapping good to go to be used in "merge_datasets" function
+    return mapping
+
+def merge_datasets(histogram):
+    """Merge datasets that belong same physics process
+
+    :param histogram: The histogram to modify
+    :type histogram: Coffea histogram
+    :return: Modified histogram
+    :rtype: Coffea histogram
+    """
+    all_datasets = list(map(str, histogram.identifiers('dataset')))
+    # Create the mapping for the datasets in this histogram
+    mapping = create_dataset_mapping(all_datasets)
+    
     # Apply the mapping
     histogram = histogram.group("dataset",hist.Cat("dataset", "Primary dataset"),  mapping)
 
