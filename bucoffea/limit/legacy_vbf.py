@@ -34,16 +34,16 @@ def datasets(year, unblind=False):
             'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
             'sr_vbf' : re.compile('nomatch')
           }
-        
+
     tmp = {}
-    
+
     for k, v in data.items():
         tmp[k] = re.compile(v)
     data.update(tmp)
 
     return data, mc
 
-def legacy_dataset_name_vbf(dataset): 
+def legacy_dataset_name_vbf(dataset):
     patterns = {
         'EWKZ\d?Jets.*ZToLL.*' : 'ewkzll',
         'EWKZ\d?Jets.*ZToNuNu.*' : 'ewkzjets',
@@ -84,9 +84,9 @@ def legacy_region_name(region):
     raise RuntimeError(f'Cannot find legacy region name for region :"{region}"')
 
 def recoil_bins_2016():
-    return [ 250.,  280.,  310.,  340.,  370.,  400.,  
-             430.,  470.,  510., 550.,  590.,  640.,  
-             690.,  740.,  790.,  840.,  900.,  960., 
+    return [ 250.,  280.,  310.,  340.,  370.,  400.,
+             430.,  470.,  510., 550.,  590.,  640.,
+             690.,  740.,  790.,  840.,  900.,  960.,
              1020., 1090., 1160., 1250., 1400.]
 
 def mjj_bins_2016():
@@ -117,6 +117,14 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
+    # Rebin
+    h = copy.deepcopy(acc[distribution])
+    newax = hist.Bin('mjj','$M_{jj}$ (GeV)', mjj_bins_2016())
+    h = h.rebin(h.axis(newax.name), newax)
+    h = merge_extensions(h, acc)
+    scale_xs_lumi(h)
+    h = merge_datasets(h)
+
     for year in [2017,2018]:
         signal = re.compile(f'VBF_HToInvisible.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_vbf_{year}.root'))
@@ -126,25 +134,14 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
             print(f'Region {region}')
             print('='*20)
             tag = region.split('_')[0]
-            # Rebin
-            h = copy.deepcopy(acc[distribution])
-            
-            newax = hist.Bin('mjj','$M_{jj}$ (GeV)', mjj_bins_2016()) 
 
-            h = h.rebin(h.axis(newax.name), newax)
+            ih = h.integrate(h.axis('region'),region)
 
-            h = merge_extensions(h, acc)
-            scale_xs_lumi(h)
-
-            h = merge_datasets(h)
-        
-            h = h.integrate(h.axis('region'),region)
-            
             for dataset in map(str, h.axis('dataset').identifiers()):
                 if not (data[region].match(dataset) or mc[region].match(dataset)):
                     # Insert dummy data for the signal region
                     if region == 'sr_vbf' and re.match('ZJetsToNuNu.*', dataset) and not unblind:
-                        th1 = export1d(h.integrate('dataset', dataset))    
+                        th1 = export1d(ih.integrate('dataset', dataset))
                         histo_name = 'signal_data'
                         f[histo_name] = th1
                         continue
@@ -159,7 +156,7 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
                 except:
                     print(f"Skipping {dataset}")
                     continue
-                
+
                 print('-'*20)
                 f[histo_name] = th1
         if not unblind:
