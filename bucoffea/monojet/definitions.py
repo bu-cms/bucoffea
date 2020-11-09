@@ -560,7 +560,7 @@ def monojet_regions(cfg):
 
     # additional regions to test out deep ak8 WvsQCD tagger
     for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
-        for wp in ['loose', 'tight']:
+        for wp in ['loose', 'tight', 'inclusive']:
             # the new region name will be, for example, cr_2m_loose_v
             newRegionName=region.replace('_v','_'+wp+'_v')
             regions[newRegionName] = copy.deepcopy(regions[region])
@@ -582,6 +582,9 @@ def monojet_regions(cfg):
                 if wp in ['loose','tight']:
                     noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
                     regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
+                    noMistagNoMassRegionName = region.replace('_v', '_nomistag_nomass_'+ wp + '_v')
+                    regions[noMistagNoMassRegionName]=copy.deepcopy(regions[newRegionName])
+                    regions[noMistagNoMassRegionName].remove('leadak8_mass')
 
     # Veto weight region
     tmp = {}
