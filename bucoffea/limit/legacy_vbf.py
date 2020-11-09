@@ -149,7 +149,7 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
                         continue
                 print(f"Dataset: {dataset}")
 
-                th1 = export1d(h.integrate('dataset', dataset))
+                th1 = export1d(ih.integrate('dataset', dataset))
                 try:
                     histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name_vbf(dataset)}'
                     print(f'Saved under histogram: {histo_name}')
