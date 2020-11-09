@@ -103,7 +103,7 @@ def legacy_dataset_name_vbf(dataset):
         'ZJetsToNuNu.*' : 'qcdzjets',
         'DYJets.*' : 'qcdzll',
         'GJets_DR-0p4.*' : 'qcdgjets',
-        'GJets_SM.*' : 'ewkgjets',
+        'GJets_SM_5f_EWK.*' : 'ewkgjets',
     }
 
     for pat, ret in patterns.items():
