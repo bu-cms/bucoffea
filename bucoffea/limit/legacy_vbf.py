@@ -44,6 +44,53 @@ def datasets(year, unblind=False):
     return data, mc
 
 def legacy_dataset_name_vbf(dataset):
+
+    m = re.match("VBF_HToInvisible_M(\d+)_pow_pythia8_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "vbf"
+        else:
+            return f"vbf{mh}"
+    m = re.match("ZH_ZToQQ_HToInvisible_M(\d+)_pow_pythia8_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "zh"
+        else:
+            return f"zh{mh}"
+
+    m = re.match("WH_WToQQ_Hinv_M(\d+)_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "wh"
+        else:
+            return f"wh{mh}"
+
+    m = re.match("GluGlu_HToInvisible_M(\d+)_HiggspTgt190_pow_pythia8_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "ggh"
+        else:
+            return f"ggh{mh}"
+
+    m = re.match("ggZH_ZToQQ_HToInvisible_M(\d+)_pow_pythia8_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "ggzh"
+        else:
+            return f"ggzh{mh}"
+
+    m = re.match("WH_HToInv_JHU_ptH150_201[0-9]", dataset)
+    if m:
+        return "wh_jhu"
+    m = re.match("ZH_HToInv_JHU_ptH150_201[0-9]", dataset)
+    if m:
+        return "zh_jhu"
+
     patterns = {
         'EWKZ\d?Jets.*ZToLL.*' : 'ewkzll',
         'EWKZ\d?Jets.*ZToNuNu.*' : 'ewkzjets',
@@ -57,15 +104,12 @@ def legacy_dataset_name_vbf(dataset):
         'DYJets.*' : 'qcdzll',
         'GJets_DR-0p4.*' : 'qcdgjets',
         'GJets_SM.*' : 'ewkgjets',
-        'VBF_HToInv.*M125.*' : 'vbf',
-        'GluGlu_HToInv.*M125_HiggspTgt190.*' : 'ggh',
-        'ggZH_.*M125.*' : 'zh',
-        'WH_.*M125.*' : 'wh'
     }
 
     for pat, ret in patterns.items():
         if re.match(pat, dataset):
             return ret
+
     raise RuntimeError(f'Cannot find legacy region name for dataset :"{dataset}"')
 
 def legacy_region_name(region):
