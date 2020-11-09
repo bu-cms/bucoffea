@@ -198,33 +198,28 @@ def legacy_limit_input_monojet(acc, outdir='./output', unblind=False):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
+    # Histogram prep, rebin, etc
+    h = copy.deepcopy(acc[distribution])
+    newax = hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016())
+    h = h.rebin(h.axis(newax.name), newax)
+    h = merge_extensions(h, acc)
+    scale_xs_lumi(h)
+    h = merge_datasets(h)
+
     for year in [2017,2018]:
-        # signal = re.compile(f'(GluGlu|WH|ZH|ggZH|VBF).*(I|i)inv.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_monojet_{year}.root'))
         data, mc = datasets(year, unblind=unblind)
 
         for region in regions:
             print(f'Region {region}')
-            # Rebin
-            h = copy.deepcopy(acc[distribution])
-
-            newax = hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016())
-
-            h = h.rebin(h.axis(newax.name), newax)
-
-            h = merge_extensions(h, acc)
-            scale_xs_lumi(h)
-
-            h = merge_datasets(h)
-
-            h = h.integrate(h.axis('region'),region)
+            ih = h.integrate(h.axis('region'),region)
 
             for dataset in map(str, h.axis('dataset').identifiers()):
                 if not (data[region].match(dataset) or mc[region].match(dataset)):
                     continue
                 print(f"   Dataset: {dataset}")
 
-                th1 = export1d(h.integrate('dataset', dataset))
+                th1 = export1d(ih.integrate('dataset', dataset))
                 try:
                     histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name(dataset)}'
                 except RuntimeError:
