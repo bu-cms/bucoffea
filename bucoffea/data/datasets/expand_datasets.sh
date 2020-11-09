@@ -49,6 +49,9 @@ sed -i '/.*CP5up.*/d' datasets_nanoaod_v7_201*.txt
 sed -i '/.*CP5down.*/d' datasets_nanoaod_v7_201*.txt
 sed -i '/.*CH3.*/d' datasets_nanoaod_v7_201*.txt
 
+
+sed -i '/\/WZ_TuneCP5_13TeV-pythia8\/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1\/NANOAODSIM/d' datasets_nanoaod_v7_2017.txt
+
 # sed '/\(Run2016\|\/G.*Jet\)/!d' -i datasets_nanoaod_v7_2016.txt
 sed -i '/.*JetHT.*/d' datasets_nanoaod_v7_2016.txt
 sed -i '/.*SingleMuon.*/d' datasets_nanoaod_v7_2016.txt
