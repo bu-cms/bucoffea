@@ -36,7 +36,8 @@ for line in data:
     xs = float(line[1])
     if not (dataset in xs_dict):
         xs_dict[dataset] = {}
-    xs_dict[dataset]['gen'] = xs
+    if not 'gen' in xs_dict[dataset]:
+        xs_dict[dataset]['gen'] = xs
 
 tmp = {}
 for k, v in xs_dict.items():
