@@ -60,9 +60,9 @@ def legacy_dataset_name(dataset):
     m = re.match('(Pseudoscalar|Scalar)_Mono(J|V)_LO_Mphi-([0-9,p]*)_Mchi-([0-9,p]*)_gSM-([0-9,p]*)_gDM-([0-9,p]*)-mg_201(\d)', dataset)
     if m:
         coupling, channel, mmed, mdm, gq, gdm, _ = m.groups()
-        if channel=='MonoJ':
+        if channel=='J':
             channel = 'monojet'
-        elif channel=='MonoV':
+        elif channel=='V':
             channel = 'monov'
         return f"{coupling.lower()}_{channel}_mmed{mmed}_mdm{mdm}_gq{gq}_gdm{gdm}"
 
@@ -76,6 +76,51 @@ def legacy_dataset_name(dataset):
         mlq, ylq = m.groups()
         return f"lq_m{mlq}_d{ylq}"
 
+    m = re.match("VBF_HToInvisible_M(\d+)_pow_pythia8_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "vbf"
+        else:
+            return f"vbf{mh}"
+    m = re.match("ZH_ZToQQ_HToInvisible_M(\d+)_pow_pythia8_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "zh"
+        else:
+            return f"zh{mh}"
+
+    m = re.match("WH_WToQQ_Hinv_M(\d+)_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "wh"
+        else:
+            return f"wh{mh}"
+
+    m = re.match("GluGlu_HToInvisible_M(\d+)_HiggspTgt190_pow_pythia8_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "ggh"
+        else:
+            return f"ggh{mh}"
+
+    m = re.match("ggZH_ZToQQ_HToInvisible_M(\d+)_pow_pythia8_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "ggzh"
+        else:
+            return f"ggzh{mh}"
+
+    m = re.match("WH_HToInv_JHU_ptH150_201[0-9]", dataset)
+    if m:
+        return "wh_jhu"
+    m = re.match("ZH_HToInv_JHU_ptH150_201[0-9]", dataset)
+    if m:
+        return "zh_jhu"
 
     patterns = {
         '.*DY.*' : 'zll',
@@ -90,12 +135,6 @@ def legacy_dataset_name(dataset):
         'ZJetsToNuNu.*' : 'zjets',
         'GJets_DR-0p4.*HT.*' : 'gjets',
         'GJets.*NLO.*' : 'gjets',
-        'VQQGamma.*' : 'vgamma',
-        'WH.*Hinv.*' : 'wh',
-        'ZH.*HToInvisible_M125.*' : 'zh',
-        'VBF.*HToInvisible_M125.*' : 'vbf',
-        'GluGlu_HToInvisible_M125.*HiggspTgt190.*' : 'ggh',
-        'ggZH.*HToInvisible_M125.*' : 'ggzh',
         'VQQGamma.*' : 'vgamma',
         'WQQGamma.*' : 'wgamma',
         'ZQQGamma.*' : 'zgamma'
@@ -159,33 +198,28 @@ def legacy_limit_input_monojet(acc, outdir='./output', unblind=False):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
+    # Histogram prep, rebin, etc
+    h = copy.deepcopy(acc[distribution])
+    newax = hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016())
+    h = h.rebin(h.axis(newax.name), newax)
+    h = merge_extensions(h, acc)
+    scale_xs_lumi(h)
+    h = merge_datasets(h)
+
     for year in [2017,2018]:
-        signal = re.compile(f'(GluGlu|WH|ZH|ggZH|VBF).*(I|i)inv.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_monojet_{year}.root'))
         data, mc = datasets(year, unblind=unblind)
 
         for region in regions:
             print(f'Region {region}')
-            # Rebin
-            h = copy.deepcopy(acc[distribution])
-
-            newax = hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016())
-
-            h = h.rebin(h.axis(newax.name), newax)
-
-            h = merge_extensions(h, acc)
-            scale_xs_lumi(h)
-
-            h = merge_datasets(h)
-
-            h = h.integrate(h.axis('region'),region)
+            ih = h.integrate(h.axis('region'),region)
 
             for dataset in map(str, h.axis('dataset').identifiers()):
-                if not (data[region].match(dataset) or mc[region].match(dataset) or signal.match(dataset)):
+                if not (data[region].match(dataset) or mc[region].match(dataset)):
                     continue
                 print(f"   Dataset: {dataset}")
 
-                th1 = export1d(h.integrate('dataset', dataset))
+                th1 = export1d(ih.integrate('dataset', dataset))
                 try:
                     histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name(dataset)}'
                 except RuntimeError:
