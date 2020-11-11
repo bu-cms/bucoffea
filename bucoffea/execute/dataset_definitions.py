@@ -30,6 +30,8 @@ def short_name(dataset):
         name = name + "_" + m.groups()[0]
     if 'new_pmx' in conditions:
         name = name + '_new_pmx'
+    if 'EXT' in conditions:
+        name = name + "_EXT"
     if 'RunIISummer16' in conditions:
         name = name + "_2016"
     elif "RunIIFall17" in conditions:
