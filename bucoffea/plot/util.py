@@ -132,6 +132,7 @@ def merge_extensions(histogram, acc, reweight_pu=True, noscale=False):
         base = d
 
         to_replace =[
+            '.*(_EXT).*',
             '.*(_ext\d+).*',
             '.*(_new_+pmx).*',
             '.*(_PSweights).*'
