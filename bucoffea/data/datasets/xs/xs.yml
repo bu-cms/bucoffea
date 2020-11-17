@@ -2619,23 +2619,31 @@ ST_tW_antitop_5f_inclusiveDecays-pow_ext1_2018:
   nnlo: 35.85
 ST_tW_antitop_5f_inclusiveDecays_PSweights-pow_2016:
   gen: 34.97
+  nnlo: 35.85
 ST_tW_antitop_5f_inclusiveDecays_PSweights-pow_2017:
   gen: 34.97
   nnlo: 35.85
 ST_tW_antitop_5f_inclusiveDecaysdown-pow_2017:
   gen: 34.97
+  nnlo: 35.85
 ST_tW_antitop_5f_inclusiveDecaysdown-pow_2018:
   gen: 34.97
+  nnlo: 35.85
 ST_tW_antitop_5f_inclusiveDecaysdown_PSweights-pow_2017:
   gen: 34.97
+  nnlo: 35.85
 ST_tW_antitop_5f_inclusiveDecaysup-pow_2017:
   gen: 34.97
+  nnlo: 35.85
 ST_tW_antitop_5f_inclusiveDecaysup-pow_2018:
   gen: 34.97
+  nnlo: 35.85
 ST_tW_antitop_5f_inclusiveDecaysup_PSweights-pow_2017:
   gen: 34.97
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecays-pow_2016:
   gen: 34.91
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecays-pow_2017:
   gen: 34.91
   nnlo: 35.85
@@ -2647,27 +2655,37 @@ ST_tW_top_5f_inclusiveDecays-pow_ext1_2018:
   nnlo: 35.85
 ST_tW_top_5f_inclusiveDecays_PSweights-pow_2016:
   gen: 34.91
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecays_PSweights-pow_2017:
   gen: 34.91
   nnlo: 35.85
 ST_tW_top_5f_inclusiveDecays_PSweights-pow_new_pmx_2017:
   gen: 34.91
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecaysdown-pow_2017:
   gen: 34.91
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecaysdown-pow_2018:
   gen: 34.91
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecaysdown_PSweights-pow_2017:
   gen: 34.91
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecaysdown_PSweights-pow_2018:
   gen: 34.91
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecaysup-pow_2017:
   gen: 34.91
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecaysup-pow_2018:
   gen: 34.91
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecaysup_PSweights-pow_2017:
   gen: 34.91
+  nnlo: 35.85
 ST_tW_top_5f_inclusiveDecaysup_PSweights-pow_2018:
   gen: 34.91
+  nnlo: 35.85
 ScalarFirstGenLeptoquarkToQNu_Mlq-1000_Ylq-0p1_mg_2016:
   gen: 0.003615
 ScalarFirstGenLeptoquarkToQNu_Mlq-1000_Ylq-0p1_mg_2017:
