@@ -2544,56 +2544,52 @@ QCD_HT700to1000_GenJets5-MLM_2016:
   gen: 3029.0
 ST_s-channel_4f_hadronicDecays-amcatnlo_2017:
   gen: 11.24
+  nlo: 6.97632
 ST_s-channel_4f_hadronicDecays-mg_2018:
   gen: 11.24
+  nlo: 6.97632
 ST_s-channel_4f_hadronicDecays-mg_ext1_2018:
   gen: 11.24
+  nlo: 6.97632
 ST_s-channel_4f_leptonDecays-amcatnlo_2016:
   gen: 3.74
+  nlo: 3.3436799999999995
 ST_s-channel_4f_leptonDecays-amcatnlo_2017:
   gen: 3.74
-  nnlo: 10.32
+  nlo: 3.3436799999999995
 ST_s-channel_4f_leptonDecays-amcatnlo_2018:
   gen: 3.74
+  nlo: 3.3436799999999995
 ST_s-channel_4f_leptonDecays-mg_2018:
   gen: 3.74
-  nnlo: 1.1016749829959998
+  nlo: 3.3436799999999995
 ST_s-channel_4f_leptonDecays-mg_ext1_2018:
   gen: 3.74
-  nnlo: 1.1016749829959998
+  nlo: 3.3436799999999995
 ST_s-channel_4f_leptonDecays-mg_ext2_2018:
   gen: 3.74
+  nlo: 3.3436799999999995
 ST_s-channel_4f_leptonDecays_PSweights-amcatnlo_2016:
   gen: 3.74
+  nlo: 3.3436799999999995
 ST_s-channel_4f_leptonDecays_PSweights-amcatnlo_2017:
   gen: 3.74
-  nnlo: 10.32
+  nlo: 3.3436799999999995
 ST_s-channel_4f_leptonDecays_PSweights-amcatnlo_new_pmx_2017:
   gen: 3.74
-ST_s-channel_4f_leptonDecays_mtop1715-amcatnlo_2017:
-  gen: 3.824
-  nnlo: 10.32
-ST_s-channel_4f_leptonDecays_mtop1715-amcatnlo_2018:
-  gen: 3.824
-  nnlo: 10.32
-ST_s-channel_4f_leptonDecays_mtop1715_PSweights-amcatnlo_2017:
-  gen: 3.824
-  nnlo: 10.32
-ST_s-channel_4f_leptonDecays_mtop1715_PSweights-amcatnlo_2018:
-  gen: 3.824
-  nnlo: 10.32
+  nlo: 3.3436799999999995
 ST_s-channel_antitop_leptonDecays-PSweights_pow-pythia_2017:
   gen: 3.579
-  nnlo: 0.4260473698319999
+  nlo: 1.28628
 ST_s-channel_antitop_leptonDecays-PSweights_pow-pythia_2018:
   gen: 3.58
-  nnlo: 0.4260473698319999
+  nlo: 1.28628
 ST_s-channel_top_leptonDecays-PSweights_pow-pythia_2017:
   gen: 5.757
-  nnlo: 0.6756276131639999
+  nlo: 2.0574
 ST_s-channel_top_leptonDecays-PSweights_pow-pythia_2018:
   gen: 5.756
-  nnlo: 0.6756276131639999
+  nlo: 2.0574
 ST_t-channel_antitop_4f_InclusiveDecays-pow-madspin_2018:
   gen: 69.09
   nnlo: 83.0066
