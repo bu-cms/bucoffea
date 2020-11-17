@@ -2592,19 +2592,19 @@ ST_s-channel_top_leptonDecays-PSweights_pow-pythia_2018:
   nlo: 2.0574
 ST_t-channel_antitop_4f_InclusiveDecays-pow-madspin_2018:
   gen: 69.09
-  nnlo: 83.0066
+  nnlo: 80.95
 ST_t-channel_antitop_4f_inclusiveDecays-powV2-madspin_2017:
   gen: 67.91
-  nnlo: 83.0066
+  nnlo: 80.95
 ST_t-channel_top_4f_InclusiveDecays-pow-madspin_2018:
   gen: 115.3
-  nnlo: 137.4581
+  nnlo: 136.02
 ST_t-channel_top_4f_inclusiveDecays-powV2-madspin_2017:
   gen: 113.3
-  nnlo: 137.4581
+  nnlo: 136.02
 ST_t-channel_top_4f_inclusiveDecays-powV2-madspin_new_pmx_2017:
   gen: 113.3
-  nnlo: 137.4581
+  nnlo: 136.02
 ST_tW_antitop_5f_inclusiveDecays-pow_2016:
   gen: 34.97
   nnlo: 35.85
