@@ -13,7 +13,7 @@ default:
         eta: 2.4  # max
         mass:
           min: 65
-          max: 105
+          max: 120
         tau21: 0.6 # max
       mindphijr : 0.5 # min
       dpfcalo : 0.5 # max
