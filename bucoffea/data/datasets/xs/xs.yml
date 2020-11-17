@@ -3481,6 +3481,7 @@ WW_PSweights_2018:
   nnlo: 118.7
 WW_ext1_2016:
   gen: 64.28
+  nnlo: 118.7
 WZTo3LNu_0Jets_MLL-4to50-MLM_2017:
   gen: 2.508
 WZTo3LNu_0Jets_MLL-4to50-MLM_2018:
@@ -3512,6 +3513,7 @@ WZ_PSweights_2018:
   nlo: 47.13
 WZ_ext1_2016:
   gen: 23.42
+  nlo: 47.13
 WminusH_WToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.3654
   nnlo: 0.36
@@ -3658,6 +3660,7 @@ ZZ_2018:
   nlo: 16.523
 ZZ_ext1_2016:
   gen: 10.15
+  nlo: 16.523
 ggZH_ZToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.085780797
 ggZH_ZToQQ_HToInvisible_M125_pow_pythia8_2017:
