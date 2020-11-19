@@ -26,7 +26,7 @@ GJets_DR-0p4_HT-*-madgraphMLM-pythia8*
 # GJets_HT-*_Tune*_13TeV-madgraphMLM-pythia8
 AJJ_EWK_Tune*_13TeV_amcatnlo-pythia8
 GJets_*SM*CP5*
-# G*Jet_Pt-*_Tune*_13TeV-amcatnlo-pythia8
+G*Jet_Pt-*_Tune*_13TeV-amcatnlo-pythia8
 
 # TT
 TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8
