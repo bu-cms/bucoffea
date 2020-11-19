@@ -303,6 +303,8 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('leadak8_wvsqcd_tightmd', ((ak8.wvsqcdmd[leadak8_index] > cfg.WTAG.TIGHTMD)).any())
         selection.add('leadak8_wvsqcd_loose', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.LOOSE)
                                     & (ak8.wvsqcd[leadak8_index] < cfg.WTAG.TIGHT)).any())
+        selection.add('leadak8_wvsqcd_medium', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.MEDIUM)
+                                    ).any())
         selection.add('leadak8_wvsqcd_tight', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.TIGHT)).any())
 
         selection.add('veto_vtag',
@@ -500,9 +502,9 @@ class monojetProcessor(processor.ProcessorABC):
                 leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
                 matched_leadak8 = leadak8[leadak8_matched_mask]
                 unmatched_leadak8 = leadak8[~leadak8_matched_mask]
-                for wp in ['loose','tight']:
+                for wp in ['loose','tight','medium']:
                     if re.match(f'.*_{wp}_v.*', region):
-                        if ('nomistag' in region): 
+                        if ('nomistag' in region) or wp=='medium': 
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
                         elif re.match(r'cr_g.*', region):
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
@@ -711,10 +713,12 @@ class monojetProcessor(processor.ProcessorABC):
                 # specifically for deepak8 mistag rate measurement
                 if cfg.RUN.MONOVMISTAG and 'inclusive_v' in region:
                     ezfill('ak8_passloose_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
+                    ezfill('ak8_passmedium_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passtight_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHT, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passloosemd_pt0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.LOOSEMD, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passtightmd_pt0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.TIGHTMD, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passloose_mass0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
+                    ezfill('ak8_passmedium_mass0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passtight_mass0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHT, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passloosemd_mass0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.LOOSEMD, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passtightmd_mass0', wppass=ak8[leadak8_index].wvsqcdmd[mask].max()>cfg.WTAG.TIGHTMD, mass=ak8[leadak8_index].mass[mask].max(),      weight=w_leadak8 )

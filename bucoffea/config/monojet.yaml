@@ -263,6 +263,7 @@ era2016:
         tight: 0.9535
   wtag: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
     loose: 0.475
+    medium: 0.918
     tight: 0.960
     loosemd: 0.274
     tightmd: 0.828
@@ -414,6 +415,7 @@ era2017:
         tight: 0.8001
   wtag: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
     loose: 0.467
+    medium: 0.925
     tight: 0.964
     loosemd: 0.258
     tightmd: 0.838
@@ -476,6 +478,9 @@ era2017:
       file: data/sf/ak8/wtag_eff_SF.root
     wtag_loosemd:
       histogram: WTag_2017_loosemd_ak8_pt
+      file: data/sf/ak8/wtag_eff_SF.root
+    wtag_medium: #https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
+      histogram: WTag_2017_medium_ak8_pt
       file: data/sf/ak8/wtag_eff_SF.root
     wtag_tight:
       histogram: WTag_2017_tight_ak8_pt
@@ -568,6 +573,7 @@ era2018:
         tight: 0.7527
   wtag: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
     loose: 0.458
+    medium: 0.918
     tight: 0.961
     loosemd: 0.245
     tightmd: 0.806
@@ -651,6 +657,9 @@ era2018:
       file: data/sf/ak8/wtag_eff_SF.root
     wtag_loosemd:
       histogram: WTag_2018_loosemd_ak8_pt
+      file: data/sf/ak8/wtag_eff_SF.root
+    wtag_medium: #https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
+      histogram: WTag_2018_medium_ak8_pt
       file: data/sf/ak8/wtag_eff_SF.root
     wtag_tight:
       histogram: WTag_2018_tight_ak8_pt

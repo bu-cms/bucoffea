@@ -163,10 +163,12 @@ def monojet_accumulator(cfg):
 
     if cfg and cfg.RUN.MONOVMISTAG:
         items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
+        items["ak8_passmedium_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
         items["ak8_passtight_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
         items["ak8_passloosemd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
         items["ak8_passtightmd_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
         items["ak8_passloose_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
+        items["ak8_passmedium_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
         items["ak8_passtight_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
         items["ak8_passloosemd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
         items["ak8_passtightmd_mass0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_mass_ax)
@@ -560,7 +562,7 @@ def monojet_regions(cfg):
 
     # additional regions to test out deep ak8 WvsQCD tagger
     for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
-        for wp in ['loose', 'tight', 'inclusive']:
+        for wp in ['loose', 'medium', 'tight', 'inclusive']:
             # the new region name will be, for example, cr_2m_loose_v
             newRegionName=region.replace('_v','_'+wp+'_v')
             regions[newRegionName] = copy.deepcopy(regions[region])
@@ -579,7 +581,7 @@ def monojet_regions(cfg):
             # save a copy of the v-tagged regions but not applying mistag SFs, for the sake of measuring mistag SF later
 
             if cfg and cfg.RUN.MONOVMISTAG:
-                if wp in ['loose','tight']:
+                if wp in ['loose','medium','tight']:
                     noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
                     regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
                     noMistagNoMassRegionName = region.replace('_v', '_nomistag_nomass_'+ wp + '_v')
