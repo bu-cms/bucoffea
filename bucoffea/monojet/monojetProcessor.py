@@ -305,7 +305,12 @@ class monojetProcessor(processor.ProcessorABC):
                                     & (ak8.wvsqcd[leadak8_index] < cfg.WTAG.TIGHT)).any())
         selection.add('leadak8_wvsqcd_tight', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.TIGHT)).any())
 
-        selection.add('veto_vtag', ~selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_wvsqcd_tight", "leadak8_mass"))
+        selection.add('veto_vtag',
+            ~(
+            selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_wvsqcd_tight", "leadak8_mass")
+            | selection.all("leadak8_pt_eta", "leadak8_id", "leadak8_wvsqcd_loose", "leadak8_mass")
+            )
+        )
         selection.add('only_one_ak8', ak8.counts==1)
 
         # Dimuon CR
