@@ -506,9 +506,9 @@ class monojetProcessor(processor.ProcessorABC):
                     if re.match(f'.*_{wp}_v.*', region):
                         if ('nomistag' in region) or wp=='medium': 
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
-                        elif re.match(r'cr_g.*', region):
-                            matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
-                                    * evaluator[f'wtag_mistag_g_{wp}'](unmatched_leadak8.pt).prod()
+                        #elif re.match(r'cr_g.*', region):
+                        #    matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
+                        #            * evaluator[f'wtag_mistag_g_{wp}'](unmatched_leadak8.pt).prod()
                         else:
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
                                     * evaluator[f'wtag_mistag_wz_{wp}'](unmatched_leadak8.pt).prod()
