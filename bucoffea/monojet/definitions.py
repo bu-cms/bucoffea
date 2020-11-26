@@ -560,9 +560,14 @@ def monojet_regions(cfg):
     regions['cr_g_j'] = cr_g_cuts + j_cuts
     regions['cr_g_v'] = cr_g_cuts + v_cuts
 
-    # additional regions to test out deep ak8 WvsQCD tagger
+    # DeepAK8 WPs for signal regions with different level of purities
+    wp_to_run = ['loose', 'tight']
+    # and more WPs when doing the mistag measurement
+    if cfg and cfg.RUN.MONOVMISTAG:
+        wp_to_run += ['medium', 'inclusive']
+
     for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
-        for wp in ['loose', 'medium', 'tight', 'inclusive']:
+        for wp in wp_to_run:
             # the new region name will be, for example, cr_2m_loose_v
             newRegionName=region.replace('_v','_'+wp+'_v')
             regions[newRegionName] = copy.deepcopy(regions[region])
