@@ -131,7 +131,8 @@ class Style():
                     'ak4_pt' : hist.Bin('jetpt',r'All AK4 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,20)) ),
                     'ak4_ptraw0' : hist.Bin('jetpt',r'Leading AK4 raw jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,20)) ),
                     'ak4_pt0_eta0' : hist.Bin('jetpt',r'AK4 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,20)) ),
-                    'ak8_pt0' : hist.Bin('jetpt',r'Leading AK8 jet $p_{T}$ (GeV)',list(range(80,600,20)) + list(range(600,1000,40)) ),
+                    'ak8_pt0' : hist.Bin('jetpt',r'Leading AK8 jet $p_{T}$ (GeV)',list(range(200,600,20)) + list(range(600,1000,40)) ),
+                    'ak8_mass0' : hist.Bin('jet_mass',r'M(AK8)',30,40,130),
                     'ak8_pt1' : hist.Bin('jetpt',r'Trailing AK8 jet $p_{T}$ (GeV)',list(range(40,600,20)) + list(range(600,1000,40)) ),
                     'ak8_pt' : hist.Bin('jetpt',r'All AK8 jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,40)) ),
                     'ak8_ptraw0' : hist.Bin('jetpt',r'Leading AK8 raw jet $p_{T}$ (GeV)',list(range(100,600,20)) + list(range(600,1000,40)) ),
@@ -248,14 +249,15 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     # Plot MC background samples
     # Here we use a regular expression to match
     # data sets we want
-    hist.plot1d(
-        h[mc],
-        overlay='dataset',
-        stack=True,
-        clear=False,
-        overflow='all',
-        ax=ax,
-        binwnorm=1)
+    if mc!=None:
+        hist.plot1d(
+            h[mc],
+            overlay='dataset',
+            stack=True,
+            clear=False,
+            overflow='all',
+            ax=ax,
+            binwnorm=1)
 
     # Apply correct colors to BG histograms
     handles, labels = ax.get_legend_handles_labels()
@@ -296,7 +298,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     ax.legend(title=region_name,ncol=2,handles=handles, labels=new_labels)
 
     # Ratio plot
-    if data:
+    if data and ratio:
         hist.plotratio(h[data].integrate('dataset'), h[mc].integrate('dataset'),
                     ax=rax,
                     denom_fill_opts={},

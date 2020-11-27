@@ -5,8 +5,8 @@ outfilename = "../../../data/sf/ak8/wtag_eff_SF.root"
 #outfilename = "wtag_eff_SF_2017test.root"
 outfile = ROOT.TFile.Open(outfilename, "recreate")
 
-#ref: These numbers are read from https://twiki.cern.ch/twiki/bin/viewauth/CMS/DeepAKXTagging#DeepAK8_V2_Working_Points_and_Sc
-#loose: 5%, tight: 0.5%
+#ref: These numbers are read from https://twiki.cern.ch/twiki/bin/view/CMS/DeepAK8Tagging2018WPsSFs
+#loose: 5%, tight: 0.5%, medium: 1%
 binning    = [200, 300, 400, 800]
 SFs = {}
 SFs[(2017,'tight'  )] = [ [1.00 , 0.08        , 0.07],
@@ -21,6 +21,12 @@ SFs[(2017,'loose'  )] = [ [1.05 , 0.04        , 0.04],
 SFs[(2017,'loosemd')] = [ [1.00 , 0.04        , 0.04],
                           [0.94 , 0.03        , 0.03],
                           [0.95 , 0.03        , 0.03],]
+SFs[(2017,'medium'  )] = [[1.03 , 0.09        , 0.10],
+                          [0.91 , 0.08        , 0.07],
+                          [0.88 , 0.09        , 0.08],]
+SFs[(2017,'mediummd')] = [[0.85 , 0.06        , 0.06],
+                          [0.82 , 0.05        , 0.05],
+                          [0.95 , 0.06        , 0.06],]
 SFs[(2018,'tight'  )] = [ [0.87 , 0.06        , 0.06],
                           [0.86 , 0.05        , 0.05],
                           [0.85 , 0.06        , 0.05],]
@@ -33,9 +39,15 @@ SFs[(2018,'loose'  )] = [ [1.04 , 0.02        , 0.02],
 SFs[(2018,'loosemd')] = [ [0.96 , 0.03        , 0.03],
                           [0.93 , 0.02        , 0.03],
                           [0.96 , 0.03        , 0.03],]
+SFs[(2018,'medium'  )] = [[0.97 , 0.07        , 0.07],
+                          [0.90 , 0.06        , 0.06],
+                          [0.91 , 0.07        , 0.07],]
+SFs[(2018,'mediummd')] = [[0.86 , 0.06        , 0.06],
+                          [0.77 , 0.04        , 0.04],
+                          [0.78 , 0.05        , 0.05],]
 
 for year in [2017,2018]:
-    for wp in ['loose','loosemd','tight','tightmd']:
+    for wp in ['loose','loosemd','tight','tightmd','medium','mediummd']:
         htmp = ROOT.TH1F(f'WTag_{year}_{wp}_ak8_pt', f'WTag_{year}_{wp}_ak8_pt', len(binning)-1, array('d',binning))
         htmp_up    = ROOT.TH1F(f'WTagUp_{year}_{wp}_ak8_pt', f'WTagUp_{year}_{wp}_ak8_pt', len(binning)-1, array('d',binning))
         htmp_down  = ROOT.TH1F(f'WTagDown_{year}_{wp}_ak8_pt', f'WTagDown_{year}_{wp}_ak8_pt', len(binning)-1, array('d',binning))
