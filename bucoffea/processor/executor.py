@@ -299,9 +299,7 @@ def run_uproot_job_nanoaod(fileset,
     mmap = executor_args.pop('mmap', False)
     schema = executor_args.pop('schema', None)
     nano = executor_args.pop('nano', False)
-    if nano:
-        warnings.warn("Please use 'schema': processor.NanoEvents rather than 'nano': True to enable awkward0 NanoEvents processing", DeprecationWarning)
-        schema = NanoEvents
+ 
     cachestrategy = executor_args.pop('cachestrategy', None)
     pi_compression = executor_args.pop('processor_compression', 1)
     if pi_compression is None:
