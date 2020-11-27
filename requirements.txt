@@ -1,5 +1,4 @@
-coffea==0.6.37
-mplhep==0.1.14
+coffea==0.6.46
 htcondor
 dynaconf
 pyyaml
