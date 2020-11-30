@@ -9,7 +9,8 @@ from coffea.analysis_objects import JaggedCandidateArray
 import coffea.processor as processor
 from awkward import JaggedArray
 import numpy as np
-from bucoffea.helpers import object_overlap
+from bucoffea.helpers import object_overlap, sigmoid3
+from bucoffea.helpers.dataset import extract_year
 from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.helpers.gen import find_first_parent
 from bucoffea.monojet.definitions import accu_int, defaultdict_accumulator_of_empty_column_accumulator_float16, defaultdict_accumulator_of_empty_column_accumulator_int64,defaultdict_accumulator_of_empty_column_accumulator_bool
@@ -313,75 +314,46 @@ def vbfhinv_regions(cfg):
 
     regions.update(tmp)
 
-    if cfg and  cfg.RUN.TRIGGER_STUDY:
+    if cfg and cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
         # num = numerator, den = denominator
         # Single Mu region: Remove mjj cut, add SingleMu trigger, toggle MET trigger
         tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts)
-        tr_1m_num_cuts.remove('mjj')
+        tr_1m_num_cuts.remove('recoil')
         tr_1m_num_cuts.append('trig_mu')
         tr_1m_num_cuts.append('mu_pt_trig_safe')
 
+        # Single mu region for three cases:
+        # 1. Two central jets with |eta| < 2.5
+        # 2. One central jet with |eta| < 2.5 + one forward jet with |eta| > 2.5
+        # 3. Combination of 1 and 2 (everything except no HF-HF)
         regions['tr_1m_num_two_central_jets'] = tr_1m_num_cuts + ['two_central_jets']
-        regions['tr_1m_num_two_forward_jets'] = tr_1m_num_cuts + ['two_forward_jets']
         regions['tr_1m_num_one_jet_forward_one_jet_central'] = tr_1m_num_cuts + ['one_jet_forward_one_jet_central']
+        regions['tr_1m_num_inclusive_nohfhf'] = tr_1m_num_cuts + ['inclusive_nohfhf']
 
         tr_1m_den_cuts = copy.deepcopy(tr_1m_num_cuts)
         tr_1m_den_cuts.remove('trig_met')
 
         regions['tr_1m_den_two_central_jets'] = tr_1m_den_cuts + ['two_central_jets']
-        regions['tr_1m_den_two_forward_jets'] = tr_1m_den_cuts + ['two_forward_jets']
         regions['tr_1m_den_one_jet_forward_one_jet_central'] = tr_1m_den_cuts + ['one_jet_forward_one_jet_central']
+        regions['tr_1m_den_inclusive_nohfhf'] = tr_1m_den_cuts + ['inclusive_nohfhf']
 
         # Double Mu region: Remove mjj cut, toggle MET trigger
         tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts)
-        tr_2m_num_cuts.remove('mjj')
+        tr_2m_num_cuts.remove('recoil')
         tr_2m_num_cuts.append('trig_mu')
         tr_2m_num_cuts.append('mu_pt_trig_safe')
 
         regions['tr_2m_num_two_central_jets'] = tr_2m_num_cuts + ['two_central_jets']
-        regions['tr_2m_num_two_forward_jets'] = tr_2m_num_cuts + ['two_forward_jets']
         regions['tr_2m_num_one_jet_forward_one_jet_central'] = tr_2m_num_cuts + ['one_jet_forward_one_jet_central']
+        regions['tr_2m_num_inclusive_nohfhf'] = tr_2m_num_cuts + ['inclusive_nohfhf']
 
         tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)
         tr_2m_den_cuts.remove('trig_met')
 
         regions['tr_2m_den_two_central_jets'] = tr_2m_den_cuts + ['two_central_jets']
-        regions['tr_2m_den_two_forward_jets'] = tr_2m_den_cuts + ['two_forward_jets']
         regions['tr_2m_den_one_jet_forward_one_jet_central'] = tr_2m_den_cuts + ['one_jet_forward_one_jet_central']
-
-        # Single Electron region: Remove mjj cut, toggle MET trigger
-        tr_1e_num_cuts = copy.deepcopy(cr_1e_cuts)
-        tr_1e_num_cuts.remove('mjj')
-        tr_1e_num_cuts.append('trig_met')
-
-        regions['tr_1e_num_two_central_jets'] = tr_1e_num_cuts + ['two_central_jets']
-        regions['tr_1e_num_two_forward_jets'] = tr_1e_num_cuts + ['two_forward_jets']
-        regions['tr_1e_num_one_jet_forward_one_jet_central'] = tr_1e_num_cuts + ['one_jet_forward_one_jet_central']
-
-        tr_1e_den_cuts = copy.deepcopy(tr_1e_num_cuts)
-        tr_1e_den_cuts.remove('trig_met')
-
-        regions['tr_1e_den_two_central_jets'] = tr_1e_den_cuts + ['two_central_jets']
-        regions['tr_1e_den_two_forward_jets'] = tr_1e_den_cuts + ['two_forward_jets']
-        regions['tr_1e_den_one_jet_forward_one_jet_central'] = tr_1e_den_cuts + ['one_jet_forward_one_jet_central']
-
-        # Double Electron region: Remove mjj cut, toggle MET trigger
-        tr_2e_num_cuts = copy.deepcopy(cr_2e_cuts)
-        tr_2e_num_cuts.remove('mjj')
-        tr_2e_num_cuts.append('trig_met')
-
-        regions['tr_2e_num_two_central_jets'] = tr_2e_num_cuts + ['two_central_jets']
-        regions['tr_2e_num_two_forward_jets'] = tr_2e_num_cuts + ['two_forward_jets']
-        regions['tr_2e_num_one_jet_forward_one_jet_central'] = tr_2e_num_cuts + ['one_jet_forward_one_jet_central']
-
-        tr_2e_den_cuts = copy.deepcopy(tr_2e_num_cuts)
-        tr_2e_den_cuts.remove('trig_met')
-
-        regions['tr_2e_den_two_central_jets'] = tr_2e_den_cuts + ['two_central_jets']
-        regions['tr_2e_den_two_forward_jets'] = tr_2e_den_cuts + ['two_forward_jets']
-        regions['tr_2e_den_one_jet_forward_one_jet_central'] = tr_2e_den_cuts + ['one_jet_forward_one_jet_central']
-
+        regions['tr_2m_den_inclusive_nohfhf'] = tr_2m_den_cuts + ['inclusive_nohfhf']
 
     return regions
 
@@ -397,3 +369,65 @@ def ak4_em_frac_weights(weights, diak4, evaluator):
     weights.add('em_frac_weight', em_frac_weight)
 
     return weights
+
+def met_trigger_sf(weights, diak4, df, apply_categorized=True):
+    '''
+    Data/MC SF for the MET trigger, determined as the ratio of 
+    two sigmoid functions which are fit to data and MC efficiencies.
+    If apply_categorized is set to True, two categories of SF will be applied,
+    depending on the leading two jets. Otherwise, one single SF will be applied.
+    '''
+    year = extract_year(df['dataset'])
+    x = df['recoil_pt']
+    
+    data_params = {
+        'two_central_jets' : {
+            2017 : (0.044, 164.881, 0.990),
+            2018 : (0.045, 176.266, 0.993)
+        },
+        'mixed' : {
+            2017 : (0.039, 173.351, 0.986),
+            2018 : (0.041, 182.607, 0.990)
+        },
+        'inclusive' : {
+            2017 : (0.043, 167.896, 0.99),
+            2018 : (0.044, 178.364, 0.992)
+        }
+    }
+
+    mc_params = {
+        'two_central_jets' : {
+            2017 : (0.046, 144.881, 0.994),
+            2018 : (0.052, 152.838, 0.993)
+        },
+        'mixed' : {
+            2017 : (0.039, 154.035, 0.992),
+            2018 : (0.048, 159.329, 0.992)
+        },
+        'inclusive' : {
+            2017 : (0.044, 147.932, 0.994),
+            2018 : (0.051, 155.016, 0.993)
+        }
+    }
+
+    if year == 2016:
+        sf = np.ones(df.size)
+    else:
+        if apply_categorized:
+            # Two categories: Two central jets & others
+            two_central_jets = (diak4.i0.abseta < 2.5) & (diak4.i1.abseta < 2.5)
+            two_hf_jets = (diak4.i0.abseta > 3.0) & (diak4.i1.eta > 3.0)
+            one_jet_forward_one_jet_central = (~two_central_jets) & (~two_hf_jets)
+            
+            sf = np.where(
+                two_central_jets,
+                sigmoid3(x, *data_params['two_central_jets'][year]) / sigmoid3(x, *mc_params['two_central_jets'][year]),
+                sigmoid3(x, *data_params['mixed'][year]) / sigmoid3(x, *mc_params['mixed'][year])
+            ) 
+    
+        else:
+            sf = sigmoid3(x, *data_params['inclusive'][year]) / sigmoid3(x, *mc_params['inclusive'][year])
+
+    sf[np.isnan(sf) | np.isinf(sf)] == 1
+    weights.add("trigger_met", sf)
+

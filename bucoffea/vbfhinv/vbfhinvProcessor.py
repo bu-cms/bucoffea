@@ -52,7 +52,8 @@ from bucoffea.monojet.definitions import (
 from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,
                                            vbfhinv_regions,
-                                           ak4_em_frac_weights
+                                           ak4_em_frac_weights,
+                                           met_trigger_sf
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -320,12 +321,14 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
-            two_central_jets = (np.abs(diak4.i0.eta) <= 2.4) & (np.abs(diak4.i1.eta) <= 2.4)
-            two_forward_jets = (np.abs(diak4.i0.eta) > 2.4) & (np.abs(diak4.i1.eta) > 2.4)
-            one_jet_forward_one_jet_central = (~two_central_jets) & (~two_forward_jets)
+            two_central_jets = (np.abs(diak4.i0.eta) <= 2.5) & (np.abs(diak4.i1.eta) <= 2.5)
+            two_hf_jets = (np.abs(diak4.i0.eta) > 3.0) & (np.abs(diak4.i1.eta) > 3.0)
+            one_jet_forward_one_jet_central = (~two_central_jets) & (~two_hf_jets)
+            # Combination of the other two categories: Central-central + Central-endcap (no HF-HF)
+            inclusive_nohfhf = two_central_jets | one_jet_forward_one_jet_central
             selection.add('two_central_jets', two_central_jets.any())
-            selection.add('two_forward_jets', two_forward_jets.any())
             selection.add('one_jet_forward_one_jet_central', one_jet_forward_one_jet_central.any())
+            selection.add('inclusive_nohfhf', inclusive_nohfhf.any())
 
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()
@@ -457,7 +460,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     trigger_weight[np.isnan(trigger_weight)] = 1
                     region_weights.add('trigger', trigger_weight)
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
-                    region_weights.add('trigger_met', evaluator["trigger_met"](df['recoil_pt']))
+                    met_trigger_sf(region_weights, diak4, df, apply_categorized=cfg.RUN.APPLY_CATEGORIZED_SF)
                 elif re.match(r'cr_g.*', region):
                     photon_trigger_sf(region_weights, photons, df)
 
