@@ -323,10 +323,6 @@ def vbfhinv_regions(cfg):
         tr_1m_num_cuts.append('trig_mu')
         tr_1m_num_cuts.append('mu_pt_trig_safe')
 
-        # Single mu region for three cases:
-        # 1. Two central jets with |eta| < 2.5
-        # 2. One central jet with |eta| < 2.5 + one forward jet with |eta| > 2.5
-        # 3. Combination of 1 and 2 (everything except no HF-HF)
         regions['tr_1m_num_two_central_jets'] = tr_1m_num_cuts + ['two_central_jets']
         regions['tr_1m_num_two_forward_jets'] = tr_1m_num_cuts + ['two_forward_jets']
         regions['tr_1m_num_one_jet_forward_one_jet_central'] = tr_1m_num_cuts + ['one_jet_forward_one_jet_central']
