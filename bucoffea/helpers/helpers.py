@@ -172,6 +172,12 @@ def sigmoid(x,a,b,c,d):
     """
     return c + (d-c) / (1 + np.exp(-a * (x-b)))
 
+def sigmoid3(x,a,b,c):
+    '''
+    Sigmoid function with three parameters.
+    '''
+    return c / (1 + np.exp(-a * (x-b)))
+
 def exponential(x, a, b, c):
     """Exponential function for scale factor fits."""
     return a * np.exp(-b * x) + c

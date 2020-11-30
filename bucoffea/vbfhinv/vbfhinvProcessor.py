@@ -52,7 +52,8 @@ from bucoffea.monojet.definitions import (
 from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,
                                            vbfhinv_regions,
-                                           ak4_em_frac_weights
+                                           ak4_em_frac_weights,
+                                           met_trigger_sf
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -457,7 +458,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     trigger_weight[np.isnan(trigger_weight)] = 1
                     region_weights.add('trigger', trigger_weight)
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
-                    region_weights.add('trigger_met', evaluator["trigger_met"](df['recoil_pt']))
+                    met_trigger_sf(region_weights, diak4, df, apply_categorized=cfg.RUN.APPLY_CATEGORIZED_SF)
                 elif re.match(r'cr_g.*', region):
                     photon_trigger_sf(region_weights, photons, df)
 
