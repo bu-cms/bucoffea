@@ -51,7 +51,6 @@ def datasets(year, unblind=False):
 
 
 def legacy_dataset_name(dataset):
-
     m = re.match(f"DMSimp_(monojet|monow|monoz)_NLO_FXFX_(Axial|Vector)_GQ([0-9,p]*)_GDM([0-9,p]*)_MY1[_,-]([0-9,p]*)_MXd[_,-]([0-9,p]*).*", dataset)
     if m:
         channel, coupling, gq, gdm, mmed, mdm = m.groups()
@@ -76,13 +75,15 @@ def legacy_dataset_name(dataset):
         mlq, ylq = m.groups()
         return f"lq_m{mlq}_d{ylq}"
 
-    m = re.match("VBF_HToInvisible_M(\d+)_pow_pythia8_201[0-9]", dataset)
+
+    m = re.match("VBF_HToInvisible_M(\d+)(_PSweights)?_pow_pythia8_201[0-9]", dataset)
     if m:
         mh = m.groups()[0]
         if mh=="125":
             return "vbf"
         else:
             return f"vbf{mh}"
+
     m = re.match("ZH_ZToQQ_HToInvisible_M(\d+)_pow_pythia8_201[0-9]", dataset)
     if m:
         mh = m.groups()[0]
