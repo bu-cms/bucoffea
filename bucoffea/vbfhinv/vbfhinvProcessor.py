@@ -321,14 +321,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
-            two_central_jets = (np.abs(diak4.i0.eta) <= 2.5) & (np.abs(diak4.i1.eta) <= 2.5)
-            two_hf_jets = (np.abs(diak4.i0.eta) > 3.0) & (np.abs(diak4.i1.eta) > 3.0)
+            two_central_jets = (np.abs(diak4.i0.eta) <= 2.4) & (np.abs(diak4.i1.eta) <= 2.4)
+            two_forward_jets = (np.abs(diak4.i0.eta) > 2.4) & (np.abs(diak4.i1.eta) > 2.4)
             one_jet_forward_one_jet_central = (~two_central_jets) & (~two_hf_jets)
-            # Combination of the other two categories: Central-central + Central-endcap (no HF-HF)
-            inclusive_nohfhf = two_central_jets | one_jet_forward_one_jet_central
             selection.add('two_central_jets', two_central_jets.any())
+            selection.add('two_forward_jets', two_forward_jets.any())
             selection.add('one_jet_forward_one_jet_central', one_jet_forward_one_jet_central.any())
-            selection.add('inclusive_nohfhf', inclusive_nohfhf.any())
 
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()

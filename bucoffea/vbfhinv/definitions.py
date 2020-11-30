@@ -319,7 +319,7 @@ def vbfhinv_regions(cfg):
         # num = numerator, den = denominator
         # Single Mu region: Remove mjj cut, add SingleMu trigger, toggle MET trigger
         tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts)
-        tr_1m_num_cuts.remove('recoil')
+        tr_1m_num_cuts.remove('mjj')
         tr_1m_num_cuts.append('trig_mu')
         tr_1m_num_cuts.append('mu_pt_trig_safe')
 
@@ -328,33 +328,65 @@ def vbfhinv_regions(cfg):
         # 2. One central jet with |eta| < 2.5 + one forward jet with |eta| > 2.5
         # 3. Combination of 1 and 2 (everything except no HF-HF)
         regions['tr_1m_num_two_central_jets'] = tr_1m_num_cuts + ['two_central_jets']
+        regions['tr_1m_num_two_forward_jets'] = tr_1m_num_cuts + ['two_forward_jets']
         regions['tr_1m_num_one_jet_forward_one_jet_central'] = tr_1m_num_cuts + ['one_jet_forward_one_jet_central']
-        regions['tr_1m_num_inclusive_nohfhf'] = tr_1m_num_cuts + ['inclusive_nohfhf']
 
         tr_1m_den_cuts = copy.deepcopy(tr_1m_num_cuts)
         tr_1m_den_cuts.remove('trig_met')
 
         regions['tr_1m_den_two_central_jets'] = tr_1m_den_cuts + ['two_central_jets']
+        regions['tr_1m_den_two_forward_jets'] = tr_1m_den_cuts + ['two_forward_jets']
         regions['tr_1m_den_one_jet_forward_one_jet_central'] = tr_1m_den_cuts + ['one_jet_forward_one_jet_central']
-        regions['tr_1m_den_inclusive_nohfhf'] = tr_1m_den_cuts + ['inclusive_nohfhf']
 
         # Double Mu region: Remove mjj cut, toggle MET trigger
         tr_2m_num_cuts = copy.deepcopy(cr_2m_cuts)
-        tr_2m_num_cuts.remove('recoil')
+        tr_2m_num_cuts.remove('mjj')
         tr_2m_num_cuts.append('trig_mu')
         tr_2m_num_cuts.append('mu_pt_trig_safe')
 
         regions['tr_2m_num_two_central_jets'] = tr_2m_num_cuts + ['two_central_jets']
+        regions['tr_2m_num_two_forward_jets'] = tr_2m_num_cuts + ['two_forward_jets']
         regions['tr_2m_num_one_jet_forward_one_jet_central'] = tr_2m_num_cuts + ['one_jet_forward_one_jet_central']
-        regions['tr_2m_num_inclusive_nohfhf'] = tr_2m_num_cuts + ['inclusive_nohfhf']
 
         tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)
         tr_2m_den_cuts.remove('trig_met')
 
         regions['tr_2m_den_two_central_jets'] = tr_2m_den_cuts + ['two_central_jets']
+        regions['tr_2m_den_two_forward_jets'] = tr_2m_den_cuts + ['two_forward_jets']
         regions['tr_2m_den_one_jet_forward_one_jet_central'] = tr_2m_den_cuts + ['one_jet_forward_one_jet_central']
-        regions['tr_2m_den_inclusive_nohfhf'] = tr_2m_den_cuts + ['inclusive_nohfhf']
 
+        # Single Electron region: Remove mjj cut, toggle MET trigger
+        tr_1e_num_cuts = copy.deepcopy(cr_1e_cuts)
+        tr_1e_num_cuts.remove('mjj')
+        tr_1e_num_cuts.append('trig_met')
+
+        regions['tr_1e_num_two_central_jets'] = tr_1e_num_cuts + ['two_central_jets']
+        regions['tr_1e_num_two_forward_jets'] = tr_1e_num_cuts + ['two_forward_jets']
+        regions['tr_1e_num_one_jet_forward_one_jet_central'] = tr_1e_num_cuts + ['one_jet_forward_one_jet_central']
+
+        tr_1e_den_cuts = copy.deepcopy(tr_1e_num_cuts)
+        tr_1e_den_cuts.remove('trig_met')
+
+        regions['tr_1e_den_two_central_jets'] = tr_1e_den_cuts + ['two_central_jets']
+        regions['tr_1e_den_two_forward_jets'] = tr_1e_den_cuts + ['two_forward_jets']
+        regions['tr_1e_den_one_jet_forward_one_jet_central'] = tr_1e_den_cuts + ['one_jet_forward_one_jet_central']
+
+        # Double Electron region: Remove mjj cut, toggle MET trigger
+        tr_2e_num_cuts = copy.deepcopy(cr_2e_cuts)
+        tr_2e_num_cuts.remove('mjj')
+        tr_2e_num_cuts.append('trig_met')
+
+        regions['tr_2e_num_two_central_jets'] = tr_2e_num_cuts + ['two_central_jets']
+        regions['tr_2e_num_two_forward_jets'] = tr_2e_num_cuts + ['two_forward_jets']
+        regions['tr_2e_num_one_jet_forward_one_jet_central'] = tr_2e_num_cuts + ['one_jet_forward_one_jet_central']
+
+        tr_2e_den_cuts = copy.deepcopy(tr_2e_num_cuts)
+        tr_2e_den_cuts.remove('trig_met')
+
+        regions['tr_2e_den_two_central_jets'] = tr_2e_den_cuts + ['two_central_jets']
+        regions['tr_2e_den_two_forward_jets'] = tr_2e_den_cuts + ['two_forward_jets']
+        regions['tr_2e_den_one_jet_forward_one_jet_central'] = tr_2e_den_cuts + ['one_jet_forward_one_jet_central']
+    
     return regions
 
 def ak4_em_frac_weights(weights, diak4, evaluator):
