@@ -138,7 +138,8 @@ def plot_settings():
         },
         'sr_j' : {
             'recoil' : {
-                'ylim' : (1e-3,1e4)
+                'ylim' : (1e-3,1e4),
+                'xlim' : (250,1550)
                 },
             'recoil_phi' : {
                 'ylim' : (1e3,1e6)
