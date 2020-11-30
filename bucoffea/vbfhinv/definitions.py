@@ -388,9 +388,32 @@ def vbfhinv_regions(cfg):
 def ak4_em_frac_weights(weights, diak4, evaluator):
     '''Apply SF for EM fraction cut on jets. Event weight = (Leading jet weight) * (Trailing jet weight)'''
     # Separate weights for the two leading jets:
-    # If jet pt < 100 GeV, use the SF from the lowest pt bin
-    w_ak40 = evaluator['ak4_em_frac_sf'](diak4.i0.pt, diak4.i0.eta).prod()
-    w_ak41 = evaluator['ak4_em_frac_sf'](diak4.i1.pt, diak4.i1.eta).prod()
+    # Calculate each jet weight based on the jet pt, if the jet is not in the endcap, assign a weight of 1.
+    ak40_in_pos_endcap = ((diak4.i0.eta > 2.5) & (diak4.i0.eta < 3.0)).any()
+    ak40_in_neg_endcap = ((diak4.i0.eta > -3.0) & (diak4.i0.eta < -2.5)).any()
+    
+    ak41_in_pos_endcap = ((diak4.i1.eta > 2.5) & (diak4.i1.eta < 3.0)).any()
+    ak41_in_neg_endcap = ((diak4.i1.eta > -3.0) & (diak4.i1.eta < -2.5)).any()
+
+    w_ak40 = np.where(
+        ak40_in_pos_endcap,
+        evaluator['ak4_em_frac_sf_pos_endcap'](diak4.i0.pt).prod(),
+        np.where(
+            ak40_in_neg_endcap,
+            evaluator['ak4_em_frac_sf_neg_endcap'](diak4.i0.pt).prod(),
+            1.
+        )
+    )
+
+    w_ak41 = np.where(
+        ak41_in_pos_endcap,
+        evaluator['ak4_em_frac_sf_pos_endcap'](diak4.i1.pt).prod(),
+        np.where(
+            ak41_in_neg_endcap,
+            evaluator['ak4_em_frac_sf_neg_endcap'](diak4.i1.pt).prod(),
+            1.
+        )
+    )
 
     em_frac_weight = w_ak40 * w_ak41
 
