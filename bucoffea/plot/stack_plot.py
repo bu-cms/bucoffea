@@ -47,6 +47,7 @@ colors = {
     '.*QCD.*' : '#08306b',
     'GJets_HT.*' : '#fc4e2a',
     'GJets_DR-0p4.*' : '#fc4e2a',
+    'GJets_1j.*' : '#fc4e2a',
     'GJets_SM.*' : '#a76b51',
 
 
@@ -69,6 +70,7 @@ legend_labels = {
     },
     'Monojet/Mono-V': {
         'GJets_DR-0p4.*' : "$\\gamma$+jets",
+        'GJets_1j.*' : "$\\gamma$+jets",
         'DY.*' : "Z$\\rightarrow\\ell\\ell$",
         'WN*J.*LNu.*' : "W$\\rightarrow\\ell\\nu$",
         'ZJetsToNuNu.*.*' : "Z$\\rightarrow\\nu\\nu$"
@@ -95,11 +97,12 @@ class Style():
             'cr_2e_j' : 'Di-e CR, monojet',
             'cr_g_j' : 'Single-Photon CR, monojet',
             'sr_j' : 'Signal region, monojet',
-            'cr_1m_v' : 'Single-$\mu$ CR, mono-v',
-            'cr_2m_v' : 'Di-$\mu$ CR, mono-v',
-            'cr_1e_v' : 'Single-e CR, mono-v',
-            'cr_2e_v' : 'Di-e CR, mono-v',
-            'cr_g_v' : 'Single-Photon CR, mono-v',
+            'sr_tight_v' : 'Signal region, mono-V (tight)',
+            'cr_1m_tight_v' : 'Single-$\mu$ CR, mono-V (tight)',
+            'cr_2m_tight_v' : 'Di-$\mu$ CR, mono-V (tight)',
+            'cr_1e_tight_v' : 'Single-e CR, mono-V (tight)',
+            'cr_2e_tight_v' : 'Di-e CR, mono-V (tight)',
+            'cr_g_tight_v' : 'Single-Photon CR, mono-V (tight)',
             'sr_vbf' : 'Signal region, vbfhinv',
             'cr_1m_vbf' : 'Single-$\mu$ CR, vbfhinv',
             'cr_2m_vbf' : 'Di-$\mu$ CR, vbfhinv',
@@ -220,7 +223,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         'elinewidth': 1,
     }
     signal_err_opts = {
-        'linestyle':'-',
+        #'linestyle':'-',
         'color':'crimson',
         'elinewidth': 1,
     }
