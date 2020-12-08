@@ -504,7 +504,7 @@ class monojetProcessor(processor.ProcessorABC):
                 unmatched_leadak8 = leadak8[~leadak8_matched_mask]
                 for wp in ['loose','tight','medium']:
                     if re.match(f'.*_{wp}_v.*', region):
-                        if ('nomistag' in region) or wp=='medium': 
+                        if ('nomistag' in region) or wp=='medium':
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
                         #elif re.match(r'cr_g.*', region):
                         #    matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
@@ -637,6 +637,10 @@ class monojetProcessor(processor.ProcessorABC):
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
+
+                if not cfg.RUN.HISTOGRAM.get(name, True):
+                    return
+
                 if not ('dataset' in kwargs):
                     kwargs['dataset'] = dataset
                 output[name].fill(
