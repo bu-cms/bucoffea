@@ -743,7 +743,7 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
         if extract_year(df['dataset']) == 2016:
             qcd_nlo = evaluator["qcd_nlo_w_2016"](gen_v_pt)
         else:
-            qcd_nlo = evaluator["kfac_wjets_filter"](gen_v_pt)
+            qcd_nlo = evaluator["qcd_nlo_w_2017"](gen_v_pt)
         theory_weights =  qcd_nlo * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
         if df['is_lo_znunu']:
