@@ -240,9 +240,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', taus.counts==0)
         selection.add('at_least_one_tau', taus.counts>0)
-        selection.add('veto_b', bjets.counts==0)
         selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
+
+        # B jets are treated using veto weights
+        # So accept them in MC, but reject in data
+        if df['is_data']:
+            selection.add('veto_b', bjets.counts==0)
+        else:
+            selection.add('veto_b', pass_all)
 
         selection.add('dpfcalo_sr',np.abs(df['dPFCaloSR']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('dpfcalo_cr',np.abs(df['dPFCaloCR']) < cfg.SELECTION.SIGNAL.DPFCALO)
