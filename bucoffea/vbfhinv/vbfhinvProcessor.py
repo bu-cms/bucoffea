@@ -636,6 +636,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
 
+            # b-tag weight up and down variations
+            if cfg.RUN.BTAG_STUDY:
+                if not df['is_data']:
+                    rw = region_weights.partial_weight(exclude=exclude+['bveto'])
+                    ezfill('mjj_bveto_up',    mjj=df['mjj'][mask],  weight=(rw*(1-bsf_variations['up']).prod())[mask])
+                    ezfill('mjj_bveto_down',  mjj=df['mjj'][mask],  weight=(rw*(1-bsf_variations['down']).prod())[mask])
 
             if gen_v_pt is not None:
                 ezfill('gen_vpt', vpt=gen_v_pt[mask], weight=df['Generator_weight'][mask])
