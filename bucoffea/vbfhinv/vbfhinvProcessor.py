@@ -49,6 +49,9 @@ from bucoffea.monojet.definitions import (
                                           photon_impurity_weights,
                                           data_driven_qcd_dataset
                                           )
+
+from bucoffea.monojet.monojetProcessor import btag_weights
+
 from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,
                                            vbfhinv_regions,
@@ -102,11 +105,6 @@ def trigger_selection(selection, df, cfg):
     selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
 
     return selection
-
-
-
-
-
 
 class vbfhinvProcessor(processor.ProcessorABC):
     def __init__(self, blind=False):
@@ -402,6 +400,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 weights.add('prefire', np.ones(df.size))
 
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg)
+
+            # B jet veto weights
+            bsf_variations = btag_weights(bjets,cfg)
+            weights.add("bveto", (1-bsf_variations["central"]).prod())
+
             weights = pileup_weights(weights, df, evaluator, cfg)
             weights = ak4_em_frac_weights(weights, diak4, evaluator)
             if not (gen_v_pt is None):

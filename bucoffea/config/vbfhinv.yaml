@@ -288,6 +288,8 @@ era2016:
       id: Tau_idDecayModeNewDMs
       iso: Tau_idDeepTau2017v2p1VSjet
   sf:
+    deepcsv:
+      file: data/sf/btag/DeepCSV_102XSF_WP_V1.csv
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
@@ -419,6 +421,8 @@ era2017:
         medium: 0.4941
         tight: 0.8001
   sf:
+    deepcsv:
+      file: data/sf/btag/DeepCSV_94XSF_WP_V4_B_F.csv
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
@@ -547,6 +551,9 @@ era2018:
         medium: 0.4184
         tight: 0.7527
   sf:
+    deepcsv:
+      file: data/sf/btag/DeepCSV_102XSF_WP_V1.csv
+
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2018_egammaEffi_txt_EGM2D_updatedAll.root
