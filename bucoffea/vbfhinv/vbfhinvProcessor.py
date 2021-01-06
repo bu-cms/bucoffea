@@ -38,7 +38,8 @@ from bucoffea.helpers.gen import (
                                   fill_gen_v_info
                                  )
 from bucoffea.helpers.weights import (
-                                  get_veto_weights
+                                  get_veto_weights,
+                                  btag_weights
                                  )
 from bucoffea.monojet.definitions import (
                                           candidate_weights,
@@ -49,8 +50,6 @@ from bucoffea.monojet.definitions import (
                                           photon_impurity_weights,
                                           data_driven_qcd_dataset
                                           )
-
-from bucoffea.monojet.monojetProcessor import btag_weights
 
 from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,

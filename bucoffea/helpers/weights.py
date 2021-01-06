@@ -3,8 +3,10 @@ import re
 import coffea.processor as processor
 import numpy as np
 
+from coffea.btag_tools.btagscalefactor import BTagScaleFactor
 from bucoffea.helpers.dataset import extract_year
 from bucoffea.helpers.gen import get_gen_photon_pt
+from bucoffea.helpers.paths import bucoffea_path
 
 def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=False):
     """
@@ -156,3 +158,36 @@ def diboson_nlo_weights(df, evaluator, gen):
     dw[pt<0] = 0
     df['weight_diboson_nlo'] = w
     df['weight_diboson_nlo_rel_unc'] = dw/w
+
+def btag_weights(bjets, cfg):
+    # Evaluate weight variations
+    weight_variations = {}
+
+    # Only calculate for DeepCSV
+    if cfg.BTAG.ALGO != "deepcsv":
+        weight_variations["central"] = bjets.pt.ones_like()
+        weight_variations["up"] = bjets.pt.ones_like()
+        weight_variations["down"] = bjets.pt.ones_like()
+        return weight_variations
+
+    # Heavy lifting done by coffea implementation
+    bsf = BTagScaleFactor(
+                          filename=bucoffea_path(cfg.SF.DEEPCSV.FILE),
+                          workingpoint=cfg.BTAG.WP.upper(),
+                          methods='comb,comb,incl' # Comb for b and c flavors, incl for light
+                          )
+
+
+    for variation in ["central","up","down"]:
+        weights = bsf.eval(
+                        systematic=variation,
+                        flavor=bjets.hadflav,
+                        abseta=bjets.abseta,
+                        pt=bjets.pt)
+
+        # Cap the weights just in case
+        weights[np.abs(weights)>5] = 1
+
+        weight_variations[variation] = weights
+
+    return weight_variations
