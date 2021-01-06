@@ -38,7 +38,8 @@ from bucoffea.helpers.gen import (
                                   fill_gen_v_info
                                  )
 from bucoffea.helpers.weights import (
-                                  get_veto_weights
+                                  get_veto_weights,
+                                  btag_weights
                                  )
 from bucoffea.monojet.definitions import (
                                           candidate_weights,
@@ -49,6 +50,7 @@ from bucoffea.monojet.definitions import (
                                           photon_impurity_weights,
                                           data_driven_qcd_dataset
                                           )
+
 from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,
                                            vbfhinv_regions,
@@ -102,11 +104,6 @@ def trigger_selection(selection, df, cfg):
     selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
 
     return selection
-
-
-
-
-
 
 class vbfhinvProcessor(processor.ProcessorABC):
     def __init__(self, blind=False):
@@ -242,9 +239,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', taus.counts==0)
         selection.add('at_least_one_tau', taus.counts>0)
-        selection.add('veto_b', bjets.counts==0)
         selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
+
+        # B jets are treated using veto weights
+        # So accept them in MC, but reject in data
+        if df['is_data']:
+            selection.add('veto_b', bjets.counts==0)
+        else:
+            selection.add('veto_b', pass_all)
 
         selection.add('dpfcalo_sr',np.abs(df['dPFCaloSR']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('dpfcalo_cr',np.abs(df['dPFCaloCR']) < cfg.SELECTION.SIGNAL.DPFCALO)
@@ -402,6 +405,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 weights.add('prefire', np.ones(df.size))
 
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg)
+
+            # B jet veto weights
+            bsf_variations = btag_weights(bjets,cfg)
+            weights.add("bveto", (1-bsf_variations["central"]).prod())
+
             weights = pileup_weights(weights, df, evaluator, cfg)
             weights = ak4_em_frac_weights(weights, diak4, evaluator)
             if not (gen_v_pt is None):
@@ -633,6 +641,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
 
+            # b-tag weight up and down variations
+            if cfg.RUN.BTAG_STUDY:
+                if not df['is_data']:
+                    rw = region_weights.partial_weight(exclude=exclude+['bveto'])
+                    ezfill('mjj_bveto_up',    mjj=df['mjj'][mask],  weight=(rw*(1-bsf_variations['up']).prod())[mask])
+                    ezfill('mjj_bveto_down',  mjj=df['mjj'][mask],  weight=(rw*(1-bsf_variations['down']).prod())[mask])
 
             if gen_v_pt is not None:
                 ezfill('gen_vpt', vpt=gen_v_pt[mask], weight=df['Generator_weight'][mask])

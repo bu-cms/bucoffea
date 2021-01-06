@@ -4,7 +4,6 @@ import re
 import numpy as np
 
 import coffea.processor as processor
-from coffea.btag_tools.btagscalefactor import BTagScaleFactor
 
 from dynaconf import settings as cfg
 from bucoffea.monojet.definitions import (
@@ -32,7 +31,8 @@ from bucoffea.helpers import (
                              )
 from bucoffea.helpers.weights import (
                               get_veto_weights,
-                              diboson_nlo_weights
+                              diboson_nlo_weights,
+                              btag_weights
                              )
 
 from bucoffea.helpers.dataset import (
@@ -108,39 +108,6 @@ def trigger_selection(selection, df, cfg):
         selection.add('trig_mu', mask_or(df, cfg.TRIGGERS.MUON.SINGLE))
 
     return selection
-
-def btag_weights(bjets, cfg):
-    # Evaluate weight variations
-    weight_variations = {}
-
-    # Only calculate for DeepCSV
-    if cfg.BTAG.ALGO != "deepcsv":
-        weight_variations["central"] = bjets.pt.ones_like()
-        weight_variations["up"] = bjets.pt.ones_like()
-        weight_variations["down"] = bjets.pt.ones_like()
-        return weight_variations
-
-    # Heavy lifting done by coffea implementation
-    bsf = BTagScaleFactor(
-                          filename=bucoffea_path(cfg.SF.DEEPCSV.FILE),
-                          workingpoint=cfg.BTAG.WP.upper(),
-                          methods='comb,comb,incl' # Comb for b and c flavors, incl for light
-                          )
-
-
-    for variation in ["central","up","down"]:
-        weights = bsf.eval(
-                        systematic=variation,
-                        flavor=bjets.hadflav,
-                        abseta=bjets.abseta,
-                        pt=bjets.pt)
-
-        # Cap the weights just in case
-        weights[np.abs(weights)>5] = 1
-
-        weight_variations[variation] = weights
-
-    return weight_variations
 
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
