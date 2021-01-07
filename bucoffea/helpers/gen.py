@@ -294,6 +294,38 @@ def setup_lhe_cleaned_genjets(df):
 
     return genjets[(~genjets.match(lhe_leps_gams,deltaRCut=0.4))]
 
+def setup_lhe_candidates(df):
+    lhe = JaggedCandidateArray.candidatesfromcounts(
+            df['nLHEPart'],
+            pt=df['LHEPart_pt'],
+            eta=df['LHEPart_eta'],
+            phi=df['LHEPart_phi'],
+            mass=df['LHEPart_mass'],
+            pdg=df['LHEPart_pdgId'],
+        )
+    return lhe
+def setup_lhe_cleaned_gen_fatjets(df):
+    genjetsak8 = JaggedCandidateArray.candidatesfromcounts(
+            df['nGenJetAK8'],
+            pt=df['GenJetAK8_pt'],
+            eta=df['GenJetAK8_eta'],
+            abseta=np.abs(df['GenJetAK8_eta']),
+            phi=df['GenJetAK8_phi'],
+            mass=df['GenJetAK8_mass']
+        )
+    lhe = JaggedCandidateArray.candidatesfromcounts(
+                df['nLHEPart'],
+                pt=df['LHEPart_pt'],
+                eta=df['LHEPart_eta'],
+                phi=df['LHEPart_phi'],
+                mass=df['LHEPart_mass'],
+                pdg=df['LHEPart_pdgId'],
+            )
+
+    lhe_leps_gams = lhe[(islep(lhe.pdg) & ~isnu(lhe.pdg)) | (lhe.pdg==22)]
+
+    return genjetsak8
+
 
 def isnu(pdg):
     """Returns True if the PDG ID represents a neutrino."""
