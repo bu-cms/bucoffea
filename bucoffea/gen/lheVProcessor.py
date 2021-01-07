@@ -1,52 +1,23 @@
+import copy
+
 import coffea.processor as processor
 import numpy as np
-from coffea import hist
-
-from bucoffea.helpers import min_dphi_jet_met, dphi
+from bucoffea.helpers import dphi, min_dphi_jet_met
 from bucoffea.helpers.dataset import (is_lo_g, is_lo_g_ewk, is_lo_w, is_lo_z,
-                                      is_nlo_g,is_nlo_g_ewk, is_nlo_w, is_nlo_z,)
+                                      is_nlo_g, is_nlo_g_ewk, is_nlo_w,
+                                      is_nlo_z)
 from bucoffea.helpers.gen import (fill_gen_v_info,
                                   setup_dressed_gen_candidates,
-                                  setup_gen_candidates,setup_lhe_cleaned_genjets)
+                                  setup_gen_candidates, setup_lhe_candidates,
+                                  setup_lhe_cleaned_gen_fatjets,
+                                  setup_lhe_cleaned_genjets)
+from coffea import hist
 
 Hist = hist.Hist
 Bin = hist.Bin
 Cat = hist.Cat
 
-def vbf_selection(vphi, dijet, genjets):
-    selection = processor.PackedSelection()
-    selection.add(
-                  'two_jets',
-                  dijet.counts>0
-                  )
-    selection.add(
-                  'leadak4_pt_eta',
-                  (dijet.i0.pt.max() > 80) & (np.abs(dijet.i0.eta.max()) < 5.0)
-                  )
-    selection.add(
-                  'trailak4_pt_eta',
-                  (dijet.i1.pt.max() > 40) & (np.abs(dijet.i1.eta.max()) < 5.0)
-                  )
-    selection.add(
-                  'hemisphere',
-                  (dijet.i0.eta.max()*dijet.i1.eta.max() < 0)
-                  )
-    selection.add(
-                  'mindphijr',
-                  min_dphi_jet_met(genjets, vphi, njet=4, ptmin=30, etamax=5.0) > 0.5
-                  )
-    selection.add(
-                  'detajj',
-                  np.abs(dijet.i0.eta-dijet.i1.eta).max() > 1
-                  )
-    selection.add(
-                  'dphijj',
-                  dphi(dijet.i0.phi,dijet.i1.phi).min() < 1.5
-                  )
-
-    return selection
-
-def monojet_selection(vphi, genjets):
+def selection(vphi, genjets, fatjets,lhe_charged_leps):
     selection = processor.PackedSelection()
 
     selection.add(
@@ -62,7 +33,52 @@ def monojet_selection(vphi, genjets):
                   min_dphi_jet_met(genjets, vphi, njet=4, ptmin=30) > 0.5
                   )
 
+    selection.add(
+                  'at_least_one_fat_jet',
+                  fatjets.counts>0
+                  )
+    selection.add(
+                  'leadak8_pt_eta',
+                  (fatjets.pt.max() > 250) & (np.abs(fatjets[fatjets.pt.argmax()].eta.max()) < 2.4)
+                  )
+    msd = fatjets[fatjets.pt.argmax()].mass.max()
+    selection.add(
+                  'leadak8_mass',
+                  (msd <65) & (msd<120)
+                  )
+    selection.add(
+                  'no_forward_leps',
+                  ~(np.abs(lhe_charged_leps.eta)>2.5).any()
+                  )
+
     return selection
+
+
+
+regions = {
+    'monojet' : [
+                 'at_least_one_jet',
+                 'leadak4_pt_eta',
+                 'mindphijr'
+                 ],
+    'monov' : [
+                'at_least_one_fat_jet',
+                'leadak8_pt_eta',
+                'leadak8_mass',
+                'mindphijr'
+                ],
+}
+
+regions['monov_nomass'] = copy.deepcopy(regions['monov'])
+regions['monov_nomass'].remove('leadak8_mass')
+
+tmp = {}
+for region in regions.keys():
+    requirements = copy.deepcopy(regions[region])
+    tmp[region+"_central"] = requirements
+    tmp[region+"_central"].append("no_forward_leps")
+regions.update(tmp)
+
 
 
 class lheVProcessor(processor.ProcessorABC):
@@ -70,26 +86,18 @@ class lheVProcessor(processor.ProcessorABC):
 
         # Histogram setup
         dataset_ax = Cat("dataset", "Primary dataset")
+        region_ax = Cat("region", "Region")
 
-        vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 50, 0, 2000)
-        jpt_ax = Bin("jpt",r"$p_{T}^{j}$ (GeV)", 50, 0, 2000)
-        mjj_ax = Bin("mjj",r"$m(jj)$ (GeV)", 75, 0, 7500)
+        vpt_ax = Bin("vpt",r"$p_{T}^{V}$ (GeV)", 100, 0, 2000)
         res_ax = Bin("res",r"pt: dressed / stat1 - 1", 80,-0.2,0.2)
 
         items = {}
         for tag in ['stat1','dress','lhe','combined']:
-            items[f"gen_vpt_inclusive_{tag}"] = Hist("Counts",
-                                    dataset_ax,
-                                    vpt_ax)
-            items[f"gen_vpt_monojet_{tag}"] = Hist("Counts",
-                                    dataset_ax,
-                                    jpt_ax,
-                                    vpt_ax)
-            items[f"gen_vpt_vbf_{tag}"] = Hist("Counts",
-                                    dataset_ax,
-                                    jpt_ax,
-                                    mjj_ax,
-                                    vpt_ax)
+                items[f"gen_vpt_{tag}"] = Hist("Counts",
+                                        dataset_ax,
+                                        region_ax,
+                                        vpt_ax)
+
         items["resolution"] = Hist("Counts",
                                 dataset_ax,
                                 res_ax)
@@ -108,6 +116,14 @@ class lheVProcessor(processor.ProcessorABC):
         dataset = df['dataset']
 
         genjets = setup_lhe_cleaned_genjets(df)
+        genjets_ak8 = setup_lhe_cleaned_gen_fatjets(df)
+        lhe = setup_lhe_candidates(df)
+
+        lhe_charged_leps = lhe[
+                                (np.abs(lhe.pdg)==11)
+                                | (np.abs(lhe.pdg)==13)
+                                | (np.abs(lhe.pdg)==15)
+                                ]
 
         # Dilepton
         gen = setup_gen_candidates(df)
@@ -125,37 +141,18 @@ class lheVProcessor(processor.ProcessorABC):
 
         dijet = genjets[:,:2].distincts()
         mjj = dijet.mass.max()
+        nominal = df['Generator_weight']
         for tag in tags:
-            # Dijet for VBF
+            sel = selection(df[f'gen_v_phi_{tag}'], genjets, genjets_ak8, lhe_charged_leps)
+            for region, requirements in regions.items():
+                mask = sel.all(*requirements)
+                output[f'gen_vpt_{tag}'].fill(
+                                        dataset=dataset,
+                                        vpt=df[f'gen_v_pt_{tag}'][mask],
+                                        region=region,
+                                        weight=nominal[mask]
+                                        )
 
-            # Selection
-            vbf_sel = vbf_selection(df[f'gen_v_phi_{tag}'], dijet, genjets)
-            monojet_sel = monojet_selection(df[f'gen_v_phi_{tag}'], genjets)
-
-            nominal = df['Generator_weight']
-
-            output[f'gen_vpt_inclusive_{tag}'].fill(
-                                    dataset=dataset,
-                                    vpt=df[f'gen_v_pt_{tag}'],
-                                    weight=nominal
-                                    )
-            mask_vbf = vbf_sel.all(*vbf_sel.names)
-            output[f'gen_vpt_vbf_{tag}'].fill(
-                                    dataset=dataset,
-                                    vpt=df[f'gen_v_pt_{tag}'][mask_vbf],
-                                    jpt=genjets.pt.max()[mask_vbf],
-                                    mjj = mjj[mask_vbf],
-                                    weight=nominal[mask_vbf]
-                                    )
-
-            mask_monojet = monojet_sel.all(*monojet_sel.names)
-
-            output[f'gen_vpt_monojet_{tag}'].fill(
-                                    dataset=dataset,
-                                    vpt=df[f'gen_v_pt_{tag}'][mask_monojet],
-                                    jpt=genjets.pt.max()[mask_monojet],
-                                    weight=nominal[mask_monojet]
-                                    )
 
         # Keep track of weight sum
         output['sumw'][dataset] +=  df['genEventSumw']
