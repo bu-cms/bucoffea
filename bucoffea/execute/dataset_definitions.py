@@ -47,9 +47,9 @@ def short_name(dataset):
 
 def load_lists():
     files = [
-        bucoffea_path(f"data/datasets/datasets_2016.txt"),
-        bucoffea_path(f"data/datasets/datasets_2017.txt"),
-        bucoffea_path(f"data/datasets/datasets_2018.txt")
+        bucoffea_path(f"data/datasets/datasets_nanoaod_v7_2016.txt"),
+        bucoffea_path(f"data/datasets/datasets_nanoaod_v7_2017.txt"),
+        bucoffea_path(f"data/datasets/datasets_nanoaod_v7_2018.txt")
     ]
     lines = []
     for fpath in files:
