@@ -1776,6 +1776,382 @@ DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_750p0_MXd_1p0_mg_pythia8_2017:
   gen: 0.0225726
 DMSimp_monoz_NLO_FXFX_Vector_GQ0p25_GDM1p0_MY1_750p0_MXd_1p0_mg_pythia8_2018:
   gen: 0.0225726
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.08845
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.08837
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.07656
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.07677
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-400_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.04771
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-400_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.04757
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-600_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.02813
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-600_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.02819
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-750_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.01809
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-750_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.01811
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-900_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.005617
+DMsimp_t-S3D_uR_JChiChi_Mphi-1000_Mchi-900_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.005644
+DMsimp_t-S3D_uR_JChiChi_Mphi-100_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 354.7
+DMsimp_t-S3D_uR_JChiChi_Mphi-100_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 353.7
+DMsimp_t-S3D_uR_JChiChi_Mphi-100_Mchi-1_Lambda-1p0-mg_pythia8_ext1_2018:
+  gen: 353.7
+DMsimp_t-S3D_uR_JChiChi_Mphi-100_Mchi-75_Lambda-1p0-mg_pythia8_2018:
+  gen: 37.73
+DMsimp_t-S3D_uR_JChiChi_Mphi-1200_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.03858
+DMsimp_t-S3D_uR_JChiChi_Mphi-1200_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.04128
+DMsimp_t-S3D_uR_JChiChi_Mphi-1200_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.03347
+DMsimp_t-S3D_uR_JChiChi_Mphi-1200_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.03353
+DMsimp_t-S3D_uR_JChiChi_Mphi-1200_Mchi-400_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.02149
+DMsimp_t-S3D_uR_JChiChi_Mphi-1200_Mchi-400_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.02148
+DMsimp_t-S3D_uR_JChiChi_Mphi-1200_Mchi-600_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.01323
+DMsimp_t-S3D_uR_JChiChi_Mphi-1200_Mchi-600_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.01323
+DMsimp_t-S3D_uR_JChiChi_Mphi-1200_Mchi-750_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.009101
+DMsimp_t-S3D_uR_JChiChi_Mphi-1200_Mchi-900_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.006111
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.01703
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.01692
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.0163
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.01633
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-350_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.01184
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-350_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.01187
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-500_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.008361
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-500_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.008394
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-650_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.005887
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-650_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.005887
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-800_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.004101
+DMsimp_t-S3D_uR_JChiChi_Mphi-1400_Mchi-800_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.004102
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.008651
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.00859
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.008674
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.008736
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-350_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.006336
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-350_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.006358
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-500_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.004501
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-500_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.004462
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-650_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.006586
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-650_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.003154
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-800_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.00221
+DMsimp_t-S3D_uR_JChiChi_Mphi-1600_Mchi-800_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.00221
+DMsimp_t-S3D_uR_JChiChi_Mphi-1800_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.005062
+DMsimp_t-S3D_uR_JChiChi_Mphi-1800_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.005039
+DMsimp_t-S3D_uR_JChiChi_Mphi-1800_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.005013
+DMsimp_t-S3D_uR_JChiChi_Mphi-1800_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.005023
+DMsimp_t-S3D_uR_JChiChi_Mphi-1800_Mchi-350_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.003646
+DMsimp_t-S3D_uR_JChiChi_Mphi-1800_Mchi-350_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.003588
+DMsimp_t-S3D_uR_JChiChi_Mphi-1800_Mchi-500_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.002565
+DMsimp_t-S3D_uR_JChiChi_Mphi-1800_Mchi-500_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.002556
+DMsimp_t-S3D_uR_JChiChi_Mphi-1800_Mchi-650_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.001792
+DMsimp_t-S3D_uR_JChiChi_Mphi-1800_Mchi-650_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.001787
+DMsimp_t-S3D_uR_JChiChi_Mphi-2000_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.002823
+DMsimp_t-S3D_uR_JChiChi_Mphi-2000_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.002869
+DMsimp_t-S3D_uR_JChiChi_Mphi-2000_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.003096
+DMsimp_t-S3D_uR_JChiChi_Mphi-2000_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.003096
+DMsimp_t-S3D_uR_JChiChi_Mphi-2000_Mchi-350_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.002218
+DMsimp_t-S3D_uR_JChiChi_Mphi-2000_Mchi-350_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.002234
+DMsimp_t-S3D_uR_JChiChi_Mphi-2000_Mchi-500_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.001543
+DMsimp_t-S3D_uR_JChiChi_Mphi-2000_Mchi-500_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.001543
+DMsimp_t-S3D_uR_JChiChi_Mphi-2200_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.001719
+DMsimp_t-S3D_uR_JChiChi_Mphi-2200_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.001783
+DMsimp_t-S3D_uR_JChiChi_Mphi-2200_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.002019
+DMsimp_t-S3D_uR_JChiChi_Mphi-2200_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.00196
+DMsimp_t-S3D_uR_JChiChi_Mphi-2200_Mchi-350_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.001435
+DMsimp_t-S3D_uR_JChiChi_Mphi-2200_Mchi-350_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.001443
+DMsimp_t-S3D_uR_JChiChi_Mphi-300_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 12.07
+DMsimp_t-S3D_uR_JChiChi_Mphi-300_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 12.11
+DMsimp_t-S3D_uR_JChiChi_Mphi-300_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 2.55
+DMsimp_t-S3D_uR_JChiChi_Mphi-300_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 2.564
+DMsimp_t-S3D_uR_JChiChi_Mphi-500_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 1.89
+DMsimp_t-S3D_uR_JChiChi_Mphi-500_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 1.897
+DMsimp_t-S3D_uR_JChiChi_Mphi-500_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 1.214
+DMsimp_t-S3D_uR_JChiChi_Mphi-500_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 1.214
+DMsimp_t-S3D_uR_JChiChi_Mphi-500_Mchi-400_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.2628
+DMsimp_t-S3D_uR_JChiChi_Mphi-500_Mchi-400_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.2638
+DMsimp_t-S3D_uR_JChiChi_Mphi-750_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.3372
+DMsimp_t-S3D_uR_JChiChi_Mphi-750_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.3381
+DMsimp_t-S3D_uR_JChiChi_Mphi-750_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.2633
+DMsimp_t-S3D_uR_JChiChi_Mphi-750_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.2629
+DMsimp_t-S3D_uR_JChiChi_Mphi-750_Mchi-400_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.149
+DMsimp_t-S3D_uR_JChiChi_Mphi-750_Mchi-400_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.1492
+DMsimp_t-S3D_uR_JChiChi_Mphi-750_Mchi-550_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.08558
+DMsimp_t-S3D_uR_JChiChi_Mphi-750_Mchi-550_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.08547
+DMsimp_t-S3D_uR_JChiChi_Mphi-750_Mchi-700_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.03231
+DMsimp_t-S3D_uR_JChiChi_Mphi-750_Mchi-700_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.03243
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.007799
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.007794
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.007163
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.00716
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-400_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.005943
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-400_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.00595
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-600_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.004816
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-600_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.004804
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-750_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.003998
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-750_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.003984
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-900_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.002277
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1000_Mchi-900_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.002278
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-100_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 539.9
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-100_Mchi-75_Lambda-1p0-mg_pythia8_2017:
+  gen: 34.56
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.002139
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.002139
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.002006
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.002009
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-400_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.001724
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-400_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.001722
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-600_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.001432
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-600_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.001428
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-750_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.001239
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-750_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.001243
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-900_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.001062
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1200_Mchi-900_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.001062
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.0006457
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0006463
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.000615
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0006155
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-350_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.0005629
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-350_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0005634
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-500_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.0005018
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-500_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0005016
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-650_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.0004413
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-650_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0004415
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-800_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.0003876
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1400_Mchi-800_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0003877
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.000209
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0002094
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.0002013
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.000201
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-350_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.000187
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-350_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.000187
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-500_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.0001692
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-500_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0001694
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-650_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.0001513
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-650_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0001513
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-800_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.000134
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1600_Mchi-800_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0001343
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1800_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 7.129e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1800_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 7.122e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1800_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 6.898e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1800_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 6.896e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1800_Mchi-350_Lambda-1p0-mg_pythia8_2017:
+  gen: 6.496e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1800_Mchi-350_Lambda-1p0-mg_pythia8_2018:
+  gen: 6.489e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1800_Mchi-500_Lambda-1p0-mg_pythia8_2017:
+  gen: 5.963e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1800_Mchi-500_Lambda-1p0-mg_pythia8_2018:
+  gen: 5.964e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1800_Mchi-650_Lambda-1p0-mg_pythia8_2017:
+  gen: 5.388e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-1800_Mchi-650_Lambda-1p0-mg_pythia8_2018:
+  gen: 5.382e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2000_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 2.523e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2000_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 2.521e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2000_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 2.457e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2000_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 2.457e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2000_Mchi-350_Lambda-1p0-mg_pythia8_2017:
+  gen: 2.33e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2000_Mchi-350_Lambda-1p0-mg_pythia8_2018:
+  gen: 2.331e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2000_Mchi-500_Lambda-1p0-mg_pythia8_2017:
+  gen: 2.164e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2000_Mchi-500_Lambda-1p0-mg_pythia8_2018:
+  gen: 2.17e-05
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2200_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 9.246e-06
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2200_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 9.233e-06
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2200_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 9.025e-06
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2200_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 9.026e-06
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2200_Mchi-350_Lambda-1p0-mg_pythia8_2017:
+  gen: 8.635e-06
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-2200_Mchi-350_Lambda-1p0-mg_pythia8_2018:
+  gen: 8.637e-06
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-300_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 5.411
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-300_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 5.406
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-300_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 2.668
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-300_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 2.661
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-500_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.4683
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-500_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.4695
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-500_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.3763
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-500_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.3769
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-500_Mchi-400_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.1863
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-500_Mchi-400_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.1873
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-750_Mchi-1_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.04884
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-750_Mchi-1_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.04881
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-750_Mchi-200_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.04277
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-750_Mchi-200_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.04282
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-750_Mchi-400_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.03356
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-750_Mchi-400_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.0336
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-750_Mchi-550_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.02651
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-750_Mchi-550_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.02643
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-750_Mchi-700_Lambda-1p0-mg_pythia8_2017:
+  gen: 0.01642
+DMsimp_t-S3D_uR_PhiPhiToJJChiChi_Mphi-750_Mchi-700_Lambda-1p0-mg_pythia8_2018:
+  gen: 0.01643
 DY1JetsToLL_M-50-MLM_2017:
   gen: 878.6
 DY1JetsToLL_M-50-MLM_2018:
@@ -3502,11 +3878,11 @@ WZ_2016:
 WZ_2017:
   gen: 27.56
   nlo: 47.13
-WZ_EXT_2017:
-  gen: 27.56
-  nlo: 47.13
 WZ_2018:
   gen: 27.55
+  nlo: 47.13
+WZ_EXT_2017:
+  gen: 27.56
   nlo: 47.13
 WZ_PSweights_2018:
   gen: 27.56
