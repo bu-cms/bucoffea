@@ -84,6 +84,7 @@ ScalarFirstGenLeptoquarkToQNu_Mlq-*
 # DMsimp
 DMSimp_monojet_NLO_FXFX_GQ*
 DMSimp_monov_NLO_FXFX_GQ*
+DMsimp_t*
 Scalar_MonoJ*
 Pseudoscalar_MonoJ*
 Scalar_MonoV*
