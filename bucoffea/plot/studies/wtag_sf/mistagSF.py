@@ -39,6 +39,7 @@ bin_schems = {
         1 : hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [200,300,400,800]),
         2 : hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [240,1000]),
         3 : hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [240,360,500,1000]),
+        5 : hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [240,280,340,400,500,600,1000]),
         }
 newbin = bin_schems[bin_scheme]
 #newbin = hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [240,360,500,1000])
@@ -210,6 +211,7 @@ def main():
                 #############
                 #make stack_plot for all and pass
                 try:
+                    acc["alskjxkjo"]
                     make_plot(acc, region=region_all, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
                     make_plot(acc, region=region_all_nomass, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
                     make_plot(acc, region=region_all_nomass, distribution=distribution_mass, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
@@ -324,6 +326,18 @@ def main():
                         + teff_mistag_rate_mc_1m + teff_mistag_rate_mc_2m
                 teff_mistag_rate_mc_wz.SetNameTitle(f'mistag_rate_mc_wz_{wp}_{year}{sysvar_tag}', 'souped mistagging rate for W and Z')
                 th1_mistag_SF_wz = ratio_of_efficiencies(f'mistag_SF_wz_{wp}_{year}{sysvar_tag}', 'souped mistag scale factor for W and Z', teff_mistag_rate_data_wz, teff_mistag_rate_mc_wz)
+                # souped SF for all W regions
+                teff_mistag_rate_data_w = teff_mistag_rate_data_1e + teff_mistag_rate_data_1m
+                teff_mistag_rate_data_w.SetNameTitle(f'mistag_rate_data_w_{wp}_{year}{sysvar_tag}', 'souped mistagging rate for W')
+                teff_mistag_rate_mc_w = teff_mistag_rate_mc_1e + teff_mistag_rate_mc_1m
+                teff_mistag_rate_mc_w.SetNameTitle(f'mistag_rate_mc_w_{wp}_{year}{sysvar_tag}', 'souped mistagging rate for W')
+                th1_mistag_SF_w = ratio_of_efficiencies(f'mistag_SF_w_{wp}_{year}{sysvar_tag}', 'souped mistag scale factor for W', teff_mistag_rate_data_w, teff_mistag_rate_mc_w)
+                # souped SF for all Z regions
+                teff_mistag_rate_data_z = teff_mistag_rate_data_2e + teff_mistag_rate_data_2m
+                teff_mistag_rate_data_z.SetNameTitle(f'mistag_rate_data_z_{wp}_{year}{sysvar_tag}', 'souped mistagging rate for Z')
+                teff_mistag_rate_mc_z = teff_mistag_rate_mc_2e + teff_mistag_rate_mc_2m
+                teff_mistag_rate_mc_z.SetNameTitle(f'mistag_rate_mc_z_{wp}_{year}{sysvar_tag}', 'souped mistagging rate for Z')
+                th1_mistag_SF_z = ratio_of_efficiencies(f'mistag_SF_z_{wp}_{year}{sysvar_tag}', 'souped mistag scale factor for Z', teff_mistag_rate_data_z, teff_mistag_rate_mc_z)
                 # souped SF for all regions including photon
                 teff_mistag_rate_data_all = teff_mistag_rate_data_1e + teff_mistag_rate_data_2e\
                         + teff_mistag_rate_data_1m + teff_mistag_rate_data_2m + teff_mistag_rate_data_g
@@ -336,6 +350,12 @@ def main():
                     teff_mistag_rate_data_wz.Write()
                     teff_mistag_rate_mc_wz.Write()
                     th1_mistag_SF_wz.Write()
+                    teff_mistag_rate_data_w.Write()
+                    teff_mistag_rate_mc_w.Write()
+                    th1_mistag_SF_w.Write()
+                    teff_mistag_rate_data_z.Write()
+                    teff_mistag_rate_mc_z.Write()
+                    th1_mistag_SF_z.Write()
                     teff_mistag_rate_data_all.Write()
                     teff_mistag_rate_mc_all.Write()
                     th1_mistag_SF_all.Write()
