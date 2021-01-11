@@ -212,12 +212,9 @@ default:
       ak4_phi: false
       ak4_pt0_over_recoil: false
       ak4_ptraw0: false
-      ak8_tvsqcdmd0: false
       ak8_tvsqcdmd0: False
-      ak8_wvsqcdmd0: false
       ak8_wvsqcdmd0: False
       ak8_wvstqcdmd0: False
-      ak8_zvsqcdmd0: false
       ak8_zvsqcdmd0: False
       bjet_eta: false
       bjet_phi: false
