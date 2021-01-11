@@ -135,8 +135,8 @@ def define_weight_counters(output, df, weights, rand_datasets):
             output['sumw'][dataset] +=  df[f'genEventSumw']
             output['sumw2'][dataset] +=  df[f'genEventSumw2']
             output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
-
-
+            
+            
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
@@ -561,10 +561,14 @@ class monojetProcessor(processor.ProcessorABC):
                             output['tree_float16'][region]["el1pt"]  += processor.column_accumulator(electrons.pt[~leadelectron_index][mask].max())
                             output['tree_float16'][region]["el1eta"] += processor.column_accumulator(electrons.eta[~leadelectron_index][mask].max())
                             output['tree_float16'][region]["el1tight"] += processor.column_accumulator(electrons.tightId[~leadelectron_index][mask].max())
-
+                        
                         # mono-V
                         if re.match('.*_v_.*', region):
-                            output['tree_float16'][region]["el1pt"]  += processor.column_accumulator(electrons.pt[~leadelectron_index][mask].max())
+                            for key in ['leadak8_pt','leadak8_eta','leadak8_tau21','leadak8_mass','leadak8_wvsqcd']:
+                                output['tree_float16'][region]["key"]  += processor.column_accumulator(df['key'][mask].max())
+
+                            if not df['is_data']:
+                                output['tree_float16'][region]["leadak8_gen_match_v"]  += processor.column_accumulator(df['leadak8_gen_match_v'][mask].max())
 
             if region=='inclusive':
                 continue
