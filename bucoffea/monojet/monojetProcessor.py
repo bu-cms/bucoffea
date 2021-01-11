@@ -255,24 +255,40 @@ class monojetProcessor(processor.ProcessorABC):
 
         # AK8 Jet
         leadak8_index=ak8.pt.argmax()
-        leadak8_pt_eta = (ak8.pt.max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
-                         & (ak8.abseta[leadak8_index] < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
-        selection.add('leadak8_pt_eta', leadak8_pt_eta)
+        leadak8 = ak8[ak8.pt.argmax()]
 
+        if not df['is_data']:
+            genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
+            leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
+            matched_leadak8 = leadak8[leadak8_matched_mask]
+            unmatched_leadak8 = leadak8[~leadak8_matched_mask]
+            df['leadak8_gen_match_v'] = leadak8_matched_mask
+
+        df['leadak8_pt']       = ak8.pt.max()
+        df['leadak8_eta']      = ak8.eta[leadak8_index]
+        df['leadak8_tau21']    = ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]
+        df['leadak8_mass']     = ak8.mass[leadak8_index]
+        df['leadak8_wvsqcdmd'] = ak8.wvsqcdmd[leadak8_index]
+        df['leadak8_wvsqcd']   = ak8.wvsqcd[leadak8_index]
+
+        leadak8_pt_eta = (df['leadak8_pt'] > cfg.SELECTION.SIGNAL.leadak8.PT) \
+                         & (df['leadak8_eta'] < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
+
+        selection.add('leadak8_pt_eta', leadak8_pt_eta)
         selection.add('leadak8_id',(ak8.tightId[leadak8_index]).any())
 
         # Mono-V selection
-        selection.add('leadak8_tau21', ((ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]) < cfg.SELECTION.SIGNAL.LEADAK8.TAU21).any())
-        selection.add('leadak8_mass', ((ak8.mass[leadak8_index] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
-                                    & (ak8.mass[leadak8_index] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
-        selection.add('leadak8_wvsqcd_loosemd', ((ak8.wvsqcdmd[leadak8_index] > cfg.WTAG.LOOSEMD)
-                                    & (ak8.wvsqcdmd[leadak8_index] < cfg.WTAG.TIGHTMD)).any())
-        selection.add('leadak8_wvsqcd_tightmd', ((ak8.wvsqcdmd[leadak8_index] > cfg.WTAG.TIGHTMD)).any())
-        selection.add('leadak8_wvsqcd_loose', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.LOOSE)
-                                    & (ak8.wvsqcd[leadak8_index] < cfg.WTAG.TIGHT)).any())
-        selection.add('leadak8_wvsqcd_medium', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.MEDIUM)
-                                    ).any())
-        selection.add('leadak8_wvsqcd_tight', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.TIGHT)).any())
+        selection.add('leadak8_tau21', (df['leadak8_tau21'] < cfg.SELECTION.SIGNAL.LEADAK8.TAU21).any())
+
+        selection.add('leadak8_mass', ((df['leadak8_mass'] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
+                                    & (df['leadak8_mass'] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
+        selection.add('leadak8_wvsqcd_loosemd', ((df['leadak8_wvsqcdmd'] > cfg.WTAG.LOOSEMD)
+                                               & (df['leadak8_wvsqcdmd'] < cfg.WTAG.TIGHTMD)).any())
+        selection.add('leadak8_wvsqcd_tightmd', ((df['leadak8_wvsqcdmd'] > cfg.WTAG.TIGHTMD)).any())
+        selection.add('leadak8_wvsqcd_loose', ((df['leadak8_wvsqcd'] > cfg.WTAG.LOOSE)
+                                             & (df['leadak8_wvsqcd'] < cfg.WTAG.TIGHT)).any())
+        selection.add('leadak8_wvsqcd_medium', ((df['leadak8_wvsqcd'] > cfg.WTAG.MEDIUM)).any())
+        selection.add('leadak8_wvsqcd_tight', ((df['leadak8_wvsqcd'] > cfg.WTAG.TIGHT)).any())
 
         selection.add('veto_vtag',
             ~(
@@ -464,11 +480,6 @@ class monojetProcessor(processor.ProcessorABC):
                     region_weights.add("vetoweight", veto_weights.partial_weight(include=["nominal"]))
 
             if not (df['is_data']):
-                genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
-                leadak8 = ak8[ak8.pt.argmax()]
-                leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
-                matched_leadak8 = leadak8[leadak8_matched_mask]
-                unmatched_leadak8 = leadak8[~leadak8_matched_mask]
                 for wp in ['loose','tight','medium']:
                     if re.match(f'.*_{wp}_v.*', region):
                         if ('nomistag' in region) or wp=='medium':
@@ -482,6 +493,11 @@ class monojetProcessor(processor.ProcessorABC):
 
                         region_weights.add('wtag_{wp}', matched_weights)
 
+
+            # if not df['is_data']:
+            #     gen_ak8 = setup_gen_jets_ak8(df)
+            #     leadak8 = ak8[leadak8_index]
+            #     leadak8_matched_mask = leadak8.match(gen_ak8, deltaRCut=0.8, relPtCut=0.5)
 
 
             # Blinding
@@ -571,8 +587,10 @@ class monojetProcessor(processor.ProcessorABC):
                             output['tree_float16'][region]["el1pt"]  += processor.column_accumulator(electrons.pt[~leadelectron_index][mask].max())
                             output['tree_float16'][region]["el1eta"] += processor.column_accumulator(electrons.eta[~leadelectron_index][mask].max())
                             output['tree_float16'][region]["el1tight"] += processor.column_accumulator(electrons.tightId[~leadelectron_index][mask].max())
-
-
+                        
+                        # mono-V
+                        if re.match('.*_v_.*', region):
+                            output['tree_float16'][region]["el1pt"]  += processor.column_accumulator(electrons.pt[~leadelectron_index][mask].max())
 
             if region=='inclusive':
                 continue
