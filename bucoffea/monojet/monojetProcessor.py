@@ -486,12 +486,6 @@ class monojetProcessor(processor.ProcessorABC):
                         region_weights.add('wtag_{wp}', matched_weights)
 
 
-            # if not df['is_data']:
-            #     gen_ak8 = setup_gen_jets_ak8(df)
-            #     leadak8 = ak8[leadak8_index]
-            #     leadak8_gen_match_v_mask = leadak8.match(gen_ak8, deltaRCut=0.8, relPtCut=0.5)
-
-
             # Blinding
             if(self._blind and df['is_data'] and region.startswith('sr')):
                 continue
@@ -583,11 +577,11 @@ class monojetProcessor(processor.ProcessorABC):
                         # mono-V
                         if re.match('.*_v_.*', region):
                             for key in ['leadak8_pt','leadak8_eta','leadak8_tau21','leadak8_mass','leadak8_wvsqcd']:
-                                output['tree_float16'][region]["key"]  += processor.column_accumulator(df['key'][mask].max())
+                                output['tree_float16'][region][key]  += processor.column_accumulator(df[key][mask].max())
 
                             if not df['is_data']:
                                 for key in ['leadak8_gen_match_v','leadak8_gen_match_ak8','leadak8_gen_match_ak8_pt','leadak8_gen_match_ak8_eta','leadak8_gen_match_ak8_phi']:
-                                    output['tree_float16'][region]["key"]  += processor.column_accumulator(df['key'][mask].max())
+                                    output['tree_float16'][region][key]  += processor.column_accumulator(df[key][mask].max())
 
             if region=='inclusive':
                 continue
