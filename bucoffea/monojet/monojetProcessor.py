@@ -286,11 +286,29 @@ class monojetProcessor(processor.ProcessorABC):
         leadak8 = ak8[ak8.pt.argmax()]
 
         if not df['is_data']:
+            ## Matching reco AK8 to gen AK*
             genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
-            leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
-            matched_leadak8 = leadak8[leadak8_matched_mask]
-            unmatched_leadak8 = leadak8[~leadak8_matched_mask]
-            df['leadak8_gen_match_v'] = leadak8_matched_mask
+            leadak8_gen_match_v_mask = leadak8.match(genVs, deltaRCut=0.8)
+            matched_leadak8 = leadak8[leadak8_gen_match_v_mask]
+            unmatched_leadak8 = leadak8[~leadak8_gen_match_v_mask]
+            df['leadak8_gen_match_v'] = leadak8_gen_match_v_mask
+
+            # Matching reco AK8 to gen AK8
+
+            pairs = leadak8.cross(gen_ak8)
+            dr = np.hypot(
+                    np.abs(pairs.i0.eta - pairs.i1.eta),
+                    np.abs(pairs.i0.phi - pairs.i1.phi)
+            )
+
+            best_pair = pairs[dr.argmin()]
+            leadak8_gen_match_ak8_mask = dr.min() < 0.8
+
+            df['leadak8_gen_match_ak8'] = leadak8_gen_match_ak8_mask
+            df['leadak8_gen_match_ak8_pt'] = best_pair.i1.pt
+            df['leadak8_gen_match_ak8_eta'] = best_pair.i1.eta
+            df['leadak8_gen_match_ak8_phi'] = best_pair.i1.phi
+
 
         df['leadak8_pt']       = ak8.pt.max()
         df['leadak8_eta']      = ak8.eta[leadak8_index]
@@ -471,7 +489,7 @@ class monojetProcessor(processor.ProcessorABC):
             # if not df['is_data']:
             #     gen_ak8 = setup_gen_jets_ak8(df)
             #     leadak8 = ak8[leadak8_index]
-            #     leadak8_matched_mask = leadak8.match(gen_ak8, deltaRCut=0.8, relPtCut=0.5)
+            #     leadak8_gen_match_v_mask = leadak8.match(gen_ak8, deltaRCut=0.8, relPtCut=0.5)
 
 
             # Blinding
@@ -568,7 +586,8 @@ class monojetProcessor(processor.ProcessorABC):
                                 output['tree_float16'][region]["key"]  += processor.column_accumulator(df['key'][mask].max())
 
                             if not df['is_data']:
-                                output['tree_float16'][region]["leadak8_gen_match_v"]  += processor.column_accumulator(df['leadak8_gen_match_v'][mask].max())
+                                for key in ['leadak8_gen_match_v','leadak8_gen_match_ak8','leadak8_gen_match_ak8_pt','leadak8_gen_match_ak8_eta','leadak8_gen_match_ak8_phi']:
+                                    output['tree_float16'][region]["key"]  += processor.column_accumulator(df['key'][mask].max())
 
             if region=='inclusive':
                 continue
