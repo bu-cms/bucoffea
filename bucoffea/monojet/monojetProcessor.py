@@ -52,7 +52,7 @@ from bucoffea.helpers.gen import (
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
                                   fill_gen_v_info,
-                                  get_gen_photon_pt
+                                  get_gen_photon_pt, setup_gen_jets_ak8
                                  )
 
 def trigger_selection(selection, df, cfg):
@@ -294,7 +294,7 @@ class monojetProcessor(processor.ProcessorABC):
             df['leadak8_gen_match_v'] = leadak8_gen_match_v_mask
 
             # Matching reco AK8 to gen AK8
-
+            gen_ak8 = setup_gen_jets_ak8(df)
             pairs = leadak8.cross(gen_ak8)
             dr = np.hypot(
                     np.abs(pairs.i0.eta - pairs.i1.eta),
