@@ -109,6 +109,9 @@ def monojet_accumulator(cfg):
     items["recoil_dibosonnlo_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_dibosonnlo_dn"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
 
+    items["gen_v_pt"] = Hist("Counts", dataset_ax, region_ax, gen_v_pt_ax)
+    items["gen_v_pt_notheory"] = Hist("Counts", dataset_ax, region_ax, gen_v_pt_ax)
+
     if cfg and cfg.RUN.BTAG_STUDY:
         items["recoil_hardbveto"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
         items["recoil_bveto_up"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
