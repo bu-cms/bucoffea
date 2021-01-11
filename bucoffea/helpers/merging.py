@@ -70,11 +70,12 @@ class CoffeaMerger(object):
     
     The results are stored using the klepto library.
     '''
-    def __init__(self, indir, jobs=1):
+    def __init__(self, indir, jobs=1, save_trees=False):
         files = filter(lambda x: x.endswith(".coffea") and not ('cache' in x), os.listdir(indir))
         files = list(map(lambda x: os.path.abspath(pjoin(indir, x)), files))
         self._files = files
         self._keys = set()
+        self._save_trees = save_trees
 
         # Open a multiproc pool for various operations
         self._pool = multiprocessing.Pool(processes=jobs)
@@ -90,6 +91,8 @@ class CoffeaMerger(object):
         )
         for keys in pool_result.get():
             for k in keys:
+                if not self._save_trees and k.startswith("tree"):
+                    continue
                 self._keys.add(str(k))
 
     def to_klepto_dir(self, outname):
