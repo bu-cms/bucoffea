@@ -52,7 +52,7 @@ from bucoffea.helpers.gen import (
                                   setup_gen_candidates,
                                   setup_dressed_gen_candidates,
                                   fill_gen_v_info,
-                                  get_gen_photon_pt
+                                  get_gen_photon_pt, setup_gen_jets_ak8
                                  )
 
 def trigger_selection(selection, df, cfg):
@@ -109,6 +109,34 @@ def trigger_selection(selection, df, cfg):
 
     return selection
 
+
+def define_weight_counters(output, df, weights, rand_datasets):
+    dataset = df['dataset']
+    output['nevents'][dataset] += df.size
+    if not df['is_data']:
+        if len(rand_datasets):
+            # For randomized datasets, save the normalization separately per sub-dataset
+            # but also integread for the whole dataset, so that we can use both the sub
+            # and total datasets for plotting
+            for ds, short in rand_datasets.items():
+                dsmask = df[f'GenModel_{ds}']
+                output['nevents'][short] += dsmask.sum()
+                # Split per sub-dataset
+                output['sumw'][short] +=  getattr(df, f'genEventSumw_{ds}', 0)
+                output['sumw2'][short] +=  getattr(df,f'genEventSumw2_{ds}', 0)
+                output['sumw_pileup'][short] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
+
+                # Integrated for the whole dataset
+                output['sumw'][dataset] +=  getattr(df, f'genEventSumw_{ds}', 0)
+                output['sumw2'][dataset] +=  getattr(df,f'genEventSumw2_{ds}', 0)
+                output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
+        else:
+            # For normal datasets, no splitting is necessary
+            output['sumw'][dataset] +=  df[f'genEventSumw']
+            output['sumw2'][dataset] +=  df[f'genEventSumw2']
+            output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
+            
+            
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
@@ -255,24 +283,58 @@ class monojetProcessor(processor.ProcessorABC):
 
         # AK8 Jet
         leadak8_index=ak8.pt.argmax()
-        leadak8_pt_eta = (ak8.pt.max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
-                         & (ak8.abseta[leadak8_index] < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
-        selection.add('leadak8_pt_eta', leadak8_pt_eta)
+        leadak8 = ak8[ak8.pt.argmax()]
 
+        if not df['is_data']:
+            ## Matching reco AK8 to gen AK*
+            genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
+            leadak8_gen_match_v_mask = leadak8.match(genVs, deltaRCut=0.8)
+            matched_leadak8 = leadak8[leadak8_gen_match_v_mask]
+            unmatched_leadak8 = leadak8[~leadak8_gen_match_v_mask]
+            df['leadak8_gen_match_v'] = leadak8_gen_match_v_mask.any()
+
+            # Matching reco AK8 to gen AK8
+            gen_ak8 = setup_gen_jets_ak8(df)
+            pairs = leadak8.cross(gen_ak8)
+            dr = np.hypot(
+                    np.abs(pairs.i0.eta - pairs.i1.eta),
+                    np.abs(pairs.i0.phi - pairs.i1.phi)
+            )
+
+            best_pair = pairs[dr.argmin()]
+            leadak8_gen_match_ak8_mask = (dr.min() < 0.8)
+
+            df['leadak8_gen_match_ak8'] = leadak8_gen_match_ak8_mask
+            df['leadak8_gen_match_ak8_pt'] = best_pair.i1.pt
+            df['leadak8_gen_match_ak8_eta'] = best_pair.i1.eta
+            df['leadak8_gen_match_ak8_phi'] = best_pair.i1.phi
+
+
+        df['leadak8_pt']       = ak8.pt[leadak8_index]
+        df['leadak8_eta']      = ak8.eta[leadak8_index]
+        df['leadak8_tau21']    = ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]
+        df['leadak8_mass']     = ak8.mass[leadak8_index]
+        df['leadak8_wvsqcdmd'] = ak8.wvsqcdmd[leadak8_index]
+        df['leadak8_wvsqcd']   = ak8.wvsqcd[leadak8_index]
+
+        leadak8_pt_eta = (df['leadak8_pt'].max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
+                         & (df['leadak8_eta'] < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
+
+        selection.add('leadak8_pt_eta', leadak8_pt_eta)
         selection.add('leadak8_id',(ak8.tightId[leadak8_index]).any())
 
         # Mono-V selection
-        selection.add('leadak8_tau21', ((ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]) < cfg.SELECTION.SIGNAL.LEADAK8.TAU21).any())
-        selection.add('leadak8_mass', ((ak8.mass[leadak8_index] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
-                                    & (ak8.mass[leadak8_index] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
-        selection.add('leadak8_wvsqcd_loosemd', ((ak8.wvsqcdmd[leadak8_index] > cfg.WTAG.LOOSEMD)
-                                    & (ak8.wvsqcdmd[leadak8_index] < cfg.WTAG.TIGHTMD)).any())
-        selection.add('leadak8_wvsqcd_tightmd', ((ak8.wvsqcdmd[leadak8_index] > cfg.WTAG.TIGHTMD)).any())
-        selection.add('leadak8_wvsqcd_loose', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.LOOSE)
-                                    & (ak8.wvsqcd[leadak8_index] < cfg.WTAG.TIGHT)).any())
-        selection.add('leadak8_wvsqcd_medium', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.MEDIUM)
-                                    ).any())
-        selection.add('leadak8_wvsqcd_tight', ((ak8.wvsqcd[leadak8_index] > cfg.WTAG.TIGHT)).any())
+        selection.add('leadak8_tau21', (df['leadak8_tau21'] < cfg.SELECTION.SIGNAL.LEADAK8.TAU21).any())
+
+        selection.add('leadak8_mass', ((df['leadak8_mass'] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
+                                    & (df['leadak8_mass'] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
+        selection.add('leadak8_wvsqcd_loosemd', ((df['leadak8_wvsqcdmd'] > cfg.WTAG.LOOSEMD)
+                                               & (df['leadak8_wvsqcdmd'] < cfg.WTAG.TIGHTMD)).any())
+        selection.add('leadak8_wvsqcd_tightmd', ((df['leadak8_wvsqcdmd'] > cfg.WTAG.TIGHTMD)).any())
+        selection.add('leadak8_wvsqcd_loose', ((df['leadak8_wvsqcd'] > cfg.WTAG.LOOSE)
+                                             & (df['leadak8_wvsqcd'] < cfg.WTAG.TIGHT)).any())
+        selection.add('leadak8_wvsqcd_medium', ((df['leadak8_wvsqcd'] > cfg.WTAG.MEDIUM)).any())
+        selection.add('leadak8_wvsqcd_tight', ((df['leadak8_wvsqcd'] > cfg.WTAG.TIGHT)).any())
 
         selection.add('veto_vtag',
             ~(
@@ -356,67 +418,13 @@ class monojetProcessor(processor.ProcessorABC):
             diboson_nlo_weights(df, evaluator, gen)
             weights.add('weight_diboson_nlo', df['weight_diboson_nlo'])
 
-        # Save per-event values for synchronization
-        if cfg.RUN.KINEMATICS.SAVE:
-            for event in cfg.RUN.KINEMATICS.EVENTS:
-                mask = df['event'] == event
-                if not mask.any():
-                    continue
-                output['kinematics']['event'] += [event]
-                output['kinematics']['met'] += [met_pt[mask].flatten()]
-                output['kinematics']['met_phi'] += [met_phi[mask].flatten()]
-                output['kinematics']['recoil'] += [df['recoil_pt'][mask].flatten()]
-                output['kinematics']['recoil_phi'] += [df['recoil_phi'][mask].flatten()]
-
-                output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt.flatten()]
-                output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta.flatten()]
-                output['kinematics']['leadbtag'] += [ak4.pt.max()<0][mask]
-
-                output['kinematics']['nLooseMu'] += [muons.counts[mask]]
-                output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask].flatten()]
-                output['kinematics']['mupt0'] += [muons[leadmuon_index][mask].pt.flatten()]
-                output['kinematics']['mueta0'] += [muons[leadmuon_index][mask].eta.flatten()]
-                output['kinematics']['muphi0'] += [muons[leadmuon_index][mask].phi.flatten()]
-
-                output['kinematics']['nLooseEl'] += [electrons.counts[mask]]
-                output['kinematics']['nTightEl'] += [electrons[df['is_tight_electron']].counts[mask].flatten()]
-                output['kinematics']['elpt0'] += [electrons[leadelectron_index][mask].pt.flatten()]
-                output['kinematics']['eleta0'] += [electrons[leadelectron_index][mask].eta.flatten()]
-
-                output['kinematics']['nLooseGam'] += [photons.counts[mask]]
-                output['kinematics']['nTightGam'] += [photons[df['is_tight_photon']].counts[mask].flatten()]
-                output['kinematics']['gpt0'] += [photons[leadphoton_index][mask].pt.flatten()]
-                output['kinematics']['geta0'] += [photons[leadphoton_index][mask].eta.flatten()]
-
-
         # Randomized Parameter data sets
         # keep track of the mapping
         rand_datasets = rand_dataset_dict(df.keys(), df['year'])
 
         # Sum of all weights to use for normalization
-        output['nevents'][dataset] += df.size
-        if not df['is_data']:
-            if len(rand_datasets):
-                # For randomized datasets, save the normalization separately per sub-dataset
-                # but also integread for the whole dataset, so that we can use both the sub
-                # and total datasets for plotting
-                for ds, short in rand_datasets.items():
-                    dsmask = df[f'GenModel_{ds}']
-                    output['nevents'][short] += dsmask.sum()
-                    # Split per sub-dataset
-                    output['sumw'][short] +=  getattr(df, f'genEventSumw_{ds}', 0)
-                    output['sumw2'][short] +=  getattr(df,f'genEventSumw2_{ds}', 0)
-                    output['sumw_pileup'][short] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
+        define_weight_counters(output, df, weights, rand_datasets)
 
-                    # Integrated for the whole dataset
-                    output['sumw'][dataset] +=  getattr(df, f'genEventSumw_{ds}', 0)
-                    output['sumw2'][dataset] +=  getattr(df,f'genEventSumw2_{ds}', 0)
-                    output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
-            else:
-                # For normal datasets, no splitting is necessary
-                output['sumw'][dataset] +=  df[f'genEventSumw']
-                output['sumw2'][dataset] +=  df[f'genEventSumw2']
-                output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
         regions = monojet_regions(cfg)
 
         # Get veto weights (only for MC)
@@ -464,11 +472,6 @@ class monojetProcessor(processor.ProcessorABC):
                     region_weights.add("vetoweight", veto_weights.partial_weight(include=["nominal"]))
 
             if not (df['is_data']):
-                genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
-                leadak8 = ak8[ak8.pt.argmax()]
-                leadak8_matched_mask = leadak8.match(genVs, deltaRCut=0.8)
-                matched_leadak8 = leadak8[leadak8_matched_mask]
-                unmatched_leadak8 = leadak8[~leadak8_matched_mask]
                 for wp in ['loose','tight','medium']:
                     if re.match(f'.*_{wp}_v.*', region):
                         if ('nomistag' in region) or wp=='medium':
@@ -481,7 +484,6 @@ class monojetProcessor(processor.ProcessorABC):
                                     * evaluator[f'wtag_mistag_g_{wp}'](unmatched_leadak8.pt).prod()
 
                         region_weights.add('wtag_{wp}', matched_weights)
-
 
 
             # Blinding
@@ -571,8 +573,17 @@ class monojetProcessor(processor.ProcessorABC):
                             output['tree_float16'][region]["el1pt"]  += processor.column_accumulator(electrons.pt[~leadelectron_index][mask].max())
                             output['tree_float16'][region]["el1eta"] += processor.column_accumulator(electrons.eta[~leadelectron_index][mask].max())
                             output['tree_float16'][region]["el1tight"] += processor.column_accumulator(electrons.tightId[~leadelectron_index][mask].max())
+                        
+                        # mono-V
+                        if re.match('.*_v', region):
+                            for key in ['leadak8_pt','leadak8_eta','leadak8_tau21','leadak8_mass','leadak8_wvsqcd']:
+                                output['tree_float16'][region][key]  += processor.column_accumulator(df[key][mask].max())
 
-
+                            if not df['is_data']:
+                                for key in ['leadak8_gen_match_v','leadak8_gen_match_ak8']:
+                                    output['tree_float16'][region][key]  += processor.column_accumulator(df[key][mask])
+                                for key in ['leadak8_gen_match_ak8_pt','leadak8_gen_match_ak8_eta','leadak8_gen_match_ak8_phi']:
+                                    output['tree_float16'][region][key]  += processor.column_accumulator(df[key][mask].max())
 
             if region=='inclusive':
                 continue
