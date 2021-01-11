@@ -205,20 +205,38 @@ default:
     monovmistag: False
     monoj: True
     histogram:
-      ak4_eta_phi: False
-      ak4_deepcsv: False
       ak4_chf0: False
+      ak4_deepcsv: false
+      ak4_eta_phi: False
       ak4_nef0: False
+      ak4_phi: false
+      ak4_pt0_over_recoil: false
+      ak4_ptraw0: false
+      ak8_tvsqcdmd0: False
+      ak8_wvsqcdmd0: False
+      ak8_wvstqcdmd0: False
+      ak8_zvsqcdmd0: False
+      bjet_eta: false
+      bjet_phi: false
+      bjet_pt: false
       drelejet: False
       drmuonjet: False
       drphotonjet: False
-      ak8_wvsqcdmd0: False
-      ak8_zvsqcdmd0: False
-      ak8_tvsqcdmd0: False
-      ak8_wvstqcdmd0: False
-      recoil_dibosonnlo_up: False
-      recoil_dibosonnlo_dn: False
       muon_eta_phi: False
+      npv_nopu: False
+      npv: false
+      npvgood_nopu: False
+      npvgood: false
+      photon_eta_phi: False
+      recoil_dibosonnlo_dn: False
+      recoil_dibosonnlo_up: False
+      recoil_nopog: False
+      recoil_nopref: False
+      recoil_nopu: False
+      recoil_notrg: False
+      recoil_veto_weight: False
+      rho_all_nopu: false
+      rho_central_nopu: false
   triggers:
     ht:
       gammaeff:
