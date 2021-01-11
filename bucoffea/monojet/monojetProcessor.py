@@ -135,8 +135,8 @@ def define_weight_counters(output, df, weights, rand_datasets):
             output['sumw'][dataset] +=  df[f'genEventSumw']
             output['sumw2'][dataset] +=  df[f'genEventSumw2']
             output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
-            
-            
+
+
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
@@ -719,6 +719,10 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_pt0_over_recoil',    ratio=ak4.pt.max()[mask]/recoil_pt[mask],      weight=region_weights.partial_weight(exclude=exclude)[mask])
             ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
+
+            if gen_v_pt is not None:
+                ezfill("gen_v_pt", pt=gen_v_pt[mask], weight=rw[mask])
+                ezfill("gen_v_pt_notheory", pt=gen_v_pt[mask], weight=region_weights.partial_weight(exclude=['theory'])[mask])
 
             # Diboson NLO
             ezfill(
