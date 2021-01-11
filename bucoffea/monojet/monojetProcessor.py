@@ -109,6 +109,34 @@ def trigger_selection(selection, df, cfg):
 
     return selection
 
+
+def define_weight_counters(output, df, weights, rand_datasets):
+    dataset = df['dataset']
+    output['nevents'][dataset] += df.size
+    if not df['is_data']:
+        if len(rand_datasets):
+            # For randomized datasets, save the normalization separately per sub-dataset
+            # but also integread for the whole dataset, so that we can use both the sub
+            # and total datasets for plotting
+            for ds, short in rand_datasets.items():
+                dsmask = df[f'GenModel_{ds}']
+                output['nevents'][short] += dsmask.sum()
+                # Split per sub-dataset
+                output['sumw'][short] +=  getattr(df, f'genEventSumw_{ds}', 0)
+                output['sumw2'][short] +=  getattr(df,f'genEventSumw2_{ds}', 0)
+                output['sumw_pileup'][short] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
+
+                # Integrated for the whole dataset
+                output['sumw'][dataset] +=  getattr(df, f'genEventSumw_{ds}', 0)
+                output['sumw2'][dataset] +=  getattr(df,f'genEventSumw2_{ds}', 0)
+                output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
+        else:
+            # For normal datasets, no splitting is necessary
+            output['sumw'][dataset] +=  df[f'genEventSumw']
+            output['sumw2'][dataset] +=  df[f'genEventSumw2']
+            output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
+
+
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
@@ -377,29 +405,8 @@ class monojetProcessor(processor.ProcessorABC):
         rand_datasets = rand_dataset_dict(df.keys(), df['year'])
 
         # Sum of all weights to use for normalization
-        output['nevents'][dataset] += df.size
-        if not df['is_data']:
-            if len(rand_datasets):
-                # For randomized datasets, save the normalization separately per sub-dataset
-                # but also integread for the whole dataset, so that we can use both the sub
-                # and total datasets for plotting
-                for ds, short in rand_datasets.items():
-                    dsmask = df[f'GenModel_{ds}']
-                    output['nevents'][short] += dsmask.sum()
-                    # Split per sub-dataset
-                    output['sumw'][short] +=  getattr(df, f'genEventSumw_{ds}', 0)
-                    output['sumw2'][short] +=  getattr(df,f'genEventSumw2_{ds}', 0)
-                    output['sumw_pileup'][short] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
+        define_weight_counters(output, df, weights, rand_datasets)
 
-                    # Integrated for the whole dataset
-                    output['sumw'][dataset] +=  getattr(df, f'genEventSumw_{ds}', 0)
-                    output['sumw2'][dataset] +=  getattr(df,f'genEventSumw2_{ds}', 0)
-                    output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup'])[dsmask].sum()
-            else:
-                # For normal datasets, no splitting is necessary
-                output['sumw'][dataset] +=  df[f'genEventSumw']
-                output['sumw2'][dataset] +=  df[f'genEventSumw2']
-                output['sumw_pileup'][dataset] +=  weights.partial_weight(include=['pileup']).sum()
         regions = monojet_regions(cfg)
 
         # Get veto weights (only for MC)
@@ -554,7 +561,7 @@ class monojetProcessor(processor.ProcessorABC):
                             output['tree_float16'][region]["el1pt"]  += processor.column_accumulator(electrons.pt[~leadelectron_index][mask].max())
                             output['tree_float16'][region]["el1eta"] += processor.column_accumulator(electrons.eta[~leadelectron_index][mask].max())
                             output['tree_float16'][region]["el1tight"] += processor.column_accumulator(electrons.tightId[~leadelectron_index][mask].max())
-                        
+
                         # mono-V
                         if re.match('.*_v_.*', region):
                             output['tree_float16'][region]["el1pt"]  += processor.column_accumulator(electrons.pt[~leadelectron_index][mask].max())
