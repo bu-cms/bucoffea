@@ -196,15 +196,6 @@ default:
       prescale: 1
       tree: False
       treeregions: "((sr|cr_.*)_j|inclusive)$"
-    kinematics:
-      save: False
-      events:
-        - 36533896
-        - 35733274
-        - 35719982
-        - 30682767
-        - 79123963
-        - 51393664
     trigger_study: False
     veto_study: False
     photon_id_study: False

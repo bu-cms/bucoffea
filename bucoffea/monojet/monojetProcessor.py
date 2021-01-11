@@ -372,39 +372,6 @@ class monojetProcessor(processor.ProcessorABC):
             diboson_nlo_weights(df, evaluator, gen)
             weights.add('weight_diboson_nlo', df['weight_diboson_nlo'])
 
-        # Save per-event values for synchronization
-        if cfg.RUN.KINEMATICS.SAVE:
-            for event in cfg.RUN.KINEMATICS.EVENTS:
-                mask = df['event'] == event
-                if not mask.any():
-                    continue
-                output['kinematics']['event'] += [event]
-                output['kinematics']['met'] += [met_pt[mask].flatten()]
-                output['kinematics']['met_phi'] += [met_phi[mask].flatten()]
-                output['kinematics']['recoil'] += [df['recoil_pt'][mask].flatten()]
-                output['kinematics']['recoil_phi'] += [df['recoil_phi'][mask].flatten()]
-
-                output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt.flatten()]
-                output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta.flatten()]
-                output['kinematics']['leadbtag'] += [ak4.pt.max()<0][mask]
-
-                output['kinematics']['nLooseMu'] += [muons.counts[mask]]
-                output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask].flatten()]
-                output['kinematics']['mupt0'] += [muons[leadmuon_index][mask].pt.flatten()]
-                output['kinematics']['mueta0'] += [muons[leadmuon_index][mask].eta.flatten()]
-                output['kinematics']['muphi0'] += [muons[leadmuon_index][mask].phi.flatten()]
-
-                output['kinematics']['nLooseEl'] += [electrons.counts[mask]]
-                output['kinematics']['nTightEl'] += [electrons[df['is_tight_electron']].counts[mask].flatten()]
-                output['kinematics']['elpt0'] += [electrons[leadelectron_index][mask].pt.flatten()]
-                output['kinematics']['eleta0'] += [electrons[leadelectron_index][mask].eta.flatten()]
-
-                output['kinematics']['nLooseGam'] += [photons.counts[mask]]
-                output['kinematics']['nTightGam'] += [photons[df['is_tight_photon']].counts[mask].flatten()]
-                output['kinematics']['gpt0'] += [photons[leadphoton_index][mask].pt.flatten()]
-                output['kinematics']['geta0'] += [photons[leadphoton_index][mask].eta.flatten()]
-
-
         # Randomized Parameter data sets
         # keep track of the mapping
         rand_datasets = rand_dataset_dict(df.keys(), df['year'])
