@@ -721,8 +721,8 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask],    weight=region_weights.partial_weight(exclude=exclude)[mask] )
 
             if gen_v_pt is not None:
-                ezfill("gen_v_pt", pt=gen_v_pt, weight=region_weights.partial_weight(exclude=[]))
-                ezfill("gen_v_pt_notheory", pt=gen_v_pt, weight=region_weights.partial_weight(exclude=['theory']))
+                ezfill("gen_v_pt", pt=gen_v_pt[mask], weight=rw[mask])
+                ezfill("gen_v_pt_notheory", pt=gen_v_pt[mask], weight=region_weights.partial_weight(exclude=['theory'])[mask])
 
             # Diboson NLO
             ezfill(
