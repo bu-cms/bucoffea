@@ -291,7 +291,7 @@ class monojetProcessor(processor.ProcessorABC):
             leadak8_gen_match_v_mask = leadak8.match(genVs, deltaRCut=0.8)
             matched_leadak8 = leadak8[leadak8_gen_match_v_mask]
             unmatched_leadak8 = leadak8[~leadak8_gen_match_v_mask]
-            df['leadak8_gen_match_v'] = leadak8_gen_match_v_mask
+            df['leadak8_gen_match_v'] = leadak8_gen_match_v_mask.any()
 
             # Matching reco AK8 to gen AK8
             gen_ak8 = setup_gen_jets_ak8(df)
@@ -302,7 +302,7 @@ class monojetProcessor(processor.ProcessorABC):
             )
 
             best_pair = pairs[dr.argmin()]
-            leadak8_gen_match_ak8_mask = dr.min() < 0.8
+            leadak8_gen_match_ak8_mask = (dr.min() < 0.8)
 
             df['leadak8_gen_match_ak8'] = leadak8_gen_match_ak8_mask
             df['leadak8_gen_match_ak8_pt'] = best_pair.i1.pt
@@ -310,14 +310,14 @@ class monojetProcessor(processor.ProcessorABC):
             df['leadak8_gen_match_ak8_phi'] = best_pair.i1.phi
 
 
-        df['leadak8_pt']       = ak8.pt.max()
+        df['leadak8_pt']       = ak8.pt[leadak8_index]
         df['leadak8_eta']      = ak8.eta[leadak8_index]
         df['leadak8_tau21']    = ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]
         df['leadak8_mass']     = ak8.mass[leadak8_index]
         df['leadak8_wvsqcdmd'] = ak8.wvsqcdmd[leadak8_index]
         df['leadak8_wvsqcd']   = ak8.wvsqcd[leadak8_index]
 
-        leadak8_pt_eta = (df['leadak8_pt'] > cfg.SELECTION.SIGNAL.leadak8.PT) \
+        leadak8_pt_eta = (df['leadak8_pt'].max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
                          & (df['leadak8_eta'] < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
 
         selection.add('leadak8_pt_eta', leadak8_pt_eta)
@@ -575,12 +575,14 @@ class monojetProcessor(processor.ProcessorABC):
                             output['tree_float16'][region]["el1tight"] += processor.column_accumulator(electrons.tightId[~leadelectron_index][mask].max())
                         
                         # mono-V
-                        if re.match('.*_v_.*', region):
+                        if re.match('.*_v', region):
                             for key in ['leadak8_pt','leadak8_eta','leadak8_tau21','leadak8_mass','leadak8_wvsqcd']:
                                 output['tree_float16'][region][key]  += processor.column_accumulator(df[key][mask].max())
 
                             if not df['is_data']:
-                                for key in ['leadak8_gen_match_v','leadak8_gen_match_ak8','leadak8_gen_match_ak8_pt','leadak8_gen_match_ak8_eta','leadak8_gen_match_ak8_phi']:
+                                for key in ['leadak8_gen_match_v','leadak8_gen_match_ak8']:
+                                    output['tree_float16'][region][key]  += processor.column_accumulator(df[key][mask])
+                                for key in ['leadak8_gen_match_ak8_pt','leadak8_gen_match_ak8_eta','leadak8_gen_match_ak8_phi']:
                                     output['tree_float16'][region][key]  += processor.column_accumulator(df[key][mask].max())
 
             if region=='inclusive':
