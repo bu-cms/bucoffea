@@ -677,7 +677,6 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_phi0',       jetphi=ak8[leadak8_index].phi[mask].flatten(),    weight=w_leadak8)
                 ezfill('ak8_pt0',        jetpt=ak8[leadak8_index].pt[mask].flatten(),      weight=w_leadak8 )
                 ezfill('ak8_mass0',      mass=ak8[leadak8_index].mass[mask].flatten(),     weight=w_leadak8)
-                ezfill('ak8_mass_response',   response=ak8[leadak8_index].mass[mask].max() / df['leadak8_gen_match_ak8_mass'][mask].max(),  weight=w_leadak8)
                 ezfill('ak8_tau210',     tau21=ak8[leadak8_index].tau21[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_wvsqcd0',    tagger=ak8[leadak8_index].wvsqcd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_wvsqcdmd0',  tagger=ak8[leadak8_index].wvsqcdmd[mask].flatten(),     weight=w_leadak8)
@@ -687,6 +686,9 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_tvsqcdmd0',    tagger=ak8[leadak8_index].tvsqcdmd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_wvstqcd0',    tagger=ak8[leadak8_index].wvstqcd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_wvstqcdmd0',    tagger=ak8[leadak8_index].wvstqcdmd[mask].flatten(),     weight=w_leadak8)
+
+                if not df['is_data']:
+                    ezfill('ak8_mass_response',   response=ak8[leadak8_index].mass[mask].max() / df['leadak8_gen_match_ak8_mass'][mask].max(),  weight=w_leadak8)
 
                 # histogram with only gen-matched lead ak8 pt
                 if not df['is_data']:
