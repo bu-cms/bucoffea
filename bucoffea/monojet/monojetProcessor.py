@@ -413,7 +413,7 @@ class monojetProcessor(processor.ProcessorABC):
 
             weights = pileup_weights(weights, df, evaluator, cfg)
             if not (gen_v_pt is None):
-                weights = theory_weights_monojet(weights, df, evaluator, gen_v_pt)
+                theory_weights = theory_weights_monojet(weights, df, evaluator, gen_v_pt)
 
             # Diboson NLO
             diboson_nlo_weights(df, evaluator, gen)
@@ -472,6 +472,22 @@ class monojetProcessor(processor.ProcessorABC):
                         ]
                     region_weights.add("vetoweight", veto_weights.partial_weight(include=["nominal"]))
 
+
+                if not (gen_v_pt is None):
+                    region_weights.add(
+                        'sf_nlo_ewk',
+                        theory_weights.partial_weight(include=['sf_nlo_ewk']),
+                    )
+
+                    channel = 'v' if re.match(".*_v($|_.*)", region) else 'j'
+                    central = re.match(r'cr_1(e|m)_.*', region) and df['is_lo_w']
+                    sf_qcd_name = f'sf_nlo_qcd_{channel}'+("_central" if central else "")
+
+                    region_weights.add(
+                                        "sf_nlo_qcd",
+                                        theory_weights.partial_weight(include=[sf_qcd_name])
+                    )
+                    print(region, dataset, sf_qcd_name, theory_weights.partial_weight(include=[sf_qcd_name]))
             if not (df['is_data']):
                 for wp in ['loose','tight','medium']:
                     if re.match(f'.*_{wp}_v.*', region):

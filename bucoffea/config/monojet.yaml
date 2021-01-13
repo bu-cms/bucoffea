@@ -141,7 +141,7 @@ default:
     ewk_nlo_g: # EW k factor for QCD photon
       histogram: kfactor_monojet_ewk
       file: data/sf/theory/merged_kfactors_gjets.root
-    qcd_nlo_w_2017: # QCD k factor for QCD W
+    qcd_nlo_w_j: # QCD k factor for QCD W
       histogram: kfac_wjet_filter
       file: data/sf/theory/kfac_wjet_filter.root
     qcd_nlo_dy_2017: # QCD k factor for QCD Z
@@ -150,7 +150,15 @@ default:
     qcd_nlo_znn_2017: # QCD k factor for QCD Z
       histogram: kfac_znn_filter
       file: data/sf/theory/kfac_znn_filter.root
-
+    qcd_nlo_w_j_central:
+      histogram: wjet_gen_vpt_combined_wjets_monojet_central
+      file: data/sf/theory/kfac_2020-12-17_wkfac_v8.root
+    qcd_nlo_w_v:
+      histogram: wjet_gen_vpt_combined_wjets_monov
+      file: data/sf/theory/kfac_2020-12-17_wkfac_v8.root
+    qcd_nlo_w_v_central:
+      histogram: wjet_gen_vpt_combined_wjets_monov_central
+      file: data/sf/theory/kfac_2020-12-17_wkfac_v8.root
     qcd_nlo_g:
       histogram: gjets_stat1_monojet
       file: data/sf/theory/monojet_photon_kfac_new.root

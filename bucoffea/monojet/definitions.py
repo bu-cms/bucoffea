@@ -740,34 +740,45 @@ def fitfun(x, a, b, c):
     return a * np.exp(-b * x) + c
 
 def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
+    weights = processor.Weights(size=df.size, storeIndividual=True)
+
     if df['is_lo_w']:
-        if extract_year(df['dataset']) == 2016:
-            qcd_nlo = evaluator["qcd_nlo_w_2016"](gen_v_pt)
-        else:
-            qcd_nlo = evaluator["qcd_nlo_w_2017"](gen_v_pt)
-        theory_weights =  qcd_nlo * evaluator["ewk_nlo_w"](gen_v_pt)
+        qcd_nlo_j          = evaluator["qcd_nlo_w_j"](gen_v_pt)
+        qcd_nlo_j_central  = evaluator["qcd_nlo_w_j_central"](gen_v_pt)
+        qcd_nlo_v          = evaluator["qcd_nlo_w_v"](gen_v_pt)
+        qcd_nlo_v_central  = evaluator["qcd_nlo_w_v_central"](gen_v_pt)
+
+        ewk_nlo = evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
         if df['is_lo_znunu']:
             qcd_nlo = evaluator["qcd_nlo_znn_2017"](gen_v_pt)
         else:
             qcd_nlo = evaluator["qcd_nlo_dy_2017"](gen_v_pt)
-        theory_weights =  qcd_nlo * evaluator["ewk_nlo_z"](gen_v_pt)
+        ewk_nlo = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_nlo_w']:
-        theory_weights = evaluator["ewk_nlo_w"](gen_v_pt)
+        qcd_nlo = np.ones(df.size)
+        ewk_nlo = evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_nlo_z']:
-        theory_weights = evaluator["ewk_nlo_z"](gen_v_pt)
+        qcd_nlo = np.ones(df.size)
+        ewk_nlo = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
-        theory_weights = evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["ewk_nlo_g"](gen_v_pt)
+        qcd_nlo = evaluator["qcd_nlo_g"](gen_v_pt)
+        ewk_nlo = evaluator["ewk_nlo_g"](gen_v_pt)
     elif df['is_nlo_g']:
-        theory_weights = evaluator["ewk_nlo_g"](gen_v_pt)
+        qcd_nlo = np.ones(df.size)
+        ewk_nlo = evaluator["ewk_nlo_g"](gen_v_pt)
     else:
         theory_weights = np.ones(df.size)
 
     # Guard against invalid input pt
     invalid = (gen_v_pt <=0) | np.isinf(gen_v_pt) | np.isnan(gen_v_pt)
-    theory_weights[invalid] = 1
 
-    weights.add('theory', theory_weights)
+    weights.add('sf_nlo_qcd_j',               np.where(invalid, 1, qcd_nlo_j))
+    weights.add('sf_nlo_qcd_j_central',       np.where(invalid, 1, qcd_nlo_j_central))
+    weights.add('sf_nlo_qcd_v',         np.where(invalid, 1, qcd_nlo_v))
+    weights.add('sf_nlo_qcd_v_central', np.where(invalid, 1, qcd_nlo_v_central))
+
+    weights.add('sf_nlo_ewk',               np.where(invalid, 1, ewk_nlo))
     return weights
 
 def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
