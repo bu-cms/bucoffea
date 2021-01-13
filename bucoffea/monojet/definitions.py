@@ -1,3 +1,4 @@
+import re
 import copy
 
 import coffea.processor as processor
@@ -68,6 +69,10 @@ def monojet_accumulator(cfg):
 
     dxy_ax = Bin("dxy", r"$d_{xy}$", 20, 0, 0.5)
     dz_ax = Bin("dz", r"$d_{z}$", 20, 0, 0.5)
+
+    tmp =[0, 0.25, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.92,0.94,0.95,0.96,0.97,0.98,0.99, 1.0]
+    tmp = tmp + [2-x for x in reversed(tmp[:-1])]
+    response_ax = Bin("response", r"response", tmp)
     id_ax = Bin("id", r"ID bool", 2,-0.5,1.5)
 
     pt_ax = Bin("pt", r"$p_{T}$ (GeV)", 50, 0, 1000)
@@ -86,7 +91,7 @@ def monojet_accumulator(cfg):
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 50,50,150)
 
     weight_type_ax = Cat("weight_type", "Weight type")
-    weight_ax = Bin("weight_value", "Weight",50,0.5,1.5)
+    weight_ax = Bin("weight_value", "Weight",20,0.5,1.5)
     sf_ax = Bin("sf", "sf",50,0.8,1.8)
 
     nvtx_ax = Bin('nvtx','Number of vertices',50,-0.5,99.5)
@@ -155,6 +160,7 @@ def monojet_accumulator(cfg):
     items["ak8_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak8_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak8_mass0"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
+    items["ak8_mass_response"] = Hist("Counts", dataset_ax, region_ax, response_ax)
     items["ak8_tau210"] = Hist("Counts", dataset_ax, region_ax, tau21_ax)
     items["ak8_wvsqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
@@ -717,15 +723,6 @@ def monojet_regions(cfg):
 
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
             regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
-
-    tmp = {}
-    for name, cuts in regions.items():
-        if not name.startswith("cr"):
-            continue
-        cuts = copy.deepcopy(cuts)
-        cuts.remove("dpfcalo")
-        tmp [f"{name}_nodpfcalo"] = cuts
-    regions.update(tmp)
 
     if cfg and not cfg.RUN.MONOV:
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_v') or '_v_' in x]
