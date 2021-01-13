@@ -308,6 +308,7 @@ class monojetProcessor(processor.ProcessorABC):
             df['leadak8_gen_match_ak8_pt'] = best_pair.i1.pt
             df['leadak8_gen_match_ak8_eta'] = best_pair.i1.eta
             df['leadak8_gen_match_ak8_phi'] = best_pair.i1.phi
+            df['leadak8_gen_match_ak8_mass'] = best_pair.i1.mass
 
 
         df['leadak8_pt']       = ak8.pt[leadak8_index]
@@ -660,7 +661,7 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('drphotonjet',    dr=df['dRPhotonJet'][mask],  weight=rw[mask])
 
             # AK8 jets
-            if region=='inclusive' or region.endswith('v'):
+            if region=='inclusive' or re.match('.*_v($|_.*)',region):
                 # All
                 w_allak8 = weight_shape(ak8.eta[mask], region_weights.partial_weight(exclude=exclude)[mask])
 
@@ -676,6 +677,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_phi0',       jetphi=ak8[leadak8_index].phi[mask].flatten(),    weight=w_leadak8)
                 ezfill('ak8_pt0',        jetpt=ak8[leadak8_index].pt[mask].flatten(),      weight=w_leadak8 )
                 ezfill('ak8_mass0',      mass=ak8[leadak8_index].mass[mask].flatten(),     weight=w_leadak8)
+                ezfill('ak8_mass_response',   response=ak8[leadak8_index].mass[mask].max() / df['leadak8_gen_match_ak8_mass'][mask].max(),  weight=w_leadak8)
                 ezfill('ak8_tau210',     tau21=ak8[leadak8_index].tau21[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_wvsqcd0',    tagger=ak8[leadak8_index].wvsqcd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_wvsqcdmd0',  tagger=ak8[leadak8_index].wvsqcdmd[mask].flatten(),     weight=w_leadak8)

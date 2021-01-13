@@ -222,12 +222,14 @@ default:
       drelejet: False
       drmuonjet: False
       drphotonjet: False
+      electron_eta_phi: False
       muon_eta_phi: False
       npv_nopu: False
       npv: false
       npvgood_nopu: False
       npvgood: false
       photon_eta_phi: False
+      recoil_nodibosonnlo: False
       recoil_dibosonnlo_dn: False
       recoil_dibosonnlo_up: False
       recoil_nopog: False
