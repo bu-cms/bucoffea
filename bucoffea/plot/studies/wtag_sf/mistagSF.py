@@ -13,10 +13,11 @@ inpath = "../../../input/merged_2020_11_23_03Sep20v7_Wmass65To120"
 if inpath[-1]=='/':
     inpath = inpath[:-1]
 inpath_tag = inpath.split('/')[-1]
-bin_scheme=1   # choose which binning scheme to use, see bin_schemes
+bin_scheme=2   # choose which binning scheme to use, see bin_schemes
 massden=True   # True if we apply mass cut on denominator in the efficiency calculation
-massnum=True   # True if we apply mass cut on denominator in the efficiency calculation
+massnum=True   # True if we apply mass cut on numerator in the efficiency calculation
 nlogjet=True   # True if we use NLO GJets sample for the mistag measurement in the photon CR
+splitsys=True  # True if splited systemtics sources calculated separately, won't affect nominal values, only generate additional hitograms
 realVSF=1.0    # This number can be used to scale the matched real V events up/down before doing realV extraction from data
 #outdir = 'output_bin2_gvsothers_nojmr'
 outdir = f'output_mistag/{inpath_tag}/output_bin{bin_scheme}'
@@ -26,6 +27,8 @@ if massnum:
     outdir+="_massnum"
 if nlogjet:
     outdir+="_nlogjet"
+if splitsys:
+    outdir+="_splitsys"
 outdir+="_realVSF"+( str(realVSF).replace(".","p"))
 if not os.path.exists(outdir):
     os.makedirs(outdir)
@@ -34,12 +37,16 @@ if not os.path.exists(outdir):
 outfilename = f"{outdir}/wtag_mistag_SF.root"
 bin_schems = {
         1 : hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [200,300,400,800]),
-        2 : hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [240,800]),
+        2 : hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [240,1000]),
         3 : hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [240,360,500,1000]),
         }
 newbin = bin_schems[bin_scheme]
 #newbin = hist.Bin('jetpt',r'AK8 jet $p_{T}$ (GeV)', [240,360,500,1000])
 
+if splitsys:
+    all_sysvar = ["nominal","sysUp","sysDn","topNormUp","topNormDn","vvNormUp","vvNormDn","vgNormUp","vgNormDn","topVTagUp","topVTagDn","vvVTagUp","vvVTagDn","vgVTagUp","vgVTagDn","topBVetoUp","topBVetoDn","vvBVetoUp","vvBVetoDn","vgBVetoUp","vgBVetoDn"]
+else:
+    all_sysvar = ["nominal","sysUp","sysDn"]
 
 def divide_sumw2(sumw_a, sumw2_a, sumw_b, sumw2_b): #return (sumw_c, sumw2_c) for c=a/b
     # check that the inputs have the same shape
@@ -238,7 +245,7 @@ def main():
                 if not massnum:
                     selector_region_pass = region_pass_nomass
 
-                for sysvar in ["nominal","sysUp","sysDn"]:
+                for sysvar in all_sysvar:
                     if sysvar=="nominal":
                         sysvar_tag = ""
                     else:
@@ -252,10 +259,26 @@ def main():
                     h_mc_Real  = htmp_Vmatched[mc_Real]
                     # vary within systematics
                     # norm for both 10%, bveto unc for top 6% for diboson 2%, vtag unc for both 10% (approx)
-                    if sysvar=="sysUp":
-                        h_mc_Real.scale(1.15)
-                    if sysvar=="sysDn":
-                        h_mc_Real.scale(0.85)
+                    if sysvar=="sysUp": h_mc_Real.scale(1.15)
+                    if sysvar=="sysDn": h_mc_Real.scale(0.85)
+                    if sysvar=="topNormUp": h_mc_Real.scale  ( { "Top_FXFX_2017"      : 1.10, "Top_FXFX_2018"      : 1.10} , axis="dataset" ) 
+                    if sysvar=="topNormDn": h_mc_Real.scale  ( { "Top_FXFX_2017"      : 0.90, "Top_FXFX_2018"      : 0.90} , axis="dataset" ) 
+                    if sysvar=="vvNormUp":  h_mc_Real.scale  ( { "Diboson_2017"       : 1.10, "Diboson_2018"       : 1.10} , axis="dataset" ) 
+                    if sysvar=="vvNormDn":  h_mc_Real.scale  ( { "Diboson_2017"       : 0.90, "Diboson_2018"       : 0.90} , axis="dataset" ) 
+                    if sysvar=="vgNormUp":  h_mc_Real.scale  ( { "VQQGamma_FXFX_2017" : 1.10, "VQQGamma_FXFX_2018" : 1.10} , axis="dataset" ) 
+                    if sysvar=="vgNormDn":  h_mc_Real.scale  ( { "VQQGamma_FXFX_2017" : 0.90, "VQQGamma_FXFX_2018" : 0.90} , axis="dataset" ) 
+                    if sysvar=="topVTagUp": h_mc_Real.scale  ( { "Top_FXFX_2017"      : 1.10, "Top_FXFX_2018"      : 1.10} , axis="dataset" ) 
+                    if sysvar=="topVTagDn": h_mc_Real.scale  ( { "Top_FXFX_2017"      : 0.90, "Top_FXFX_2018"      : 0.90} , axis="dataset" ) 
+                    if sysvar=="vvVTagUp":  h_mc_Real.scale  ( { "Diboson_2017"       : 1.10, "Diboson_2018"       : 1.10} , axis="dataset" ) 
+                    if sysvar=="vvVTagDn":  h_mc_Real.scale  ( { "Diboson_2017"       : 0.90, "Diboson_2018"       : 0.90} , axis="dataset" ) 
+                    if sysvar=="vgVTagUp":  h_mc_Real.scale  ( { "VQQGamma_FXFX_2017" : 1.10, "VQQGamma_FXFX_2018" : 1.10} , axis="dataset" ) 
+                    if sysvar=="vgVTagDn":  h_mc_Real.scale  ( { "VQQGamma_FXFX_2017" : 0.90, "VQQGamma_FXFX_2018" : 0.90} , axis="dataset" ) 
+                    if sysvar=="topBVetoUp": h_mc_Real.scale ( { "Top_FXFX_2017"      : 1.06, "Top_FXFX_2018"      : 1.06} , axis="dataset" ) 
+                    if sysvar=="topBVetoDn": h_mc_Real.scale ( { "Top_FXFX_2017"      : 0.94, "Top_FXFX_2018"      : 0.94} , axis="dataset" ) 
+                    if sysvar=="vvBVetoUp":  h_mc_Real.scale ( { "Diboson_2017"       : 1.02, "Diboson_2018"       : 1.02} , axis="dataset" ) 
+                    if sysvar=="vvBVetoDn":  h_mc_Real.scale ( { "Diboson_2017"       : 0.98, "Diboson_2018"       : 0.98} , axis="dataset" ) 
+                    if sysvar=="vgBVetoUp":  h_mc_Real.scale ( { "VQQGamma_FXFX_2017" : 1.02, "VQQGamma_FXFX_2018" : 1.02} , axis="dataset" ) 
+                    if sysvar=="vgBVetoDn":  h_mc_Real.scale ( { "VQQGamma_FXFX_2017" : 0.98, "VQQGamma_FXFX_2018" : 0.98} , axis="dataset" ) 
                     h_mc_Real  = h_mc_Real.integrate('dataset')
                     h_mc_Real.scale(-1*realVSF) # just for background substraction
                     h_data.add(h_mc_Real)
@@ -278,7 +301,7 @@ def main():
     # soup togather all CR using a weighted_average between the regions:
     for year in [2017,2018]:
         for wp in ['loose','tight','medium']:
-            for sysvar in ["nominal","sysUp","sysDn"]:
+            for sysvar in all_sysvar:
                 if sysvar=="nominal":
                     sysvar_tag = ""
                 else:
