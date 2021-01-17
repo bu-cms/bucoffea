@@ -1,6 +1,6 @@
 import uproot
 import time
-from mistagSF import outdir
+from mistagSF import outdir,newbin
 import numpy as np
 from matplotlib import pyplot as plt
 import os
