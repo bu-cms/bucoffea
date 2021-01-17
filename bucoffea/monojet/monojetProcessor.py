@@ -475,11 +475,18 @@ class monojetProcessor(processor.ProcessorABC):
                 for wp in ['loose','tight','medium']:
                     if re.match(f'.*_{wp}_v.*', region):
                         if ('nomistag' in region) or wp=='medium':
+                            #print(f'dataset {dataset} in region {region} not using mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
-                        #elif re.match(r'cr_g.*', region):
-                        #    matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
-                        #            * evaluator[f'wtag_mistag_g_{wp}'](unmatched_leadak8.pt).prod()
+                        elif re.match(r'^W(\d)?Jet.*', dataset):
+                            #print(f'dataset {dataset} in region {region} using W mistag SF')
+                            matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
+                                    * evaluator[f'wtag_mistag_w_{wp}'](unmatched_leadak8.pt).prod()
+                        elif re.match(r'^(Z(\d)?Jet|DY).*', dataset):
+                            #print(f'dataset {dataset} in region {region} using Z mistag SF')
+                            matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
+                                    * evaluator[f'wtag_mistag_z_{wp}'](unmatched_leadak8.pt).prod()
                         else:
+                            #print(f'dataset {dataset} in region {region} using G mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
                                     * evaluator[f'wtag_mistag_g_{wp}'](unmatched_leadak8.pt).prod()
 
