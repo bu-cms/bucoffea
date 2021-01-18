@@ -142,10 +142,10 @@ default:
       histogram: kfactor_monojet_ewk
       file: data/sf/theory/merged_kfactors_gjets.root
     qcd_nlo_w_j: # QCD k factor for QCD W
-      histogram: kfac_wjet_filter
+      histogram: gen_vpt_combined_wjets_monojet
       file: data/sf/theory/kfac_wjet_filter.root
     qcd_nlo_w_j_central:
-      histogram: wjet_gen_vpt_combined_wjets_monojet_central
+      histogram: gen_vpt_combined_wjets_monojet_central
       file: data/sf/theory/kfac_2020-12-17_wkfac_v9.root
     qcd_nlo_w_v:
       histogram: gen_vpt_v_mass_combined_wjets_monov_nomass
