@@ -761,9 +761,9 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt, gen_ak8_mass):
         ewk_nlo = evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
         if df['is_lo_znunu']:
-            qcd_nlo_j          = evaluator["qcd_nlo_zjet_j"](gen_v_pt)
+            qcd_nlo_j          = evaluator["qcd_nlo_znn_j"](gen_v_pt)
             qcd_nlo_j_central  = qcd_nlo_j
-            qcd_nlo_v          = evaluator["qcd_nlo_zjet_v"](gen_v_pt, gen_ak8_mass)
+            qcd_nlo_v          = evaluator["qcd_nlo_znn_v"](gen_v_pt, gen_ak8_mass)
             qcd_nlo_v_central  = qcd_nlo_v
         else:
             qcd_nlo_j          = evaluator["qcd_nlo_dy_j_central"](gen_v_pt)
