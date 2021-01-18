@@ -413,7 +413,14 @@ class monojetProcessor(processor.ProcessorABC):
 
             weights = pileup_weights(weights, df, evaluator, cfg)
             if not (gen_v_pt is None):
-                theory_weights = theory_weights_monojet(weights, df, evaluator, gen_v_pt)
+                theory_weights = theory_weights_monojet(
+                                                         weights=weights,
+                                                         df=df,
+                                                         evaluator=evaluator,
+                                                         gen_v_pt=gen_v_pt,
+                                                         gen_ak8_mass=df['leadak8_gen_match_ak8_mass'].max()
+                                                         )
+
 
             # Diboson NLO
             diboson_nlo_weights(df, evaluator, gen)
@@ -480,7 +487,11 @@ class monojetProcessor(processor.ProcessorABC):
                     )
 
                     channel = 'v' if re.match(".*_v($|_.*)", region) else 'j'
-                    central = re.match(r'cr_1(e|m)_.*', region) and df['is_lo_w']
+
+                    # Use SF with central leptons for W and DY in CR
+                    central = bool(re.match(r'cr_1(e|m)_.*', region)) and df['is_lo_w']
+                    central |= bool(re.match(r'cr_2(e|m)_.*', region)) and df['is_lo_z']
+
                     sf_qcd_name = f'sf_nlo_qcd_{channel}'+("_central" if central else "")
 
                     region_weights.add(
@@ -590,7 +601,7 @@ class monojetProcessor(processor.ProcessorABC):
                             output['tree_float16'][region]["el1pt"]  += processor.column_accumulator(electrons.pt[~leadelectron_index][mask].max())
                             output['tree_float16'][region]["el1eta"] += processor.column_accumulator(electrons.eta[~leadelectron_index][mask].max())
                             output['tree_float16'][region]["el1tight"] += processor.column_accumulator(electrons.tightId[~leadelectron_index][mask].max())
-                        
+
                         # mono-V
                         if re.match('.*_v', region):
                             for key in ['leadak8_pt','leadak8_eta','leadak8_tau21','leadak8_mass','leadak8_wvsqcd']:

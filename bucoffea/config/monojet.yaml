@@ -144,33 +144,30 @@ default:
     qcd_nlo_w_j: # QCD k factor for QCD W
       histogram: kfac_wjet_filter
       file: data/sf/theory/kfac_wjet_filter.root
-    qcd_nlo_dy_2017: # QCD k factor for QCD Z
-      histogram: kfac_dy_filter
-      file: data/sf/theory/kfac_dy_filter.root
-    qcd_nlo_znn_2017: # QCD k factor for QCD Z
-      histogram: kfac_znn_filter
-      file: data/sf/theory/kfac_znn_filter.root
     qcd_nlo_w_j_central:
       histogram: wjet_gen_vpt_combined_wjets_monojet_central
       file: data/sf/theory/kfac_2020-12-17_wkfac_v8.root
     qcd_nlo_w_v:
-      histogram: wjet_gen_vpt_combined_wjets_monov
-      file: data/sf/theory/kfac_2020-12-17_wkfac_v8.root
+      histogram: gen_vpt_v_mass_combined_wjets_monov_nomass
+      file: data/sf/theory/kfac_2d_2020-12-17_wkfac_v9.root
     qcd_nlo_w_v_central:
-      histogram: wjet_gen_vpt_combined_wjets_monov_central
-      file: data/sf/theory/kfac_2020-12-17_wkfac_v8.root
+      histogram: gen_vpt_v_mass_combined_wjets_monov_nomass_central
+      file: data/sf/theory/kfac_2d_2020-12-17_wkfac_v9.root
+    qcd_nlo_dy_j_central: # QCD k factor for QCD Z
+      histogram: gen_vpt_combined_dy_monojet_central
+      file: data/sf/theory/kfac_2020-12-17_wkfac_v9.root
+    qcd_nlo_dy_v_central: # QCD k factor for QCD Z
+      histogram: gen_vpt_v_mass_combined_dy_monov_nomass_central
+      file: data/sf/theory/kfac_2d_2020-12-17_wkfac_v9.root
+    qcd_nlo_znn_j: # QCD k factor for QCD Z
+      histogram: gen_vpt_combined_zjets_monojet
+      file: data/sf/theory/kfac_2020-12-17_wkfac_v9.root
+    qcd_nlo_znn_v: # QCD k factor for QCD Z
+      histogram: gen_vpt_v_mass_combined_zjets_monov_nomass
+      file: data/sf/theory/kfac_2d_2020-12-17_wkfac_v9.root
     qcd_nlo_g:
       histogram: gjets_stat1_monojet
       file: data/sf/theory/monojet_photon_kfac_new.root
-    qcd_nnlo_g:
-      histogram: aj
-      file: data/sf/theory/lindert_qcd_nnlo_sf.root
-    qcd_nnlo_w:
-      histogram: evj
-      file: data/sf/theory/lindert_qcd_nnlo_sf.root
-    qcd_nnlo_z:
-      histogram: eej
-      file: data/sf/theory/lindert_qcd_nnlo_sf.root
     pileup:
       mode: nano
     diele_id_sf:
