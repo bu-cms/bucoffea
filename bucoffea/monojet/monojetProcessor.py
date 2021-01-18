@@ -481,14 +481,14 @@ class monojetProcessor(processor.ProcessorABC):
                             #print(f'dataset {dataset} in region {region} using W mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
                                     * evaluator[f'wtag_mistag_w_{wp}'](unmatched_leadak8.pt).prod()
-                        elif re.match(r'^(Z(\d)?Jet|DY).*', dataset):
-                            #print(f'dataset {dataset} in region {region} using Z mistag SF')
-                            matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
-                                    * evaluator[f'wtag_mistag_z_{wp}'](unmatched_leadak8.pt).prod()
-                        else:
+                        elif re.match(r'^G(\d)?Jet.*', dataset) or re.match(r'QCD.*', dataset):
                             #print(f'dataset {dataset} in region {region} using G mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
                                     * evaluator[f'wtag_mistag_g_{wp}'](unmatched_leadak8.pt).prod()
+                        else:
+                            #print(f'dataset {dataset} in region {region} using Z mistag SF')
+                            matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
+                                    * evaluator[f'wtag_mistag_z_{wp}'](unmatched_leadak8.pt).prod()
 
                         region_weights.add('wtag_{wp}', matched_weights)
 
