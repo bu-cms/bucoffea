@@ -752,6 +752,7 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt, gen_ak8_mass):
     qcd_nlo_j_central = qcd_nlo_j
     qcd_nlo_v         = qcd_nlo_j
     qcd_nlo_v_central = qcd_nlo_j
+    ewk_nlo           = qcd_nlo_j
 
     if df['is_lo_w']:
         qcd_nlo_j          = evaluator["qcd_nlo_w_j"](gen_v_pt)
@@ -786,8 +787,22 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt, gen_ak8_mass):
     else:
         pass
 
+
     # Guard against invalid input pt
-    invalid = (gen_v_pt <=0) | np.isinf(gen_v_pt) | np.isnan(gen_v_pt)
+    invalid_pt = (gen_v_pt <=0) | np.isinf(gen_v_pt) | np.isnan(gen_v_pt)
+    qcd_nlo_j         = np.where(invalid_pt, 1, qcd_nlo_j)
+    qcd_nlo_j_central = np.where(invalid_pt, 1, qcd_nlo_j_central)
+    qcd_nlo_v         = np.where(invalid_pt, 1, qcd_nlo_v)
+    qcd_nlo_v_central = np.where(invalid_pt, 1, qcd_nlo_v_central)
+
+
+    # If anything is still invalid, that's an error
+    is_invalid = lambda x: np.isinf(x) | np.isnan(x)
+    assert(~np.any(is_invalid(qcd_nlo_j)))
+    assert(~np.any(is_invalid(qcd_nlo_j_central)))
+    assert(~np.any(is_invalid(qcd_nlo_v)))
+    assert(~np.any(is_invalid(qcd_nlo_v_central)))
+    assert(~np.any(is_invalid(ewk_nlo)))
 
     weights.add('sf_nlo_qcd_j',         np.where(invalid, 1, qcd_nlo_j))
     weights.add('sf_nlo_qcd_j_central', np.where(invalid, 1, qcd_nlo_j_central))
