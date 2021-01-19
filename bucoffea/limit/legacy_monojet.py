@@ -65,6 +65,16 @@ def legacy_dataset_name(dataset):
             channel = 'monov'
         return f"{coupling.lower()}_{channel}_mmed{mmed}_mdm{mdm}_gq{gq}_gdm{gdm}"
 
+
+    m = re.match('DMsimp_t-(S3D_uR)_(JChiChi|PhiPhiToJJChiChi)_Mphi-(\d+)_Mchi-(\d+)_Lambda-(1p0)-mg_pythia8_201(\d)', dataset)
+    if m:
+        model, channel, mphi, mchi, lam, _ = m.groups()
+        if channel=='JChiChi':
+            channel = 'cc'
+        elif channel=='PhiPhiToJJChiChi':
+            channel = 'pp'
+        return f'{model}_{channel}_mphi{mphi}_mchi{mchi}_lam{lam}'
+
     m = re.match(f"ADDMonoJet_MD_(\d+)_d_(\d+)_pythia8_.*", dataset)
     if m:
         md, d = m.groups()
