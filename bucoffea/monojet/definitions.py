@@ -804,12 +804,11 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt, gen_ak8_mass):
     assert(~np.any(is_invalid(qcd_nlo_v_central)))
     assert(~np.any(is_invalid(ewk_nlo)))
 
-    weights.add('sf_nlo_qcd_j',         np.where(invalid, 1, qcd_nlo_j))
-    weights.add('sf_nlo_qcd_j_central', np.where(invalid, 1, qcd_nlo_j_central))
-    weights.add('sf_nlo_qcd_v',         np.where(invalid, 1, qcd_nlo_v))
-    weights.add('sf_nlo_qcd_v_central', np.where(invalid, 1, qcd_nlo_v_central))
-
-    weights.add('sf_nlo_ewk',               np.where(invalid, 1, ewk_nlo))
+    weights.add('sf_nlo_qcd_j',         qcd_nlo_j)
+    weights.add('sf_nlo_qcd_j_central', qcd_nlo_j_central)
+    weights.add('sf_nlo_qcd_v',         qcd_nlo_v)
+    weights.add('sf_nlo_qcd_v_central', qcd_nlo_v_central)
+    weights.add('sf_nlo_ewk',           ewk_nlo)
     return weights
 
 def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
