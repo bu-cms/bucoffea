@@ -1,5 +1,6 @@
 import re
 import copy
+from bucoffea.helpers.gen import setup_gen_jets_ak8
 
 import coffea.processor as processor
 import numpy as np
@@ -739,35 +740,75 @@ def monojet_regions(cfg):
 def fitfun(x, a, b, c):
     return a * np.exp(-b * x) + c
 
-def theory_weights_monojet(weights, df, evaluator, gen_v_pt):
+def theory_weights_monojet(weights, df, evaluator, gen_v_pt, gen_ak8_mass):
+    weights = processor.Weights(size=df.size, storeIndividual=True)
+
+    # Guard against missing masses
+    mass_valid = gen_ak8_mass > 0
+    gen_ak8_mass[~mass_valid] = 85
+
+    # Default: flat 1
+    qcd_nlo_j         = np.ones(df.size)
+    qcd_nlo_j_central = qcd_nlo_j
+    qcd_nlo_v         = qcd_nlo_j
+    qcd_nlo_v_central = qcd_nlo_j
+    ewk_nlo           = qcd_nlo_j
+
     if df['is_lo_w']:
-        if extract_year(df['dataset']) == 2016:
-            qcd_nlo = evaluator["qcd_nlo_w_2016"](gen_v_pt)
-        else:
-            qcd_nlo = evaluator["qcd_nlo_w_2017"](gen_v_pt)
-        theory_weights =  qcd_nlo * evaluator["ewk_nlo_w"](gen_v_pt)
+        qcd_nlo_j          = evaluator["qcd_nlo_w_j"](gen_v_pt)
+        qcd_nlo_j_central  = evaluator["qcd_nlo_w_j_central"](gen_v_pt)
+        qcd_nlo_v          = evaluator["qcd_nlo_w_v"](gen_v_pt, gen_ak8_mass)
+        qcd_nlo_v_central  = evaluator["qcd_nlo_w_v_central"](gen_v_pt, gen_ak8_mass)
+        ewk_nlo = evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_z']:
         if df['is_lo_znunu']:
-            qcd_nlo = evaluator["qcd_nlo_znn_2017"](gen_v_pt)
+            qcd_nlo_j          = evaluator["qcd_nlo_znn_j"](gen_v_pt)
+            qcd_nlo_j_central  = qcd_nlo_j
+            qcd_nlo_v          = evaluator["qcd_nlo_znn_v"](gen_v_pt, gen_ak8_mass)
+            qcd_nlo_v_central  = qcd_nlo_v
         else:
-            qcd_nlo = evaluator["qcd_nlo_dy_2017"](gen_v_pt)
-        theory_weights =  qcd_nlo * evaluator["ewk_nlo_z"](gen_v_pt)
+            qcd_nlo_j          = evaluator["qcd_nlo_dy_j_central"](gen_v_pt)
+            qcd_nlo_j_central  = qcd_nlo_j
+            qcd_nlo_v          = evaluator["qcd_nlo_dy_v_central"](gen_v_pt, gen_ak8_mass)
+            qcd_nlo_v_central  = qcd_nlo_v
+        ewk_nlo = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_nlo_w']:
-        theory_weights = evaluator["ewk_nlo_w"](gen_v_pt)
+        ewk_nlo = evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_nlo_z']:
-        theory_weights = evaluator["ewk_nlo_z"](gen_v_pt)
+        ewk_nlo = evaluator["ewk_nlo_z"](gen_v_pt)
     elif df['is_lo_g']:
-        theory_weights = evaluator["qcd_nlo_g"](gen_v_pt) * evaluator["ewk_nlo_g"](gen_v_pt)
+        qcd_nlo_j = evaluator["qcd_nlo_g"](gen_v_pt)
+        qcd_nlo_j_central = qcd_nlo_j
+        qcd_nlo_v         = qcd_nlo_j
+        qcd_nlo_v_central = qcd_nlo_j
+        ewk_nlo = evaluator["ewk_nlo_g"](gen_v_pt)
     elif df['is_nlo_g']:
-        theory_weights = evaluator["ewk_nlo_g"](gen_v_pt)
+        ewk_nlo = evaluator["ewk_nlo_g"](gen_v_pt)
     else:
-        theory_weights = np.ones(df.size)
+        pass
+
 
     # Guard against invalid input pt
-    invalid = (gen_v_pt <=0) | np.isinf(gen_v_pt) | np.isnan(gen_v_pt)
-    theory_weights[invalid] = 1
+    invalid_pt = (gen_v_pt <=0) | np.isinf(gen_v_pt) | np.isnan(gen_v_pt)
+    qcd_nlo_j         = np.where(invalid_pt, 1, qcd_nlo_j)
+    qcd_nlo_j_central = np.where(invalid_pt, 1, qcd_nlo_j_central)
+    qcd_nlo_v         = np.where(invalid_pt, 1, qcd_nlo_v)
+    qcd_nlo_v_central = np.where(invalid_pt, 1, qcd_nlo_v_central)
 
-    weights.add('theory', theory_weights)
+
+    # If anything is still invalid, that's an error
+    is_invalid = lambda x: np.isinf(x) | np.isnan(x)
+    assert(~np.any(is_invalid(qcd_nlo_j)))
+    assert(~np.any(is_invalid(qcd_nlo_j_central)))
+    assert(~np.any(is_invalid(qcd_nlo_v)))
+    assert(~np.any(is_invalid(qcd_nlo_v_central)))
+    assert(~np.any(is_invalid(ewk_nlo)))
+
+    weights.add('sf_nlo_qcd_j',         qcd_nlo_j)
+    weights.add('sf_nlo_qcd_j_central', qcd_nlo_j_central)
+    weights.add('sf_nlo_qcd_v',         qcd_nlo_v)
+    weights.add('sf_nlo_qcd_v_central', qcd_nlo_v_central)
+    weights.add('sf_nlo_ewk',           ewk_nlo)
     return weights
 
 def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
