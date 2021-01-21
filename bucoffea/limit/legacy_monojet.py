@@ -36,12 +36,12 @@ def datasets(year, unblind=False):
 
 
     mc = {
-            'cr_1m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-            'cr_1e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*|GJets_DR-0p4.*).*{year}'),
+            'cr_1m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WNJetsToLNu.*|.*WJetsToLNu.*HT.*).*{year}'),
+            'cr_1e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WNJetsToLNu.*|.*WJetsToLNu.*HT.*|GJets_DR-0p4.*).*{year}'),
             'cr_2m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_2e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-            'cr_g_j' : re.compile(f'(GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
-            'sr_j_no_veto_all' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsToNuNu.*HT.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*).*{year}'),
+            'cr_g_j' : re.compile(f'(GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|.*WNJetsToLNu.*|WJetsToLNu.*HT.*|Diboson).*{year}'),
+            'sr_j_no_veto_all' : re.compile(f'(.*WJetsToLNu.*HT.*|.*WNJetsToLNu.*|.*ZJetsToNuNu.*HT.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*).*{year}'),
             'sr_j' : re.compile('nomatch'),
             }
     for key in list(mc.keys()):
@@ -64,6 +64,16 @@ def legacy_dataset_name(dataset):
         elif channel=='V':
             channel = 'monov'
         return f"{coupling.lower()}_{channel}_mmed{mmed}_mdm{mdm}_gq{gq}_gdm{gdm}"
+
+
+    m = re.match('DMsimp_t-(S3D_uR)_(JChiChi|PhiPhiToJJChiChi)_Mphi-(\d+)_Mchi-(\d+)_Lambda-(1p0)-mg_pythia8_201(\d)', dataset)
+    if m:
+        model, channel, mphi, mchi, lam, _ = m.groups()
+        if channel=='JChiChi':
+            channel = 'cc'
+        elif channel=='PhiPhiToJJChiChi':
+            channel = 'pp'
+        return f'{model}_{channel}_mphi{mphi}_mchi{mchi}_lam{lam}'
 
     m = re.match(f"ADDMonoJet_MD_(\d+)_d_(\d+)_pythia8_.*", dataset)
     if m:
@@ -132,7 +142,8 @@ def legacy_dataset_name(dataset):
         'WW.*' : 'ww',
         'ZZ.*' : 'zz',
         '(MET|EGamma).*' : 'data',
-        'WJetsToLNu.*' : 'wjets',
+        'WJetsToLNu.*HT.*' : 'wjets',
+        '.*WNJetsToLNu.*' : 'wjetsnlo',
         'ZJetsToNuNu.*' : 'zjets',
         'GJets_DR-0p4.*HT.*' : 'gjets',
         'GJets.*NLO.*' : 'gjets',
