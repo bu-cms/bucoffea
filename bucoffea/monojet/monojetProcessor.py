@@ -500,6 +500,7 @@ class monojetProcessor(processor.ProcessorABC):
                     )
                     print(region, dataset, sf_qcd_name, theory_weights.partial_weight(include=[sf_qcd_name]))
             if not (df['is_data']):
+                suffix_usepol1 = "_pol1" if cfg.MONOVMISTAG_USEPOL1 else ""
                 for wp in ['loose','tight','medium']:
                     if re.match(f'.*_{wp}_v.*', region):
                         if ('nomistag' in region) or wp=='medium':
@@ -508,15 +509,15 @@ class monojetProcessor(processor.ProcessorABC):
                         elif df['is_lo_w'] or df['is_nlo_w']:
                             #print(f'dataset {dataset} in region {region} using W mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
-                                    * evaluator[f'wtag_mistag_w_{wp}'](unmatched_leadak8.pt).prod()
+                                    * evaluator[f'wtag_mistag_w_{wp}{suffix_usepol1}'](unmatched_leadak8.pt).prod()
                         elif df['is_lo_g'] or df['is_nlo_g'] or re.match(r'QCD.*', dataset):
                             #print(f'dataset {dataset} in region {region} using G mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
-                                    * evaluator[f'wtag_mistag_g_{wp}'](unmatched_leadak8.pt).prod()
+                                    * evaluator[f'wtag_mistag_g_{wp}{suffix_usepol1}'](unmatched_leadak8.pt).prod()
                         else:
                             #print(f'dataset {dataset} in region {region} using Z mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
-                                    * evaluator[f'wtag_mistag_z_{wp}'](unmatched_leadak8.pt).prod()
+                                    * evaluator[f'wtag_mistag_z_{wp}{suffix_usepol1}'](unmatched_leadak8.pt).prod()
 
                         region_weights.add('wtag_{wp}', matched_weights)
 
@@ -731,7 +732,7 @@ class monojetProcessor(processor.ProcessorABC):
 
 
                 # specifically for deepak8 mistag rate measurement
-                if cfg.RUN.MONOVMISTAG and 'inclusive_v' in region:
+                if cfg.RUN.MONOVMISTAG_STUDY and 'inclusive_v' in region:
                     ezfill('ak8_passloose_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passmedium_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.LOOSE, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
                     ezfill('ak8_passtight_pt0', wppass=ak8[leadak8_index].wvsqcd[mask].max()>cfg.WTAG.TIGHT, jetpt=ak8[leadak8_index].pt[mask].max(),      weight=w_leadak8 )
