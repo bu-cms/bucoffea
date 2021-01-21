@@ -16,7 +16,7 @@ def produce_pol1_fitted_hist(raw_hist, nbins=100, xlim=None):
     canv = ROOT.TCanvas("canv","canv")
     raw_hist.Draw()
     if not raw_nbins==1:
-        ftr = raw_hist.Fit("pol1","S")
+        ftr = raw_hist.Fit("pol1","NS")
         p0 = ftr.Parameter(0)
         p1 = ftr.Parameter(1)
     else:
