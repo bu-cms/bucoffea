@@ -500,7 +500,7 @@ class monojetProcessor(processor.ProcessorABC):
                     )
                     print(region, dataset, sf_qcd_name, theory_weights.partial_weight(include=[sf_qcd_name]))
             if not (df['is_data']):
-                suffix_usepol1 = "_pol1" if cfg.MONOVMISTAG_USEPOL1 else ""
+                suffix_usepol1 = ("_pol1" if cfg.RUN.MONOVMISTAG_USEPOL1 else "")
                 for wp in ['loose','tight','medium']:
                     if re.match(f'.*_{wp}_v.*', region):
                         if ('nomistag' in region) or wp=='medium':
