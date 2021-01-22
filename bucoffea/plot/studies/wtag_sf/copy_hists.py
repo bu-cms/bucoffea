@@ -36,7 +36,8 @@ def produce_pol1_fitted_hist(raw_hist, nbins=100, xlim=None):
 
 # use single bin for tight SF and multibin for loose SF
 input_filename = {  'loose' : 'output_mistag/merged_2020_11_23_03Sep20v7_Wmass65To120/output_bin5_massden_massnum_nlogjet_splitsys_realVSF1p0/wtag_mistag_SF.root',
-                    'tight' : 'output_mistag/merged_2020_11_23_03Sep20v7_Wmass65To120/output_bin2_massden_massnum_nlogjet_splitsys_realVSF1p0/wtag_mistag_SF.root',
+                    'tight' : 'output_mistag/merged_2020_11_23_03Sep20v7_Wmass65To120/output_bin5_massden_massnum_nlogjet_splitsys_realVSF1p0/wtag_mistag_SF.root',
+                    #'tight' : 'output_mistag/merged_2020_11_23_03Sep20v7_Wmass65To120/output_bin2_massden_massnum_nlogjet_splitsys_realVSF1p0/wtag_mistag_SF.root',
         }
 output_filename = '../../../data/sf/ak8/wtag_mistag_SF.root'
 
