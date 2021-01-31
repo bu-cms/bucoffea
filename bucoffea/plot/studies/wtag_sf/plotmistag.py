@@ -148,13 +148,14 @@ def main():
                     ax.set_title(prefix)
                     if "rate" in prefix:
                         if wp=="loose":  ylim = np.array([0, 0.10])
-                        if wp=="medium": ylim = np.array([0, 0.02])
+                        if wp=="medium": ylim = np.array([0, 0.04])
                         if wp=="tight":  ylim = np.array([0, 0.01])
                         if "massden" in convertedfilename:
                             ylim = ylim*10
                         ax.set_ylabel("efficiency")
                     else:
                         ylim = np.array([0.0,3.0])
+                        if wp=="loose":  ylim = np.array([0.6, 1.6])
                         ax.set_ylabel("SF")
                     ax.set_ylim(ylim[0],ylim[1])
                     ax.minorticks_on()
@@ -163,7 +164,7 @@ def main():
                     ax.legend()
                 plot_from_tags(['g','1e','2e','1m','2m'])
                 fig.savefig(f'{outdir}/{prefix}_{wp}_{year}.png')
-                plot_from_tags(['g','wz'])
+                plot_from_tags(['g','w','z'])
                 fig.savefig(f'{outdir}/{prefix}_{wp}_gvswz_{year}.png')
                 plot_from_tags(['all'])
                 fig.savefig(f'{outdir}/{prefix}_{wp}_all_{year}.png')

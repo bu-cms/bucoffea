@@ -207,7 +207,8 @@ default:
     ele_id_study: False
     btag_study: False
     monov: True
-    monovmistag: False
+    monovmistag_study: False
+    monovmistag_usepol1: False
     monoj: True
     histogram:
       ak4_chf0: False
@@ -532,12 +533,30 @@ era2017:
     wtag_mistag_z_tight:
       histogram: mistag_SF_z_tight_2017
       file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_w_loose_pol1:
+      histogram: mistag_SF_w_loose_2017_pol1
+      file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_w_tight_pol1:
+      histogram: mistag_SF_w_tight_2017_pol1
+      file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_z_loose_pol1:
+      histogram: mistag_SF_z_loose_2017_pol1
+      file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_z_tight_pol1:
+      histogram: mistag_SF_z_tight_2017_pol1
+      file: data/sf/ak8/wtag_mistag_SF.root
     # for photon region
     wtag_mistag_g_loose:
       histogram: mistag_SF_g_loose_2017
       file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_g_tight:
       histogram: mistag_SF_g_tight_2017
+      file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_g_loose_pol1:
+      histogram: mistag_SF_g_loose_2017_pol1
+      file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_g_tight_pol1:
+      histogram: mistag_SF_g_tight_2017_pol1
       file: data/sf/ak8/wtag_mistag_SF.root
 
     pileup:
@@ -717,12 +736,30 @@ era2018:
     wtag_mistag_z_tight:
       histogram: mistag_SF_z_tight_2018
       file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_w_loose_pol1:
+      histogram: mistag_SF_w_loose_2018_pol1
+      file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_w_tight_pol1:
+      histogram: mistag_SF_w_tight_2018_pol1
+      file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_z_loose_pol1:
+      histogram: mistag_SF_z_loose_2018_pol1
+      file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_z_tight_pol1:
+      histogram: mistag_SF_z_tight_2018_pol1
+      file: data/sf/ak8/wtag_mistag_SF.root
     # for photon region
     wtag_mistag_g_loose:
       histogram: mistag_SF_g_loose_2018
       file: data/sf/ak8/wtag_mistag_SF.root
     wtag_mistag_g_tight:
       histogram: mistag_SF_g_tight_2018
+      file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_g_loose_pol1:
+      histogram: mistag_SF_g_loose_2018_pol1
+      file: data/sf/ak8/wtag_mistag_SF.root
+    wtag_mistag_g_tight_pol1:
+      histogram: mistag_SF_g_tight_2018_pol1
       file: data/sf/ak8/wtag_mistag_SF.root
 
     pileup:

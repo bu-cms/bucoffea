@@ -172,7 +172,7 @@ def monojet_accumulator(cfg):
     items["ak8_wvstqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvstqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
 
-    if cfg and cfg.RUN.MONOVMISTAG:
+    if cfg and cfg.RUN.MONOVMISTAG_STUDY:
         items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
         items["ak8_passmedium_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
         items["ak8_passtight_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
@@ -574,7 +574,7 @@ def monojet_regions(cfg):
     # DeepAK8 WPs for signal regions with different level of purities
     wp_to_run = ['loose', 'tight']
     # and more WPs when doing the mistag measurement
-    if cfg and cfg.RUN.MONOVMISTAG:
+    if cfg and cfg.RUN.MONOVMISTAG_STUDY:
         wp_to_run += ['medium', 'inclusive']
 
     for region in ['sr_v','cr_2m_v','cr_1m_v','cr_2e_v','cr_1e_v','cr_g_v']:
@@ -584,7 +584,7 @@ def monojet_regions(cfg):
             regions[newRegionName] = copy.deepcopy(regions[region])
             regions[newRegionName].remove('leadak8_tau21')
             if wp == 'inclusive':
-                if cfg and cfg.RUN.MONOVMISTAG:
+                if cfg and cfg.RUN.MONOVMISTAG_STUDY:
                     regions[newRegionName].remove('leadak8_mass')
 
                     # add regions: cr_2m_hasmass_inclusive_v, cr_1m_hasmass_inclusive_v, cr_2e_hasmass_inclusive_v, cr_1e_hasmass_inclusive_v
@@ -596,7 +596,7 @@ def monojet_regions(cfg):
                 regions[newRegionName].append('leadak8_wvsqcd_'+wp)
             # save a copy of the v-tagged regions but not applying mistag SFs, for the sake of measuring mistag SF later
 
-            if cfg and cfg.RUN.MONOVMISTAG:
+            if cfg and cfg.RUN.MONOVMISTAG_STUDY:
                 if wp in ['loose','medium','tight']:
                     noMistagRegionName = region.replace('_v', '_nomistag_'+ wp + '_v')
                     regions[noMistagRegionName]=copy.deepcopy(regions[newRegionName])
