@@ -533,8 +533,8 @@ def monojet_regions(cfg):
     regions = {}
     regions['inclusive'] = ['inclusive']
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_v'] = ['trig_met','hemveto_metphi'] + common_cuts + v_cuts
-    regions['sr_j'] = ['trig_met','hemveto_metphi'] + common_cuts + j_cuts
+    regions['sr_v'] = ['trig_met','hemveto_metphi'] + common_cuts + v_cuts + ['prescale']
+    regions['sr_j'] = ['trig_met','hemveto_metphi'] + common_cuts + j_cuts + ['prescale']
 
     # regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
     # regions['cr_nofilt_j'].remove('filt_met')

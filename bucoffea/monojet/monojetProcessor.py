@@ -140,7 +140,7 @@ def define_weight_counters(output, df, weights, rand_datasets):
 class monojetProcessor(processor.ProcessorABC):
     def __init__(self, blind=True):
         self._year=None
-        self._blind=blind
+        self._blind=False
         self._configure()
         self._accumulator = monojet_accumulator(cfg)
 
@@ -382,6 +382,13 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
         selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
         selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
+
+        prescale = 5
+        if df["is_data"]:
+            selection.add("prescale", (df['event']%prescale)==0)
+        else:
+            selection.add("prescale",pass_all)
+
 
         # Fill histograms
         output = self.accumulator.identity()
