@@ -211,13 +211,7 @@ default:
     monovmistag_usepol1: False
     monoj: True
     histogram:
-      ak4_chf0: False
       ak4_deepcsv: false
-      ak4_eta_phi: False
-      ak4_nef0: False
-      ak4_phi: false
-      ak4_pt0_over_recoil: false
-      ak4_ptraw0: false
       ak8_tvsqcdmd0: False
       ak8_wvsqcdmd0: False
       ak8_wvstqcdmd0: False

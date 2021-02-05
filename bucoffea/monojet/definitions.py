@@ -53,6 +53,7 @@ def monojet_accumulator(cfg):
 
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
+    recoil_ax_coarse = Bin("recoil", r"Recoil (GeV)", 20, 0, 2000)
     gen_v_pt_ax = Bin("pt", r"pt (GeV)", 200, 0, 2000)
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
@@ -143,8 +144,16 @@ def monojet_accumulator(cfg):
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_muf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_cef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_chf"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nhf"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_muf"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_cef"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
 
     items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
+    items["ak4_pt0_recoil"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,recoil_ax_coarse)
 
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -155,9 +164,11 @@ def monojet_accumulator(cfg):
     items["bjet_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["bjet_sf"] = Hist("Counts", dataset_ax, region_ax, sf_ax)
     items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
+    items["ak4_eta0_phi0"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
     items["ak8_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak8_pt0_recoil"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, recoil_ax_coarse)
     items["ak8_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak8_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak8_mass0"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
@@ -421,6 +432,8 @@ def setup_candidates(df, cfg):
         nef=df['Jet_neEmEF'],
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
+        cef=df['Jet_chEmEF'],
+        muf=df['Jet_muEF'],
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
         nconst=df['Jet_nConstituents'],
         hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour']

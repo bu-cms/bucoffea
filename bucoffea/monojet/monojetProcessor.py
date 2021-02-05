@@ -681,6 +681,11 @@ class monojetProcessor(processor.ProcessorABC):
             ezfill('ak4_eta_phi', phi=ak4[mask].phi.flatten(),eta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
             ezfill('ak4_deepcsv', deepcsv=ak4[mask].deepcsv.flatten(),   weight=w_alljets)
+            ezfill('ak4_chf',    frac=ak4[mask].chf.flatten(),      weight=w_alljets)
+            ezfill('ak4_nhf',    frac=ak4[mask].nhf.flatten(),      weight=w_alljets)
+            ezfill('ak4_nef',    frac=ak4[mask].nef.flatten(),      weight=w_alljets)
+            ezfill('ak4_muf',    frac=ak4[mask].muf.flatten(),      weight=w_alljets)
+            ezfill('ak4_cef',    frac=ak4[mask].cef.flatten(),      weight=w_alljets)
 
             w_bjets = weight_shape(bjets[mask].eta, region_weights.partial_weight(exclude=["bveto"])[mask])
             ezfill('bjet_eta',    jeteta=bjets[mask].eta.flatten(), weight=w_bjets)
@@ -689,13 +694,17 @@ class monojetProcessor(processor.ProcessorABC):
 
             # Leading ak4
             w_leadak4 = weight_shape(ak4[leadak4_index].eta[mask], region_weights.partial_weight(exclude=exclude)[mask])
-            ezfill('ak4_eta0',   jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
+            ezfill('ak4_eta0',       jeteta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
+            ezfill('ak4_eta0_phi0',  phi=ak4[leadak4_index].phi[mask].flatten(), eta=ak4[leadak4_index].eta[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_phi0',   jetphi=ak4[leadak4_index].phi[mask].flatten(),    weight=w_leadak4)
             ezfill('ak4_pt0',    jetpt=ak4[leadak4_index].pt[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_pt0_recoil',    jetpt=ak4[leadak4_index].pt[mask].flatten(), recoil=recoil_pt[mask],      weight=w_leadak4)
             ezfill('ak4_ptraw0',    jetpt=ak4[leadak4_index].ptraw[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_chf0',    frac=ak4[leadak4_index].chf[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_nhf0',    frac=ak4[leadak4_index].nhf[mask].flatten(),      weight=w_leadak4)
             ezfill('ak4_nef0',    frac=ak4[leadak4_index].nef[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_muf0',    frac=ak4[leadak4_index].muf[mask].flatten(),      weight=w_leadak4)
+            ezfill('ak4_cef0',    frac=ak4[leadak4_index].cef[mask].flatten(),      weight=w_leadak4)
 
             rw=region_weights.partial_weight(exclude=exclude)
             ezfill('drelejet',    dr=df['dREleJet'][mask],      weight=rw[mask])
@@ -718,6 +727,7 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_eta0',       jeteta=ak8[leadak8_index].eta[mask].flatten(),    weight=w_leadak8)
                 ezfill('ak8_phi0',       jetphi=ak8[leadak8_index].phi[mask].flatten(),    weight=w_leadak8)
                 ezfill('ak8_pt0',        jetpt=ak8[leadak8_index].pt[mask].flatten(),      weight=w_leadak8 )
+                ezfill('ak8_pt0_recoil', jetpt=ak8[leadak8_index].pt[mask].flatten(), recoil=recoil_pt[mask],     weight=w_leadak8 )
                 ezfill('ak8_mass0',      mass=ak8[leadak8_index].mass[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_tau210',     tau21=ak8[leadak8_index].tau21[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_wvsqcd0',    tagger=ak8[leadak8_index].wvsqcd[mask].flatten(),     weight=w_leadak8)
