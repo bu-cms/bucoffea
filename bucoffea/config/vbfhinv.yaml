@@ -219,6 +219,7 @@ default:
 
   run:
     sync: False
+    ulegacy: True
     save:
       passing: False
       tree: False
