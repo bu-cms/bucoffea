@@ -248,6 +248,11 @@ def vbfhinv_regions(cfg):
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
 
+    # HF-HF region in signal region
+    regions['sr_vbf_hfhf'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_hfhf'].remove('veto_hfhf')
+    regions['sr_vbf_hfhf'].append('hfhf_region')
+
     # For sync mode
     if cfg and cfg.RUN.SYNC:
         regions['cr_sync'] = [
@@ -312,21 +317,23 @@ def vbfhinv_regions(cfg):
                                         'detajj',
                                         ]
 
-    tmp = {}
-    for region in regions.keys():
-        if not region.startswith("sr_"):
-            continue
-        new_region = f"{region}_no_veto_all"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].remove("veto_muo")
-        tmp[new_region].remove("veto_tau")
-        tmp[new_region].remove("veto_ele")
-        tmp[new_region].remove("mindphijr")
-        tmp[new_region].remove("recoil")
-        tmp[new_region].append("met_sr")
-        tmp[new_region].append("mindphijm")
+    # If only running over data, no need to create these additional regions
+    if not cfg.RUN.DATARUN:
+        tmp = {}
+        for region in regions.keys():
+            if not region.startswith("sr_"):
+                continue
+            new_region = f"{region}_no_veto_all"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].remove("veto_muo")
+            tmp[new_region].remove("veto_tau")
+            tmp[new_region].remove("veto_ele")
+            tmp[new_region].remove("mindphijr")
+            tmp[new_region].remove("recoil")
+            tmp[new_region].append("met_sr")
+            tmp[new_region].append("mindphijm")
 
-    regions.update(tmp)
+        regions.update(tmp)
 
     if cfg and cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
