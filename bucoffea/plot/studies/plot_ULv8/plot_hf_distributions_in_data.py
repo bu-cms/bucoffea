@@ -47,14 +47,14 @@ def plot_hf_distributions(acc, outtag, distribution, year=2017, region_regex='sr
     ax.set_ylim(1e-2,1e6)
     ax.set_xlabel(get_new_xlabel(distribution))
 
-    ax.text(0., 1., f'MET {year}',
+    ax.text(0., 1., f'MET UL v8 {year}',
         fontsize=14,
         ha='left',
         va='bottom',
         transform=ax.transAxes
     )
 
-    ax.text(1., 1., f'VBF SR, {lumi(year):.1f} fb$^{{-1}}$',
+    ax.text(1., 1., f'VBF SR',
         fontsize=14,
         ha='right',
         va='bottom',
@@ -91,7 +91,7 @@ def plot_sigma_eta_phi(acc, outtag, distribution, year=2017, region='sr_vbf_hfhf
     fig, ax = plt.subplots()
     hist.plot2d(h, ax=ax, xaxis='sigmaetaeta', patch_opts={'norm': colors.LogNorm(1e-3,1e1)})
     
-    ax.text(0., 1., f'MET {year}',
+    ax.text(0., 1., f'MET UL v8 {year}',
         fontsize=14,
         ha='left',
         va='bottom',
@@ -103,7 +103,7 @@ def plot_sigma_eta_phi(acc, outtag, distribution, year=2017, region='sr_vbf_hfhf
         'sr_vbf_hfhf' : 'VBF SR (HF-HF)',
     }
 
-    ax.text(1., 1., f'{regiontag[region]}, {lumi(year):.1f} fb$^{{-1}}$',
+    ax.text(1., 1., regiontag[region],
         fontsize=14,
         ha='right',
         va='bottom',
