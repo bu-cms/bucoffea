@@ -12,6 +12,16 @@ from klepto.archives import dir_archive
 
 pjoin = os.path.join
 
+def get_new_xlabel(distribution):
+    mapping = {
+        'ak4_sigma_eta_eta0' : r'Leading Jet $\sigma_{\eta\eta}$',
+        'ak4_sigma_eta_eta1' : r'Trailing Jet $\sigma_{\eta\eta}$',
+        'ak4_sigma_phi_phi0' : r'Leading Jet $\sigma_{\phi\phi}$',
+        'ak4_sigma_phi_phi1' : r'Trailing Jet $\sigma_{\phi\phi}$',
+    }
+
+    return mapping[distribution]
+
 def get_new_legend_label(label):
     mapping = {
         'sr_vbf' : 'VBF SR',
@@ -34,8 +44,7 @@ def plot_hf_distributions(acc, outtag, distribution, year=2017, region_regex='sr
 
     ax.set_yscale('log')
     ax.set_ylim(1e-2,1e6)
-
-    # ax.get_legend().remove()
+    ax.set_xlabel(get_new_xlabel(distribution))
 
     ax.text(0., 1., f'MET {year}',
         fontsize=14,
