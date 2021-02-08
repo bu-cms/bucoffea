@@ -220,6 +220,7 @@ default:
   run:
     sync: False
     ulegacy: True
+    datarun: True
     save:
       passing: False
       tree: False

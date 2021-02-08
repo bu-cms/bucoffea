@@ -633,6 +633,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_sigma_eta_eta1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(),   weight=w_diak4)
             ezfill('ak4_sigma_phi_phi1',   sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),   weight=w_diak4)
 
+            ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(), sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),  weight=w_diak4)
+            ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(), sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),  weight=w_diak4)
+
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
             w_btag = weight_shape(btag[mask], rweight[mask])
