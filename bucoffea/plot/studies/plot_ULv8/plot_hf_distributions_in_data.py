@@ -89,6 +89,25 @@ def plot_sigma_eta_phi(acc, outtag, distribution, year=2017, region='sr_vbf_hfhf
 
     fig, ax = plt.subplots()
     hist.plot2d(h, ax=ax, xaxis='sigmaetaeta')
+    
+    ax.text(0., 1., f'MET {year}',
+        fontsize=14,
+        ha='left',
+        va='bottom',
+        transform=ax.transAxes
+    )
+
+    regiontag = {
+        'sr_vbf' : 'VBF SR',
+        'sr_vbf_hfhf' : 'VBF SR (HF-HF)',
+    }
+
+    ax.text(1., 1., f'{regiontag[region]}, {lumi(year):.1f} fb$^{{-1}}$',
+        fontsize=14,
+        ha='right',
+        va='bottom',
+        transform=ax.transAxes
+    )
 
     # Save figure
     outdir = f'./output/{outtag}'
