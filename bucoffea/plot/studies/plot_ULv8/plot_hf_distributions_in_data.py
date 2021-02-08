@@ -77,6 +77,29 @@ def plot_hf_distributions(acc, outtag, distribution, year=2017, region_regex='sr
     plt.close(fig)
     print(f'File saved: {outpath}')
 
+def plot_sigma_eta_phi(acc, outtag, distribution, year=2017, region='sr_vbf_hfhf'):
+    '''Plot 2D sigma eta vs. phi distribution in the given region, for the leading or trailing jet.'''
+    acc.load(distribution)
+    h = acc[distribution]
+
+    h = merge_extensions(h, acc, reweight_pu=False)
+    h = merge_datasets(h)
+
+    h = h.integrate('dataset', f'MET_{year}').integrate('region', region)
+
+    fig, ax = plt.subplots()
+    hist.plot2d(h, ax=ax, xaxis='sigmaetaeta')
+
+    # Save figure
+    outdir = f'./output/{outtag}'
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    outpath = pjoin(outdir, f'met_{year}_{distribution}.pdf')
+    fig.savefig(outpath)
+    plt.close(fig)
+    print(f'File saved: {outpath}')
+
 def main():
     inpath = sys.argv[1]
     acc = dir_archive(inpath)
@@ -98,6 +121,16 @@ def main():
     ]
     for distribution in distributions:
         plot_hf_distributions(acc, outtag, distribution=distribution)
+
+    # 2D eta vs. phi histograms
+
+    distributions_2d = [
+        'ak4_sigma_eta_phi0',
+        'ak4_sigma_eta_phi1'
+    ]
+
+    for distribution in distributions_2d:
+        plot_sigma_eta_phi(acc, outtag, distribution=distribution)
 
 if __name__ == '__main__':
     main()
