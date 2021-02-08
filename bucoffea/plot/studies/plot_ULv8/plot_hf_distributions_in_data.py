@@ -12,28 +12,30 @@ from klepto.archives import dir_archive
 
 pjoin = os.path.join
 
-def get_region_tag(region):
+def get_new_legend_label(label):
     mapping = {
-        'sr_vbf' : 'VBF SR'
+        'sr_vbf' : 'VBF SR',
+        'sr_vbf_hfhf' : 'VBF SR (HF-HF)'
     }
-    return mapping[region]
+    return mapping[label]
 
-def plot_hf_distributions(acc, outtag, distribution, year, region='sr_vbf'):
+def plot_hf_distributions(acc, outtag, distribution, year=2017, region_regex='sr_vbf.*'):
     acc.load(distribution)
     h = acc[distribution]
 
     h = merge_extensions(h, acc, reweight_pu=False)
     h = merge_datasets(h)
 
-    h = h.integrate('dataset', f'MET_{year}').integrate('region', region)
+    # h = h.integrate('dataset', f'MET_{year}').integrate('region', region)
+    h = h.integrate('dataset', f'MET_{year}')[re.compile(region_regex)]
 
     fig, ax = plt.subplots()
-    hist.plot1d(h, ax=ax)
+    hist.plot1d(h, ax=ax, overlay='region')
 
     ax.set_yscale('log')
     ax.set_ylim(1e-2,1e6)
 
-    ax.get_legend().remove()
+    # ax.get_legend().remove()
 
     ax.text(0., 1., f'MET {year}',
         fontsize=14,
@@ -42,12 +44,20 @@ def plot_hf_distributions(acc, outtag, distribution, year, region='sr_vbf'):
         transform=ax.transAxes
     )
 
-    ax.text(1., 1., f'{get_region_tag(region)}, {lumi(year):.1f} fb$^{{-1}}$',
+    ax.text(1., 1., f'VBF SR, {lumi(year):.1f} fb$^{{-1}}$',
         fontsize=14,
         ha='right',
         va='bottom',
         transform=ax.transAxes
     )
+
+    # Update legend labels
+    handles, labels = ax.get_legend_handles_labels()
+    for handle, label in zip(handles, labels):
+        new_label = get_new_legend_label(label)
+        handle.set_label(new_label)
+
+    ax.legend(title='Region', handles=handles)
 
     outdir = f'./output/{outtag}'
     if not os.path.exists(outdir):
@@ -73,8 +83,12 @@ def main():
         'ak4_sigma_phi_phi1',
     ]
 
+    regions = [
+        'sr_vbf',
+        'sr_vbf_hfhf'
+    ]
     for distribution in distributions:
-        plot_hf_distributions(acc, outtag, distribution, year=2017)
+        plot_hf_distributions(acc, outtag, distribution=distribution)
 
 if __name__ == '__main__':
     main()
