@@ -134,7 +134,19 @@ def plot_settings():
             },
             'met_phi' : {
                 'ylim' : (1e-1,1e6)
-            }
+            },
+            'ak4_sigma_eta_eta0' : {
+                'ylim' : (1e-1,1e5)
+            },
+            'ak4_sigma_eta_eta1' : {
+                'ylim' : (1e-1,1e5)
+            },
+            'ak4_sigma_phi_phi0' : {
+                'ylim' : (1e-1,1e5)
+            },
+            'ak4_sigma_phi_phi1' : {
+                'ylim' : (1e-1,1e5)
+            },
         },
         'sr_j' : {
             'recoil' : {
