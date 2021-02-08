@@ -4,6 +4,7 @@ import os
 import sys
 import re
 import numpy as np
+import matplotlib.colors as colors
 
 from matplotlib import pyplot as plt
 from bucoffea.plot.util import merge_datasets, merge_extensions, lumi
@@ -88,7 +89,7 @@ def plot_sigma_eta_phi(acc, outtag, distribution, year=2017, region='sr_vbf_hfhf
     h = h.integrate('dataset', f'MET_{year}').integrate('region', region)
 
     fig, ax = plt.subplots()
-    hist.plot2d(h, ax=ax, xaxis='sigmaetaeta')
+    hist.plot2d(h, ax=ax, xaxis='sigmaetaeta', patch_opts={'norm': colors.LogNorm(1e-3,1e1)})
     
     ax.text(0., 1., f'MET {year}',
         fontsize=14,
@@ -105,6 +106,15 @@ def plot_sigma_eta_phi(acc, outtag, distribution, year=2017, region='sr_vbf_hfhf
     ax.text(1., 1., f'{regiontag[region]}, {lumi(year):.1f} fb$^{{-1}}$',
         fontsize=14,
         ha='right',
+        va='bottom',
+        transform=ax.transAxes
+    )
+
+    jettag = 'Leading Jet' if distribution == 'ak4_sigma_eta_phi0' else 'Trailing Jet'
+
+    ax.text(0.05, 0.9, jettag,
+        fontsize=14,
+        ha='left',
         va='bottom',
         transform=ax.transAxes
     )
@@ -142,7 +152,6 @@ def main():
         plot_hf_distributions(acc, outtag, distribution=distribution)
 
     # 2D eta vs. phi histograms
-
     distributions_2d = [
         'ak4_sigma_eta_phi0',
         'ak4_sigma_eta_phi1'
