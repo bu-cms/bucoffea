@@ -26,7 +26,8 @@ def get_new_xlabel(distribution):
 def get_new_legend_label(label):
     mapping = {
         'sr_vbf' : 'VBF SR',
-        'sr_vbf_hfhf' : 'VBF SR (HF-HF)'
+        'sr_vbf_hfhf' : 'VBF SR (HF-HF)',
+        'sr_vbf_at_least_one_jet_in_hf' : 'VBF SR ($\\geq 1$ jet in HF)',
     }
     return mapping[label]
 
