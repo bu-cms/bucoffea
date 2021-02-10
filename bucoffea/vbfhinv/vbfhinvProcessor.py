@@ -333,6 +333,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Region where both leading jets are in HF
         selection.add('hfhf_region', both_jets_in_hf.any())        
 
+        # Region where at least one jet is in HF
+        selection.add('at_least_one_jet_in_hf', at_least_one_jet_in_hf)        
+
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
             two_central_jets = (np.abs(diak4.i0.eta) <= 2.4) & (np.abs(diak4.i1.eta) <= 2.4)
