@@ -668,6 +668,15 @@ def monojet_regions(cfg):
 
     regions.update(tmp)
 
+    tmp = {}
+    for region in regions.keys():
+        if not re.match("sr_(loose|tight)_v.*",region):
+            continue
+        new_region = f"{region}_no_lowmass_ak8"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].append("no_lowmass_ak8")
+    regions.update(tmp)
+
     if cfg and cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
         # num = numerator, den = denominator

@@ -329,6 +329,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         selection.add('leadak8_mass', ((df['leadak8_mass'] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
                                     & (df['leadak8_mass'] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
+        selection.add("no_lowmass_ak8", ~(ak8.mass < 65).any() )
         selection.add('leadak8_wvsqcd_loosemd', ((df['leadak8_wvsqcdmd'] > cfg.WTAG.LOOSEMD)
                                                & (df['leadak8_wvsqcdmd'] < cfg.WTAG.TIGHTMD)).any())
         selection.add('leadak8_wvsqcd_tightmd', ((df['leadak8_wvsqcdmd'] > cfg.WTAG.TIGHTMD)).any())
