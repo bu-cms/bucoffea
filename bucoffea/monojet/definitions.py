@@ -679,7 +679,7 @@ def monojet_regions(cfg):
 
     tmp = {}
     for region in regions.keys():
-        if not re.match("sr_j_(no_veto_all)?",region):
+        if not re.match("sr_j(_no_veto_all)?",region):
             continue
         new_region = f"{region}_no_overlap_removal"
         tmp[new_region] = copy.deepcopy(regions[region])
