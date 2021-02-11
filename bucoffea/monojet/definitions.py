@@ -677,6 +677,15 @@ def monojet_regions(cfg):
         tmp[new_region].append("no_lowmass_ak8")
     regions.update(tmp)
 
+    tmp = {}
+    for region in regions.keys():
+        if not re.match("sr_j_(no_veto_all)?",region):
+            continue
+        new_region = f"{region}_no_overlap_removal"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].remove("veto_vtag")
+    regions.update(tmp)
+
     if cfg and cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
         # num = numerator, den = denominator
