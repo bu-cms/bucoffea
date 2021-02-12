@@ -27,7 +27,8 @@ from bucoffea.helpers import (
                               mask_and,
                               mask_or,
                               evaluator_from_config,
-                              candidates_in_hem
+                              calculate_vecB,
+                              calculate_vecDPhi
                              )
 from bucoffea.helpers.weights import (
                               get_veto_weights,
@@ -234,9 +235,15 @@ class monojetProcessor(processor.ProcessorABC):
         df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
         df["dPFCaloSR"] = (met_pt - df["CaloMET_pt"]) / met_pt
         df["dPFCalo"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
+        df["dPFTk"] = (met_pt - df["TkMET_pt"]) / df["recoil_pt"]
 
         df["minDPhiJetRecoil"] = min_dphi_jet_met(ak4, df['recoil_phi'], njet=4, ptmin=30, etamax=2.4)
         df["minDPhiJetMet"] = min_dphi_jet_met(ak4, met_phi, njet=4, ptmin=30, etamax=2.4)
+        df["dPhiTkPf"] = dphi(met_phi, df["TkMET_phi"])
+        df["dPhiCalPf"] = dphi(met_phi, df["CaloMET_phi"])
+        df["vec_b"]    = calculate_vecB(ak4, met_pt, met_phi)
+        df["vec_dphi"] = calculate_vecDPhi(ak4, met_pt, met_phi, df['TkMET_phi'])
+
         selection = processor.PackedSelection()
 
         # Triggers
@@ -285,6 +292,21 @@ class monojetProcessor(processor.ProcessorABC):
         leadak8_index=ak8.pt.argmax()
         leadak8 = ak8[ak8.pt.argmax()]
 
+        lowmass_ak8 = ak8[ak8.mass < 65]
+        vlowmass_ak8 = ak8[ak8.mass < 20]
+
+        trailak8 = ak8[:,1:]
+        trailak8_ak4_pairs = trailak8.cross(ak4)
+        dr_trailak8_ak4 = np.hypot(
+                                    trailak8_ak4_pairs.i0.eta - trailak8_ak4_pairs.i1.eta,
+                                    dphi(trailak8_ak4_pairs.i0.phi, trailak8_ak4_pairs.i1.phi)
+                            )
+        print(dr_trailak8_ak4[trailak8.counts>0])
+        print(dr_trailak8_ak4.argmin()[trailak8.counts>0])
+        trailak8_ak4_best_pair = trailak8_ak4_pairs[dr_trailak8_ak4.argmin()]
+        trailak8_ak4_dr_min = dr_trailak8_ak4.min()
+        trailak8_ak4_pt = trailak8_ak4_best_pair.i1.pt
+
         if not df['is_data']:
             ## Matching reco AK8 to gen AK*
             genVs = gen[((gen.pdg==23) | (gen.pdg==24) | (gen.pdg==-24)) & (gen.pt>10)]
@@ -310,7 +332,6 @@ class monojetProcessor(processor.ProcessorABC):
             df['leadak8_gen_match_ak8_phi'] = best_pair.i1.phi
             df['leadak8_gen_match_ak8_mass'] = best_pair.i1.mass
 
-
         df['leadak8_pt']       = ak8.pt[leadak8_index]
         df['leadak8_eta']      = ak8.eta[leadak8_index]
         df['leadak8_tau21']    = ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]
@@ -330,6 +351,8 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('leadak8_mass', ((df['leadak8_mass'] > cfg.SELECTION.SIGNAL.LEADAK8.MASS.MIN) \
                                     & (df['leadak8_mass'] < cfg.SELECTION.SIGNAL.LEADAK8.MASS.MAX)).any())
         selection.add("no_lowmass_ak8", ~(ak8.mass < 65).any() )
+        selection.add("lowmass_ak8", (ak8.mass < 65).any() )
+        selection.add("vlowmass_ak8", (ak8.mass < 20).any() )
         selection.add('leadak8_wvsqcd_loosemd', ((df['leadak8_wvsqcdmd'] > cfg.WTAG.LOOSEMD)
                                                & (df['leadak8_wvsqcdmd'] < cfg.WTAG.TIGHTMD)).any())
         selection.add('leadak8_wvsqcd_tightmd', ((df['leadak8_wvsqcdmd'] > cfg.WTAG.TIGHTMD)).any())
@@ -722,6 +745,23 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_pt',     jetpt=ak8[mask].pt.flatten(),   weight=w_allak8)
                 ezfill('ak8_mass',   mass=ak8[mask].mass.flatten(),  weight=w_allak8)
 
+                w_lowmass_ak8 = weight_shape(lowmass_ak8.eta[mask], region_weights.partial_weight(exclude=exclude)[mask])
+                ezfill('lowmass_ak8_eta',    jeteta=lowmass_ak8[mask].eta.flatten(), weight=w_lowmass_ak8)
+                ezfill('lowmass_ak8_phi',    jetphi=lowmass_ak8[mask].phi.flatten(), weight=w_lowmass_ak8)
+                ezfill('lowmass_ak8_pt',     jetpt=lowmass_ak8[mask].pt.flatten(),   weight=w_lowmass_ak8)
+                ezfill('lowmass_ak8_mass',   mass=lowmass_ak8[mask].mass.flatten(),  weight=w_lowmass_ak8)
+
+                w_vlowmass_ak8 = weight_shape(vlowmass_ak8.eta[mask], region_weights.partial_weight(exclude=exclude)[mask])
+                ezfill('vlowmass_ak8_eta',    jeteta=vlowmass_ak8[mask].eta.flatten(), weight=w_vlowmass_ak8)
+                ezfill('vlowmass_ak8_phi',    jetphi=vlowmass_ak8[mask].phi.flatten(), weight=w_vlowmass_ak8)
+                ezfill('vlowmass_ak8_pt',     jetpt=vlowmass_ak8[mask].pt.flatten(),   weight=w_vlowmass_ak8)
+                ezfill('vlowmass_ak8_mass',   mass=vlowmass_ak8[mask].mass.flatten(),  weight=w_vlowmass_ak8)
+
+                w_trailak8 = weight_shape(trailak8.eta[mask&(trailak8.counts>0)], region_weights.partial_weight(exclude=exclude)[mask&(trailak8.counts>0)])
+                print(trailak8_ak4_pt[trailak8.counts>0])
+                print(trailak8.pt[trailak8.counts>0])
+                ezfill("trailak8_ak4_pt", jetpt=trailak8_ak4_pt[mask&(trailak8.counts>0)].flatten(), weight=w_trailak8)
+                ezfill("trailak8_ak4_dr_min", dr=trailak8_ak4_dr_min[mask&(trailak8.counts>0)].flatten(), weight=w_trailak8)
                 # Leading
                 w_leadak8 = weight_shape(ak8[leadak8_index].eta[mask], region_weights.partial_weight(exclude=exclude)[mask])
 
@@ -765,6 +805,13 @@ class monojetProcessor(processor.ProcessorABC):
             # MET
             rw = region_weights.partial_weight(exclude=exclude)
             ezfill('dpfcalo',            dpfcalo=df["dPFCalo"][mask], weight=rw[mask])
+            ezfill('dpftk',            dpfcalo=df["dPFTk"][mask], weight=rw[mask])
+            ezfill('vec_b',            vec_b=df["vec_b"][mask], weight=rw[mask])
+            ezfill('vec_dphi',            vec_dphi=df["vec_dphi"][mask], weight=rw[mask])
+
+            ezfill('dphi_pf_tk',            dphi=df["dPhiTkPf"][mask], weight=rw[mask])
+            ezfill('dphi_pf_calo',            dphi=df["dPhiCalPf"][mask], weight=rw[mask])
+
             ezfill('met',                met=met_pt[mask],            weight=rw[mask] )
             ezfill('met_phi',            phi=met_phi[mask],           weight=rw[mask] )
             ezfill('recoil',             recoil=recoil_pt[mask],      weight=rw[mask] )

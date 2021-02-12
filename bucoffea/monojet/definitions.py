@@ -64,10 +64,13 @@ def monojet_accumulator(cfg):
     jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
 
     dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
+    dpftk_ax = Bin("dpfcalo", r"$(TKMet-PFMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
+    vec_b_ax = Bin("vec_b", "vec_b", 50, 0,1)
+    vec_dphi_ax = Bin("vec_dphi", "vec_dphi", 50, 0, np.pi)
 
     dxy_ax = Bin("dxy", r"$d_{xy}$", 20, 0, 0.5)
     dz_ax = Bin("dz", r"$d_{z}$", 20, 0, 0.5)
@@ -183,6 +186,9 @@ def monojet_accumulator(cfg):
     items["ak8_wvstqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvstqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
 
+    items["trailak8_ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["trailak8_ak4_dr_min"] = Hist("Counts", dataset_ax, region_ax, dr_ax)
+
     if cfg and cfg.RUN.MONOVMISTAG_STUDY:
         items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
         items["ak8_passmedium_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
@@ -200,10 +206,25 @@ def monojet_accumulator(cfg):
     items["ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak8_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak8_mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
+    items["lowmass_ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["lowmass_ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["lowmass_ak8_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["lowmass_ak8_mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
+    items["vlowmass_ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["vlowmass_ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["vlowmass_ak8_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["vlowmass_ak8_mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
 
     items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    items["dpftk"] = Hist("Counts", dataset_ax, region_ax, dpftk_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
+
+    items["vec_dphi"] = Hist("vec_dphi", dataset_ax, region_ax, vec_dphi_ax)
+    items["vec_b"] = Hist("vec_b", dataset_ax, region_ax, vec_b_ax)
+
+    items["dphi_pf_tk"] = Hist(r"\Delta\Phi(PF, TK)", dataset_ax, region_ax, dphi_ax)
+    items["dphi_pf_calo"] = Hist(r"\Delta\Phi(PF, Calo)", dataset_ax, region_ax, dphi_ax)
 
     # Multiplicity histograms
     for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','gen_dilepton']:
@@ -378,7 +399,7 @@ def setup_candidates(df, cfg):
     # For MC, add the matched gen-particle info for checking
     if not df['is_data']:
         kwargs = {'genpartflav' : df['Tau_genPartFlav']}
-        taus.add_attributes(**kwargs) 
+        taus.add_attributes(**kwargs)
 
     taus = taus[ (taus.decaymode) \
                 & (taus.pt > cfg.TAU.CUTS.PT)\
@@ -675,16 +696,24 @@ def monojet_regions(cfg):
         new_region = f"{region}_no_lowmass_ak8"
         tmp[new_region] = copy.deepcopy(regions[region])
         tmp[new_region].append("no_lowmass_ak8")
+
+        new_region = f"{region}_lowmass_ak8"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].append("lowmass_ak8")
+
+        new_region = f"{region}_vlowmass_ak8"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].append("vlowmass_ak8")
     regions.update(tmp)
 
-    tmp = {}
-    for region in regions.keys():
-        if not re.match("sr_j(_no_veto_all)?",region):
-            continue
-        new_region = f"{region}_no_overlap_removal"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].remove("veto_vtag")
-    regions.update(tmp)
+    # tmp = {}
+    # for region in regions.keys():
+    #     if not re.match("sr_j(_no_veto_all)?",region):
+    #         continue
+    #     new_region = f"{region}_no_overlap_removal"
+    #     tmp[new_region] = copy.deepcopy(regions[region])
+    #     tmp[new_region].remove("veto_vtag")
+    # regions.update(tmp)
 
     if cfg and cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
