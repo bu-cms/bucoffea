@@ -185,6 +185,8 @@ def monojet_accumulator(cfg):
     items["ak8_tvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvstqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvstqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
+    items["ak8_eta0_phi0"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
 
     items["trailak8_ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["trailak8_ak4_dr_min"] = Hist("Counts", dataset_ax, region_ax, dr_ax)
@@ -704,6 +706,20 @@ def monojet_regions(cfg):
         new_region = f"{region}_vlowmass_ak8"
         tmp[new_region] = copy.deepcopy(regions[region])
         tmp[new_region].append("vlowmass_ak8")
+    regions.update(tmp)
+
+    tmp = {}
+    for region in regions.keys():
+        if not re.match("sr_((loose|tight)_v|_j)(_no_veto_all)?$",region):
+            continue
+        new_region = f"{region}_dphipftkveto"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].append("dphipftkveto")
+
+        new_region = f"{region}_dphipftkvetoinv"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].append("dphipftkvetoinv")
+
     regions.update(tmp)
 
     # tmp = {}

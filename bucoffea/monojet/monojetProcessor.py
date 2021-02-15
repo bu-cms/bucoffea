@@ -271,6 +271,9 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
+        
+        selection.add('dphipftkvetoinv', df["dPhiTkPf"] > 2.)
+        selection.add('dphipftkveto', df["dPhiTkPf"] <= 2. )
 
 
         if df['year'] == 2018:
@@ -301,8 +304,8 @@ class monojetProcessor(processor.ProcessorABC):
                                     trailak8_ak4_pairs.i0.eta - trailak8_ak4_pairs.i1.eta,
                                     dphi(trailak8_ak4_pairs.i0.phi, trailak8_ak4_pairs.i1.phi)
                             )
-        print(dr_trailak8_ak4[trailak8.counts>0])
-        print(dr_trailak8_ak4.argmin()[trailak8.counts>0])
+        # print(dr_trailak8_ak4[trailak8.counts>0])
+        # print(dr_trailak8_ak4.argmin()[trailak8.counts>0])
         trailak8_ak4_best_pair = trailak8_ak4_pairs[dr_trailak8_ak4.argmin()]
         trailak8_ak4_dr_min = dr_trailak8_ak4.min()
         trailak8_ak4_pt = trailak8_ak4_best_pair.i1.pt
@@ -745,6 +748,8 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_pt',     jetpt=ak8[mask].pt.flatten(),   weight=w_allak8)
                 ezfill('ak8_mass',   mass=ak8[mask].mass.flatten(),  weight=w_allak8)
 
+                ezfill('ak8_eta_phi', phi=ak8[mask].phi.flatten(),eta=ak8[mask].eta.flatten(), weight=w_allak8)
+
                 w_lowmass_ak8 = weight_shape(lowmass_ak8.eta[mask], region_weights.partial_weight(exclude=exclude)[mask])
                 ezfill('lowmass_ak8_eta',    jeteta=lowmass_ak8[mask].eta.flatten(), weight=w_lowmass_ak8)
                 ezfill('lowmass_ak8_phi',    jetphi=lowmass_ak8[mask].phi.flatten(), weight=w_lowmass_ak8)
@@ -757,11 +762,14 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('vlowmass_ak8_pt',     jetpt=vlowmass_ak8[mask].pt.flatten(),   weight=w_vlowmass_ak8)
                 ezfill('vlowmass_ak8_mass',   mass=vlowmass_ak8[mask].mass.flatten(),  weight=w_vlowmass_ak8)
 
-                w_trailak8 = weight_shape(trailak8.eta[mask&(trailak8.counts>0)], region_weights.partial_weight(exclude=exclude)[mask&(trailak8.counts>0)])
-                print(trailak8_ak4_pt[trailak8.counts>0])
-                print(trailak8.pt[trailak8.counts>0])
-                ezfill("trailak8_ak4_pt", jetpt=trailak8_ak4_pt[mask&(trailak8.counts>0)].flatten(), weight=w_trailak8)
-                ezfill("trailak8_ak4_dr_min", dr=trailak8_ak4_dr_min[mask&(trailak8.counts>0)].flatten(), weight=w_trailak8)
+                # w_trailak8 = weight_shape(trailak8.eta[mask&(trailak8.counts>0)], region_weights.partial_weight(exclude=exclude)[mask&(trailak8.counts>0)])
+                # print(trailak8_ak4_pt[trailak8.counts>0])
+                # print(trailak8.pt[trailak8.counts>0])
+                # ezfill("trailak8_ak4_pt", jetpt=trailak8_ak4_pt[mask&(trailak8.counts>0)].flatten(), weight=w_trailak8)
+
+                # print(trailak8.eta[mask&(trailak8.counts>0)].flatten())
+                # print(trailak8_ak4_dr_min[mask&(trailak8.counts>0)].flatten())
+                # ezfill("trailak8_ak4_dr_min", dr=trailak8_ak4_dr_min[mask&(trailak8.counts>0)].flatten(), weight=w_trailak8)
                 # Leading
                 w_leadak8 = weight_shape(ak8[leadak8_index].eta[mask], region_weights.partial_weight(exclude=exclude)[mask])
 
@@ -779,6 +787,8 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('ak8_tvsqcdmd0',    tagger=ak8[leadak8_index].tvsqcdmd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_wvstqcd0',    tagger=ak8[leadak8_index].wvstqcd[mask].flatten(),     weight=w_leadak8)
                 ezfill('ak8_wvstqcdmd0',    tagger=ak8[leadak8_index].wvstqcdmd[mask].flatten(),     weight=w_leadak8)
+
+                ezfill('ak8_eta0_phi0', phi=ak8[leadak8_index].phi[mask].flatten(),eta=ak8[leadak8_index].eta[mask].flatten(), weight=w_leadak8)
 
                 if not df['is_data']:
                     ezfill('ak8_mass_response',   response=ak8[leadak8_index].mass[mask].max() / df['leadak8_gen_match_ak8_mass'][mask].max(),  weight=w_leadak8)
