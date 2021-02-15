@@ -2326,6 +2326,10 @@ EWKWMinus2Jets_WToLNu_M-50-mg_ext2_2016:
   gen: 20.2
 EWKWMinus2Jets_WToLNu_M-50-mg_new_pmx_2017:
   gen: 23.22
+EWKWMinus2Jets_WToLNu_M-50_ForwardLep-mg_2017:
+  gen: 5.384
+EWKWMinus2Jets_WToLNu_M-50_ForwardLep-mg_2018:
+  gen: 5.384
 EWKWPlus2Jets_WToLNu_M-50-mg_2016:
   gen: 25.81
 EWKWPlus2Jets_WToLNu_M-50-mg_2017:
@@ -2338,6 +2342,10 @@ EWKWPlus2Jets_WToLNu_M-50-mg_ext2_2016:
   gen: 25.54
 EWKWPlus2Jets_WToLNu_M-50-mg_new_pmx_2017:
   gen: 29.55
+EWKWPlus2Jets_WToLNu_M-50_ForwardLep-mg_2017:
+  gen: 5.496
+EWKWPlus2Jets_WToLNu_M-50_ForwardLep-mg_2018:
+  gen: 5.496
 EWKZ2Jets_ZToLL_M-50-mg_2016:
   gen: 3.997
 EWKZ2Jets_ZToLL_M-50-mg_2017:
