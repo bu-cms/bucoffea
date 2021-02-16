@@ -126,7 +126,7 @@ def plot_sigma_eta_phi(acc, outtag, distribution, year=2017, region='sr_vbf_hfhf
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    outpath = pjoin(outdir, f'met_{year}_{distribution}.pdf')
+    outpath = pjoin(outdir, f'met_{year}_{distribution}_{region}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
     print(f'File saved: {outpath}')
@@ -160,8 +160,14 @@ def main():
         'ak4_sigma_eta_phi1'
     ]
 
-    for distribution in distributions_2d:
-        plot_sigma_eta_phi(acc, outtag, distribution=distribution)
+    regions_2d = [
+        'sr_vbf_hfhf',
+        'sr_vbf_no_jet_in_hf'
+    ]
+
+    for region in regions_2d:
+        for distribution in distributions_2d:
+            plot_sigma_eta_phi(acc, outtag, region=region, distribution=distribution)
 
 if __name__ == '__main__':
     main()
