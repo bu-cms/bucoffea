@@ -10,6 +10,7 @@ from matplotlib import pyplot as plt
 from bucoffea.plot.util import merge_datasets, merge_extensions, lumi
 from coffea import hist
 from klepto.archives import dir_archive
+from pprint import pprint
 
 pjoin = os.path.join
 
@@ -161,8 +162,8 @@ def main():
     ]
 
     regions_2d = [
+        'sr_vbf',
         'sr_vbf_hfhf',
-        'sr_vbf_no_jet_in_hf'
     ]
 
     for region in regions_2d:
