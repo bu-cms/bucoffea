@@ -186,8 +186,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]
 
-        # Recalculate MET pt and phi based on npv-corrections
-        met_pt, met_phi = recalculate_met_based_on_npv(df, met_pt, met_phi)
+        if cfg.RUN.CORRECT_MET:
+            # Recalculate MET pt and phi based on npv-corrections
+            met_pt, met_phi = recalculate_met_based_on_npv(df, met_pt, met_phi)
 
         # Muons
         df['is_tight_muon'] = muons.tightId \

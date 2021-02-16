@@ -219,6 +219,7 @@ default:
 
   run:
     sync: False
+    correct_met: True
     save:
       passing: False
       tree: False
