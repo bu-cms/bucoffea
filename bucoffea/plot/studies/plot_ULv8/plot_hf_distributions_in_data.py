@@ -27,11 +27,11 @@ def get_new_legend_label(label):
     mapping = {
         'sr_vbf' : 'VBF SR',
         'sr_vbf_hfhf' : 'VBF SR (HF-HF)',
-        'sr_vbf_at_least_one_jet_in_hf' : 'VBF SR ($\\geq 1$ jet in HF)',
+        'sr_vbf_no_jet_in_hf' : 'VBF SR (No jet in HF)',
     }
     return mapping[label]
 
-def plot_hf_distributions(acc, outtag, distribution, year=2017, region_regex='sr_vbf.*'):
+def plot_hf_distributions(acc, outtag, distribution, year=2017, region_regex='sr_vbf(?!(_at_least)).*'):
     acc.load(distribution)
     h = acc[distribution]
 
@@ -102,6 +102,7 @@ def plot_sigma_eta_phi(acc, outtag, distribution, year=2017, region='sr_vbf_hfhf
     regiontag = {
         'sr_vbf' : 'VBF SR',
         'sr_vbf_hfhf' : 'VBF SR (HF-HF)',
+        'sr_vbf_no_jet_in_hf' : 'VBF SR (no jets in HF)',
     }
 
     ax.text(1., 1., regiontag[region],
@@ -147,7 +148,8 @@ def main():
 
     regions = [
         'sr_vbf',
-        'sr_vbf_hfhf'
+        'sr_vbf_hfhf',
+        'sr_vbf_no_jet_in_hf'
     ]
     for distribution in distributions:
         plot_hf_distributions(acc, outtag, distribution=distribution)
