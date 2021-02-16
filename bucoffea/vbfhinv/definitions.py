@@ -261,6 +261,11 @@ def vbfhinv_regions(cfg):
     regions['sr_vbf_at_least_one_jet_in_hf'].remove('veto_hfhf')
     regions['sr_vbf_at_least_one_jet_in_hf'].append('at_least_one_jet_in_hf')
 
+    # Signal region: No jet in HF
+    regions['sr_vbf_no_jet_in_hf'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_no_jet_in_hf'].remove('veto_hfhf')
+    regions['sr_vbf_no_jet_in_hf'].append('no_jet_in_hf')
+
     # For sync mode
     if cfg and cfg.RUN.SYNC:
         regions['cr_sync'] = [

@@ -336,6 +336,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Region where at least one jet is in HF
         selection.add('at_least_one_jet_in_hf', at_least_one_jet_in_hf)        
 
+        # Region where at least one jet is in HF
+        selection.add('no_jet_in_hf', ~at_least_one_jet_in_hf)        
+
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
             two_central_jets = (np.abs(diak4.i0.eta) <= 2.4) & (np.abs(diak4.i1.eta) <= 2.4)
@@ -468,6 +471,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus)
         
         for region, cuts in regions.items():
+            if not region.startswith('sr'):
+                continue
             exclude = [None]
             region_weights = copy.deepcopy(weights)
 
