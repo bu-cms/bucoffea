@@ -1,4 +1,5 @@
 import copy
+import re
 from coffea import hist
 
 Hist = hist.Hist
@@ -486,3 +487,43 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
     sf[np.isnan(sf) | np.isinf(sf)] == 1
     weights.add("trigger_met", sf)
 
+def recalculate_met_based_on_npv(df, met_pt, met_phi):
+    '''Apply the NPV based recipe to correct MET x and y components.'''
+    npv = df['PV_npvsGood']
+
+    met_px = met_pt * np.cos(met_phi)
+    met_py = met_pt * np.sin(met_phi)
+    
+    def correction(a,b):
+        return -(a * npv + b)
+
+    # Get the correction factors, depending on the run (if data)
+    correction_src_file = bucoffea_path('data/pu/metxycorr.txt')
+    with open(correction_src_file, 'r') as f:
+        lines = [line for line in f.readlines() if not (line.startswith('#') or line == '\n')]
+
+        if df['is_data']:
+            # Extract the run information from the dataset name
+            dataset = df['dataset']
+            run = re.findall('201\d[A-F]', dataset)[0]
+            # Get the corrections for this run
+            xycorrections = [l.replace('\n', '') for l in lines if l.startswith(run)]
+
+            
+        else:
+            # No run info needed, just extract the corrections for MC, based on year
+            xycorrections = [l.replace('\n', '') for l in lines if l.startswith(f'{df["year"]}MC')]
+
+    xcorr_coef = list(map(float, xycorrections[0].split(' ')[2:]))
+    ycorr_coef = list(map(float, xycorrections[1].split(' ')[2:]))
+
+    met_xcorr = correction(*xcorr_coef)
+    met_ycorr = correction(*ycorr_coef)
+
+    corr_met_px = met_px + met_xcorr
+    corr_met_py = met_py + met_ycorr
+
+    corr_met_pt = np.hypot(corr_met_px, corr_met_py)
+    corr_met_phi = np.arctan2(corr_met_py, corr_met_px)
+
+    return corr_met_pt, corr_met_phi
