@@ -498,7 +498,7 @@ def recalculate_met_based_on_npv(df, met_pt, met_phi):
         return -(a * npv + b)
 
     # Get the correction factors, depending on the run (if data)
-    correction_src_file = bucoffea_path('data/pu/metxycorr.txt')
+    correction_src_file = bucoffea_path('data/met/metxycorr.txt')
     with open(correction_src_file, 'r') as f:
         lines = [line for line in f.readlines() if not (line.startswith('#') or line == '\n')]
 
