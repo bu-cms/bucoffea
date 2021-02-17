@@ -219,7 +219,7 @@ default:
 
   run:
     sync: False
-    ulegacy: True
+    ulegacy: False
     datarun: True
     save:
       passing: False

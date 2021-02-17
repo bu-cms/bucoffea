@@ -424,9 +424,13 @@ def setup_candidates(df, cfg):
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
         nconst=df['Jet_nConstituents'],
         hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour'],
-        setaeta=df['Jet_hfsigmaEtaEta'],
-        sphiphi=df['Jet_hfsigmaPhiPhi'],
     )
+
+    if cfg.RUN.ULEGACY:
+        ak4.add_attributes({
+            setaeta: df['Jet_hfsigmaEtaEta'],
+            sphiphi: df['Jet_hfsigmaPhiPhi'],
+        })
 
     # Before cleaning, apply HEM veto
     hem_ak4 = ak4[ (ak4.pt>30) &
