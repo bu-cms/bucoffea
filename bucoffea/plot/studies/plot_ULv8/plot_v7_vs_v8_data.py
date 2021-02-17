@@ -79,7 +79,7 @@ def plot_v7_vs_v8_data(acc_v7, acc_v8, distribution):
 
     rax.set_ylabel('v8 / v7')
     rax.grid(True)
-    if distribution == 'mjj':
+    if distribution in ['mjj','detajj']:
         rax.set_ylim(0.6,1.4)
         loc = MultipleLocator(0.2)
         rax.yaxis.set_major_locator(loc)
