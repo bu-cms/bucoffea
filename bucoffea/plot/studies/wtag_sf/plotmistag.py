@@ -14,11 +14,11 @@ colors={
         '2m'       : '#ff7f0e' , 
         '1e'       : '#2ca02c' , 
         '2e'       : '#d62728' , 
-        'g'        : '#9467bd' , 
+        'g'        : '#00acff' , 
         'ave'      : '#17becf' , 
-        'w'        : '#8c564b' , 
-        'z'        : '#e377c2' , 
-        'all' : '#7f7f7f' , 
+        'w'        : '#ff7b25' , 
+        'z'        : '#82b74b' , 
+        'all'      : '#7f7f7f' , 
         'wz'       : '#bcbd22' , 
         }
 
@@ -112,6 +112,9 @@ def main():
         compute_weighted_average(convertedfilename)
     inputfile = uproot.open(convertedfilename)
 
+    if not os.path.exists(f"{outdir}/pdf"):
+        os.makedirs(f"{outdir}/pdf")
+
     # first plot the rate plots
     fig, ax = plt.subplots(1,1, sharex=True)
     for year in [2017,2018]:
@@ -127,14 +130,16 @@ def main():
                         centers = 0.5*(edges[:-1]+edges[1:])
                         widths = (edges[1:]-edges[:-1])
                         if lepton_tag == "ave":
-                            p = ax.errorbar(centers, hist.values, xerr=0.5*widths, yerr=np.sqrt(hist.variances), capsize=5, markeredgewidth=1, label=f"{lepton_tag} with all uncertainties", color=colors[lepton_tag])
+                            #p = ax.errorbar(centers, hist.values, xerr=0.5*widths, yerr=np.sqrt(hist.variances), capsize=5, markeredgewidth=1, label=f"{lepton_tag} + all unc.", color=colors[lepton_tag])
+                            p = ax.errorbar(centers, hist.values, xerr=0.5*widths, yerr=np.sqrt(hist.variances), capsize=5, markeredgewidth=1, label=f"{lepton_tag} + all unc.", color=colors[lepton_tag], linestyle='none')
                         else:
-                            p = ax.errorbar(centers, hist.values, xerr=0.5*widths, yerr=np.sqrt(hist.variances), capsize=5, markeredgewidth=1, label=f"{lepton_tag} with stat. uncertainties", color=colors[lepton_tag])
-                        if ("rate_data" in prefix) or ("SF" in prefix):
+                            #p = ax.errorbar(centers, hist.values, xerr=0.5*widths, yerr=np.sqrt(hist.variances), capsize=5, markeredgewidth=1, label=f"{lepton_tag} + stat. unc.", color=colors[lepton_tag])
+                            p = ax.errorbar(centers, hist.values, xerr=0.5*widths, yerr=np.sqrt(hist.variances), capsize=5, markeredgewidth=1, label=f"{lepton_tag} + stat. unc.", color=colors[lepton_tag], linestyle='none')
+                        if ("rate_data" in prefix) or ("SF" in prefix) and (len(lepton_tags)<=3): # don't draw syst. bar if plot is too busy
                             try:
                                 hist_sysup = inputfile[hist_name+"_sysUp"]
                                 hist_sysdn = inputfile[hist_name+"_sysDn"]
-                                ax.bar(centers ,hist_sysup.values-hist_sysdn.values, bottom=hist_sysdn.values, width=widths, label=f"{lepton_tag} with syst. variation on top/diboson", color=p[0].get_color(), alpha=0.5)
+                                ax.bar(centers ,hist_sysup.values-hist_sysdn.values, bottom=hist_sysdn.values, width=widths, label=f"{lepton_tag} + syst. unc.", color=p[0].get_color(), alpha=0.5)
                                 # for print
                                 if "SF" in prefix:
                                     msg = f"{wp} {prefix} {lepton_tag} {year}: , "
@@ -143,7 +148,7 @@ def main():
                                     #print(msg)
                             except KeyError:
                                 pass
-                    ax.set_xlim(100,1100)
+                    ax.set_xlim(200,1050)
                     ax.set_xlabel(r"AK8 Jet $p_T$")
                     ax.set_title(prefix)
                     if "rate" in prefix:
@@ -154,8 +159,8 @@ def main():
                             ylim = ylim*10
                         ax.set_ylabel("efficiency")
                     else:
-                        ylim = np.array([0.0,3.0])
-                        if wp=="loose":  ylim = np.array([0.6, 1.6])
+                        ylim = np.array([0.0,2.5])
+                        if wp=="loose":  ylim = np.array([0.7, 1.4])
                         ax.set_ylabel("SF")
                     ax.set_ylim(ylim[0],ylim[1])
                     ax.minorticks_on()
@@ -166,6 +171,7 @@ def main():
                 fig.savefig(f'{outdir}/{prefix}_{wp}_{year}.png')
                 plot_from_tags(['g','w','z'])
                 fig.savefig(f'{outdir}/{prefix}_{wp}_gvswz_{year}.png')
+                fig.savefig(f'{outdir}/pdf/{prefix}_{wp}_gvswz_{year}.pdf')
                 plot_from_tags(['all'])
                 fig.savefig(f'{outdir}/{prefix}_{wp}_all_{year}.png')
                 plot_from_tags(['wz'])

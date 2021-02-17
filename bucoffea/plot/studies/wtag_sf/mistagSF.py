@@ -8,12 +8,13 @@ import ROOT
 #inpath = "../../../input/merged_2020_10_14_update_mistag"
 #inpath = "../../../input/merged_2020_11_20_03Sep20v7_hasjmrjms_Wmass70To120"
 inpath = "../../../input/merged_2020_11_23_03Sep20v7_Wmass65To120"
+#inpath = "../../../input/merged_2021_01_18_03Sep20v7_monojv_splitWkfac_splitmistag"
 
 # construct an output dir name
 if inpath[-1]=='/':
     inpath = inpath[:-1]
 inpath_tag = inpath.split('/')[-1]
-bin_scheme=2   # choose which binning scheme to use, see bin_schemes
+bin_scheme=5   # choose which binning scheme to use, see bin_schemes
 massden=True   # True if we apply mass cut on denominator in the efficiency calculation
 massnum=True   # True if we apply mass cut on numerator in the efficiency calculation
 nlogjet=True   # True if we use NLO GJets sample for the mistag measurement in the photon CR
@@ -63,8 +64,8 @@ def divide_sumw2(sumw_a, sumw2_a, sumw_b, sumw2_b): #return (sumw_c, sumw2_c) fo
 
 # takes the coffea hists, calculate the efficiency using ROOT and return a TEfficiency containing the efficiencies calculated
 def get_mistag_rate(hist, region_all, region_pass, flag='', isData=False): #flag is for histogram naming only
-    sumw_all , sumw2_all  = hist.values(sumw2=True)[(region_all,)]
-    sumw_pass, sumw2_pass = hist.values(sumw2=True)[(region_pass,)]
+    sumw_all , sumw2_all  = hist.values(sumw2=True, overflow=True)[(region_all,)]
+    sumw_pass, sumw2_pass = hist.values(sumw2=True, overflow=True)[(region_pass,)]
     # construct root th1f
     edges = hist.axis('jetpt').edges()
     th1_all = ROOT.TH1F(f'h_all_{flag}',f'h_all{flag}',len(edges)-1, array('d',edges))
