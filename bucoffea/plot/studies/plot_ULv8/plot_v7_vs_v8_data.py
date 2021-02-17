@@ -7,11 +7,15 @@ import numpy as np
 from scipy.stats import distributions
 
 from bucoffea.plot.util import merge_datasets, merge_extensions, fig_ratio
+from bucoffea.plot.style import matplotlib_rc
 from coffea import hist
 from matplotlib import pyplot as plt
+from matplotlib.ticker import MultipleLocator
 from klepto.archives import dir_archive
 
 pjoin = os.path.join
+
+matplotlib_rc()
 
 def preprocess(h, acc, distribution, region='sr_vbf', dataset='MET_2017'):
     h = merge_extensions(h, acc, reweight_pu=False)
@@ -66,6 +70,7 @@ def plot_v7_vs_v8_data(acc_v7, acc_v8, distribution):
     newxlabels = {
         'ak4_eta0' : r'Leading jet $\eta$',
         'ak4_eta1' : r'Trailing jet $\eta$',
+        'detajj' : r'$\Delta\eta_{jj}$',
     }
 
     if distribution in newxlabels.keys():
@@ -76,8 +81,12 @@ def plot_v7_vs_v8_data(acc_v7, acc_v8, distribution):
     rax.grid(True)
     if distribution == 'mjj':
         rax.set_ylim(0.6,1.4)
+        loc = MultipleLocator(0.2)
+        rax.yaxis.set_major_locator(loc)
     else:
         rax.set_ylim(0,2)
+        loc = MultipleLocator(0.5)
+        rax.yaxis.set_major_locator(loc)
 
     # Save figure
     outdir = './output/v7_vs_v8'
@@ -99,7 +108,7 @@ def main():
         acc.load('sumw')
         acc.load('sumw2')
 
-    distributions = ['mjj', 'ak4_eta0', 'ak4_eta1']
+    distributions = ['mjj', 'detajj', 'ak4_eta0', 'ak4_eta1']
 
     for distribution in distributions:
         plot_v7_vs_v8_data(acc_v7, acc_v8, distribution=distribution)
