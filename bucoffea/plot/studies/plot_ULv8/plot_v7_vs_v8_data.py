@@ -29,13 +29,13 @@ def preprocess(h, acc, distribution, region='sr_vbf', dataset='MET_2017'):
 
     return h
 
-def plot_v7_vs_v8_data(acc_v7, acc_v8, distribution):
+def plot_v7_vs_v8_data(acc_v7, acc_v8, distribution, region='sr_vbf'):
     '''Plot the comparison of v7 and v8 MET datasets (2017 for now)'''
     acc_v7.load(distribution)
     acc_v8.load(distribution)
 
-    h_v7 = preprocess(acc_v7[distribution], acc_v7, distribution)
-    h_v8 = preprocess(acc_v8[distribution], acc_v8, distribution)
+    h_v7 = preprocess(acc_v7[distribution], acc_v7, distribution, region)
+    h_v8 = preprocess(acc_v8[distribution], acc_v8, distribution, region)
 
     fig, ax, rax = fig_ratio()
     hist.plot1d(h_v7, ax=ax)
@@ -46,7 +46,12 @@ def plot_v7_vs_v8_data(acc_v7, acc_v8, distribution):
 
     ax.legend(title='MET 2017',labels=['Nano v7', 'Nano v8'])
 
-    ax.text(0.,1.,'VBF Signal Region',
+    if region == 'sr_vbf':
+        regiontext = 'VBF Signal Region'
+    elif region == 'sr_vbf_without_mitigation_cuts':
+        regiontext = 'VBF Signal Region (No mitigation cuts)'
+
+    ax.text(0.,1.,regiontext,
         fontsize=14,
         ha='left',
         va='bottom',
@@ -93,14 +98,14 @@ def plot_v7_vs_v8_data(acc_v7, acc_v8, distribution):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    outpath = pjoin(outdir, f'met_2017_v7_v8_{distribution}.pdf')
+    outpath = pjoin(outdir, f'met_2017_v7_v8_{region}_{distribution}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
     print(f'File saved: {outpath}')
 
 def main():
-    inpath_v7 = '../../../submission/merged_2021-02-16_vbfhinv_03Sep20v7_MET_2017'
-    inpath_v8 = '../../../submission/merged_2021-02-16_vbfhinv_ULv8_MET_2017'
+    inpath_v7 = '../../../submission/merged_2021-02-18_vbfhinv_03Sep20v7_MET_2017'
+    inpath_v8 = '../../../submission/merged_2021-02-18_vbfhinv_ULv8_MET_2017'
     acc_v7 = dir_archive(inpath_v7) 
     acc_v8 = dir_archive(inpath_v8) 
 
@@ -110,8 +115,11 @@ def main():
 
     distributions = ['mjj', 'detajj', 'ak4_eta0', 'ak4_eta1']
 
-    for distribution in distributions:
-        plot_v7_vs_v8_data(acc_v7, acc_v8, distribution=distribution)
+    regions = ['sr_vbf', 'sr_vbf_without_mitigation_cuts']
+
+    for region in regions:
+        for distribution in distributions:
+            plot_v7_vs_v8_data(acc_v7, acc_v8, distribution=distribution, region=region)
 
 if __name__ == '__main__':
     main()
