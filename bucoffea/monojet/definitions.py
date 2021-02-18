@@ -428,8 +428,8 @@ def setup_candidates(df, cfg):
 
     if cfg.RUN.ULEGACY:
         ak4.add_attributes({
-            setaeta: df['Jet_hfsigmaEtaEta'],
-            sphiphi: df['Jet_hfsigmaPhiPhi'],
+            'setaeta': df['Jet_hfsigmaEtaEta'],
+            'sphiphi': df['Jet_hfsigmaPhiPhi'],
         })
 
     # Before cleaning, apply HEM veto
