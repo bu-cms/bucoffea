@@ -427,10 +427,11 @@ def setup_candidates(df, cfg):
     )
 
     if cfg.RUN.ULEGACY:
-        ak4.add_attributes({
+        kwargs = {
             'setaeta': df['Jet_hfsigmaEtaEta'],
             'sphiphi': df['Jet_hfsigmaPhiPhi'],
-        })
+        }
+        ak4.add_attributes(**kwargs)
 
     # Before cleaning, apply HEM veto
     hem_ak4 = ak4[ (ak4.pt>30) &
