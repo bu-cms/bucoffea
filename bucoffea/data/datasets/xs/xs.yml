@@ -3839,6 +3839,22 @@ WJetsToQQ_HT600to800_qc19_3j-MLM_2017:
   gen: 68.98
 WJetsToQQ_HT600to800_qc19_3j-MLM_2018:
   gen: 68.43
+WJetsToLNu_Pt-100To250-amcatnloFXFX_2018:
+  gen: 769.8
+WJetsToLNu_Pt-250To400-amcatnloFXFX_2018:
+  gen: 27.62
+WJetsToLNu_Pt-250To400-amcatnloFXFX_ext1_2018:
+  gen: 27.86
+WJetsToLNu_Pt-400To600-amcatnloFXFX_2018:
+  gen: 3.597
+WJetsToLNu_Pt-400To600-amcatnloFXFX_ext1_2018:
+  gen: 3.591
+WJetsToLNu_Pt-50To100-amcatnloFXFX_2018:
+  gen: 3569.0
+WJetsToLNu_Pt-600ToInf-amcatnloFXFX_2018:
+  gen: 0.5481
+WJetsToLNu_Pt-600ToInf-amcatnloFXFX_ext1_2018:
+  gen: 0.549
 WQQGamma_5f_NLO_FXFX-amcatnlo_2017:
   gen: 1.05859
 WQQGamma_5f_NLO_FXFX-amcatnlo_2018:
@@ -3910,32 +3926,48 @@ WplusH_WToQQ_HToInvisible_M125_pow_pythia8_2018:
   nnlo: 0.5678
 Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_2017:
   gen: 18.08
+Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_2018:
+  gen: 17.97
 Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_ext1_2017:
   gen: 18.04
 Z1JetsToNuNu_M-50_LHEZpT_250-400-FXFX_2017:
   gen: 2.057
+Z1JetsToNuNu_M-50_LHEZpT_250-400-FXFX_2018:
+  gen: 2.05
 Z1JetsToNuNu_M-50_LHEZpT_250-400-FXFX_ext1_2017:
   gen: 2.051
 Z1JetsToNuNu_M-50_LHEZpT_400-inf-FXFX_2017:
   gen: 0.2256
+Z1JetsToNuNu_M-50_LHEZpT_400-inf-FXFX_2018:
+  gen: 0.2246
 Z1JetsToNuNu_M-50_LHEZpT_400-inf-FXFX_ext1_2017:
   gen: 0.2251
 Z1JetsToNuNu_M-50_LHEZpT_50-150-FXFX_2017:
   gen: 598.9
+Z1JetsToNuNu_M-50_LHEZpT_50-150-FXFX_2018:
+  gen: 596.0
 Z2JetsToNuNU_M-50_LHEZpT_400-inf-FXFX_2017:
   gen: 0.8472
+Z2JetsToNuNU_M-50_LHEZpT_400-inf-FXFX_2018:
+  gen: 0.8414
 Z2JetsToNuNU_M-50_LHEZpT_400-inf-FXFX_ext1_2017:
   gen: 0.8472
 Z2JetsToNuNu_M-50_LHEZpT_150-250-FXFX_2017:
   gen: 29.74
+Z2JetsToNuNu_M-50_LHEZpT_150-250-FXFX_2018:
+  gen: 29.66
 Z2JetsToNuNu_M-50_LHEZpT_150-250-FXFX_ext1_2017:
   gen: 29.6
 Z2JetsToNuNu_M-50_LHEZpT_250-400-FXFX_2017:
   gen: 5.204
+Z2JetsToNuNu_M-50_LHEZpT_250-400-FXFX_2018:
+  gen: 5.202
 Z2JetsToNuNu_M-50_LHEZpT_250-400-FXFX_ext1_2017:
   gen: 5.174
 Z2JetsToNuNu_M-50_LHEZpT_50-150-FXFX_2017:
   gen: 326.3
+Z2JetsToNuNu_M-50_LHEZpT_50-150-FXFX_2018:
+  gen: 331.7
 ZH_HToInv_JHU_2017:
   gen: 0.7612
 ZH_HToInv_JHU_ptH150_2017:
