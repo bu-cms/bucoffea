@@ -710,7 +710,7 @@ def monojet_regions(cfg):
 
     tmp = {}
     for region in regions.keys():
-        if not re.match("sr_((loose|tight)_v|_j)(_no_veto_all)?$",region):
+        if not re.match("sr_((loose|tight)_v|j)(_no_veto_all)?$",region):
             continue
         new_region = f"{region}_dphipftkveto"
         tmp[new_region] = copy.deepcopy(regions[region])
