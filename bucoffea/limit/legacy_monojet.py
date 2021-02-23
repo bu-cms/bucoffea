@@ -41,7 +41,7 @@ def datasets(year, unblind=False, nlo=False):
     if nlo:
         mc = {
                 'cr_1m_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*|{wjets_nlo_regex}).*{year})'),
-                'cr_1e_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*|{wjets_nlo_regex}).*{year})'),
+                'cr_1e_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*|{wjets_nlo_regex}|GJets_1j_.*).*{year})'),
                 'cr_2m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}'),
                 'cr_2e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}'),
                 'cr_g_j' : re.compile(f'((GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|Diboson|{wjets_nlo_regex}).*{year})'),
@@ -51,7 +51,7 @@ def datasets(year, unblind=False, nlo=False):
     else:
         mc = {
                 'cr_1m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_1e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*|GJets_DR-0p4.*).*{year}'),
+                'cr_1e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*|GJets_1j_.*).*{year}'),
                 'cr_2m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_2e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_g_j' : re.compile(f'(GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|WJetsToLNu.*HT.*|Diboson).*{year}'),
