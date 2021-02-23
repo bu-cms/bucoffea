@@ -43,12 +43,19 @@ def plot_ul_comparison(acc_old, acc_new, jobtag, distribution='ak4_eta0', region
 
     if re.match('.*2017[A-F]', dataset_regex):
         dataset_tag = dataset_regex.replace('.*', '_') 
-        ax.text(0., 1., dataset_tag,
+        ax.text(1., 1., dataset_tag,
             fontsize=14,
-            ha='left',
+            ha='right',
             va='bottom',
             transform=ax.transAxes
         )
+
+    ax.text(0., 1., 'VBF Signal Region',
+        fontsize=14,
+        ha='left',
+        va='bottom',
+        transform=ax.transAxes
+    )
 
     # Plot ratio
     data_err_opts = {
