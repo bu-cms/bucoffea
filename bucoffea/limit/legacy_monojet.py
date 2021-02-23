@@ -36,12 +36,12 @@ def datasets(year, unblind=False, nlo=False):
 
     if nlo:
         mc = {
-                'cr_1m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*|.*WNJetsToLNu.*|.*WJetsToLNu.*FXFX.*).*{year}'),
-                'cr_1e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*|.*WNJetsToLNu.*|.*WJetsToLNu.*FXFX.*|GJets_DR-0p4.*).*{year}'),
+                'cr_1m_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}|WJetsToLNu.*FXFX.*2018|.*WNJetsToLNu.*2017)'),
+                'cr_1e_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}|WJetsToLNu.*FXFX.*2018|.*WNJetsToLNu.*2017)'),
                 'cr_2m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}'),
                 'cr_2e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}'),
-                'cr_g_j' : re.compile(f'(GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|.*WNJetsToLNu.*|WJetsToLNu.*FXFX.*|Diboson).*{year}'),
-                'sr_j_no_veto_all' : re.compile(f'(WJetsToLNu.*FXFX.*|.*WNJetsToLNu.*|.*ZNJetsTo.*LHE.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*).*{year}'),
+                'cr_g_j' : re.compile(f'((GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|Diboson).*{year}|WJetsToLNu.*FXFX.*2018|.*WNJetsToLNu.*2017)'),
+                'sr_j_no_veto_all' : re.compile(f'((.*ZNJetsTo.*LHE.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*).*{year}|WJetsToLNu.*FXFX.*2018|.*WNJetsToLNu.*2017)'),
                 'sr_j' : re.compile('nomatch'),
                 }
     else:
@@ -51,7 +51,7 @@ def datasets(year, unblind=False, nlo=False):
                 'cr_2m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_2e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_g_j' : re.compile(f'(GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|WJetsToLNu.*HT.*|Diboson).*{year}'),
-                'sr_j_no_veto_all' : re.compile(f'(WJetsToLNu.*FXFX.*|.*WNJetsToLNu.*|.*ZJetsTo.*HT.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*).*{year}'),
+                'sr_j_no_veto_all' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsTo.*HT.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*).*{year}'),
                 'sr_j' : re.compile('nomatch'),
                 }
 
@@ -154,7 +154,6 @@ def legacy_dataset_name(dataset):
         'ZZ.*' : 'zz',
         '(MET|EGamma).*' : 'data',
         'WN?JetsToLNu.*' : 'wjets',
-        # '.*WNJetsToLNu.*' : 'wjetsnlo',
         'ZN?JetsToNuNu.*' : 'zjets',
         'GJets_DR-0p4.*HT.*' : 'gjets',
         'GJets.*NLO.*' : 'gjets',
