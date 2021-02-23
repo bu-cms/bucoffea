@@ -33,15 +33,19 @@ def datasets(year, unblind=False, nlo=False):
         tmp[k1] = re.compile(v)
     data.update(tmp)
 
+    if year==2017:
+        wjets_nlo_regex = ".*WNJetsToLNu.*"
+    elif year==2018:
+        wjets_nlo_regex = "WJetsToLNu.*FXFX.*"
 
     if nlo:
         mc = {
-                'cr_1m_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}|WJetsToLNu.*FXFX.*2018|.*WNJetsToLNu.*2017)'),
-                'cr_1e_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}|WJetsToLNu.*FXFX.*2018|.*WNJetsToLNu.*2017)'),
+                'cr_1m_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*|{wjets_nlo_regex}).*{year})'),
+                'cr_1e_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*|{wjets_nlo_regex}).*{year})'),
                 'cr_2m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}'),
                 'cr_2e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}'),
-                'cr_g_j' : re.compile(f'((GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|Diboson).*{year}|WJetsToLNu.*FXFX.*2018|.*WNJetsToLNu.*2017)'),
-                'sr_j_no_veto_all' : re.compile(f'((.*ZNJetsTo.*LHE.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*).*{year}|WJetsToLNu.*FXFX.*2018|.*WNJetsToLNu.*2017)'),
+                'cr_g_j' : re.compile(f'((GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|Diboson|{wjets_nlo_regex}).*{year})'),
+                'sr_j_no_veto_all' : re.compile(f'((.*ZNJetsTo.*LHE.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*|{wjets_nlo_regex}).*{year})'),
                 'sr_j' : re.compile('nomatch'),
                 }
     else:
