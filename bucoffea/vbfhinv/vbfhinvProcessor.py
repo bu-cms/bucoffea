@@ -634,7 +634,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
 
-            if cfg.RUN.ULEGACY:
+            if cfg.RUN.ULEGACYV8:
                 ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),   weight=w_alljets)
                 ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),   weight=w_alljets)
 

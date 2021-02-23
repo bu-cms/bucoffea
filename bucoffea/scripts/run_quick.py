@@ -16,11 +16,14 @@ def parse_commandline():
     return args
 
 def main():
-
+    # Test on old and new UL samples
     fileset = {
         "MET_ver1_2017B" : [
-            "root://cmsxrootd.fnal.gov///store/user/aakpinar/nanopost/ULv8_05Feb21/MET/MET_ver1_2017B/210205_210910/0000/tree_1.root"
-        ]
+            "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/MET/MET_ver1_2017B/210205_210910/0000/tree_1.root"
+        ],
+        "MET_ver1_2017C" : [
+            "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/UL_02Dec2019_22Feb21/MET/MET_ver1_2017C/210222_152952/0000/tree_1.root"
+        ],
     }
 
     years = list(set(map(extract_year, fileset.keys())))

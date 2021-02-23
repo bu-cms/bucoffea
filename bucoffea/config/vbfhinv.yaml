@@ -219,7 +219,8 @@ default:
 
   run:
     sync: False
-    ulegacy: False
+    ulegacy: True
+    ulegacyv8: False
     datarun: True
     save:
       passing: False
