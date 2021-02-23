@@ -39,7 +39,7 @@ def plot_ul_comparison(acc_old, acc_new, jobtag, distribution='ak4_eta0', region
     ax.set_yscale('log')
     ax.set_ylim(1e-1,1e5)
 
-    ax.legend(labels=['New v8 UL', 'Old UL'])
+    ax.legend(labels=['Old UL', 'New v8 UL'])
 
     if re.match('.*2017[A-F]', dataset_regex):
         dataset_tag = dataset_regex.replace('.*', '_') 
