@@ -17,7 +17,7 @@ pjoin = os.path.join
 
 matplotlib_rc()
 
-def plot_ul_comparison(acc_old, acc_new, jobtag, distribution='ak4_eta0', region='sr_vbf', dataset_regex='MET.*2017C'):
+def plot_ul_comparison(acc_old, acc_new, jobtag, distribution='ak4_eta0', region='sr_vbf', dataset_regex='MET.*2017'):
     '''Plot the comparison of two UL samples: Old and new (most recent v8)'''
     acc_old.load(distribution)
     acc_new.load(distribution)
@@ -39,16 +39,33 @@ def plot_ul_comparison(acc_old, acc_new, jobtag, distribution='ak4_eta0', region
     ax.set_yscale('log')
     ax.set_ylim(1e-1,1e5)
 
-    ax.legend(labels=['Old UL', 'New v8 UL'])
+    ax.legend(labels=['02Dec2019 UL', 'New v8 UL'])
 
+    dataset_tag = None
+    # Run by run comparison
     if re.match('.*2017[A-F]', dataset_regex):
-        dataset_tag = dataset_regex.replace('.*', '_') 
+        dataset_tag = dataset_regex.replace('.*', ' ')
+        outputfiletag = dataset_regex.replace('.*', '_')
         ax.text(1., 1., dataset_tag,
             fontsize=14,
             ha='right',
             va='bottom',
             transform=ax.transAxes
         )
+
+    # Comparison for all runs combined (2017)
+    elif dataset_regex == 'MET.*2017':
+        dataset_tag = 'MET 2017, all runs'
+        outputfiletag = 'MET_2017_combined'
+        ax.text(1., 1., dataset_tag,
+            fontsize=14,
+            ha='right',
+            va='bottom',
+            transform=ax.transAxes
+        )
+
+    if not dataset_tag:
+        raise RuntimeError(f'Invalid dataset regex: {dataset_regex}')
 
     ax.text(0., 1., 'VBF Signal Region',
         fontsize=14,
@@ -91,14 +108,14 @@ def plot_ul_comparison(acc_old, acc_new, jobtag, distribution='ak4_eta0', region
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    outpath = pjoin(outdir, f'ul_comparison_{region}_{distribution}.pdf')
+    outpath = pjoin(outdir, f'{outputfiletag}_ul_comparison_{region}_{distribution}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
     
     print(f'File saved: {outpath}')
 
 def main():
-    acc_old_UL = dir_archive( bucoffea_path('./submission/merged_2021-02-23_vbfhinv_MET2017_RunC_oldUL') )
+    acc_old_UL = dir_archive( bucoffea_path('./submission/merged_2021-02-25_vbfhinv_MET2017_oldUL') )
     acc_new_UL = dir_archive( bucoffea_path('./submission/merged_2021-02-18_vbfhinv_ULv8_MET_2017') )
 
     acc_old_UL.load('sumw')
@@ -106,11 +123,22 @@ def main():
     acc_new_UL.load('sumw')
     acc_new_UL.load('sumw2')
 
-    jobtag = '23Feb21'
+    jobtag = '25Feb21_UL_comparison'
+
+    # Regex to use for dataset name matching. Run-by-run and 2017 combined
+    dataset_regexlist = [
+        'MET.*2017B',
+        'MET.*2017C',
+        'MET.*2017D',
+        'MET.*2017E',
+        'MET.*2017F',
+        'MET.*2017',
+    ]
 
     distributions = ['ak4_eta0', 'ak4_eta1', 'mjj', 'detajj']
-    for distribution in distributions:
-        plot_ul_comparison(acc_old_UL, acc_new_UL, jobtag, distribution=distribution)
+    for dataset_regex in dataset_regexlist:
+        for distribution in distributions:
+            plot_ul_comparison(acc_old_UL, acc_new_UL, jobtag, distribution=distribution, dataset_regex=dataset_regex)
 
 if __name__ == '__main__':
     main()
