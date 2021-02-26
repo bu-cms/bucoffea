@@ -21,8 +21,8 @@ def main():
         "MET_ver1_2017B" : [
             "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/MET/MET_ver1_2017B/210205_210910/0000/tree_1.root"
         ],
-        "MET_ver1_2017C" : [
-            "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/UL_02Dec2019_22Feb21/MET/MET_ver1_2017C/210222_152952/0000/tree_1.root"
+        "DYJetsToLL_M-50-MLM_2017" : [
+            "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50-MLM/210226_195924/0000/tree_13.root"
         ],
     }
 
