@@ -635,19 +635,19 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
 
             if cfg.RUN.ULEGACYV8:
-                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),       weight=w_alljets)
-                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),       weight=w_alljets)
-                ezfill('ak4_etastripsize',    etastripsize=ak4[mask].hfstripsize.flatten(),  weight=w_alljets)
+                # Select HF jets with pt > 100 GeV to fill these histograms
+                def high_pt_jet_in_hf(ak4):
+                    '''Helper function to get HF jets with high pt.'''
+                    return (ak4.abseta > 3.0) & (ak4.abseta < 5.0) & (ak4.pt > 100)
+                
+                hfmask = high_pt_jet_in_hf(ak4[mask])
+                hfjets = ak4[mask][hfmask]
 
-                ezfill('ak4_sigma_eta_eta0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(),   weight=w_diak4)
-                ezfill('ak4_sigma_phi_phi0',   sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),   weight=w_diak4)
-                ezfill('ak4_sigma_eta_eta1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(),   weight=w_diak4)
-                ezfill('ak4_sigma_phi_phi1',   sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),   weight=w_diak4)
-                ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(), sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),  weight=w_diak4)
-                ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(), sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),  weight=w_diak4)
+                w_hfjets = w_alljets[hfmask.flatten()]
 
-                ezfill('ak4_etastripsize0',    etastripsize=diak4.i0.hfstripsize[mask].flatten(), weight=w_diak4)
-                ezfill('ak4_etastripsize1',    etastripsize=diak4.i1.hfstripsize[mask].flatten(), weight=w_diak4)
+                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=hfjets.setaeta.flatten(),       weight=w_hfjets)
+                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=hfjets.sphiphi.flatten(),       weight=w_hfjets)
+                ezfill('ak4_etastripsize',    etastripsize=hfjets.hfstripsize.flatten(),  weight=w_hfjets)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
