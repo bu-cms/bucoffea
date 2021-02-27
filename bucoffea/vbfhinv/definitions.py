@@ -67,6 +67,7 @@ def vbfhinv_accumulator(cfg):
 
     sigma_eta_eta_ax = Bin("sigmaetaeta", r"$\sigma_{\eta\eta}$", 25, 0, 0.5)
     sigma_phi_phi_ax = Bin("sigmaphiphi", r"$\sigma_{\phi\phi}$", 25, 0, 0.5)
+    eta_stripsize_ax = Bin("etastripsize", r"HF Central $\eta$ Strip Size", 5, -0.5, 4.5)
 
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",100,0.5,1.5)
@@ -108,6 +109,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
     items["ak4_sigma_eta_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
     items["ak4_sigma_phi_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+    items["ak4_etastripsize0"] = Hist("Counts", dataset_ax, region_ax, eta_stripsize_ax)
 
     items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_ptraw1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -118,6 +120,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_nconst1"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
     items["ak4_sigma_eta_eta1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
     items["ak4_sigma_phi_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+    items["ak4_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, eta_stripsize_ax)
 
     items["ak4_pt0_chf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
     items["ak4_pt0_nhf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
@@ -137,6 +140,7 @@ def vbfhinv_accumulator(cfg):
 
     items["ak4_sigma_eta_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
     items["ak4_sigma_phi_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+    items["ak4_etastripsize"]  = Hist("Counts", dataset_ax, region_ax, eta_stripsize_ax)
 
     items["recoil_mjj"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, mjj_ax)
     items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)

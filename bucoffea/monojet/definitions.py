@@ -431,6 +431,7 @@ def setup_candidates(df, cfg):
         kwargs = {
             'setaeta': df['Jet_hfsigmaEtaEta'],
             'sphiphi': df['Jet_hfsigmaPhiPhi'],
+            'hfstripsize': df['Jet_hfcentralEtaStripSize'],
         }
         ak4.add_attributes(**kwargs)
 

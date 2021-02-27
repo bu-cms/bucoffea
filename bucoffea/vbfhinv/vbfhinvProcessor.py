@@ -635,8 +635,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
 
             if cfg.RUN.ULEGACYV8:
-                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),   weight=w_alljets)
-                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),   weight=w_alljets)
+                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),       weight=w_alljets)
+                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),       weight=w_alljets)
+                ezfill('ak4_etastripsize',    etastripsize=ak4[mask].hfstripsize.flatten(),  weight=w_alljets)
 
                 ezfill('ak4_sigma_eta_eta0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(),   weight=w_diak4)
                 ezfill('ak4_sigma_phi_phi0',   sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),   weight=w_diak4)
@@ -644,6 +645,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('ak4_sigma_phi_phi1',   sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),   weight=w_diak4)
                 ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(), sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),  weight=w_diak4)
                 ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(), sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),  weight=w_diak4)
+
+                ezfill('ak4_etastripsize0',    etastripsize=diak4.i0.hfstripsize[mask].flatten(), weight=w_diak4)
+                ezfill('ak4_etastripsize1',    etastripsize=diak4.i1.hfstripsize[mask].flatten(), weight=w_diak4)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
