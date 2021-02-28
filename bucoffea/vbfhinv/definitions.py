@@ -255,26 +255,6 @@ def vbfhinv_regions(cfg):
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
 
-    regions['sr_vbf_without_mitigation_cuts'] = copy.deepcopy(regions['sr_vbf'])
-    regions['sr_vbf_without_mitigation_cuts'].remove('veto_hfhf')
-    regions['sr_vbf_without_mitigation_cuts'].remove('eemitigation')
-    regions['sr_vbf_without_mitigation_cuts'].remove('max_neEmEF')
-
-    # HF-HF region in signal region
-    # regions['sr_vbf_hfhf'] = copy.deepcopy(regions['sr_vbf'])
-    # regions['sr_vbf_hfhf'].remove('veto_hfhf')
-    # regions['sr_vbf_hfhf'].append('hfhf_region')
-
-    # Signal region: At least one jet in HF
-    # regions['sr_vbf_at_least_one_jet_in_hf'] = copy.deepcopy(regions['sr_vbf'])
-    # regions['sr_vbf_at_least_one_jet_in_hf'].remove('veto_hfhf')
-    # regions['sr_vbf_at_least_one_jet_in_hf'].append('at_least_one_jet_in_hf')
-
-    # Signal region: No jet in HF
-    # regions['sr_vbf_no_jet_in_hf'] = copy.deepcopy(regions['sr_vbf'])
-    # regions['sr_vbf_no_jet_in_hf'].remove('veto_hfhf')
-    # regions['sr_vbf_no_jet_in_hf'].append('no_jet_in_hf')
-
     # For sync mode
     if cfg and cfg.RUN.SYNC:
         regions['cr_sync'] = [
