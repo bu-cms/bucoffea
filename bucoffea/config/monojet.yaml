@@ -32,11 +32,11 @@ default:
         mt: 160
         met: 50
   ak4:
-    jer: false
+    jer: true
   ak8:
-    jer: false
+    jer: true
   met:
-    jer: false
+    jer: true
   tau:
     cuts:
       pt: 18
@@ -210,6 +210,8 @@ default:
     monovmistag_study: False
     monovmistag_usepol1: False
     monoj: True
+    lowmassak8study: false
+    novtagvetostudy: false
     histogram:
       ak4_chf0: False
       ak4_deepcsv: false
@@ -229,15 +231,19 @@ default:
       drmuonjet: False
       drphotonjet: False
       electron_eta_phi: False
+      lowmass_ak8_eta: false
+      lowmass_ak8_mass: false
+      lowmass_ak8_phi: false
+      lowmass_ak8_pt: false
       muon_eta_phi: False
       npv_nopu: False
       npv: false
       npvgood_nopu: False
       npvgood: false
       photon_eta_phi: False
-      recoil_nodibosonnlo: False
       recoil_dibosonnlo_dn: False
       recoil_dibosonnlo_up: False
+      recoil_nodibosonnlo: False
       recoil_nopog: False
       recoil_nopref: False
       recoil_nopu: False
@@ -245,6 +251,10 @@ default:
       recoil_veto_weight: False
       rho_all_nopu: false
       rho_central_nopu: false
+      vlowmass_ak8_eta: false
+      vlowmass_ak8_mass: false
+      vlowmass_ak8_phi: false
+      vlowmass_ak8_pt: false
   triggers:
     ht:
       gammaeff:

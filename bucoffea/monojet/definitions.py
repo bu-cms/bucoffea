@@ -53,6 +53,7 @@ def monojet_accumulator(cfg):
 
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
+    recoil_ax_coarse = Bin("recoil", r"Recoil (GeV)", 20, 0, 2000)
     gen_v_pt_ax = Bin("pt", r"pt (GeV)", 200, 0, 2000)
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
@@ -63,10 +64,13 @@ def monojet_accumulator(cfg):
     jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
 
     dpfcalo_ax = Bin("dpfcalo", r"$(CaloMET-PFMET) / Recoil$", 20, -1, 1)
+    dpftk_ax = Bin("dpfcalo", r"$(TKMet-PFMET) / Recoil$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     dphi_ax = Bin("dphi", r"$\Delta\phi$", 50, 0, 3.5)
     dr_ax = Bin("dr", r"$\Delta R$", 50, 0, 2)
+    vec_b_ax = Bin("vec_b", "vec_b", 50, 0,1)
+    vec_dphi_ax = Bin("vec_dphi", "vec_dphi", 50, 0, np.pi)
 
     dxy_ax = Bin("dxy", r"$d_{xy}$", 20, 0, 0.5)
     dz_ax = Bin("dz", r"$d_{z}$", 20, 0, 0.5)
@@ -143,8 +147,16 @@ def monojet_accumulator(cfg):
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_muf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_cef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_chf"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nhf"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_muf"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_cef"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
 
     items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
+    items["ak4_pt0_recoil"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,recoil_ax_coarse)
 
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -155,9 +167,11 @@ def monojet_accumulator(cfg):
     items["bjet_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["bjet_sf"] = Hist("Counts", dataset_ax, region_ax, sf_ax)
     items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
+    items["ak4_eta0_phi0"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
     items["ak8_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["ak8_pt0_recoil"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, recoil_ax_coarse)
     items["ak8_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak8_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak8_mass0"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
@@ -171,6 +185,11 @@ def monojet_accumulator(cfg):
     items["ak8_tvsqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvstqcd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
     items["ak8_wvstqcdmd0"] = Hist("Counts", dataset_ax, region_ax, tagger_ax)
+    items["ak8_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
+    items["ak8_eta0_phi0"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
+
+    items["trailak8_ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["trailak8_ak4_dr_min"] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
     if cfg and cfg.RUN.MONOVMISTAG_STUDY:
         items["ak8_passloose_pt0"] = Hist("Counts", dataset_ax, region_ax, wppass_ax, jet_pt_ax)
@@ -189,10 +208,25 @@ def monojet_accumulator(cfg):
     items["ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak8_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak8_mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
+    items["lowmass_ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["lowmass_ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["lowmass_ak8_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["lowmass_ak8_mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
+    items["vlowmass_ak8_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    items["vlowmass_ak8_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["vlowmass_ak8_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    items["vlowmass_ak8_mass"] = Hist("Counts", dataset_ax, region_ax, jet_mass_ax)
 
     items["dpfcalo"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    items["dpftk"] = Hist("Counts", dataset_ax, region_ax, dpftk_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
+
+    items["vec_dphi"] = Hist("vec_dphi", dataset_ax, region_ax, vec_dphi_ax)
+    items["vec_b"] = Hist("vec_b", dataset_ax, region_ax, vec_b_ax)
+
+    items["dphi_pf_tk"] = Hist(r"\Delta\Phi(PF, TK)", dataset_ax, region_ax, dphi_ax)
+    items["dphi_pf_calo"] = Hist(r"\Delta\Phi(PF, Calo)", dataset_ax, region_ax, dphi_ax)
 
     # Multiplicity histograms
     for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','gen_dilepton']:
@@ -367,7 +401,7 @@ def setup_candidates(df, cfg):
     # For MC, add the matched gen-particle info for checking
     if not df['is_data']:
         kwargs = {'genpartflav' : df['Tau_genPartFlav']}
-        taus.add_attributes(**kwargs) 
+        taus.add_attributes(**kwargs)
 
     taus = taus[ (taus.decaymode) \
                 & (taus.pt > cfg.TAU.CUTS.PT)\
@@ -421,6 +455,8 @@ def setup_candidates(df, cfg):
         nef=df['Jet_neEmEF'],
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
+        cef=df['Jet_chEmEF'],
+        muf=df['Jet_muEF'],
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
         nconst=df['Jet_nConstituents'],
         hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour']
@@ -533,11 +569,8 @@ def monojet_regions(cfg):
     regions = {}
     regions['inclusive'] = ['inclusive']
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_v'] = ['trig_met','hemveto_metphi'] + common_cuts + v_cuts
-    regions['sr_j'] = ['trig_met','hemveto_metphi'] + common_cuts + j_cuts
-
-    # regions['cr_nofilt_j'] = copy.deepcopy(regions['sr_j'])
-    # regions['cr_nofilt_j'].remove('filt_met')
+    regions['sr_v'] = ['trig_met','hemveto_metphi'] + common_cuts + v_cuts + ['prescale','dphipftkveto']
+    regions['sr_j'] = ['trig_met','hemveto_metphi'] + common_cuts + j_cuts + ['prescale','dphipftkveto']
 
     # Dimuon CR
     cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
@@ -654,6 +687,48 @@ def monojet_regions(cfg):
         tmp[new_region].append("dpfcalo_sr")
 
     regions.update(tmp)
+
+    if cfg.RUN.LOWMASSAK8STUDY:
+        tmp = {}
+        for region in regions.keys():
+            if not re.match("sr_(loose|tight)_v.*",region):
+                continue
+            new_region = f"{region}_no_lowmass_ak8"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].append("no_lowmass_ak8")
+
+            new_region = f"{region}_lowmass_ak8"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].append("lowmass_ak8")
+
+            new_region = f"{region}_vlowmass_ak8"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].append("vlowmass_ak8")
+        regions.update(tmp)
+
+    if cfg.RUN.NOVTAGVETOSTUDY:
+        tmp = {}
+        for region in regions.keys():
+            if not re.match("sr_((loose|tight)_v|j)(_no_veto_all)?$",region):
+                continue
+            new_region = f"{region}_dphipftkveto"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].append("dphipftkveto")
+
+            new_region = f"{region}_dphipftkvetoinv"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].append("dphipftkvetoinv")
+
+        regions.update(tmp)
+
+    # tmp = {}
+    # for region in regions.keys():
+    #     if not re.match("sr_j(_no_veto_all)?",region):
+    #         continue
+    #     new_region = f"{region}_no_overlap_removal"
+    #     tmp[new_region] = copy.deepcopy(regions[region])
+    #     tmp[new_region].remove("veto_vtag")
+    # regions.update(tmp)
 
     if cfg and cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
