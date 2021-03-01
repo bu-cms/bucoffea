@@ -65,6 +65,12 @@ def parse_commandline():
         help="The output directory to use.",
     )
     parser.add_argument(
+        "--filter",
+        type=str,
+        default=".*",
+        help="Filter of histogram names",
+    )
+    parser.add_argument(
         "--rlim",
         type=str,
         default="0.9,1.1",
@@ -100,6 +106,9 @@ def main():
     tag1 = os.path.basename(os.path.dirname(args.fname1))
     tag2 = os.path.basename(os.path.dirname(args.fname2))
 
+    # filter
+    regex = re.compile(args.filter)
+
     # Convert to dictionary
     h1 = make_dict(args.fname1)
     h2 = make_dict(args.fname2)
@@ -116,6 +125,8 @@ def main():
     for key in tqdm.tqdm(h1.keys()):
         if key not in h2:
             print("Found missing key ", key)
+        if not regex.match(str(key)):
+            continue
         fig, ax, rax = fig_ratio()
         x = 0.5 * np.sum(h1[key].bins,axis=1)
         edges = np.unique(h1[key].bins)
