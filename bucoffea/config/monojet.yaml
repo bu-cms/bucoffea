@@ -210,6 +210,8 @@ default:
     monovmistag_study: False
     monovmistag_usepol1: False
     monoj: True
+    lowmassak8study: false
+    novtagvetostudy: false
     histogram:
       ak4_chf0: False
       ak4_deepcsv: false

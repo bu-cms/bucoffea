@@ -688,36 +688,38 @@ def monojet_regions(cfg):
 
     regions.update(tmp)
 
-    tmp = {}
-    for region in regions.keys():
-        if not re.match("sr_(loose|tight)_v.*",region):
-            continue
-        new_region = f"{region}_no_lowmass_ak8"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].append("no_lowmass_ak8")
+    if cfg.RUN.LOWMASSAK8STUDY:
+        tmp = {}
+        for region in regions.keys():
+            if not re.match("sr_(loose|tight)_v.*",region):
+                continue
+            new_region = f"{region}_no_lowmass_ak8"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].append("no_lowmass_ak8")
 
-        new_region = f"{region}_lowmass_ak8"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].append("lowmass_ak8")
+            new_region = f"{region}_lowmass_ak8"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].append("lowmass_ak8")
 
-        new_region = f"{region}_vlowmass_ak8"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].append("vlowmass_ak8")
-    regions.update(tmp)
+            new_region = f"{region}_vlowmass_ak8"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].append("vlowmass_ak8")
+        regions.update(tmp)
 
-    tmp = {}
-    for region in regions.keys():
-        if not re.match("sr_((loose|tight)_v|j)(_no_veto_all)?$",region):
-            continue
-        new_region = f"{region}_dphipftkveto"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].append("dphipftkveto")
+    if cfg.RUN.NOVTAGVETOSTUDY:
+        tmp = {}
+        for region in regions.keys():
+            if not re.match("sr_((loose|tight)_v|j)(_no_veto_all)?$",region):
+                continue
+            new_region = f"{region}_dphipftkveto"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].append("dphipftkveto")
 
-        new_region = f"{region}_dphipftkvetoinv"
-        tmp[new_region] = copy.deepcopy(regions[region])
-        tmp[new_region].append("dphipftkvetoinv")
+            new_region = f"{region}_dphipftkvetoinv"
+            tmp[new_region] = copy.deepcopy(regions[region])
+            tmp[new_region].append("dphipftkvetoinv")
 
-    regions.update(tmp)
+        regions.update(tmp)
 
     # tmp = {}
     # for region in regions.keys():
