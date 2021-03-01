@@ -68,6 +68,7 @@ def vbfhinv_accumulator(cfg):
     sigma_eta_eta_ax = Bin("sigmaetaeta", r"$\sigma_{\eta\eta}$", 25, 0, 0.5)
     sigma_phi_phi_ax = Bin("sigmaphiphi", r"$\sigma_{\phi\phi}$", 25, 0, 0.5)
     eta_stripsize_ax = Bin("etastripsize", r"HF Central $\eta$ Strip Size", 5, -0.5, 4.5)
+    eta_hf_ax = Bin("jeta", r"Jet $|\eta|$", [3, 3.25, 5])
 
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",100,0.5,1.5)
@@ -138,9 +139,9 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
-    items["ak4_sigma_eta_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
-    items["ak4_sigma_phi_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
-    items["ak4_etastripsize"]  = Hist("Counts", dataset_ax, region_ax, eta_stripsize_ax)
+    items["ak4_sigma_eta_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, eta_hf_ax)
+    items["ak4_sigma_phi_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax, eta_hf_ax)
+    items["ak4_etastripsize"]  = Hist("Counts", dataset_ax, region_ax, eta_stripsize_ax, eta_hf_ax)
 
     items["recoil_mjj"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, mjj_ax)
     items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
@@ -279,6 +280,10 @@ def vbfhinv_regions(cfg):
     cr_2m_cuts.remove('veto_muo')
 
     regions['cr_2m_vbf'] = cr_2m_cuts
+
+    # Dimuon CR without HF-HF veto (for HF jet studies)
+    regions['cr_2m_vbf_nohfhf_veto'] = copy.deepcopy(regions['cr_2m_vbf'])
+    regions['cr_2m_vbf_nohfhf_veto'].remove('veto_hfhf')
 
     # Single muon CR
     cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']

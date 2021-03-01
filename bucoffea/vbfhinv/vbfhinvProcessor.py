@@ -471,7 +471,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus)
         
         for region, cuts in regions.items():
-            if region not in ['sr_vbf', 'cr_2m_vbf']:
+            # For now, Z(mumu) events only
+            if not region.startswith('cr_2m_vbf'):
                 continue
             exclude = [None]
             region_weights = copy.deepcopy(weights)
@@ -645,9 +646,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                 w_hfjets = w_alljets[hfmask.flatten()]
 
-                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=hfjets.setaeta.flatten(),       weight=w_hfjets)
-                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=hfjets.sphiphi.flatten(),       weight=w_hfjets)
-                ezfill('ak4_etastripsize',    etastripsize=hfjets.hfstripsize.flatten(),  weight=w_hfjets)
+                # Fill these histograms for two eta bins: 3.0 < |eta| < 3.25 and |eta| > 3.25
+                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=hfjets.setaeta.flatten(),        jeta=hfjets.abseta.flatten(),   weight=w_hfjets)
+                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=hfjets.sphiphi.flatten(),        jeta=hfjets.abseta.flatten(),   weight=w_hfjets)
+                ezfill('ak4_etastripsize',    etastripsize=hfjets.hfstripsize.flatten(),   jeta=hfjets.abseta.flatten(),   weight=w_hfjets)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
