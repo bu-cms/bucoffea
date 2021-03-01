@@ -13,7 +13,7 @@ from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
 
 pjoin = os.path.join
 
-def datasets(year, unblind=False):
+def datasets(year, unblind=False, nlo=False):
     data = {
                     'cr_1m_j' : f'MET_{year}',
                     'cr_2m_j' : f'MET_{year}',
@@ -33,17 +33,32 @@ def datasets(year, unblind=False):
         tmp[k1] = re.compile(v)
     data.update(tmp)
 
+    if year==2017:
+        wjets_nlo_regex = ".*WNJetsToLNu.*"
+    elif year==2018:
+        wjets_nlo_regex = "WJetsToLNu.*FXFX.*"
 
+    if nlo:
+        mc = {
+                'cr_1m_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*|{wjets_nlo_regex}).*{year})'),
+                'cr_1e_j' : re.compile(f'((Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*|{wjets_nlo_regex}|GJets_1j_.*).*{year})'),
+                'cr_2m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}'),
+                'cr_2e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}'),
+                'cr_g_j' : re.compile(f'((GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|Diboson|{wjets_nlo_regex}).*{year})'),
+                'sr_j_no_veto_all' : re.compile(f'((.*ZNJetsTo.*LHE.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*|{wjets_nlo_regex}).*{year})'),
+                'sr_j' : re.compile('nomatch'),
+                }
+    else:
+        mc = {
+                'cr_1m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
+                'cr_1e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*|GJets_1j_.*).*{year}'),
+                'cr_2m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+                'cr_2e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+                'cr_g_j' : re.compile(f'(GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|WJetsToLNu.*HT.*|Diboson).*{year}'),
+                'sr_j_no_veto_all' : re.compile(f'(.*WJetsToLNu.*HT.*|.*ZJetsTo.*HT.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*).*{year}'),
+                'sr_j' : re.compile('nomatch'),
+                }
 
-    mc = {
-            'cr_1m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WNJetsToLNu.*|.*WJetsToLNu.*HT.*).*{year}'),
-            'cr_1e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WNJetsToLNu.*|.*WJetsToLNu.*HT.*|GJets_DR-0p4.*).*{year}'),
-            'cr_2m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-            'cr_2e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-            'cr_g_j' : re.compile(f'(GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|.*WNJetsToLNu.*|WJetsToLNu.*HT.*|Diboson).*{year}'),
-            'sr_j_no_veto_all' : re.compile(f'(.*WJetsToLNu.*HT.*|.*WNJetsToLNu.*|.*ZJetsToNuNu.*HT.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*).*{year}'),
-            'sr_j' : re.compile('nomatch'),
-            }
     for key in list(mc.keys()):
         new_key = key.replace('_j','_v')
         mc[new_key]=mc[key]
@@ -142,9 +157,8 @@ def legacy_dataset_name(dataset):
         'WW.*' : 'ww',
         'ZZ.*' : 'zz',
         '(MET|EGamma).*' : 'data',
-        'WJetsToLNu.*HT.*' : 'wjets',
-        '.*WNJetsToLNu.*' : 'wjetsnlo',
-        'ZJetsToNuNu.*' : 'zjets',
+        'WN?JetsToLNu.*' : 'wjets',
+        'ZN?JetsToNuNu.*' : 'zjets',
         'GJets_DR-0p4.*HT.*' : 'gjets',
         'GJets.*NLO.*' : 'gjets',
         'VQQGamma.*' : 'vgamma',
@@ -186,13 +200,13 @@ def suppress_negative_bins(histogram):
             histogram.SetBinContent(i, 0)
             histogram.SetBinError(i,0)
 
-def legacy_limit_input_monojet(acc, outdir='./output', unblind=False):
+def legacy_limit_input_monojet(acc, args):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
     :type acc: coffea.processor.accumulator
-    :param outdir: Output directory
-    :type outdir: string
+    :param args.outdir: Output directory
+    :type args.outdir: string
     """
     distribution = 'recoil'
 
@@ -204,11 +218,11 @@ def legacy_limit_input_monojet(acc, outdir='./output', unblind=False):
                 'cr_g_j',
                 'sr_j_no_veto_all'
                 ]
-    if unblind:
+    if args.unblind:
         regions.append('sr_j')
 
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    if not os.path.exists(args.outdir):
+        os.makedirs(args.outdir)
 
     # Histogram prep, rebin, etc
     h = copy.deepcopy(acc[distribution])
@@ -219,8 +233,8 @@ def legacy_limit_input_monojet(acc, outdir='./output', unblind=False):
     h = merge_datasets(h)
 
     for year in [2017,2018]:
-        f = uproot.recreate(pjoin(outdir, f'legacy_limit_monojet_{year}.root'))
-        data, mc = datasets(year, unblind=unblind)
+        f = uproot.recreate(pjoin(args.outdir, f'legacy_limit_monojet_{year}.root'))
+        data, mc = datasets(year, unblind=args.unblind, nlo=args.nlo)
 
         for region in regions:
             print(f'Region {region}')
@@ -239,9 +253,9 @@ def legacy_limit_input_monojet(acc, outdir='./output', unblind=False):
                     continue
                 f[histo_name] = th1
 
-        if not unblind:
+        if not args.unblind:
             f[f'{legacy_region_name("sr_j")}_data'] = f[f'{legacy_region_name("sr_j")}_zjets']
-    merge_legacy_inputs(outdir)
+    merge_legacy_inputs(args.outdir)
 
 
 def merge_legacy_inputs(outdir):

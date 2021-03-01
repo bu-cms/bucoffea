@@ -11,6 +11,7 @@ def parse_commandline():
     parser.add_argument('inpath', type=str, help='Input path to use.')
     parser.add_argument('--channel', type=str, help='Channel to make inputs for.', default='monojet')
     parser.add_argument('--unblind', action='store_true', help='Include signal region data')
+    parser.add_argument('--nlo', action='store_true', help='Use NLO V samples')
     args = parser.parse_args()
 
     if not os.path.isdir(args.inpath):
@@ -32,18 +33,18 @@ def main():
     else:
         acc = acc_from_dir(args.inpath)
 
-    outdir = pjoin('./output/',list(filter(lambda x:x,args.inpath.split('/')))[-1])
+    args.outdir = pjoin('./output/',list(filter(lambda x:x,args.inpath.split('/')))[-1])
     for channel in args.channel.split(','):
         print(channel)
         if channel == 'monojet':
             from legacy_monojet import legacy_limit_input_monojet
-            legacy_limit_input_monojet(acc, outdir=outdir, unblind=args.unblind)
+            legacy_limit_input_monojet(acc, args)
         elif channel == 'monov':
             from legacy_monov import legacy_limit_input_monov
-            legacy_limit_input_monov(acc, outdir=outdir, unblind=args.unblind)
+            legacy_limit_input_monov(acc, args)
         elif channel == 'vbfhinv':
             from legacy_vbf import legacy_limit_input_vbf
-            legacy_limit_input_vbf(acc, outdir=outdir, unblind=args.unblind)
+            legacy_limit_input_vbf(acc, outdir=args.outdir, unblind=args.unblind)
 
 
 if __name__ == "__main__":

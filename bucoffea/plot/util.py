@@ -257,6 +257,8 @@ def create_dataset_mapping(all_datasets):
         'VQQGamma_FXFX_{year}' : '(W|Z)QQGamma_5f_NLO_FXFX-amcatnlo_{year}',
         'WQQGamma_FXFX_{year}' : 'WQQGamma_5f_NLO_FXFX-amcatnlo_{year}',
         'ZQQGamma_FXFX_{year}' : 'ZQQGamma_5f_NLO_FXFX-amcatnlo_{year}',
+
+        'WJetsToLNu_Pt-FXFX_{year}': 'WJetsToLNu_Pt-\d+To.*-amcatnloFXFX_{year}'
     }
     for year in [2016,2017,2018]:
         for name, regex in yearly.items():

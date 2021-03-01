@@ -2,14 +2,17 @@
 # W*JetsToLNu_LHEWpT_*_Tune*_13TeV-amcnloFXFX-pythia8
 # WJetsToLNu_*J_Tune*_13TeV-amcatnloFXFX-pythia8
 
+W*JetsToLNu_NuPt-*_TuneCP5_13TeV-madgraphMLM-pythia8
+WJetsToLNu_Pt-*_TuneCP5_13TeV-amcatnloFXFX-pythia8
+
 # W LO
 # W*JetsToLNu_Tune*_13TeV-madgraphMLM-pythia8
 WJetsToLNu_HT-*_Tune*_13TeV-madgraphMLM-pythia8
 # WJetsToQQ*qc19*
 
 # Z NLO: Not currently needed
-# Z*JetsToNuNu_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
-# Z*JetsToNuNU_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
+Z*JetsToNuNu_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
+Z*JetsToNuNU_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
 # DY*JetsToLL_M-50_LHEZpT_*_Tune*_13TeV-amcnloFXFX-pythia8
 
 # Z LO
@@ -92,4 +95,5 @@ Pseudoscalar_MonoV*
 
 # ADD
 ADDMonoJet_MD*
+
 

@@ -18,13 +18,13 @@ def recoil_bins_2016():
     return [250,300,350,400,500,600,750,1000]
 
 
-def legacy_limit_input_monov(acc, outdir='./output', unblind=False):
+def legacy_limit_input_monov(acc,  args):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
     :type acc: coffea.processor.accumulator
-    :param outdir: Output directory
-    :type outdir: string
+    :param args.outdir: Output directory
+    :type args.outdir: string
     """
     distribution = 'recoil'
 
@@ -36,11 +36,11 @@ def legacy_limit_input_monov(acc, outdir='./output', unblind=False):
                 'cr_g_v',
                 'sr_v_no_veto_all'
                 ]
-    if unblind:
+    if args.unblind:
         regions.append("sr_v")
 
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    if not os.path.exists(args.outdir):
+        os.makedirs(args.outdir)
 
     newax = hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016())
 
@@ -53,8 +53,8 @@ def legacy_limit_input_monov(acc, outdir='./output', unblind=False):
 
     for wp in ['tau21','loose','tight']:
         for year in [2017,2018]:
-            f = uproot.recreate(pjoin(outdir, f'legacy_limit_monov_{wp}_{year}.root'))
-            data, mc = datasets(year, unblind)
+            f = uproot.recreate(pjoin(args.outdir, f'legacy_limit_monov_{wp}_{year}.root'))
+            data, mc = datasets(year, unblind=args.unblind, nlo=args.nlo)
             for region in regions:
                 if wp == 'tau21':
                     monov_region_name = region
@@ -78,9 +78,9 @@ def legacy_limit_input_monov(acc, outdir='./output', unblind=False):
                         print(f"Skipping {dataset}")
                         continue
                     f[histo_name] = th1
-            if not unblind:
+            if not args.unblind:
                 f[f'{legacy_region_name("sr_v")}_data'] = f[f'{legacy_region_name("sr_v")}_zjets']
-    merge_legacy_inputs(outdir)
+    merge_legacy_inputs(args.outdir)
 
 
 def merge_legacy_inputs(outdir):
