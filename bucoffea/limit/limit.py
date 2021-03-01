@@ -44,7 +44,7 @@ def main():
             legacy_limit_input_monov(acc, args)
         elif channel == 'vbfhinv':
             from legacy_vbf import legacy_limit_input_vbf
-            legacy_limit_input_vbf(acc, outdir=outdir, unblind=args.unblind)
+            legacy_limit_input_vbf(acc, outdir=args.outdir, unblind=args.unblind)
 
 
 if __name__ == "__main__":
