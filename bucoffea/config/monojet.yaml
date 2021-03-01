@@ -208,7 +208,7 @@ default:
     btag_study: False
     monov: True
     monovmistag_study: False
-    monovmistag_usepol1: False
+    monovmistag_usepol1: True
     monoj: True
     lowmassak8study: false
     novtagvetostudy: false
