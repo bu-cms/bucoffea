@@ -261,6 +261,9 @@ def vbfhinv_regions(cfg):
     regions['sr_vbf_no_mitigationcuts'].remove('eemitigation')
     regions['sr_vbf_no_mitigationcuts'].remove('max_neEmEF')
 
+    regions['sr_vbf_no_hfhf'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_no_hfhf'].remove('veto_hfhf')
+
     # For sync mode
     if cfg and cfg.RUN.SYNC:
         regions['cr_sync'] = [
