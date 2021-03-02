@@ -17,6 +17,8 @@ pjoin = os.path.join
 
 matplotlib_rc()
 
+np.seterr(all='ignore')
+
 def plot_ul_comparison(acc_old, acc_new, jobtag, distribution='ak4_eta0', region='sr_vbf', dataset_regex='MET.*2017'):
     '''Plot the comparison of two UL samples: Old and new (most recent v8)'''
     acc_old.load(distribution)
@@ -67,7 +69,18 @@ def plot_ul_comparison(acc_old, acc_new, jobtag, distribution='ak4_eta0', region
     if not dataset_tag:
         raise RuntimeError(f'Invalid dataset regex: {dataset_regex}')
 
-    ax.text(0., 1., 'VBF Signal Region',
+    # Region tag
+    if region == 'sr_vbf':
+        regiontag = 'VBF Signal Region'
+    elif region == 'sr_vbf_no_mitigationcuts':
+        regiontag = 'VBF Signal Region (No mitigation cuts)'
+    elif region == 'sr_vbf_no_hfhf':
+        regiontag = 'VBF Signal Region (No HF-HF veto)'
+
+    if not regiontag:
+        raise RuntimeError(f'Invalid region: {region}')
+
+    ax.text(0., 1., regiontag,
         fontsize=14,
         ha='left',
         va='bottom',
@@ -115,30 +128,26 @@ def plot_ul_comparison(acc_old, acc_new, jobtag, distribution='ak4_eta0', region
     print(f'File saved: {outpath}')
 
 def main():
-    acc_old_UL = dir_archive( bucoffea_path('./submission/merged_2021-02-25_vbfhinv_MET2017_oldUL') )
-    acc_new_UL = dir_archive( bucoffea_path('./submission/merged_2021-02-18_vbfhinv_ULv8_MET_2017') )
+    acc_old_UL = dir_archive( bucoffea_path('./submission/merged_2021-03-02_vbfhinv_MET2017_oldUL') )
+    acc_new_UL = dir_archive( bucoffea_path('./submission/merged_2021-03-02_vbfhinv_MET2017_newUL') )
 
     acc_old_UL.load('sumw')
     acc_old_UL.load('sumw2')
     acc_new_UL.load('sumw')
     acc_new_UL.load('sumw2')
 
-    jobtag = '25Feb21_UL_comparison'
-
-    # Regex to use for dataset name matching. Run-by-run and 2017 combined
-    dataset_regexlist = [
-        'MET.*2017B',
-        'MET.*2017C',
-        'MET.*2017D',
-        'MET.*2017E',
-        'MET.*2017F',
-        'MET.*2017',
-    ]
+    jobtag = '02Mar21_UL_comparison'
 
     distributions = ['ak4_eta0', 'ak4_eta1', 'mjj', 'detajj']
-    for dataset_regex in dataset_regexlist:
+    for region in ['sr_vbf', 'sr_vbf_no_mitigationcuts', 'sr_vbf_no_hfhf']:
         for distribution in distributions:
-            plot_ul_comparison(acc_old_UL, acc_new_UL, jobtag, distribution=distribution, dataset_regex=dataset_regex)
+            plot_ul_comparison(acc_old_UL, 
+                    acc_new_UL, 
+                    jobtag, 
+                    distribution=distribution, 
+                    dataset_regex='MET.*2017', # Only combined dataset for now
+                    region=region
+                    )
 
 if __name__ == '__main__':
     main()
