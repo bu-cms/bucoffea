@@ -471,8 +471,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus)
         
         for region, cuts in regions.items():
-            # For now, Z(mumu) events only
-            if not region.startswith('cr_2m_vbf'):
+            # Run on selected regions only
+            if not re.match(cfg.RUN.REGIONREGEX, region):
                 continue
             exclude = [None]
             region_weights = copy.deepcopy(weights)
