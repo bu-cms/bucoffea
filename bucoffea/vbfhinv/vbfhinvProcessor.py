@@ -183,7 +183,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             bjets = bjets[(bjets.ptraw>50) | (bjets.abseta<2.65) | (bjets.abseta>3.139)]
 
         # Filtering ak4 jets according to pileup ID
-        ak4 = ak4[ak4.puid]
+        if cfg.RUN.FILTERPUID:
+            ak4 = ak4[ak4.puid]
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
