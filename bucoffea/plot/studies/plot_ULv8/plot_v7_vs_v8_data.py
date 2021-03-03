@@ -16,6 +16,7 @@ from klepto.archives import dir_archive
 pjoin = os.path.join
 
 matplotlib_rc()
+np.seterr(all='ignore')
 
 def preprocess(h, acc, distribution, region='sr_vbf', dataset='MET_2017'):
     h = merge_extensions(h, acc, reweight_pu=False)
@@ -44,12 +45,16 @@ def plot_v7_vs_v8_data(acc_v7, acc_v8, distribution, region='sr_vbf'):
     ax.set_yscale('log')
     ax.set_ylim(1e-1,1e5)
 
-    ax.legend(title='MET 2017',labels=['Nano v7', 'Nano v8'])
+    ax.legend(title='MET 2017',labels=['ReReco Nano v7', 'UL Nano v8'])
 
     if region == 'sr_vbf':
         regiontext = 'VBF Signal Region'
-    elif region == 'sr_vbf_without_mitigation_cuts':
-        regiontext = 'VBF Signal Region (No mitigation cuts)'
+    elif region == 'sr_vbf_no_mitigationcuts':
+        regiontext = 'VBF Signal Region (No noise cuts)'
+    elif region == 'sr_vbf_no_hfhf':
+        regiontext = 'VBF Signal Region (No HF-HF veto)'
+    else:
+        raise RuntimeError(f'Invalid region: {region}')
 
     ax.text(0.,1.,regiontext,
         fontsize=14,
@@ -94,7 +99,7 @@ def plot_v7_vs_v8_data(acc_v7, acc_v8, distribution, region='sr_vbf'):
         rax.yaxis.set_major_locator(loc)
 
     # Save figure
-    outdir = './output/v7_vs_v8'
+    outdir = './output/v7_vs_v8/03Mar21'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
@@ -104,8 +109,8 @@ def plot_v7_vs_v8_data(acc_v7, acc_v8, distribution, region='sr_vbf'):
     print(f'File saved: {outpath}')
 
 def main():
-    inpath_v7 = '../../../submission/merged_2021-02-18_vbfhinv_03Sep20v7_MET_2017'
-    inpath_v8 = '../../../submission/merged_2021-02-18_vbfhinv_ULv8_MET_2017'
+    inpath_v7 = '../../../submission/merged_2021-03-03_vbfhinv_03Sep20v7_MET_2017'
+    inpath_v8 = '../../../submission/merged_2021-03-02_vbfhinv_MET2017_newUL'
     acc_v7 = dir_archive(inpath_v7) 
     acc_v8 = dir_archive(inpath_v8) 
 
@@ -115,7 +120,7 @@ def main():
 
     distributions = ['mjj', 'detajj', 'ak4_eta0', 'ak4_eta1']
 
-    regions = ['sr_vbf', 'sr_vbf_without_mitigation_cuts']
+    regions = ['sr_vbf', 'sr_vbf_no_mitigationcuts', 'sr_vbf_no_hfhf']
 
     for region in regions:
         for distribution in distributions:
