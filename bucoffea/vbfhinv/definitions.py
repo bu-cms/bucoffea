@@ -38,6 +38,7 @@ def vbfhinv_accumulator(cfg):
     jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
 
     dpfcalo_ax = Bin("dpfcalo", r"$(PFMET-CaloMET) / Recoil$", 20, -1, 1)
+    dpftk_ax = Bin("dpftk", r"$(PFMET-TkMET) / MET$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
@@ -109,7 +110,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef0_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
     items["ak4_sigma_eta_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
     items["ak4_sigma_phi_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
@@ -121,7 +122,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi1"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nef1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef1_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst1"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
     items["ak4_sigma_eta_eta1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
     items["ak4_sigma_phi_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
@@ -160,6 +161,7 @@ def vbfhinv_accumulator(cfg):
 
     items["vecb"] = Hist("Counts", dataset_ax, region_ax, vecb_ax)
     items["dphitkpf"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
+    items["dPFTkMET"] = Hist("Counts", dataset_ax, region_ax, dpftk_ax)
 
     # Multiplicity histograms
     for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
@@ -266,13 +268,17 @@ def vbfhinv_regions(cfg):
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
 
-    regions['sr_vbf_no_mitigationcuts'] = copy.deepcopy(regions['sr_vbf'])
-    regions['sr_vbf_no_mitigationcuts'].remove('veto_hfhf')
-    regions['sr_vbf_no_mitigationcuts'].remove('eemitigation')
-    regions['sr_vbf_no_mitigationcuts'].remove('max_neEmEF')
+    regions['sr_vbf_no_eemitigation'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_no_eemitigation'].remove('eemitigation')
+
+    regions['sr_vbf_no_emfraccut'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_no_emfraccut'].remove('max_neEmEF')
 
     regions['sr_vbf_no_hfhf'] = copy.deepcopy(regions['sr_vbf'])
     regions['sr_vbf_no_hfhf'].remove('veto_hfhf')
+
+    regions['sr_vbf_nohornveto'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_nohornveto'].remove('hornveto')
 
     # For sync mode
     if cfg and cfg.RUN.SYNC:

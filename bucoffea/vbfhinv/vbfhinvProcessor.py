@@ -644,7 +644,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_ptraw0',    jetpt=diak4.i0.ptraw[mask].flatten(),   weight=w_diak4)
             ezfill('ak4_chf0',      frac=diak4.i0.chf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nhf0',      frac=diak4.i0.nhf[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nef0',      frac=diak4.i0.nef[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst0',   nconst=diak4.i0.nconst[mask].flatten(), weight=w_diak4)
 
             # Trailing ak4
@@ -654,11 +653,25 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_ptraw1',    jetpt=diak4.i1.ptraw[mask].flatten(),   weight=w_diak4)
             ezfill('ak4_chf1',      frac=diak4.i1.chf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nef1',      frac=diak4.i1.nef[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
 
             ezfill('ak4_central_eta',   jeteta=central_jet_eta[mask],   weight=w_diak4)
             ezfill('ak4_forward_eta',   jeteta=forward_jet_eta[mask],   weight=w_diak4)
+
+            # Neutral EM fraction of leading jet ONLY if it's in endcap
+            w_ak4_nef0 = np.where(
+                (diak4.i0.abseta[mask] > 2.5) & (diak4.i0.abseta[mask] < 3.0),
+                w_diak4,
+                0,
+            )
+            w_ak4_nef1 = np.where(
+                (diak4.i1.abseta[mask] > 2.5) & (diak4.i1.abseta[mask] < 3.0),
+                w_diak4,
+                0,
+            )
+
+            ezfill('ak4_nef0_eeonly',      frac=diak4.i0.nef[mask].flatten(),      weight=w_ak4_nef0)
+            ezfill('ak4_nef1_eeonly',      frac=diak4.i1.nef[mask].flatten(),      weight=w_ak4_nef1)
 
             if cfg.RUN.ULEGACYV8:
                 # Select HF jets with pt > 100 GeV to fill these histograms
@@ -697,6 +710,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             ezfill('vecb',        vecb=vec_b[mask],       weight=rweight[mask] )
             ezfill('dphitkpf',    dphi=dphitkpf[mask],    weight=rweight[mask] )
+
+            # Consider events where only (at least) one of the jets is in horn
+            dpftkmet_weight = np.where(
+                leading_jet_in_horn | trailing_jet_in_horn,
+                rweight,
+                0
+            )
+
+            ezfill('dPFTkMET',   dpftk=df['dPFTkSR'][mask],    weight=dpftkmet_weight[mask])
 
             # b-tag weight up and down variations
             if cfg.RUN.BTAG_STUDY:
