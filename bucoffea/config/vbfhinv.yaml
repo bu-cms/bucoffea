@@ -222,7 +222,6 @@ default:
     ulegacy: True
     ulegacyv8: True
     datarun: True
-    filterpuid: True
     regionregex: sr_vbf.*
     save:
       passing: False
