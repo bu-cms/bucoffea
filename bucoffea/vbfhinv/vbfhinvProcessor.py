@@ -266,6 +266,24 @@ class vbfhinvProcessor(processor.ProcessorABC):
         leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
         trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
 
+        # Store the eta of the more forward (and central) VBF jet
+        leadjet_more_central = diak4.i0.abseta <= diak4.i1.abseta
+        leadjet_more_forward = ~leadjet_more_central
+
+        central_jet_eta = np.minimum(diak4.i0.abseta, diak4.i1.abseta)
+
+        central_jet_eta = np.where(
+            leadjet_more_central,
+            diak4.i0.eta.min(),
+            diak4.i1.eta.min(),
+        )
+
+        forward_jet_eta = np.where(
+            leadjet_more_forward,
+            diak4.i0.eta.min(),
+            diak4.i1.eta.min(),
+        )
+
         df['mjj'] = diak4.mass.max()
         df['dphijj'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
         df['detajj'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
@@ -634,6 +652,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_chf1',      frac=diak4.i1.chf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
+
+            ezfill('ak4_central_eta',   jeteta=central_jet_eta[mask],   weight=w_diak4)
+            ezfill('ak4_forward_eta',   jeteta=forward_jet_eta[mask],   weight=w_diak4)
 
             if cfg.RUN.ULEGACYV8:
                 # Select HF jets with pt > 100 GeV to fill these histograms
