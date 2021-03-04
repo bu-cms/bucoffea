@@ -70,6 +70,8 @@ def vbfhinv_accumulator(cfg):
     eta_stripsize_ax = Bin("etastripsize", r"HF Central $\eta$ Strip Size", 5, -0.5, 4.5)
     eta_hf_ax = Bin("jeta", r"Jet $|\eta|$", [3, 3.25, 5])
 
+    vecb_ax = Bin("vecb", r"VecB", 50, 0, 1)
+
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",100,0.5,1.5)
     weight_wide_ax = Bin("weight_value", "Weight",100,-10,10)
@@ -107,6 +109,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
     items["ak4_sigma_eta_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
     items["ak4_sigma_phi_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
@@ -118,6 +121,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi1"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst1"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
     items["ak4_sigma_eta_eta1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
     items["ak4_sigma_phi_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
@@ -153,6 +157,9 @@ def vbfhinv_accumulator(cfg):
     items["dpfcalo_sr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
+
+    items["vecb"] = Hist("Counts", dataset_ax, region_ax, vecb_ax)
+    items["dphitkpf"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
 
     # Multiplicity histograms
     for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
