@@ -656,6 +656,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_central_eta',   jeteta=central_jet_eta[mask],   weight=w_diak4)
             ezfill('ak4_forward_eta',   jeteta=forward_jet_eta[mask],   weight=w_diak4)
 
+            ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),     weight=w_diak4)
+            ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),     weight=w_diak4)
+
             # Neutral EM fraction of leading jet ONLY if it's in endcap
             w_ak4_nef0 = np.where(
                 (diak4.i0.abseta[mask] > 2.5) & (diak4.i0.abseta[mask] < 3.0),
@@ -686,6 +689,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('ak4_sigma_eta_eta',   sigmaetaeta=hfjets.setaeta.flatten(),        jeta=hfjets.abseta.flatten(),   weight=w_hfjets)
                 ezfill('ak4_sigma_phi_phi',   sigmaphiphi=hfjets.sphiphi.flatten(),        jeta=hfjets.abseta.flatten(),   weight=w_hfjets)
                 ezfill('ak4_etastripsize',    etastripsize=hfjets.hfstripsize.flatten(),   jeta=hfjets.abseta.flatten(),   weight=w_hfjets)
+
+                # 2D sigma eta vs. phi
+                ezfill('ak4_sigma_eta_phi',   sigmaetaeta=hfjets.setaeta.flatten(),    sigmaphiphi=hfjets.sphiphi.flatten(),     weight=w_hfjets)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
