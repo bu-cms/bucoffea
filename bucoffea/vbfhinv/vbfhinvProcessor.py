@@ -270,8 +270,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         leadjet_more_central = diak4.i0.abseta <= diak4.i1.abseta
         leadjet_more_forward = ~leadjet_more_central
 
-        central_jet_eta = np.minimum(diak4.i0.abseta, diak4.i1.abseta)
-
         central_jet_eta = np.where(
             leadjet_more_central,
             diak4.i0.eta.min(),
