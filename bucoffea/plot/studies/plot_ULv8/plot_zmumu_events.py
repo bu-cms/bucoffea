@@ -118,7 +118,12 @@ def plot_zmumu_eta_vs_phi(acc, outtag, distribution, region='cr_2m_vbf_no_noisec
     scale_xs_lumi(h)
     h = merge_datasets(h)
 
-    h = h.integrate('dataset', f'MET_2017').integrate('region', region)
+    if dtype == 'data':
+        h = h.integrate('dataset', f'MET_2017')
+    else:
+        h = h.integrate('dataset', re.compile(f'DYJets.*2017'))
+
+    h = h.integrate('region', region)
 
     fig, ax = plt.subplots()
     hist.plot2d(h, ax=ax, xaxis='sigmaetaeta',  patch_opts={'norm': colors.LogNorm(1e-3,1e1)})
@@ -138,6 +143,14 @@ def plot_zmumu_eta_vs_phi(acc, outtag, distribution, region='cr_2m_vbf_no_noisec
         va='bottom',
         transform=ax.transAxes
     )
+
+    if distribution == 'ak4_sigma_eta_phi0':
+        ax.set_xlabel(r'Leading Jet $\sigma_{\eta\eta}$')
+        ax.set_ylabel(r'Leading Jet $\sigma_{\phi\phi}$')
+
+    elif distribution == 'ak4_sigma_eta_phi1':
+        ax.set_xlabel(r'Trailing Jet $\sigma_{\eta\eta}$')
+        ax.set_ylabel(r'Trailing Jet $\sigma_{\phi\phi}$')
 
     # Save figure
     outdir = f'./output/{outtag}/2d'
