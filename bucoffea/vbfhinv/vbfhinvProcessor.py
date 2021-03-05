@@ -677,7 +677,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 # Select HF jets with pt > 100 GeV to fill these histograms
                 def high_pt_jet_in_hf(ak4):
                     '''Helper function to get HF jets with high pt.'''
-                    return (ak4.abseta > 3.0) & (ak4.abseta < 5.0) & (ak4.pt > 100)
+                    return (ak4.abseta > 3.0) & (ak4.abseta < 5.0) & (ak4.pt > 80)
                 
                 hfmask = high_pt_jet_in_hf(ak4[mask])
                 hfjets = ak4[mask][hfmask]

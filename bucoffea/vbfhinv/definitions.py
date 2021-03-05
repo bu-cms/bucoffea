@@ -305,9 +305,10 @@ def vbfhinv_regions(cfg):
 
     regions['cr_2m_vbf'] = cr_2m_cuts
 
-    # Dimuon CR without HF-HF veto (for HF jet studies)
-    regions['cr_2m_vbf_nohfhf_veto'] = copy.deepcopy(regions['cr_2m_vbf'])
-    regions['cr_2m_vbf_nohfhf_veto'].remove('veto_hfhf')
+    # Dimuon CR without the noise cuts (for HF jet studies)
+    regions['cr_2m_vbf_no_noisecuts'] = copy.deepcopy(regions['cr_2m_vbf'])
+    regions['cr_2m_vbf_no_noisecuts'].remove('veto_hfhf')
+    regions['cr_2m_vbf_no_noisecuts'].remove('max_neEmEF')
 
     # Single muon CR
     cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']
