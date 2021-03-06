@@ -222,6 +222,7 @@ default:
     ulegacy: True
     ulegacyv8: True
     datarun: True
+    jetid: False
     regionregex: cr_2m_vbf.*
     save:
       passing: False

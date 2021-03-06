@@ -629,6 +629,21 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
 
+            if cfg.RUN.ULEGACYV8:
+                # Consider only high pt jets with pt > 80 GeV
+                w_hfjets = np.where(
+                    ak4[mask].pt.flatten() > 80,
+                    w_alljets,
+                    0.
+                )
+                
+                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
+                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
+                ezfill('ak4_etastripsize',    etastripsize=ak4[mask].hfstripsize.flatten(),   jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
+
+                # 2D sigma eta vs. phi
+                ezfill('ak4_sigma_eta_phi',   sigmaetaeta=ak4[mask].setaeta.flatten(),    sigmaphiphi=ak4[mask].sphiphi.flatten(),     weight=w_hfjets)
+
 
             ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
             ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
@@ -683,25 +698,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             ezfill('ak4_nef0_eeonly',      frac=diak4.i0.nef[mask].flatten(),      weight=w_ak4_nef0)
             ezfill('ak4_nef1_eeonly',      frac=diak4.i1.nef[mask].flatten(),      weight=w_ak4_nef1)
-
-            if cfg.RUN.ULEGACYV8:
-                # Select HF jets with pt > 100 GeV to fill these histograms
-                def high_pt_jet_in_hf(ak4):
-                    '''Helper function to get HF jets with high pt.'''
-                    return (ak4.abseta > 3.0) & (ak4.abseta < 5.0) & (ak4.pt > 80)
-                
-                hfmask = high_pt_jet_in_hf(ak4[mask])
-                hfjets = ak4[mask][hfmask]
-
-                w_hfjets = w_alljets[hfmask.flatten()]
-
-                # Fill these histograms for two eta bins: 3.0 < |eta| < 3.25 and |eta| > 3.25
-                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=hfjets.setaeta.flatten(),        jeta=hfjets.abseta.flatten(),   weight=w_hfjets)
-                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=hfjets.sphiphi.flatten(),        jeta=hfjets.abseta.flatten(),   weight=w_hfjets)
-                ezfill('ak4_etastripsize',    etastripsize=hfjets.hfstripsize.flatten(),   jeta=hfjets.abseta.flatten(),   weight=w_hfjets)
-
-                # 2D sigma eta vs. phi
-                ezfill('ak4_sigma_eta_phi',   sigmaetaeta=hfjets.setaeta.flatten(),    sigmaphiphi=hfjets.sphiphi.flatten(),     weight=w_hfjets)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
