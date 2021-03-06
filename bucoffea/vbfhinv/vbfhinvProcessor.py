@@ -671,18 +671,19 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_central_eta',   jeteta=central_jet_eta[mask],   weight=w_diak4)
             ezfill('ak4_forward_eta',   jeteta=forward_jet_eta[mask],   weight=w_diak4)
 
-            # For trailing jets, look only at the ones with pt > 80 GeV
-            # For leading jets, we have this cut by definition, so no need to worry
-            highpt_trail_jet = diak4.i1.pt[mask] > 80
-
-            w_etaphi = np.where(
-                highpt_trail_jet,
-                w_diak4,
-                0.
-            )
-
-            ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),     weight=w_diak4)
-            ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),     weight=w_etaphi)
+            if cfg.RUN.ULEGACYV8:
+                # For trailing jets, look only at the ones with pt > 80 GeV
+                # For leading jets, we have this cut by definition, so no need to worry
+                highpt_trail_jet = diak4.i1.pt[mask] > 80
+    
+                w_etaphi = np.where(
+                    highpt_trail_jet,
+                    w_diak4,
+                    0.
+                )
+    
+                ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),     weight=w_diak4)
+                ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),     weight=w_etaphi)
 
             # Neutral EM fraction of leading jet ONLY if it's in endcap
             w_ak4_nef0 = np.where(
