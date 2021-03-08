@@ -223,7 +223,8 @@ default:
     ulegacyv8: True
     datarun: True
     jetid: True
-    regionregex: cr_2m_vbf.*
+    jetfiltereev2: False
+    regionregex: sr_vbf.*
     save:
       passing: False
       tree: False
