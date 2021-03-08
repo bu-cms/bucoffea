@@ -629,21 +629,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
 
-            if cfg.RUN.ULEGACYV8:
-                # Consider only high pt jets with pt > 80 GeV
-                w_hfjets = np.where(
-                    ak4[mask].pt.flatten() > 80,
-                    w_alljets,
-                    0.
-                )
-                
-                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
-                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
-                ezfill('ak4_etastripsize',    etastripsize=ak4[mask].hfstripsize.flatten(),   jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
-
-                # 2D sigma eta vs. phi
-                ezfill('ak4_sigma_eta_phi',   sigmaetaeta=ak4[mask].setaeta.flatten(),    sigmaphiphi=ak4[mask].sphiphi.flatten(),     weight=w_hfjets)
-
+            
 
             ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
             ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
@@ -672,19 +658,44 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_forward_eta',   jeteta=forward_jet_eta[mask],   weight=w_diak4)
 
             if cfg.RUN.ULEGACYV8:
-                # For trailing jets, look only at the ones with pt > 80 GeV
-                # For leading jets, we have this cut by definition, so no need to worry
-                highpt_trail_jet = diak4.i1.pt[mask] > 80
-    
-                w_etaphi = np.where(
-                    highpt_trail_jet,
+                def is_hf_jet(_ak4, ptmin=80, etamin=2.9, etamax=5.0):
+                    return (_ak4.pt > ptmin) & (_ak4.abseta > etamin) & (_ak4.abseta < etamax)
+
+                hfmask = is_hf_jet(ak4[mask])
+
+                # Consider only high pt jets with pt > 80 GeV
+                w_hfjets = np.where(
+                    hfmask.flatten(),
+                    w_alljets,
+                    0.
+                )
+
+                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
+                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
+                ezfill('ak4_etastripsize',    etastripsize=ak4[mask].hfstripsize.flatten(),   jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
+
+                # 2D sigma eta vs. phi
+                ezfill('ak4_sigma_eta_phi',   sigmaetaeta=ak4[mask].setaeta.flatten(),    sigmaphiphi=ak4[mask].sphiphi.flatten(),     weight=w_hfjets)
+
+                # Leading and trailing jets
+                hfmask_i0 = is_hf_jet(diak4.i0[mask])
+                hfmask_i1 = is_hf_jet(diak4.i1[mask])
+
+                w_hfjets_i0 = np.where(
+                    hfmask_i0.flatten(),
                     w_diak4,
                     0.
                 )
-    
-                ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),     weight=w_diak4)
-                ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),     weight=w_etaphi)
 
+                w_hfjets_i1 = np.where(
+                    hfmask_i1.flatten(),
+                    w_diak4,
+                    0.
+                )
+
+                ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),     weight=w_hfjets_i0)
+                ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),     weight=w_hfjets_i1)
+            
             # Neutral EM fraction of leading jet ONLY if it's in endcap
             w_ak4_nef0 = np.where(
                 (diak4.i0.abseta[mask] > 2.5) & (diak4.i0.abseta[mask] < 3.0),

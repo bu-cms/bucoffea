@@ -69,7 +69,7 @@ def vbfhinv_accumulator(cfg):
     sigma_eta_eta_ax = Bin("sigmaetaeta", r"$\sigma_{\eta\eta}$", 25, 0, 0.5)
     sigma_phi_phi_ax = Bin("sigmaphiphi", r"$\sigma_{\phi\phi}$", 25, 0, 0.5)
     eta_stripsize_ax = Bin("etastripsize", r"HF Central $\eta$ Strip Size", 5, -0.5, 4.5)
-    eta_hf_ax = Bin("jeta", r"Jet $|\eta|$", [3, 3.25, 5])
+    eta_hf_ax = Bin("jeta", r"Jet $|\eta|$", [2.9, 3.25, 5])
 
     vecb_ax = Bin("vecb", r"VecB", 50, 0, 1)
 
