@@ -64,8 +64,8 @@ def divide_sumw2(sumw_a, sumw2_a, sumw_b, sumw2_b): #return (sumw_c, sumw2_c) fo
 
 # takes the coffea hists, calculate the efficiency using ROOT and return a TEfficiency containing the efficiencies calculated
 def get_mistag_rate(hist, region_all, region_pass, flag='', isData=False): #flag is for histogram naming only
-    sumw_all , sumw2_all  = hist.values(sumw2=True, overflow=True)[(region_all,)]
-    sumw_pass, sumw2_pass = hist.values(sumw2=True, overflow=True)[(region_pass,)]
+    sumw_all , sumw2_all  = hist.values(sumw2=True, overflow='over')[(region_all,)]
+    sumw_pass, sumw2_pass = hist.values(sumw2=True, overflow='over')[(region_pass,)]
     # construct root th1f
     edges = hist.axis('jetpt').edges()
     th1_all = ROOT.TH1F(f'h_all_{flag}',f'h_all{flag}',len(edges)-1, array('d',edges))
@@ -86,7 +86,7 @@ def efficiency_to_histogram(teff):
     heff = teff.GetCopyTotalHisto()
     heff.SetNameTitle('th1f_'+teff.GetName(), teff.GetTitle())
     Nbins = heff.GetNbinsX()
-    for ibin in range(Nbins+1): #including overflow bins
+    for ibin in range(Nbins+2): #including overflow bins
         heff.SetBinContent(ibin, teff.GetEfficiency(ibin))
         heff.SetBinError(ibin, max(teff.GetEfficiencyErrorLow(ibin), teff.GetEfficiencyErrorUp(ibin)))
     return heff
