@@ -66,8 +66,8 @@ def vbfhinv_accumulator(cfg):
 
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 100,50,150)
 
-    sigma_eta_eta_ax = Bin("sigmaetaeta", r"$\sigma_{\eta\eta}$", 25, 0, 0.5)
-    sigma_phi_phi_ax = Bin("sigmaphiphi", r"$\sigma_{\phi\phi}$", 25, 0, 0.5)
+    sigma_eta_eta_ax = Bin("sigmaetaeta", r"$\sigma_{\eta\eta}$", 50, 0, 0.5)
+    sigma_phi_phi_ax = Bin("sigmaphiphi", r"$\sigma_{\phi\phi}$", 50, 0, 0.5)
     eta_stripsize_ax = Bin("etastripsize", r"HF Central $\eta$ Strip Size", 5, -0.5, 4.5)
     eta_hf_ax = Bin("jeta", r"Jet $|\eta|$", [2.9, 3.25, 5])
 
@@ -280,6 +280,10 @@ def vbfhinv_regions(cfg):
 
     regions['sr_vbf_nohornveto'] = copy.deepcopy(regions['sr_vbf'])
     regions['sr_vbf_nohornveto'].remove('hornveto')
+
+    regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
+    regions['cr_vbf_qcd'].remove('mindphijr')
+    regions['cr_vbf_qcd'].append('mindphijr_inv')
 
     # For sync mode
     if cfg and cfg.RUN.SYNC:

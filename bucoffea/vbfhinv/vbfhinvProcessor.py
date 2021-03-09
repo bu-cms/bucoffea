@@ -242,6 +242,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('mindphijr',df['minDPhiJetRecoil'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
         selection.add('mindphijm',df['minDPhiJetMet'] > cfg.SELECTION.SIGNAL.MINDPHIJR)
 
+        # Inverted min DPhi(j,met) cut for QCD CR
+        selection.add('mindphijr_inv', df['minDPhiJetRecoil'] < cfg.SELECTION.SIGNAL.MINDPHIJR)
+
         # B jets are treated using veto weights
         # So accept them in MC, but reject in data
         if df['is_data']:
