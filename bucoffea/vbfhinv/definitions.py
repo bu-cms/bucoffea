@@ -281,9 +281,20 @@ def vbfhinv_regions(cfg):
     regions['sr_vbf_nohornveto'] = copy.deepcopy(regions['sr_vbf'])
     regions['sr_vbf_nohornveto'].remove('hornveto')
 
+    # QCD enriched CR: Invert the mindPhi cut, remove the noise mitigation cuts
     regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
     regions['cr_vbf_qcd'].remove('mindphijr')
     regions['cr_vbf_qcd'].append('mindphijr_inv')
+
+    noise_cuts_to_remove = [
+        'dpfcalo_sr',
+        'hornveto',
+        'max_neEmEF',
+        'veto_hfhf',
+
+    ]
+    for ncut in noise_cuts_to_remove:
+        regions['cr_vbf_qcd'].remove(ncut)
 
     # For sync mode
     if cfg and cfg.RUN.SYNC:
