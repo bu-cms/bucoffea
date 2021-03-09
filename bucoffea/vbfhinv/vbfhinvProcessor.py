@@ -178,10 +178,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
         met_pt, met_phi, ak4, bjets, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Remove jets in accordance with the noise recipe
-        if cfg.RUN.JETFILTEREEV2:
-            if df['year'] == 2017:
-                ak4   = ak4[(ak4.ptraw>50) | (ak4.abseta<2.65) | (ak4.abseta>3.139)]
-                bjets = bjets[(bjets.ptraw>50) | (bjets.abseta<2.65) | (bjets.abseta>3.139)]
+        if df['year'] == 2017:
+            ak4   = ak4[(ak4.ptraw>50) | (ak4.abseta<2.65) | (ak4.abseta>3.139)]
+            bjets = bjets[(bjets.ptraw>50) | (bjets.abseta<2.65) | (bjets.abseta>3.139)]
 
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]
@@ -264,7 +263,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
         has_track0 = np.abs(diak4.i0.eta) <= 2.5
         has_track1 = np.abs(diak4.i1.eta) <= 2.5
 
-        leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
+        # Remove the ID requirement on the leading jet, depending on the config
+        if cfg.RUN.JETID:
+            leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
+        else:
+            leadak4_id = has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0
+        
         trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
 
         # Store the eta of the more forward (and central) VBF jet

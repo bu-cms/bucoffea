@@ -222,8 +222,7 @@ default:
     ulegacy: True
     ulegacyv8: True
     datarun: True
-    jetid: True
-    jetfiltereev2: False
+    jetid: False
     regionregex: sr_vbf.*
     save:
       passing: False
