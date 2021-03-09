@@ -15,7 +15,7 @@ from pprint import pprint
 
 pjoin = os.path.join
 
-def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_diag=True):
+def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_diag=True, xmax=0.3, ymax=0.3):
     '''2D sigma eta vs. phi plot for the given region.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -29,8 +29,8 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
     fig, ax = plt.subplots()
     hist.plot2d(h, ax=ax, xaxis='sigmaetaeta',  patch_opts={'norm': colors.LogNorm(1e-3,1e1)})
 
-    ax.set_xlim(0,0.4)
-    ax.set_ylim(0,0.4)
+    ax.set_xlim(0,xmax)
+    ax.set_ylim(0,ymax)
 
     if re.match('cr_2m_vbf.*', region):
         regiontag = r'$Z(\mu\mu)$'
@@ -62,8 +62,8 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
         ax.set_ylabel(r'Trailing Jet $\sigma_{\phi\phi}$')
 
     if plot_diag:
-        x = np.linspace(0, 0.4)
-        y = np.linspace(0, 0.4)
+        x = np.linspace(0, xmax)
+        y = np.linspace(0, ymax)
         ax.plot(x,y,color='k',lw=2)
 
     # Save figure
