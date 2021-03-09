@@ -94,15 +94,20 @@ def main():
     # Two regions: Z(mumu) physics-enriched and QCD CR
     regions = [
         'cr_2m_vbf_no_noisecuts',
+        'cr_2m_vbf_relaxed_sel',
         'cr_vbf_qcd',
     ]
 
     for region in regions:
-        for distribution in distributions:
-            plot_eta_vs_phi(acc, outtag, 
-                    distribution=distribution,
-                    region=region
-                    )
+        try:
+            for distribution in distributions:
+                plot_eta_vs_phi(acc, outtag, 
+                        distribution=distribution,
+                        region=region
+                        )
+        except KeyError:
+            print(f'Region not found in this input: {region}, moving on.')
+            continue
 
 if __name__ == '__main__':
     main()
