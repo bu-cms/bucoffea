@@ -291,8 +291,8 @@ def vbfhinv_regions(cfg):
         'hornveto',
         'max_neEmEF',
         'veto_hfhf',
-
     ]
+    
     for ncut in noise_cuts_to_remove:
         regions['cr_vbf_qcd'].remove(ncut)
 
@@ -325,6 +325,12 @@ def vbfhinv_regions(cfg):
     regions['cr_2m_vbf_no_noisecuts'] = copy.deepcopy(regions['cr_2m_vbf'])
     regions['cr_2m_vbf_no_noisecuts'].remove('veto_hfhf')
     regions['cr_2m_vbf_no_noisecuts'].remove('max_neEmEF')
+
+    regions['cr_2m_vbf_relaxed_sel'] = copy.deepcopy(regions['cr_2m_vbf'])
+    regions['cr_2m_vbf_relaxed_sel'].remove('veto_hfhf')
+    regions['cr_2m_vbf_relaxed_sel'].remove('dphijj')
+    regions['cr_2m_vbf_relaxed_sel'].remove('detajj')
+    regions['cr_2m_vbf_relaxed_sel'].remove('hemisphere')
 
     # Single muon CR
     cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']
