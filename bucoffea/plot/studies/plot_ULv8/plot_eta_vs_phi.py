@@ -15,7 +15,7 @@ from pprint import pprint
 
 pjoin = os.path.join
 
-def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017'):
+def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_diag=True):
     '''2D sigma eta vs. phi plot for the given region.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -60,6 +60,11 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017'):
     elif distribution == 'ak4_sigma_eta_phi1':
         ax.set_xlabel(r'Trailing Jet $\sigma_{\eta\eta}$')
         ax.set_ylabel(r'Trailing Jet $\sigma_{\phi\phi}$')
+
+    if plot_diag:
+        x = np.linspace(0, 0.4)
+        y = np.linspace(0, 0.4)
+        ax.plot(x,y,color='k',lw=2)
 
     # Save figure
     outdir = f'./output/{outtag}/2d'
