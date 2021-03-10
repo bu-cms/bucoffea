@@ -269,14 +269,19 @@ def vbfhinv_regions(cfg):
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
 
+    # Signal region with HF-HF veto replaced by the sigma eta/phi cut
+    regions['sr_vbf_with_hfcut'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_with_hfcut'].remove('veto_hfhf')
+    regions['sr_vbf_with_hfcut'].append('sigma_phi_over_eta')
+
     regions['sr_vbf_no_eemitigation'] = copy.deepcopy(regions['sr_vbf'])
     regions['sr_vbf_no_eemitigation'].remove('eemitigation')
 
     regions['sr_vbf_no_emfraccut'] = copy.deepcopy(regions['sr_vbf'])
     regions['sr_vbf_no_emfraccut'].remove('max_neEmEF')
 
-    regions['sr_vbf_no_hfhf'] = copy.deepcopy(regions['sr_vbf'])
-    regions['sr_vbf_no_hfhf'].remove('veto_hfhf')
+    regions['sr_vbf_no_hfhfveto'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_no_hfhfveto'].remove('veto_hfhf')
 
     regions['sr_vbf_nohornveto'] = copy.deepcopy(regions['sr_vbf'])
     regions['sr_vbf_nohornveto'].remove('hornveto')

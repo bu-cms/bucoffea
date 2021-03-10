@@ -310,6 +310,16 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add("metphihemextveto", pass_all)
             selection.add('no_el_in_hem', pass_all)
 
+        # Sigma eta & phi cut (only for v8 samples because we have the info there)
+        if cfg.RUN.ULEGACYV8:
+            sigma_phi_over_eta = diak4.i0.sphiphi / diak4.i0.setaeta
+            jet_in_eehf = (diak4.i0.abseta > 2.9) & (diak4.i0.abseta < 3.25)
+            sigma_phieta_cut = (sigma_phi_over_eta > 0.5) | (~jet_in_eehf)
+
+            selection.add('sigma_phi_over_eta', sigma_phieta_cut.any())
+        else:
+            selection.add('sigma_phi_over_eta', pass_all)
+
         selection.add('two_jets', diak4.counts>0)
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
         selection.add('trailak4_pt_eta', trailak4_pt_eta.any())
