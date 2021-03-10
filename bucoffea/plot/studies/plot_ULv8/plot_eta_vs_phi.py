@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.colors as colors
 
 from coffea import hist
+from numpy.core.numeric import extend_all
 from scipy.stats import distributions
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
 from matplotlib import pyplot as plt
@@ -15,7 +16,7 @@ from pprint import pprint
 
 pjoin = os.path.join
 
-def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_diag=True, xmax=0.3, ymax=0.3):
+def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_diag=True, plot_cutslope=False, etaslice=None, xmax=0.3, ymax=0.3):
     '''2D sigma eta vs. phi plot for the given region.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -25,6 +26,11 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
     h = merge_datasets(h)
 
     h = h.integrate('dataset', dataset).integrate('region', region)
+
+    # If the histogram is also split by jet eta, take the slice we're interested in
+    # Typically: 2.9 < |eta| < 3.25 and 3.25 < |eta| < 5.0
+    if etaslice is not None:
+        h = h.integrate('jeta', etaslice)
 
     fig, ax = plt.subplots()
     hist.plot2d(h, ax=ax, xaxis='sigmaetaeta',  patch_opts={'norm': colors.LogNorm(1e-3,1e1)})
@@ -53,6 +59,24 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
         transform=ax.transAxes
     )
 
+    if etaslice in [slice(2.9, 3.25), slice(3.25, 5.0)]:
+        tagforslice = {
+            (2.9, 3.25): r'$2.9 < |\eta| < 3.25$',
+            (3.25, 5.0): r'$3.25 < |\eta| < 5.0$',
+        }
+        
+        for (lo, hi), _tag in tagforslice.items():
+            if (etaslice.start, etaslice.stop) == (lo, hi):
+                _tagforslice = _tag
+                break
+
+        ax.text(1., 0., _tagforslice,
+            fontsize=14,
+            ha='right',
+            va='bottom',
+            transform=ax.transAxes
+        )
+
     if distribution == 'ak4_sigma_eta_phi0':
         ax.set_xlabel(r'Leading Jet $\sigma_{\eta\eta}$')
         ax.set_ylabel(r'Leading Jet $\sigma_{\phi\phi}$')
@@ -66,9 +90,10 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
         y = np.linspace(0, ymax)
         ax.plot(x,y,color='k',lw=2, label='Diagonal')
 
-        slope = 0.5
-        ycut = slope * x
-        ax.plot(x,ycut,color='red',lw=2,label=f'$\\sigma_{{\phi\phi}} = {slope:.1f} \\sigma_{{\\eta\\eta}}$')
+        if plot_cutslope:
+            slope = 0.5
+            ycut = slope * x
+            ax.plot(x,ycut,color='red',lw=2,label=f'$\\sigma_{{\phi\phi}} = {slope:.1f} \\sigma_{{\\eta\\eta}}$')
 
     ax.legend()
 
@@ -77,7 +102,14 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    outpath = pjoin(outdir, f'MET_2017_{region}_{distribution}.pdf')
+    if etaslice in [slice(2.9, 3.25), slice(3.25, 5.0)]:
+        etaslicetag = f'_eta_{str(etaslice.start).replace(".", "p")}_{str(etaslice.stop).replace(".", "p")}'
+    elif etaslice == slice(2.9, 5.0):
+        etaslicetag= '_eta_combined'
+    else:
+        etaslicetag = ''
+
+    outpath = pjoin(outdir, f'MET_2017_{region}_{distribution}{etaslicetag}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
     print(f'File saved: {outpath}')
@@ -104,13 +136,21 @@ def main():
         'cr_vbf_qcd',
     ]
 
+    etaslices = [
+        slice(2.9, 3.25),
+        slice(3.25, 5.0),
+        slice(2.9, 5.0),
+    ]
+
     for region in regions:
         try:
             for distribution in distributions:
-                plot_eta_vs_phi(acc, outtag, 
-                        distribution=distribution,
-                        region=region
-                        )
+                for etaslice in etaslices:
+                    plot_eta_vs_phi(acc, outtag, 
+                            distribution=distribution,
+                            region=region,
+                            etaslice=etaslice
+                            )
         except KeyError:
             print(f'Region not found in this input: {region}, moving on.')
             continue
