@@ -64,7 +64,13 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
     if plot_diag:
         x = np.linspace(0, xmax)
         y = np.linspace(0, ymax)
-        ax.plot(x,y,color='k',lw=2)
+        ax.plot(x,y,color='k',lw=2, label='Diagonal')
+
+        slope = 0.5
+        ycut = slope * x
+        ax.plot(x,ycut,color='red',lw=2,label=f'$\\sigma_{{\phi\phi}} = {slope:.1f} \\sigma_{{\\eta\\eta}}$')
+
+    ax.legend()
 
     # Save figure
     outdir = f'./output/{outtag}/2d'
