@@ -683,7 +683,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('ak4_etastripsize',    etastripsize=ak4[mask].hfstripsize.flatten(),   jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
 
                 # 2D sigma eta vs. phi
-                ezfill('ak4_sigma_eta_phi',   sigmaetaeta=ak4[mask].setaeta.flatten(),    sigmaphiphi=ak4[mask].sphiphi.flatten(),     weight=w_hfjets)
+                ezfill('ak4_sigma_eta_phi',   sigmaetaeta=ak4[mask].setaeta.flatten(),    sigmaphiphi=ak4[mask].sphiphi.flatten(),  jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
 
                 # Leading and trailing jets
                 hfmask_i0 = is_hf_jet(diak4.i0[mask])
@@ -701,8 +701,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     0.
                 )
 
-                ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),     weight=w_hfjets_i0)
-                ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),     weight=w_hfjets_i1)
+                ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),    jeta=diak4.i0.abseta[mask].flatten(),   weight=w_hfjets_i0)
+                ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),    jeta=diak4.i1.abseta[mask].flatten(),   weight=w_hfjets_i1)
             
             # Neutral EM fraction of leading jet ONLY if it's in endcap
             w_ak4_nef0 = np.where(
