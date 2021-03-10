@@ -131,7 +131,6 @@ def main():
 
     # Two regions: Z(mumu) physics-enriched and QCD CR
     regions = [
-        'cr_2m_vbf_no_noisecuts',
         'cr_2m_vbf_relaxed_sel',
         'cr_vbf_qcd',
     ]
@@ -149,7 +148,8 @@ def main():
                     plot_eta_vs_phi(acc, outtag, 
                             distribution=distribution,
                             region=region,
-                            etaslice=etaslice
+                            etaslice=etaslice,
+                            plot_cutslope=True
                             )
         except KeyError:
             print(f'Region not found in this input: {region}, moving on.')
