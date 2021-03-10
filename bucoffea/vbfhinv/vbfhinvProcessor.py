@@ -316,7 +316,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             jet_in_eehf = (diak4.i0.abseta > 2.9) & (diak4.i0.abseta < 3.25)
             sigma_phieta_cut = (sigma_phi_over_eta > 0.5) | (~jet_in_eehf)
 
-            selection.add('sigma_phi_over_eta', sigma_phieta_cut.any())
+            # selection.add('sigma_phi_over_eta', sigma_phieta_cut.any())
+            selection.add('sigma_phi_over_eta', (sigma_phi_over_eta > 0.5).any())
         else:
             selection.add('sigma_phi_over_eta', pass_all)
 
