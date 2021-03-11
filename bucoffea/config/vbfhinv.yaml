@@ -223,7 +223,7 @@ default:
     ulegacyv8: True
     datarun: True
     jetid: True
-    regionregex: sr_vbf$|sr_vbf_with_hfcut|sr_vbf_no_hfhfveto
+    regionregex: cr_2m_vbf_relaxed_sel|cr_vbf_qcd
     save:
       passing: False
       tree: False
