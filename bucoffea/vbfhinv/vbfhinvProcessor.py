@@ -318,8 +318,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             selection.add('sigma_phi_over_eta', sigma_phieta_cut.any())
             # selection.add('sigma_phi_over_eta', (sigma_phi_over_eta > 0.5).any())
+
+            stripsize_cut = diak4.i0.hfcentralstripsize < 3
+            selection.add('central_stripsize_cut', stripsize_cut.any())
         else:
             selection.add('sigma_phi_over_eta', pass_all)
+            selection.add('central_stripsize_cut', pass_all)
 
         selection.add('two_jets', diak4.counts>0)
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())

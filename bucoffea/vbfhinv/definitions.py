@@ -292,6 +292,16 @@ def vbfhinv_regions(cfg):
     regions['cr_vbf_qcd'].remove('mindphijr')
     regions['cr_vbf_qcd'].append('mindphijr_inv')
 
+    regions['cr_vbf_qcd_sphietacut'] = copy.deepcopy(regions['cr_vbf_qcd'])
+    regions['cr_vbf_qcd_sphietacut'].append('sigma_phi_over_eta')
+
+    regions['cr_vbf_qcd_cssizecut'] = copy.deepcopy(regions['cr_vbf_qcd'])
+    regions['cr_vbf_qcd_cssizecut'].append('central_stripsize_cut')
+
+    regions['cr_vbf_qcd_both_cuts'] = copy.deepcopy(regions['cr_vbf_qcd'])
+    regions['cr_vbf_qcd_both_cuts'].append('sigma_phi_over_eta')
+    regions['cr_vbf_qcd_both_cuts'].append('central_stripsize_cut')
+
     noise_cuts_to_remove = [
         'dpfcalo_sr',
         'hornveto',
@@ -337,6 +347,16 @@ def vbfhinv_regions(cfg):
     regions['cr_2m_vbf_relaxed_sel'].remove('dphijj')
     regions['cr_2m_vbf_relaxed_sel'].remove('detajj')
     regions['cr_2m_vbf_relaxed_sel'].remove('hemisphere')
+
+    regions['cr_2m_vbf_relaxed_sel_sphietacut'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
+    regions['cr_2m_vbf_relaxed_sel_sphietacut'].append('sigma_phi_over_eta')
+
+    regions['cr_2m_vbf_relaxed_sel_cssizecut'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
+    regions['cr_2m_vbf_relaxed_sel_cssizecut'].append('central_stripsize_cut')
+
+    regions['cr_2m_vbf_relaxed_sel_both_cuts'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
+    regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('sigma_phi_over_eta')
+    regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('central_stripsize_cut')
 
     # Single muon CR
     cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']
