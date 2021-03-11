@@ -697,7 +697,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
 
                 # 2D sigma eta vs. phi
-                ezfill('ak4_sigma_eta_phi',   sigmaetaeta=ak4[mask].setaeta.flatten(),    sigmaphiphi=ak4[mask].sphiphi.flatten(),  jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
+                ezfill('ak4_sigma_eta_phi',   
+                        sigmaetaeta=ak4[mask].setaeta.flatten(),    
+                        sigmaphiphi=ak4[mask].sphiphi.flatten(),  
+                        jeta=ak4[mask].abseta.flatten(),   
+                        weight=w_hfjets)
 
                 ezfill('ak4_hfcentral_adjacent_etastripsize',   
                     centraletastripsize=ak4[mask].hfcentralstripsize.flatten(),
@@ -722,13 +726,27 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     0.
                 )
 
-                ezfill('ak4_sigma_eta_phi0',   sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),    jeta=diak4.i0.abseta[mask].flatten(),   weight=w_hfjets_i0)
-                ezfill('ak4_sigma_eta_phi1',   sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),    jeta=diak4.i1.abseta[mask].flatten(),   weight=w_hfjets_i1)
+                ezfill('ak4_sigma_eta_phi0',   
+                    sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    
+                    sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),    
+                    jeta=diak4.i0.abseta[mask].flatten(),   
+                    mindphi=df["minDPhiJetMet"][mask],
+                    weight=w_hfjets_i0
+                )
+                
+                ezfill('ak4_sigma_eta_phi1',   
+                    sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    
+                    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),    
+                    jeta=diak4.i1.abseta[mask].flatten(),   
+                    mindphi=df["minDPhiJetMet"][mask],
+                    weight=w_hfjets_i1
+                )
             
                 ezfill('ak4_hfcentral_adjacent_etastripsize0',   
                     centraletastripsize=diak4.i0.hfcentralstripsize[mask].flatten(),
                     adjacentetastripsize=diak4.i0.hfadjacentstripsize[mask].flatten(),
                     jeta=diak4.i0.abseta[mask].flatten(),
+                    mindphi=df["minDPhiJetMet"][mask],
                     weight=w_hfjets_i0
                 )
 
@@ -736,6 +754,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     centraletastripsize=diak4.i1.hfcentralstripsize[mask].flatten(),
                     adjacentetastripsize=diak4.i1.hfadjacentstripsize[mask].flatten(),
                     jeta=diak4.i1.abseta[mask].flatten(),
+                    mindphi=df["minDPhiJetMet"][mask],
                     weight=w_hfjets_i1
                 )
 
