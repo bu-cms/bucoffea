@@ -30,7 +30,15 @@ def plot_strip_size(acc, outtag, distribution, region, dataset='MET_2017', etasl
         h = h.integrate('jeta', etaslice)
     
     fig, ax = plt.subplots()
-    hist.plot2d(h, ax=ax, xaxis='centraletastripsize')
+
+    # Normalize to the sumw of the histogram
+    sumw = np.sum(h.values()[()])
+    h.scale(1/sumw)
+
+    hist.plot2d(h, ax=ax, xaxis='centraletastripsize', 
+            text_opts={'format': '%.2f'}, 
+            patch_opts={'cmap': 'viridis'}
+            )
 
     if re.match('cr_2m_vbf.*', region):
         regiontag = r'$Z(\mu\mu)$'
@@ -54,11 +62,11 @@ def plot_strip_size(acc, outtag, distribution, region, dataset='MET_2017', etasl
     )
 
     if distribution == 'ak4_hfcentral_adjacent_etastripsize0':
-        ax.set_xlabel('Leading Jet Central Strip Size')
-        ax.set_ylabel('Leading Jet Adjacent Strip Size')
+        ax.set_xlabel('Leading Jet HF Central Strip Size')
+        ax.set_ylabel('Leading Jet HF Adjacent Strip Size')
     elif distribution == 'ak4_hfcentral_adjacent_etastripsize1':
-        ax.set_xlabel('Trailing Jet Central Strip Size')
-        ax.set_ylabel('Trailing Jet Adjacent Strip Size')
+        ax.set_xlabel('Trailing Jet HF Central Strip Size')
+        ax.set_ylabel('Trailing Jet HF Adjacent Strip Size')
 
     if etaslice in [slice(2.9, 3.25), slice(3.25, 5.0)]:
         tagforslice = {
@@ -110,13 +118,14 @@ def main():
     ]
 
     regions = [
-        # 'cr_2m_vbf_relaxed_sel',
+        'cr_2m_vbf_relaxed_sel',
         'cr_vbf_qcd',
     ]
 
+    # Just combined eta for now
     etaslices = [
-        slice(2.9, 3.25),
-        slice(3.25, 5.0),
+        # slice(2.9, 3.25),
+        # slice(3.25, 5.0),
         slice(2.9, 5.0),
     ]
 
