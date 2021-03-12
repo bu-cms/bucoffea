@@ -257,6 +257,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
+        selection.add('small_met', met_pt<50)
 
         # AK4 dijet
         diak4 = ak4[:,:2].distincts()
