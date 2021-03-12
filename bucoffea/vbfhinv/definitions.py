@@ -139,6 +139,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_pt0_nhf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
     items["ak4_pt0_nconst0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, nconst_ax)
     items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
+    items["ak4_pt0_eta0_hf"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, eta_hf_ax)
 
     items["ak4_sigma_eta_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
     items["ak4_sigma_eta_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax, mindphi_hf_ax)
@@ -297,11 +298,11 @@ def vbfhinv_regions(cfg):
     regions['cr_vbf_qcd'].remove('mindphijr')
     regions['cr_vbf_qcd'].append('mindphijr_inv')
 
-    regions['cr_vbf_qcd_sphietacut'] = copy.deepcopy(regions['cr_vbf_qcd'])
-    regions['cr_vbf_qcd_sphietacut'].append('sigma_phi_over_eta')
+    # regions['cr_vbf_qcd_sphietacut'] = copy.deepcopy(regions['cr_vbf_qcd'])
+    # regions['cr_vbf_qcd_sphietacut'].append('sigma_phi_over_eta')
 
-    regions['cr_vbf_qcd_cssizecut'] = copy.deepcopy(regions['cr_vbf_qcd'])
-    regions['cr_vbf_qcd_cssizecut'].append('central_stripsize_cut')
+    # regions['cr_vbf_qcd_cssizecut'] = copy.deepcopy(regions['cr_vbf_qcd'])
+    # regions['cr_vbf_qcd_cssizecut'].append('central_stripsize_cut')
 
     regions['cr_vbf_qcd_both_cuts'] = copy.deepcopy(regions['cr_vbf_qcd'])
     regions['cr_vbf_qcd_both_cuts'].append('sigma_phi_over_eta')
@@ -343,10 +344,6 @@ def vbfhinv_regions(cfg):
     regions['cr_2m_vbf'] = cr_2m_cuts
 
     # Dimuon CR without the noise cuts (for HF jet studies)
-    regions['cr_2m_vbf_no_noisecuts'] = copy.deepcopy(regions['cr_2m_vbf'])
-    regions['cr_2m_vbf_no_noisecuts'].remove('veto_hfhf')
-    regions['cr_2m_vbf_no_noisecuts'].remove('max_neEmEF')
-
     regions['cr_2m_vbf_relaxed_sel'] = copy.deepcopy(regions['cr_2m_vbf'])
     regions['cr_2m_vbf_relaxed_sel'].remove('veto_hfhf')
     regions['cr_2m_vbf_relaxed_sel'].remove('dphijj')
@@ -354,11 +351,11 @@ def vbfhinv_regions(cfg):
     regions['cr_2m_vbf_relaxed_sel'].remove('hemisphere')
     regions['cr_2m_vbf_relaxed_sel'].append('small_met')
 
-    regions['cr_2m_vbf_relaxed_sel_sphietacut'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
-    regions['cr_2m_vbf_relaxed_sel_sphietacut'].append('sigma_phi_over_eta')
+    # regions['cr_2m_vbf_relaxed_sel_sphietacut'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
+    # regions['cr_2m_vbf_relaxed_sel_sphietacut'].append('sigma_phi_over_eta')
 
-    regions['cr_2m_vbf_relaxed_sel_cssizecut'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
-    regions['cr_2m_vbf_relaxed_sel_cssizecut'].append('central_stripsize_cut')
+    # regions['cr_2m_vbf_relaxed_sel_cssizecut'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
+    # regions['cr_2m_vbf_relaxed_sel_cssizecut'].append('central_stripsize_cut')
 
     regions['cr_2m_vbf_relaxed_sel_both_cuts'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
     regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('sigma_phi_over_eta')
