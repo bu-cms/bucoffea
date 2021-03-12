@@ -71,7 +71,6 @@ def vbfhinv_accumulator(cfg):
     central_eta_stripsize_ax = Bin("centraletastripsize", r"HF central $\eta$ Strip Size", 5, -0.5, 4.5)
     adjacent_eta_stripsize_ax = Bin("adjacentetastripsize", r"HF adjacent $\eta$ Strip Size", 5, -0.5, 4.5)
     eta_hf_ax = Bin("jeta", r"Jet $|\eta|$", [2.9, 3.25, 5])
-    mindphi_hf_ax = Bin("mindphi", r"Min $\Delta\phi(j,MET)$", [0, 0.1, 0.3, 0.5])
 
     vecb_ax = Bin("vecb", r"VecB", 50, 0, 1)
 
@@ -95,6 +94,9 @@ def vbfhinv_accumulator(cfg):
     items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+
+    items["met_pt_ak40_hf"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    items["met_pt_ak41_hf"] = Hist("Counts", dataset_ax, region_ax, met_ax)
 
     items["mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
     items["mjj_veto_weight"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
@@ -142,11 +144,11 @@ def vbfhinv_accumulator(cfg):
     items["ak4_pt0_eta0_hf"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, eta_hf_ax)
 
     items["ak4_sigma_eta_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
-    items["ak4_sigma_eta_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax, mindphi_hf_ax)
-    items["ak4_sigma_eta_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax, mindphi_hf_ax)
+    items["ak4_sigma_eta_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
+    items["ak4_sigma_eta_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
     items["ak4_hfcentral_adjacent_etastripsize"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
-    items["ak4_hfcentral_adjacent_etastripsize0"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax, mindphi_hf_ax)
-    items["ak4_hfcentral_adjacent_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax, mindphi_hf_ax)
+    items["ak4_hfcentral_adjacent_etastripsize0"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
+    items["ak4_hfcentral_adjacent_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
 
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -349,7 +351,9 @@ def vbfhinv_regions(cfg):
     regions['cr_2m_vbf_relaxed_sel'].remove('dphijj')
     regions['cr_2m_vbf_relaxed_sel'].remove('detajj')
     regions['cr_2m_vbf_relaxed_sel'].remove('hemisphere')
-    regions['cr_2m_vbf_relaxed_sel'].append('small_met')
+    
+    regions['cr_2m_vbf_relaxed_sel_with_met_cut'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
+    regions['cr_2m_vbf_relaxed_sel_with_met_cut'].append('small_met')
 
     # regions['cr_2m_vbf_relaxed_sel_sphietacut'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
     # regions['cr_2m_vbf_relaxed_sel_sphietacut'].append('sigma_phi_over_eta')

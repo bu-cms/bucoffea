@@ -731,7 +731,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    
                     sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),    
                     jeta=diak4.i0.abseta[mask].flatten(),   
-                    mindphi=df["minDPhiJetMet"][mask],
                     weight=w_hfjets_i0
                 )
                 
@@ -739,7 +738,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    
                     sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),    
                     jeta=diak4.i1.abseta[mask].flatten(),   
-                    mindphi=df["minDPhiJetMet"][mask],
                     weight=w_hfjets_i1
                 )
             
@@ -747,7 +745,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     centraletastripsize=diak4.i0.hfcentralstripsize[mask].flatten(),
                     adjacentetastripsize=diak4.i0.hfadjacentstripsize[mask].flatten(),
                     jeta=diak4.i0.abseta[mask].flatten(),
-                    mindphi=df["minDPhiJetMet"][mask],
                     weight=w_hfjets_i0
                 )
 
@@ -755,7 +752,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     centraletastripsize=diak4.i1.hfcentralstripsize[mask].flatten(),
                     adjacentetastripsize=diak4.i1.hfadjacentstripsize[mask].flatten(),
                     jeta=diak4.i1.abseta[mask].flatten(),
-                    mindphi=df["minDPhiJetMet"][mask],
                     weight=w_hfjets_i1
                 )
 
@@ -764,6 +760,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('ak4_eta1_trailjetHF', jeteta=diak4.i1.eta[mask].flatten(),  weight=w_hfjets_i1)
 
                 ezfill('ak4_pt0_eta0_hf', jetpt=diak4.i0.pt[mask].flatten(),  jeta=diak4.i0.eta[mask].flatten(),  weight=w_hfjets_i0)
+
+                ezfill('met_pt_ak40_hf',    met=met_pt[mask],    weight=w_hfjets_i0)
+                ezfill('met_pt_ak41_hf',    met=met_pt[mask],    weight=w_hfjets_i1)
 
             # Neutral EM fraction of leading jet ONLY if it's in endcap
             w_ak4_nef0 = np.where(
