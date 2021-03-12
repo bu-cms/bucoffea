@@ -759,6 +759,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     weight=w_hfjets_i1
                 )
 
+                # Eta of the leading jet when the trailing jet is in HF, fill the trailing jet as well for testing
+                ezfill('ak4_eta0_trailjetHF', jeteta=diak4.i0.eta[mask].flatten(),  weight=w_hfjets_i1)
+                ezfill('ak4_eta1_trailjetHF', jeteta=diak4.i1.eta[mask].flatten(),  weight=w_hfjets_i1)
+
             # Neutral EM fraction of leading jet ONLY if it's in endcap
             w_ak4_nef0 = np.where(
                 (diak4.i0.abseta[mask] > 2.5) & (diak4.i0.abseta[mask] < 3.0),
