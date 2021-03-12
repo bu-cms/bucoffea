@@ -71,6 +71,7 @@ def vbfhinv_accumulator(cfg):
     central_eta_stripsize_ax = Bin("centraletastripsize", r"HF central $\eta$ Strip Size", 5, -0.5, 4.5)
     adjacent_eta_stripsize_ax = Bin("adjacentetastripsize", r"HF adjacent $\eta$ Strip Size", 5, -0.5, 4.5)
     eta_hf_ax = Bin("jeta", r"Jet $|\eta|$", [2.9, 3.25, 5])
+    ak40_abseta_ax = Bin("jeta", r"Jet $|\eta|$", [0, 2.5, 2.9, 5])
 
     vecb_ax = Bin("vecb", r"VecB", 50, 0, 1)
 
@@ -149,6 +150,8 @@ def vbfhinv_accumulator(cfg):
     items["ak4_hfcentral_adjacent_etastripsize"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
     items["ak4_hfcentral_adjacent_etastripsize0"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
     items["ak4_hfcentral_adjacent_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
+
+    items["ak4_sigma_eta_phi1_binned_in_ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, ak40_abseta_ax)
 
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)

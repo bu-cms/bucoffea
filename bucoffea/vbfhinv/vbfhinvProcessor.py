@@ -755,6 +755,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     weight=w_hfjets_i1
                 )
 
+                ezfill('ak4_sigma_eta_phi1_binned_in_ak4_eta0',
+                    sigmaetaeta=diak4.i1.setaeta[mask].flatten(),
+                    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),
+                    jeta=diak4.i0.abseta[mask].flatten(),
+                    weight=w_hfjets_i1
+                )
+
                 # Eta of the leading jet when the trailing jet is in HF, fill the trailing jet as well for testing
                 ezfill('ak4_eta0_trailjetHF', jeteta=diak4.i0.eta[mask].flatten(),  weight=w_hfjets_i1)
                 ezfill('ak4_eta1_trailjetHF', jeteta=diak4.i1.eta[mask].flatten(),  weight=w_hfjets_i1)
