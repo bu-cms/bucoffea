@@ -697,6 +697,18 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
                 ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
 
+                # Third jets in HF?
+                third_jet_is_in_hf = hfmask[:, :3][:, -1] 
+                third_jets = ak4[mask][:, :3][:, -1]
+
+                w_third_jets = np.where(
+                    third_jet_is_in_hf,
+                    rweight[mask],
+                    0.
+                )
+
+                ezfill('ak4_sigma_eta_phi_third_jet', sigmaetaeta=third_jets.setaeta,  sigmaphiphi=third_jets.sphiphi,    weight=w_third_jets)
+
                 # 2D sigma eta vs. phi
                 ezfill('ak4_sigma_eta_phi',   
                         sigmaetaeta=ak4[mask].setaeta.flatten(),    
