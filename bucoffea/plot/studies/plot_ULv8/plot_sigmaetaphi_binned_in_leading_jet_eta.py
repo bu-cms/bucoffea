@@ -66,7 +66,7 @@ def plot_sigma_eta_phi_binned_in_leading_jet_eta(acc, outtag, distribution, regi
     ax.plot(x,y,color='k',lw=2)
 
     # Save figure
-    outdir = f'./output/{outtag}/2d'
+    outdir = f'./output/{outtag}/2d/binned_in_ak4_eta0'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
