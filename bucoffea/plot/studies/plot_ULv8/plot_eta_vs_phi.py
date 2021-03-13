@@ -14,7 +14,7 @@ from pprint import pprint
 
 pjoin = os.path.join
 
-def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_diag=True, plot_cutslope=False, mindphislice=None, etaslice=None, xmax=0.3, ymax=0.3):
+def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_diag=True, plot_cutslope=False, etaslice=None, xmax=0.3, ymax=0.3):
     '''2D sigma eta vs. phi plot for the given region.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -29,10 +29,9 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
     # Typically: 2.9 < |eta| < 3.25 and 3.25 < |eta| < 5.0
     if etaslice is not None:
         h = h.integrate('jeta', etaslice)
+    else:
+        h = h.integrate('jeta')
 
-    if mindphislice is not None:
-        h = h.integrate('mindphi', mindphislice)
-    
     fig, ax = plt.subplots()
     hist.plot2d(h, ax=ax, xaxis='sigmaetaeta',  patch_opts={'norm': colors.LogNorm(1e-3,1e1)})
 
@@ -78,19 +77,6 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
             transform=ax.transAxes
         )
 
-    elif mindphislice is not None:
-        if mindphislice == slice(0, 0.1):
-            tagforslice = f'$\\Delta\\phi(j,MET) < 0.1$'
-        else:
-            tagforslice = f'${mindphislice.start:.1f} < \\Delta\\phi(j,MET) < {mindphislice.stop:.1f}$'
-
-        ax.text(1., 0., tagforslice,
-            fontsize=14,
-            ha='right',
-            va='bottom',
-            transform=ax.transAxes
-        )
-
     if distribution == 'ak4_sigma_eta_phi0':
         ax.set_xlabel(r'Leading Jet $\sigma_{\eta\eta}$')
         ax.set_ylabel(r'Leading Jet $\sigma_{\phi\phi}$')
@@ -123,12 +109,7 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
     else:
         etaslicetag = ''
 
-    if mindphislice in [slice(0,0.1),slice(0.1,0.3),slice(0.3,0.5)]:
-        mindphislicetag = f'_mindphi_{str(mindphislice.start).replace(".","p")}_{str(mindphislice.stop).replace(".","p")}'
-    else:
-        mindphislicetag = ''
-
-    outpath = pjoin(outdir, f'MET_2017_{region}_{distribution}{etaslicetag}{mindphislicetag}.pdf')
+    outpath = pjoin(outdir, f'MET_2017_{region}_{distribution}{etaslicetag}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
     print(f'File saved: {outpath}')
@@ -143,14 +124,15 @@ def main():
 
     # 2D sigma eta/phi distributions for data and MC
     distributions = [
-        'ak4_sigma_eta_phi',
+        # 'ak4_sigma_eta_phi',
         'ak4_sigma_eta_phi0',
         'ak4_sigma_eta_phi1',
     ]
 
     # Two regions: Z(mumu) physics-enriched and QCD CR
     regions = [
-        # 'cr_2m_vbf_relaxed_sel',
+        'cr_2m_vbf_relaxed_sel',
+        'cr_2m_vbf_relaxed_sel_with_met_cut',
         'cr_vbf_qcd',
     ]
 
@@ -160,32 +142,16 @@ def main():
         slice(2.9, 5.0),
     ]
 
-    # By default, no mindphi slices
-    # List these if you need it
-    mindphislices = {
-        'ak4_sigma_eta_phi' : [
-            None
-        ],    
-        'ak4_sigma_eta_phi0' : [
-            None
-        ],    
-        'ak4_sigma_eta_phi1' : [
-            None
-        ],    
-    }
-
     for region in regions:
         try:
             for distribution in distributions:
-                for mindphislice in mindphislices[distribution]:
-                    for etaslice in etaslices:
-                        plot_eta_vs_phi(acc, outtag, 
-                                distribution=distribution,
-                                region=region,
-                                etaslice=etaslice,
-                                mindphislice=mindphislice,
-                                plot_cutslope=True
-                                )
+                for etaslice in etaslices:
+                    plot_eta_vs_phi(acc, outtag, 
+                            distribution=distribution,
+                            region=region,
+                            etaslice=etaslice,
+                            plot_cutslope=False
+                            )
         except KeyError:
             print(f'Region not found in this input: {region}, moving on.')
             continue

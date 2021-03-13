@@ -3,6 +3,7 @@
 import os
 import sys
 import re
+import uproot
 import numpy as np
 
 from coffea import hist
@@ -13,7 +14,7 @@ from pprint import pprint
 
 pjoin = os.path.join
 
-def plot_efficiency(acc, outtag, distribution, region='noise_enriched', dataset='MET_2017'):
+def plot_efficiency(acc, outtag, distribution='ak4_pt0_eta0_hf', region='noise_enriched', dataset='MET_2017', etaslice=slice(2.9,3.25), rebin_pt=True):
     acc.load(distribution)
     h = acc[distribution]
 
@@ -31,12 +32,13 @@ def plot_efficiency(acc, outtag, distribution, region='noise_enriched', dataset=
 
     regionregex = re.compile(f'{regionbase}.*')
 
-    h = h.integrate('dataset', dataset)[regionregex]
+    h = h.integrate('dataset', dataset).integrate('jeta', etaslice)[regionregex]
 
     # Rebin jet pt
-    if 'ak4_pt' in distribution:
-        new_ax = hist.Bin('jetpt', r'Leading Jet $p_T$ (GeV)', 30, 0, 600)
-        h = h.rebin('jetpt', new_ax)
+    if rebin_pt:
+        if 'ak4_pt' in distribution:
+            new_ax = hist.Bin('jetpt', r'Leading Jet $p_T$ (GeV)', list(range(80,280,50)) + list(range(280,480,100)) + [600])
+            h = h.rebin('jetpt', new_ax)
 
     data_err_opts = {
         'linestyle':'none',
@@ -46,22 +48,28 @@ def plot_efficiency(acc, outtag, distribution, region='noise_enriched', dataset=
 
     fig, ax = plt.subplots()
     # Plot the efficiencies
-    hist.plotratio(
-        h.integrate('region', f'{regionbase}_sphietacut'),
-        h.integrate('region', f'{regionbase}'),
-        ax=ax,
-        error_opts=data_err_opts,
-        label=r'$\sigma_{\phi\phi} / \sigma_{\eta\eta} > 0.5$ ($2.9 < |\eta| < 3.25$)'
-    )
+    try:
+        hist.plotratio(
+            h.integrate('region', f'{regionbase}_sphietacut'),
+            h.integrate('region', f'{regionbase}'),
+            ax=ax,
+            error_opts=data_err_opts,
+            label=r'$\sigma_{\phi\phi} / \sigma_{\eta\eta} > 0.5$ ($2.9 < |\eta| < 3.25$)'
+        )
+    except KeyError:
+        pass
 
-    hist.plotratio(
-        h.integrate('region', f'{regionbase}_cssizecut'),
-        h.integrate('region', f'{regionbase}'),
-        ax=ax,
-        error_opts=data_err_opts,
-        label=r'CStripSize < 3',
-        clear=False
-    )
+    try:
+        hist.plotratio(
+            h.integrate('region', f'{regionbase}_cssizecut'),
+            h.integrate('region', f'{regionbase}'),
+            ax=ax,
+            error_opts=data_err_opts,
+            label=r'CStripSize < 3',
+            clear=False
+        )
+    except KeyError:
+        pass
     
     hist.plotratio(
         h.integrate('region', f'{regionbase}_both_cuts'),
@@ -75,7 +83,7 @@ def plot_efficiency(acc, outtag, distribution, region='noise_enriched', dataset=
     ax.legend()
 
     if 'ak4_pt' in distribution:
-        ax.set_ylim(0.8, 1.1)
+        ax.set_ylim(0., 1.1)
     elif 'ak4_eta' in distribution:
         ax.set_ylim(0., 1.1)
     
@@ -97,11 +105,25 @@ def plot_efficiency(acc, outtag, distribution, region='noise_enriched', dataset=
         transform=ax.transAxes
     )
 
+    plottag = f'${etaslice.start:.2f} < |\\eta| < {etaslice.stop:.2f}$'
+    ax.text(1., 1., plottag,
+        fontsize=14,
+        ha='right',
+        va='bottom',
+        transform=ax.transAxes
+    )
+    
+
+    if etaslice in [slice(2.9, 3.25), slice(3.25, 5.0)]:
+        etaslicetag = f'_eta_{str(etaslice.start).replace(".", "p")}_{str(etaslice.stop).replace(".", "p")}'
+    elif etaslice == slice(2.9,5.0):
+        etaslicetag = ''
+
     # Save figure
     outdir = f'./output/{outtag}/eff'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    outpath = pjoin(outdir, f'{region}_{distribution}.pdf')
+    outpath = pjoin(outdir, f'{region}_{distribution}{etaslicetag}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
 
@@ -120,12 +142,16 @@ def main():
         'noise_enriched',
     ]
 
-    distributions = ['ak4_pt0', 'ak4_eta0']
+    etaslices = [
+        slice(2.9, 3.25),
+        slice(3.25, 5.0),
+        slice(2.9,5.0)
+    ]
 
     for region in regions:
-        for distribution in distributions:
+        for etaslice in etaslices:
             plot_efficiency(acc, outtag, 
-                    distribution=distribution, 
+                    etaslice=etaslice, 
                     region=region
                     )
 
