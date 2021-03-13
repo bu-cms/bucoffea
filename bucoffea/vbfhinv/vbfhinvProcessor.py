@@ -702,7 +702,18 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         sigmaetaeta=ak4[mask].setaeta.flatten(),    
                         sigmaphiphi=ak4[mask].sphiphi.flatten(),  
                         jeta=ak4[mask].abseta.flatten(),   
-                        weight=w_hfjets)
+                        weight=w_hfjets
+                    )
+
+                # Sigma eta vs. phi: Binned in leading jet eta
+                # Reshape the leading jet eta
+                ak4_eta0 = (~np.isnan(ak4[mask].setaeta) * diak4.i0.abseta[mask].flatten()).flatten()
+                ezfill('ak4_sigma_eta_phi_binned_in_ak4_eta0',
+                    sigmaetaeta=ak4[mask].setaeta.flatten(),
+                    sigmaphiphi=ak4[mask].sphiphi.flatten(),
+                    jeta=ak4_eta0,
+                    weight=w_hfjets
+                    )
 
                 ezfill('ak4_hfcentral_adjacent_etastripsize',   
                     centraletastripsize=ak4[mask].hfcentralstripsize.flatten(),

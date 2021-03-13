@@ -152,6 +152,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_hfcentral_adjacent_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
 
     items["ak4_sigma_eta_phi1_binned_in_ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, ak40_abseta_ax)
+    items["ak4_sigma_eta_phi_binned_in_ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, ak40_abseta_ax)
 
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
