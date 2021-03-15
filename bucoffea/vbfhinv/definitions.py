@@ -284,10 +284,20 @@ def vbfhinv_regions(cfg):
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
 
+    # Signal region with the new noise cuts based on HF variables
+    regions['sr_vbf_with_noise_cut'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_with_noise_cut'].append('central_stripsize_cut')
+    regions['sr_vbf_with_noise_cut'].append('sigma_phi_minus_eta')
+
+    # CR QCD: Signal region with those HF cuts inverted
+    regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
+    regions['cr_vbf_qcd'].append('central_stripsize_cut_inverted')
+    regions['cr_vbf_qcd'].append('sigma_phi_minus_eta_inverted')
+
     # Signal region with HF-HF veto replaced by the sigma eta/phi cut
-    regions['sr_vbf_with_hfcut'] = copy.deepcopy(regions['sr_vbf'])
-    regions['sr_vbf_with_hfcut'].remove('veto_hfhf')
-    regions['sr_vbf_with_hfcut'].append('sigma_phi_over_eta')
+    # regions['sr_vbf_with_hfcut'] = copy.deepcopy(regions['sr_vbf'])
+    # regions['sr_vbf_with_hfcut'].remove('veto_hfhf')
+    # regions['sr_vbf_with_hfcut'].append('sigma_phi_over_eta')
 
     regions['sr_vbf_no_eemitigation'] = copy.deepcopy(regions['sr_vbf'])
     regions['sr_vbf_no_eemitigation'].remove('eemitigation')
@@ -302,9 +312,9 @@ def vbfhinv_regions(cfg):
     regions['sr_vbf_nohornveto'].remove('hornveto')
 
     # QCD enriched CR: Invert the mindPhi cut, remove the noise mitigation cuts
-    regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
-    regions['cr_vbf_qcd'].remove('mindphijr')
-    regions['cr_vbf_qcd'].append('mindphijr_inv')
+    # regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
+    # regions['cr_vbf_qcd'].remove('mindphijr')
+    # regions['cr_vbf_qcd'].append('mindphijr_inv')
 
     # regions['cr_vbf_qcd_sphietacut'] = copy.deepcopy(regions['cr_vbf_qcd'])
     # regions['cr_vbf_qcd_sphietacut'].append('sigma_phi_over_eta')
@@ -312,19 +322,19 @@ def vbfhinv_regions(cfg):
     # regions['cr_vbf_qcd_cssizecut'] = copy.deepcopy(regions['cr_vbf_qcd'])
     # regions['cr_vbf_qcd_cssizecut'].append('central_stripsize_cut')
 
-    regions['cr_vbf_qcd_both_cuts'] = copy.deepcopy(regions['cr_vbf_qcd'])
-    regions['cr_vbf_qcd_both_cuts'].append('sigma_phi_over_eta')
-    regions['cr_vbf_qcd_both_cuts'].append('central_stripsize_cut')
+    # regions['cr_vbf_qcd_both_cuts'] = copy.deepcopy(regions['cr_vbf_qcd'])
+    # regions['cr_vbf_qcd_both_cuts'].append('sigma_phi_over_eta')
+    # regions['cr_vbf_qcd_both_cuts'].append('central_stripsize_cut')
 
-    noise_cuts_to_remove = [
-        'dpfcalo_sr',
-        'hornveto',
-        'max_neEmEF',
-        'veto_hfhf',
-    ]
+    # noise_cuts_to_remove = [
+    #     'dpfcalo_sr',
+    #     'hornveto',
+    #     'max_neEmEF',
+    #     'veto_hfhf',
+    # ]
     
-    for ncut in noise_cuts_to_remove:
-        regions['cr_vbf_qcd'].remove(ncut)
+    # for ncut in noise_cuts_to_remove:
+    #     regions['cr_vbf_qcd'].remove(ncut)
 
     # For sync mode
     if cfg and cfg.RUN.SYNC:
@@ -368,9 +378,9 @@ def vbfhinv_regions(cfg):
     # regions['cr_2m_vbf_relaxed_sel_cssizecut'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
     # regions['cr_2m_vbf_relaxed_sel_cssizecut'].append('central_stripsize_cut')
 
-    regions['cr_2m_vbf_relaxed_sel_both_cuts'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
-    regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('sigma_phi_over_eta')
-    regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('central_stripsize_cut')
+    # regions['cr_2m_vbf_relaxed_sel_both_cuts'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
+    # regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('sigma_phi_over_eta')
+    # regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('central_stripsize_cut')
 
     # Single muon CR
     cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']

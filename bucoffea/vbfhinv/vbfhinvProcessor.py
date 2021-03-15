@@ -317,14 +317,21 @@ class vbfhinvProcessor(processor.ProcessorABC):
             jet_in_eehf = (diak4.i0.abseta > 2.9) & (diak4.i0.abseta < 3.25)
             sigma_phieta_cut = (sigma_phi_over_eta > 0.5) | (~jet_in_eehf)
 
-            selection.add('sigma_phi_over_eta', sigma_phieta_cut.any())
             # selection.add('sigma_phi_over_eta', (sigma_phi_over_eta > 0.5).any())
+
+            sigma_phi_minus_eta = diak4.i0.sphiphi - diak4.i0.setaeta
+            selection.add('sigma_phi_minus_eta', (sigma_phi_minus_eta > 0.03).any() )
+            selection.add('sigma_phi_minus_eta_inverted', ~(sigma_phi_minus_eta > 0.03).any() )
 
             stripsize_cut = diak4.i0.hfcentralstripsize < 3
             selection.add('central_stripsize_cut', stripsize_cut.any())
+            selection.add('central_stripsize_cut_inverted', ~stripsize_cut.any())
+
         else:
-            selection.add('sigma_phi_over_eta', pass_all)
+            selection.add('sigma_phi_minus_eta', pass_all)
+            selection.add('sigma_phi_minus_eta_inverted', pass_all)
             selection.add('central_stripsize_cut', pass_all)
+            selection.add('central_stripsize_cut_inverted', pass_all)
 
         selection.add('two_jets', diak4.counts>0)
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
@@ -427,7 +434,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('one_photon', photons.counts==1)
         selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
         selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
-        selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
+        # selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
         # Fill histograms
         output = self.accumulator.identity()
