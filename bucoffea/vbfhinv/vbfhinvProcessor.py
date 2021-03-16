@@ -313,25 +313,32 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Sigma eta & phi cut (only for v8 samples because we have the info there)
         if cfg.RUN.ULEGACYV8:
-            sigma_phi_over_eta = diak4.i0.sphiphi / diak4.i0.setaeta
-            jet_in_eehf = (diak4.i0.abseta > 2.9) & (diak4.i0.abseta < 3.25)
-            sigma_phieta_cut = (sigma_phi_over_eta > 0.5) | (~jet_in_eehf)
+            sigma_eta_minus_phi = diak4.i0.setaeta - diak4.i0.sphiphi
+            sphieta_cut = (sigma_eta_minus_phi < 0.03).any()
+            selection.add('sigma_eta_minus_phi', sphieta_cut)
 
-            # selection.add('sigma_phi_over_eta', (sigma_phi_over_eta > 0.5).any())
+            stripsize_cut = (diak4.i0.hfcentralstripsize < 3).any()
+            selection.add('central_stripsize_cut', stripsize_cut)
 
-            sigma_phi_minus_eta = diak4.i0.sphiphi - diak4.i0.setaeta
-            selection.add('sigma_phi_minus_eta', (sigma_phi_minus_eta > 0.03).any() )
-            selection.add('sigma_phi_minus_eta_inverted', ~(sigma_phi_minus_eta > 0.03).any() )
+            # Cut for QCD CR, these two SR cuts inverted
+            hf_cut_inv = (~sphieta_cut) | (~stripsize_cut)
+            selection.add('hf_cut_inv', hf_cut_inv)
 
-            stripsize_cut = diak4.i0.hfcentralstripsize < 3
-            selection.add('central_stripsize_cut', stripsize_cut.any())
-            selection.add('central_stripsize_cut_inverted', ~stripsize_cut.any())
+            jets_for_cut = ak4[(ak4.pt>80) & (ak4.abseta > 2.9) & (ak4.abseta < 5.0)]
+            sphi_minus_eta_alljets = jets_for_cut.sphiphi - jets_for_cut.setaeta
+
+            sphieta_cut_alljets = (sphi_minus_eta_alljets < -0.03).any()
+            stripsize_cut_alljets = (jets_for_cut.hfcentralstripsize >= 3).any()
+
+            noise_cut_inv_alljets = (sphieta_cut_alljets) | (stripsize_cut_alljets)
+
+            selection.add('noise_cut_inv_alljets', noise_cut_inv_alljets)
 
         else:
-            selection.add('sigma_phi_minus_eta', pass_all)
-            selection.add('sigma_phi_minus_eta_inverted', pass_all)
+            selection.add('sigma_eta_minus_phi', pass_all)
             selection.add('central_stripsize_cut', pass_all)
-            selection.add('central_stripsize_cut_inverted', pass_all)
+            selection.add('noise_cut_inv', pass_all)
+            selection.add('noise_cut_inv_alljets', pass_all)
 
         selection.add('two_jets', diak4.counts>0)
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
