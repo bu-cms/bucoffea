@@ -350,6 +350,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('dphijj', df['dphijj'] < cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DPHI)
         selection.add('detajj', df['detajj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DETA)
         
+        selection.add('high_mjj', df['mjj'] > 2000.)
+
         # Cleaning cuts for signal region
 
         # NEF cut: Only for endcap jets, require NEF < 0.7
@@ -440,7 +442,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         selection.add('one_photon', photons.counts==1)
         selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
-        selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
+        # selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
         # selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
         # Fill histograms

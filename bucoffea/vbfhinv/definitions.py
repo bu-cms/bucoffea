@@ -301,6 +301,13 @@ def vbfhinv_regions(cfg):
     regions['sr_vbf_nocleaningcuts_with_hfcuts'].append('central_stripsize_cut')
     regions['sr_vbf_nocleaningcuts_with_hfcuts'].append('sigma_eta_minus_phi')
 
+    # Signal region with high mjj (> 2 TeV)
+    regions['sr_vbf_high_mjj'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_high_mjj'].append('high_mjj')
+
+    regions['sr_vbf_nocleaningcuts_high_mjj'] = copy.deepcopy(regions['sr_vbf_nocleaningcuts'])
+    regions['sr_vbf_nocleaningcuts_high_mjj'].append('high_mjj')
+
     # QCD enriched CR: Invert the mindPhi cut, remove the noise mitigation cuts
     # regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
     # regions['cr_vbf_qcd'].remove('mindphijr')
