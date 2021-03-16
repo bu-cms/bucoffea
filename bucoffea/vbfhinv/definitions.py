@@ -275,8 +275,11 @@ def vbfhinv_regions(cfg):
         'veto_tau',
         'veto_b',
         'max_neEmEF',
-        'veto_hfhf'
+        'veto_hfhf',
     ]
+
+    if cfg.RUN.AT_LEAST_ONE_HF_JET:
+        common_cuts.append('at_least_one_hf_jet')
 
     regions = {}
     regions['inclusive'] = ['inclusive']

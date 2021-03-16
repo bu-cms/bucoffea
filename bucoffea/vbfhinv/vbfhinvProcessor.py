@@ -267,6 +267,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
         has_track0 = np.abs(diak4.i0.eta) <= 2.5
         has_track1 = np.abs(diak4.i1.eta) <= 2.5
 
+        def is_hf_jet(ak4, etamin=2.9, etamax=5.0, ptmin=100):
+            return (ak4.abseta > etamin) & (ak4.abseta < etamax) & (ak4.pt > ptmin)
+
+        # Pick events with at least one HF jet with high enough pt (> 100 GeV)        
+        ak4_hf = ak4[is_hf_jet(ak4)]
+        selection.add('at_least_one_hf_jet', ak4_hf.counts > 0)
+
         # Remove the ID requirement on the leading jet, depending on the config
         if cfg.RUN.JETID:
             leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
@@ -441,7 +448,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['is_tight_photon'] = photons.mediumId & photons.barrel
 
         selection.add('one_photon', photons.counts==1)
-        selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
+        # selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
         # selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
         # selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
