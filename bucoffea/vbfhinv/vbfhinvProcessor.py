@@ -698,12 +698,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_forward_eta',   jeteta=forward_jet_eta[mask],   weight=w_diak4)
 
             if cfg.RUN.ULEGACYV8:
-                def is_hf_jet(_ak4, ptmin=80, etamin=2.9, etamax=5.0):
+                def is_hf_jet(_ak4, ptmin=100, etamin=2.9, etamax=5.0):
                     return (_ak4.pt > ptmin) & (_ak4.abseta > etamin) & (_ak4.abseta < etamax)
 
                 hfmask = is_hf_jet(ak4[mask])
 
-                # Consider only high pt jets with pt > 80 GeV
+                # Consider only high pt jets with pt > 100 GeV
                 w_hfjets = np.where(
                     hfmask.flatten(),
                     w_alljets,
@@ -723,7 +723,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     0.
                 )
 
-                ezfill('ak4_sigma_eta_phi_third_jet', sigmaetaeta=third_jets.setaeta,  sigmaphiphi=third_jets.sphiphi,    weight=w_third_jets)
+                # ezfill('ak4_sigma_eta_phi_third_jet', sigmaetaeta=third_jets.setaeta,  sigmaphiphi=third_jets.sphiphi,    weight=w_third_jets)
 
                 # 2D sigma eta vs. phi
                 ezfill('ak4_sigma_eta_phi',   
@@ -733,22 +733,22 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         weight=w_hfjets
                     )
 
-                # Sigma eta vs. phi: Binned in leading jet eta
-                # Reshape the leading jet eta
-                ak4_eta0 = (~np.isnan(ak4[mask].setaeta) * diak4.i0.abseta[mask].flatten()).flatten()
-                ezfill('ak4_sigma_eta_phi_binned_in_ak4_eta0',
-                    sigmaetaeta=ak4[mask].setaeta.flatten(),
-                    sigmaphiphi=ak4[mask].sphiphi.flatten(),
-                    jeta=ak4_eta0,
-                    weight=w_hfjets
-                    )
-
                 ezfill('ak4_hfcentral_adjacent_etastripsize',   
                     centraletastripsize=ak4[mask].hfcentralstripsize.flatten(),
                     adjacentetastripsize=ak4[mask].hfadjacentstripsize.flatten(),
                     jeta=ak4[mask].abseta.flatten(),
                     weight=w_hfjets
                     )
+
+                # Sigma eta vs. phi: Binned in leading jet eta
+                # Reshape the leading jet eta
+                # ak4_eta0 = (~np.isnan(ak4[mask].setaeta) * diak4.i0.abseta[mask].flatten()).flatten()
+                # ezfill('ak4_sigma_eta_phi_binned_in_ak4_eta0',
+                    # sigmaetaeta=ak4[mask].setaeta.flatten(),
+                    # sigmaphiphi=ak4[mask].sphiphi.flatten(),
+                    # jeta=ak4_eta0,
+                    # weight=w_hfjets
+                    # )
 
                 # Leading and trailing jets
                 hfmask_i0 = is_hf_jet(diak4.i0[mask])
@@ -794,21 +794,21 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     weight=w_hfjets_i1
                 )
 
-                ezfill('ak4_sigma_eta_phi1_binned_in_ak4_eta0',
-                    sigmaetaeta=diak4.i1.setaeta[mask].flatten(),
-                    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),
-                    jeta=diak4.i0.abseta[mask].flatten(),
-                    weight=w_hfjets_i1
-                )
+                # ezfill('ak4_sigma_eta_phi1_binned_in_ak4_eta0',
+                    # sigmaetaeta=diak4.i1.setaeta[mask].flatten(),
+                    # sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),
+                    # jeta=diak4.i0.abseta[mask].flatten(),
+                    # weight=w_hfjets_i1
+                # )
 
                 # Eta of the leading jet when the trailing jet is in HF, fill the trailing jet as well for testing
-                ezfill('ak4_eta0_trailjetHF', jeteta=diak4.i0.eta[mask].flatten(),  weight=w_hfjets_i1)
-                ezfill('ak4_eta1_trailjetHF', jeteta=diak4.i1.eta[mask].flatten(),  weight=w_hfjets_i1)
+                # ezfill('ak4_eta0_trailjetHF', jeteta=diak4.i0.eta[mask].flatten(),  weight=w_hfjets_i1)
+                # ezfill('ak4_eta1_trailjetHF', jeteta=diak4.i1.eta[mask].flatten(),  weight=w_hfjets_i1)
 
-                ezfill('ak4_pt0_eta0_hf', jetpt=diak4.i0.pt[mask].flatten(),  jeta=diak4.i0.eta[mask].flatten(),  weight=w_hfjets_i0)
+                # ezfill('ak4_pt0_eta0_hf', jetpt=diak4.i0.pt[mask].flatten(),  jeta=diak4.i0.eta[mask].flatten(),  weight=w_hfjets_i0)
 
-                ezfill('met_pt_ak40_hf',    met=met_pt[mask],    weight=w_hfjets_i0)
-                ezfill('met_pt_ak41_hf',    met=met_pt[mask],    weight=w_hfjets_i1)
+                # ezfill('met_pt_ak40_hf',    met=met_pt[mask],    weight=w_hfjets_i0)
+                # ezfill('met_pt_ak41_hf',    met=met_pt[mask],    weight=w_hfjets_i1)
 
             # Neutral EM fraction of leading jet ONLY if it's in endcap
             w_ak4_nef0 = np.where(
