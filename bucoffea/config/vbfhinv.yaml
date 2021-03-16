@@ -224,7 +224,7 @@ default:
     datarun: True
     jetid: True
     regionregex: sr_vbf.*
-    at_least_one_hf_jet: True
+    at_least_one_hf_jet: False
     save:
       passing: False
       tree: False
