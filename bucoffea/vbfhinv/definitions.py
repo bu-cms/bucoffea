@@ -370,7 +370,7 @@ def vbfhinv_regions(cfg):
     regions['cr_2m_vbf_relaxed_sel'].append('small_met')
     
     regions['cr_2m_vbf_relaxed_sel_both_cuts'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
-    regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('sigma_phi_minus_eta')
+    regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('sigma_eta_minus_phi')
     regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('central_stripsize_cut')
 
     # Single muon CR
