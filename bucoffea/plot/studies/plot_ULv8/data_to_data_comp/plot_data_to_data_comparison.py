@@ -101,10 +101,13 @@ def plot_data_to_data_comparison(acc, outtag, distribution='mjj', datatag='data'
 
     rax.grid(True)
     rax.set_ylabel('With HF cut / Without')
-    if 'nocleaningcuts' in regionbase:
-        rax.set_ylim(0,2)
+    if 'sr_vbf' in regionbase:
+        if 'nocleaningcuts' in regionbase:
+            rax.set_ylim(0,2)
+        else:
+            rax.set_ylim(0.5,1.5)
     else:
-        rax.set_ylim(0.5,1.5)
+        rax.set_ylim(0.95,1.05)
 
     # Save figure
     outdir = f'./output/{outtag}'
