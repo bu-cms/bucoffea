@@ -13,7 +13,7 @@ from pprint import pprint
 
 pjoin = os.path.join
 
-def plot_data_to_data_comparison(acc, outtag, distribution='mjj', dataset='MET_2017', regionbase='sr_vbf'):
+def plot_data_to_data_comparison(acc, outtag, distribution='mjj', datatag='data', regionbase='sr_vbf'):
     '''Plot data to data comparison before/after HF shape cuts are applied.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -22,7 +22,10 @@ def plot_data_to_data_comparison(acc, outtag, distribution='mjj', dataset='MET_2
     scale_xs_lumi(h)
     h = merge_datasets(h)
 
-    h = h.integrate('dataset', dataset)
+    if datatag == 'data':
+        h = h.integrate('dataset', 'MET_2017')
+    else:
+        h = h.integrate('dataset', re.compile('DYJets.*2017'))
 
     if distribution == 'mjj':
         mjj_ax = hist.Bin('mjj', r'$M_{jj} \ (GeV)$', [200., 400., 600., 900., 1200., 1500., 2000., 2750., 3500., 5000.])
@@ -35,7 +38,10 @@ def plot_data_to_data_comparison(acc, outtag, distribution='mjj', dataset='MET_2
     hist.plot1d(h, ax=ax, overlay='region')
 
     ax.set_yscale('log')
-    ax.set_ylim(1e0,1e6)
+    if datatag == 'data':
+        ax.set_ylim(1e0,1e6)
+    else:
+        ax.set_ylim(1e-1,1e5)
 
     if 'nocleaningcuts' in regionbase:
         plottag = 'Usual Cleaning Cuts Removed'
@@ -49,7 +55,12 @@ def plot_data_to_data_comparison(acc, outtag, distribution='mjj', dataset='MET_2
         transform=ax.transAxes
     )
 
-    ax.text(0.02, 0.02, 'MET 2017 UL Nanov8',
+    if datatag == 'data':
+        _text = 'MET 2017 UL Nanov8'
+    else:
+        _text = r'$Z(\mu\mu)$ 2017 UL Nanov8'
+
+    ax.text(0.02, 0.02, _text,
         fontsize=12,
         ha='left',
         va='bottom',
@@ -116,8 +127,17 @@ def main():
     # Two regions: Regular SR + SR without the usual cleaning cuts
     regionbases = ['sr_vbf', 'sr_vbf_nocleaningcuts']
 
+    datatag = 'mc' if 'DY' in inpath else 'data'
+
+    regionbases_for_dtype = {
+        'data' : ['sr_vbf', 'sr_vbf_nocleaningcuts'],
+        'mc' : ['cr_2m_vbf_relaxed_sel', 'cr_2m_vbf_relaxed_sel_nocleaningcuts'],
+    }
+
+    regionbases = regionbases_for_dtype[datatag]
+
     for regionbase in regionbases:
-        plot_data_to_data_comparison(acc, outtag, regionbase=regionbase)
+        plot_data_to_data_comparison(acc, outtag, regionbase=regionbase, datatag=datatag)
 
 if __name__ == '__main__':
     main()
