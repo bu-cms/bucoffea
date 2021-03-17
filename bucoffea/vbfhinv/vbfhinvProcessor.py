@@ -55,7 +55,8 @@ from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,
                                            vbfhinv_regions,
                                            ak4_em_frac_weights,
-                                           met_trigger_sf
+                                           met_trigger_sf,
+                                           add_hfmask
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -318,6 +319,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add("metphihemextveto", pass_all)
             selection.add('no_el_in_hem', pass_all)
 
+        selection = add_hfmask(selection, df)
+
         # Sigma eta & phi cut (only for v8 samples because we have the info there)
         if cfg.RUN.ULEGACYV8:
             sigma_eta_minus_phi = diak4.i0.setaeta - diak4.i0.sphiphi
@@ -451,7 +454,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         df['is_tight_photon'] = photons.mediumId & photons.barrel
 
-        selection.add('one_photon', photons.counts==1)
+        # selection.add('one_photon', photons.counts==1)
         # selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
         # selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
         # selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)

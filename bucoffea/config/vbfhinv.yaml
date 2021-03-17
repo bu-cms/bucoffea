@@ -223,7 +223,7 @@ default:
     ulegacyv8: True
     datarun: True
     jetid: True
-    regionregex: sr_vbf_fail_hfcuts
+    regionregex: ^sr_vbf$
     at_least_one_hf_jet: False
     save:
       passing: False

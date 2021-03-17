@@ -285,7 +285,7 @@ def vbfhinv_regions(cfg):
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
+    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation', 'fail_hfshape']
 
     regions['sr_vbf_fail_hfcuts'] = copy.deepcopy(regions['sr_vbf'])
     regions['sr_vbf_fail_hfcuts'].append('fail_hf_cuts')
@@ -609,3 +609,20 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
     sf[np.isnan(sf) | np.isinf(sf)] == 1
     weights.add("trigger_met", sf)
 
+def add_hfmask(selection, df):
+    '''Load run,lumi,event information for events in VBF SR failing the HF shape cuts.'''
+    if df['is_data']:
+        maskfile = bucoffea_path('data/hfmask/run_event_lumi.csv')
+        info = np.loadtxt(maskfile, delimiter=',', skiprows=1)
+        runs = info[:,0]
+        events = info[:,1]
+        lumis = info[:,2]
+
+        # We want to remove the event if event/run/lumi matches the event list we want to remove
+        mask = (np.isin(df['run'], runs)) & (np.isin(df['luminosityBlock'], lumis)) & (np.isin(df['event'], events)) 
+
+        selection.add('fail_hfshape', ~mask)
+    else:
+        selection.add('fail_hfshape', np.zeros(df.size) == 0)
+        
+    return selection
