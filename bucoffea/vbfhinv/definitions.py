@@ -369,9 +369,17 @@ def vbfhinv_regions(cfg):
     regions['cr_2m_vbf_relaxed_sel'].remove('hemisphere')
     regions['cr_2m_vbf_relaxed_sel'].append('small_met')
     
-    regions['cr_2m_vbf_relaxed_sel_both_cuts'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
-    regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('sigma_eta_minus_phi')
-    regions['cr_2m_vbf_relaxed_sel_both_cuts'].append('central_stripsize_cut')
+    regions['cr_2m_vbf_relaxed_sel_nocleaningcuts'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
+    regions['cr_2m_vbf_relaxed_sel_nocleaningcuts'].remove('max_neEmEF')
+    regions['cr_2m_vbf_relaxed_sel_nocleaningcuts'].remove('dpfcalo_cr')
+
+    regions['cr_2m_vbf_relaxed_sel_with_hfcuts'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
+    regions['cr_2m_vbf_relaxed_sel_with_hfcuts'].append('sigma_eta_minus_phi')
+    regions['cr_2m_vbf_relaxed_sel_with_hfcuts'].append('central_stripsize_cut')
+
+    regions['cr_2m_vbf_relaxed_sel_nocleaningcuts_with_hfcuts'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel_nocleaningcuts'])
+    regions['cr_2m_vbf_relaxed_sel_nocleaningcuts_with_hfcuts'].append('sigma_eta_minus_phi')
+    regions['cr_2m_vbf_relaxed_sel_nocleaningcuts_with_hfcuts'].append('central_stripsize_cut')
 
     # Single muon CR
     cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']
