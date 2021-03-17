@@ -332,20 +332,24 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('hf_cut_inv', hf_cut_inv)
 
             jets_for_cut = ak4[(ak4.pt>80) & (ak4.abseta > 2.9) & (ak4.abseta < 5.0)]
-            sphi_minus_eta_alljets = jets_for_cut.sphiphi - jets_for_cut.setaeta
+            seta_minus_phi_alljets = jets_for_cut.setaeta - jets_for_cut.sphiphi
 
-            sphieta_cut_alljets = (sphi_minus_eta_alljets < -0.03).any()
+            # Failing the sigma eta - sigma phi < 0.03 cut
+            setaphi_cut_alljets = (seta_minus_phi_alljets > 0.03).any()
+            # Failing the CSS < 3 cut
             stripsize_cut_alljets = (jets_for_cut.hfcentralstripsize >= 3).any()
 
-            noise_cut_inv_alljets = (sphieta_cut_alljets) | (stripsize_cut_alljets)
+            # This is for the events which fail at least one of the two HF shape cuts.
+            # Cut is applied on all HF jets with pt > 80 GeV
+            noise_cut_inv_alljets = (setaphi_cut_alljets) | (stripsize_cut_alljets)
 
-            selection.add('noise_cut_inv_alljets', noise_cut_inv_alljets)
+            selection.add('fail_hf_cuts', noise_cut_inv_alljets)
 
         else:
             selection.add('sigma_eta_minus_phi', pass_all)
             selection.add('central_stripsize_cut', pass_all)
             selection.add('noise_cut_inv', pass_all)
-            selection.add('noise_cut_inv_alljets', pass_all)
+            selection.add('fail_hf_cuts', pass_all)
 
         selection.add('two_jets', diak4.counts>0)
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
@@ -597,6 +601,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
             mask = selection.all(*cuts)
 
             if cfg.RUN.SAVE.TREE:
+                # For events that fail the new HF cuts, store the run/lumi/event information 
+                if region in ['sr_vbf_fail_hfcuts']:
+                    output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
+                    output['tree_int64'][region]["run"]       +=  processor.column_accumulator(df["run"][mask])
+                    output['tree_int64'][region]["lumi"]       +=  processor.column_accumulator(df["luminosityBlock"][mask])
                 if region in ['cr_1e_vbf','cr_1m_vbf']:
                     output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
                     output['tree_float16'][region]["gen_v_pt"]    +=  processor.column_accumulator(np.float16(gen_v_pt[mask]))

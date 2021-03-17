@@ -223,11 +223,11 @@ default:
     ulegacyv8: True
     datarun: True
     jetid: True
-    regionregex: cr_2m_vbf_relaxed_sel.*
+    regionregex: sr_vbf_fail_hfcuts
     at_least_one_hf_jet: False
     save:
       passing: False
-      tree: False
+      tree: True
     kinematics:
       save: False
       events:
