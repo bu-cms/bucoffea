@@ -31,7 +31,8 @@ def main():
     indir = sys.argv[1]
     infiles = glob(pjoin(indir, 'tree*.root'))
 
-    outdir = './output'
+    # Set output directory based on the input directory
+    outdir = indir.replace('input', 'output')
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     outfile = pjoin(outdir, 'run_event_lumi.csv')
