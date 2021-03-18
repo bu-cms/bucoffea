@@ -334,7 +334,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             hf_cut_inv = (~sphieta_cut) | (~stripsize_cut)
             selection.add('hf_cut_inv', hf_cut_inv)
 
-            fail_sigma_eta_minus_phi_cut_leadjet = (diak4.i0.setaeta - diak4.i0.sphiphi > 0.3).any()
+            fail_sigma_eta_minus_phi_cut_leadjet = (diak4.i0.setaeta - diak4.i0.sphiphi > 0.03).any()
             fail_stripsize_cut_leadjet = (diak4.i0.hfcentralstripsize >= 3).any()
 
             noise_cut_inv_leading_jet = (fail_sigma_eta_minus_phi_cut_leadjet) | (fail_stripsize_cut_leadjet)
