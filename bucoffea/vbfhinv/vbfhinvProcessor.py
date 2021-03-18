@@ -709,6 +709,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_nhf0',      frac=diak4.i0.nhf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst0',   nconst=diak4.i0.nconst[mask].flatten(), weight=w_diak4)
 
+            ezfill('ak4_pt0_eta0',  jetpt=diak4.i0.pt[mask].flatten(),     jeteta=diak4.i0.eta[mask].flatten(),     weight=w_diak4)
+
             # Trailing ak4
             ezfill('ak4_eta1',      jeteta=diak4.i1.eta[mask].flatten(),    weight=w_diak4)
             ezfill('ak4_phi1',      jetphi=diak4.i1.phi[mask].flatten(),    weight=w_diak4)
