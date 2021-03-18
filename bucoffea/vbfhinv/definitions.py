@@ -285,7 +285,7 @@ def vbfhinv_regions(cfg):
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation', 'fail_hfshape']
+    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
 
     regions['sr_vbf_fail_hfcuts'] = copy.deepcopy(regions['sr_vbf'])
     regions['sr_vbf_fail_hfcuts'].append('fail_hf_cuts')
