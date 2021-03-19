@@ -288,7 +288,7 @@ def vbfhinv_regions(cfg):
     regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
 
     regions['sr_vbf_fail_hfcuts'] = copy.deepcopy(regions['sr_vbf'])
-    regions['sr_vbf_fail_hfcuts'].append('fail_hf_cuts')
+    regions['sr_vbf_fail_hfcuts'].append('fail_hf_cuts_alljets')
 
     # Signal region with the new noise cuts based on HF variables
     regions['sr_vbf_with_hfcuts'] = copy.deepcopy(regions['sr_vbf'])

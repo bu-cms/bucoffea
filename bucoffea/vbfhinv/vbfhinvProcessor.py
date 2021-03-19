@@ -323,16 +323,16 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Sigma eta & phi cut (only for v8 samples because we have the info there)
         if cfg.RUN.ULEGACYV8:
-            sigma_eta_minus_phi = diak4.i0.setaeta - diak4.i0.sphiphi
-            sphieta_cut = (sigma_eta_minus_phi < 0.03).any()
-            selection.add('sigma_eta_minus_phi', sphieta_cut)
+            # sigma_eta_minus_phi = diak4.i0.setaeta - diak4.i0.sphiphi
+            # sphieta_cut = (sigma_eta_minus_phi < 0.03).any()
+            # selection.add('sigma_eta_minus_phi', sphieta_cut)
 
-            stripsize_cut = (diak4.i0.hfcentralstripsize < 3).any()
-            selection.add('central_stripsize_cut', stripsize_cut)
+            # stripsize_cut = (diak4.i0.hfcentralstripsize < 3).any()
+            # selection.add('central_stripsize_cut', stripsize_cut)
 
             # Cut for QCD CR, these two SR cuts inverted
-            hf_cut_inv = (~sphieta_cut) | (~stripsize_cut)
-            selection.add('hf_cut_inv', hf_cut_inv)
+            # hf_cut_inv = (~sphieta_cut) | (~stripsize_cut)
+            # selection.add('hf_cut_inv', hf_cut_inv)
 
             fail_sigma_eta_minus_phi_cut_leadjet = (diak4.i0.setaeta - diak4.i0.sphiphi > 0.03).any()
             fail_stripsize_cut_leadjet = (diak4.i0.hfcentralstripsize >= 3).any()
@@ -341,17 +341,21 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             selection.add('fail_hf_cuts', noise_cut_inv_leading_jet)
 
-            # jets_for_cut = ak4[(ak4.pt>80) & (ak4.abseta > 2.9) & (ak4.abseta < 5.0)]
-            # seta_minus_phi_alljets = jets_for_cut.setaeta - jets_for_cut.sphiphi
+            jets_for_cut = ak4[(ak4.pt>80) & (ak4.abseta > 2.9) & (ak4.abseta < 5.0)]
 
-            # Failing the sigma eta - sigma phi < 0.03 cut
-            # setaphi_cut_alljets = (seta_minus_phi_alljets > 0.03).any()
-            # Failing the CSS < 3 cut
-            # stripsize_cut_alljets = (jets_for_cut.hfcentralstripsize >= 3).any()
+            seta_minus_phi_alljets = jets_for_cut.setaeta - jets_for_cut.sphiphi
+
+            setaphi_cut_alljets = (seta_minus_phi_alljets < 0.03).all() | (jets_for_cut.counts == 0)
+            stripsize_cut_alljets = (jets_for_cut.hfcentralstripsize < 3).all() | (jets_for_cut.counts == 0)
+
+            selection.add('sigma_eta_minus_phi', setaphi_cut_alljets)
+            selection.add('central_stripsize_cut', stripsize_cut_alljets)
 
             # This is for the events which fail at least one of the two HF shape cuts.
             # Cut is applied on all HF jets with pt > 80 GeV
-            # noise_cut_inv_alljets = (setaphi_cut_alljets) | (stripsize_cut_alljets)
+            noise_cut_inv_alljets = (~setaphi_cut_alljets) | (~stripsize_cut_alljets)
+
+            selection.add('fail_hf_cuts_alljets', noise_cut_inv_alljets)
 
         else:
             selection.add('sigma_eta_minus_phi', pass_all)
