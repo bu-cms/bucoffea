@@ -697,7 +697,20 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
 
-            
+            # All jet eta, for the ones that pass the HF shape cut (if they are in the HF)            
+            def is_hf_jet(_ak4):
+                return (_ak4.pt>80) & (_ak4.abseta > 2.9) & (_ak4.abseta < 5.0)
+
+            sigma_eta_minus_phi = ak4.setaeta - ak4.sphiphi
+            hfmask = ((sigma_eta_minus_phi < 0.03) & (ak4.hfcentralstripsize < 3)) | (~is_hf_jet(ak4))
+
+            w_alljets_hffiltered = np.where(
+                hfmask[mask].flatten(),
+                w_alljets,
+                0.
+            )
+
+            ezfill('ak4_eta_hf_filtered', jeteta=ak4[mask].eta.flatten(),  weight=w_alljets_hffiltered)
 
             ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
             ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)

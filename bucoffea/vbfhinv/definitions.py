@@ -164,6 +164,8 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
+    items["ak4_eta_hf_filtered"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+
     items["ak4_sigma_eta_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, eta_hf_ax)
     items["ak4_sigma_phi_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax, eta_hf_ax)
 
