@@ -7,8 +7,9 @@ import ROOT
 #inpath = "../../../input/merged_2020_11_18_03Sep20v7_use_1p0_for_wtag_medium_wp"
 #inpath = "../../../input/merged_2020_10_14_update_mistag"
 #inpath = "../../../input/merged_2020_11_20_03Sep20v7_hasjmrjms_Wmass70To120"
-inpath = "../../../input/merged_2020_11_23_03Sep20v7_Wmass65To120"
+#inpath = "../../../input/merged_2020_11_23_03Sep20v7_Wmass65To120"
 #inpath = "../../../input/merged_2021_01_18_03Sep20v7_monojv_splitWkfac_splitmistag"
+inpath = "../../../input/2021-03-11_monojv_mistag"
 
 # construct an output dir name
 if inpath[-1]=='/':
@@ -18,6 +19,7 @@ bin_scheme=5   # choose which binning scheme to use, see bin_schemes
 massden=True   # True if we apply mass cut on denominator in the efficiency calculation
 massnum=True   # True if we apply mass cut on numerator in the efficiency calculation
 nlogjet=True   # True if we use NLO GJets sample for the mistag measurement in the photon CR
+nlovjet=True   # True if we use NLO samples for all V+Jets background
 splitsys=True  # True if splited systemtics sources calculated separately, won't affect nominal values, only generate additional hitograms
 realVSF=1.0    # This number can be used to scale the matched real V events up/down before doing realV extraction from data
 #outdir = 'output_bin2_gvsothers_nojmr'
@@ -26,7 +28,9 @@ if massden:
     outdir+="_massden"
 if massnum:
     outdir+="_massnum"
-if nlogjet:
+if nlovjet:
+    outdir+="_nlovjet"
+elif nlogjet:
     outdir+="_nlogjet"
 if splitsys:
     outdir+="_splitsys"
@@ -192,6 +196,30 @@ def main():
             if nlogjet:
                 mc_map['cr_g_v']     = re.compile(f'(Diboson|QCD_HT|GJets_1j|VQQGamma_FXFX|WJetsToLNu.*HT).*{year}')
                 mc_map_noV['cr_g_v'] = re.compile(f'(QCD_HT|GJets_1j|WJetsToLNu.*HT).*{year}')
+            if nlovjet:
+
+                if year==2017:
+                    wjets_nlo_regex = ".*WNJetsToLNu.*"
+                elif year==2018:
+                    wjets_nlo_regex = "WJetsToLNu.*FXFX.*"
+                mc_map = {
+                    'cr_1m_v'      : re.compile(f'(Top_FXFX|Diboson|QCD_HT|DYNJetsToLL|{wjets_nlo_regex}).*{year}'),
+                    'cr_1e_v'      : re.compile(f'(Top_FXFX|Diboson|QCD_HT|DYNJetsToLL|{wjets_nlo_regex}|GJets_1j).*{year}'),
+                    'cr_2m_v'      : re.compile(f'(Top_FXFX|Diboson|DYNJetsToLL).*{year}'),
+                    'cr_2e_v'      : re.compile(f'(Top_FXFX|Diboson|DYNJetsToLL).*{year}'),
+                    'cr_g_v'       : re.compile(f'(QCD_HT|Diboson|GJets_1j|VQQGamma_FXFX|{wjets_nlo_regex}).*{year}'),
+                    'cr_nobveto_v' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|{wjets_nlo_regex}|GJets_1j|.*ZNJetsTo.*LHE.*).*{year}'),
+                    'sr_v'         : re.compile(f'(Top_FXFX|Diboson|QCD_HT|{wjets_nlo_regex}|GJets_1j|.*ZNJetsTo.*LHE.*).*{year}'),
+                }
+                mc_map_noV = {
+                    'cr_1m_v'      : re.compile(f'(QCD_HT|DYNJetsToLL|{wjets_nlo_regex}).*{year}'),
+                    'cr_1e_v'      : re.compile(f'(QCD_HT|DYNJetsToLL|{wjets_nlo_regex}|GJets_1j).*{year}'),
+                    'cr_2m_v'      : re.compile(f'(DYNJetsToLL).*{year}'),
+                    'cr_2e_v'      : re.compile(f'(DYNJetsToLL).*{year}'),
+                    'cr_g_v'       : re.compile(f'(QCD_HT|GJets_1j|{wjets_nlo_regex}).*{year}'),
+                    'cr_nobveto_v' : re.compile(f'(QCD_HT|{wjets_nlo_regex}|GJets_1j|.*ZNJetsTo.*LHE.*).*{year}'),
+                    'sr_v'         : re.compile(f'(QCD_HT|{wjets_nlo_regex}|GJets_1j|.*ZNJetsTo.*LHE.*).*{year}'),
+                }
             for wp in ['loose','tight','medium']:
                 region_all = f'cr_{lepton_flag}_hasmass_inclusive_v'
                 region_all_nomass = f'cr_{lepton_flag}_inclusive_v'
