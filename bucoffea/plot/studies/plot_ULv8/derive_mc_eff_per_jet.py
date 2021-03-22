@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from bucoffea.plot.studies.plot_ULv8.derive_mc_eff_with_eta import derive_mc_efficiency
 import os
 import sys
 import re
