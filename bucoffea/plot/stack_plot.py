@@ -54,7 +54,7 @@ colors = {
     'VQQGamma.*' : '#51b84f',
     'ZQQGamma.*' : '#3a8739',
     'WQQGamma.*' : '#51b84f',
-    'ZJetsToNuNu.*' : '#31a354',
+    'ZN?JetsToNuNu.*' : '#31a354',
     'ZNuNuGJets_.*' : '#0050ec'
 }
 legend_labels = {
@@ -73,7 +73,10 @@ legend_labels = {
         'GJets_1j.*' : "$\\gamma$+jets",
         'DY.*' : "Z$\\rightarrow\\ell\\ell$",
         'WN*J.*LNu.*' : "W$\\rightarrow\\ell\\nu$",
-        'ZJetsToNuNu.*.*' : "Z$\\rightarrow\\nu\\nu$"
+        'ZN?JetsToNuNu.*.*' : "Z$\\rightarrow\\nu\\nu$",
+        'EWKW.*LNu.*' : "EWK W$\\rightarrow\\ell\\nu$",
+        'EWKZ.*ZToNuNu.*' : "EWK Z$\\rightarrow\\nu\\nu$",
+        'EWKZ.*ZToLL.*' : "EWK Z$\\rightarrow\\ell\\ell$",
     },
     'Common': {
         'QCD.*' : "QCD",
@@ -175,6 +178,8 @@ class Style():
     def get_binning(self, distribution, region='default'):
         if region in self.binnings and distribution in self.binnings[region]:
             return self.binnings[region][distribution]
+        elif re.match('sr_.*_v.*', region):
+            return self.get_binning(distribution, 'sr_v')
         else:
             return self.binnings['default'][distribution]
 def channel_name(region):
