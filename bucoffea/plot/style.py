@@ -1049,11 +1049,11 @@ def plot_settings():
                 'ylim' : (1e4,1e5)
             },
             'electron_dxy' : {
-                'ylim' : (1e3,1e9),
+                'ylim' : (1e-3,1e9),
                 'xlim' : (0,0.15)
             },
             'electron_dz' : {
-                'ylim' : (1e3,1e0),
+                'ylim' : (1e-3,1e6),
                 'xlim' : (0,0.25)
             },
             'ak4_eta0' : {
