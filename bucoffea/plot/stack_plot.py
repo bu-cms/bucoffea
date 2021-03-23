@@ -54,7 +54,7 @@ colors = {
     'VQQGamma.*' : '#51b84f',
     'ZQQGamma.*' : '#3a8739',
     'WQQGamma.*' : '#51b84f',
-    'ZJetsToNuNu.*' : '#31a354',
+    'ZN?JetsToNuNu.*' : '#31a354',
     'ZNuNuGJets_.*' : '#0050ec'
 }
 legend_labels = {
@@ -73,7 +73,10 @@ legend_labels = {
         'GJets_1j.*' : "$\\gamma$+jets",
         'DY.*' : "Z$\\rightarrow\\ell\\ell$",
         'WN*J.*LNu.*' : "W$\\rightarrow\\ell\\nu$",
-        'ZJetsToNuNu.*.*' : "Z$\\rightarrow\\nu\\nu$"
+        'ZN?JetsToNuNu.*.*' : "Z$\\rightarrow\\nu\\nu$",
+        'EWKW.*LNu.*' : "EWK W$\\rightarrow\\ell\\nu$",
+        'EWKZ.*ZToNuNu.*' : "EWK Z$\\rightarrow\\nu\\nu$",
+        'EWKZ.*ZToLL.*' : "EWK Z$\\rightarrow\\ell\\ell$",
     },
     'Common': {
         'QCD.*' : "QCD",
@@ -175,6 +178,8 @@ class Style():
     def get_binning(self, distribution, region='default'):
         if region in self.binnings and distribution in self.binnings[region]:
             return self.binnings[region][distribution]
+        elif re.match('sr_.*_v.*', region):
+            return self.get_binning(distribution, 'sr_v')
         else:
             return self.binnings['default'][distribution]
 def channel_name(region):
@@ -185,7 +190,7 @@ def channel_name(region):
     if '_v' in region:
         return 'Mono-V'
 
-def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf', ratio=True):
+def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf', ratio=True, mcscale=1):
     """Creates a data vs MC comparison plot
 
     :param acc: Accumulator (processor output)
@@ -194,6 +199,11 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     # Rebin
     s = Style()
     h = copy.deepcopy(acc[distribution])
+
+    if region.startswith("sr"):
+        h.scale({
+            ds : (mcscale  if mc.match(ds) else 1) for ds in map(str,h.axis("dataset").identifiers())
+        }, axis='dataset')
     assert(h)
     try:
         newax = s.get_binning(distribution, region)

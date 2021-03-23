@@ -164,7 +164,7 @@ def merge_extensions(histogram, acc, reweight_pu=True, noscale=False):
         for d in datasets:
             if not is_data(d):
                 sumw[base] += acc['sumw'][d]
-                if reweight_pu:
+                if reweight_pu and 'sumw_pileup' in acc:
                     sumw_pileup[base] += acc['sumw_pileup'][d]
                     nevents[base] += acc['nevents'][d]
 
@@ -433,7 +433,7 @@ class URTH1(uproot_methods.classes.TH1.Methods, list):
         self._classname = "TH1D"
         self._fSumw2 = sumw2.astype(">f8")
 
-def load_and_merge(inpath, distributions):
+def load_and_merge(inpath, distributions=None, dataset_regex=None):
     if not os.path.exists(inpath):
         raise IOError("Directory not found: " + inpath)
 
@@ -444,8 +444,19 @@ def load_and_merge(inpath, distributions):
         acc.load('sumw')
         acc.load('sumw_pileup')
         acc.load('nevents')
+        if distributions:
+            for distribution in distributions:
+                acc.load(distribution)
+        else:
+            acc.load()
+
+
+    if not distributions:
+        distributions = [k for k,v in acc.items() if isinstance(v, hist.Hist)]
+
+    if dataset_regex:
         for distribution in distributions:
-            acc.load(distribution)
+            acc[distribution] = acc[distribution][re.compile(dataset_regex)]
 
     for distribution in distributions:
         acc[distribution] = merge_extensions(acc[distribution], acc, reweight_pu=not ('nopu' in distribution))
