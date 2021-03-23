@@ -371,7 +371,7 @@ def vbfhinv_regions(cfg):
 
     # Dimuon CR without the noise cuts (for HF jet studies)
     regions['cr_2m_vbf_relaxed_sel'] = copy.deepcopy(regions['cr_2m_vbf'])
-    regions['cr_2m_vbf_relaxed_sel'].remove('veto_hfhf')
+    # regions['cr_2m_vbf_relaxed_sel'].remove('veto_hfhf')
     regions['cr_2m_vbf_relaxed_sel'].remove('dphijj')
     regions['cr_2m_vbf_relaxed_sel'].remove('detajj')
     regions['cr_2m_vbf_relaxed_sel'].remove('hemisphere')
