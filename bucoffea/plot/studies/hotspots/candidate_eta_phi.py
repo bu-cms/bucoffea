@@ -41,7 +41,7 @@ def eta_phi_plot(inpath):
                 # 'cr_g_j' : f'EGamma_{year}',
             }
         for region, datare in data.items():
-            distributions = ['ak4_eta_phi']
+            distributions = ['ak4_eta0_phi0']
 
             if 'e_' in region:
                 distributions.append('electron_eta_phi')
@@ -56,8 +56,7 @@ def eta_phi_plot(inpath):
 
                 h = h.integrate('dataset', datare)
                 h = h.integrate(h.axis('region'),region)
-                fig, ax, _ = plot2d(h, xaxis='eta')
-
+                ax = plot2d(h, xaxis='eta')
 
                 ax.text(0., 1., region,
                             fontsize=10,
@@ -72,21 +71,22 @@ def eta_phi_plot(inpath):
                             verticalalignment='bottom',
                             transform=ax.transAxes
                         )
-                fig.text(1., 1., f'{lumi(year)} fb$^{{-1}}$ ({year})',
+                ax.figure.text(1., 1., f'{lumi(year):.1f} fb$^{{-1}}$ ({year})',
                             fontsize=14,
                             horizontalalignment='right',
                             verticalalignment='bottom',
                             transform=ax.transAxes
                         )
-                fig.text(0., 1., '$\\bf{CMS}$ internal',
+                ax.figure.text(0., 1., '$\\bf{CMS}$ internal',
                             fontsize=14,
                             horizontalalignment='left',
                             verticalalignment='bottom',
                             transform=ax.transAxes
                         )
-                outname = pjoin(outdir,f'{region}_{distribution}_{year}.pdf')
-                fig.savefig( outname)
-                print(f'Created file {outname}')
+                for ext in 'pdf','png':
+                    outname = pjoin(outdir,f'{region}_{distribution}_{year}.{ext}')
+                    ax.figure.savefig( outname)
+                    print(f'Created file {outname}')
     
 def eta_phi_plot_photon(inpath):
     '''Create 2D eta-phi plot for photons in VBF photon CR.'''
@@ -152,9 +152,10 @@ def eta_phi_plot_photon(inpath):
                             verticalalignment='bottom',
                             transform=ax.transAxes
                         )
-                outname = pjoin(outdir,f'{region}_{distribution}_{year}.pdf')
-                fig.savefig( outname)
-                print(f'Created file {outname}')
+                for ext in 'pdf','png':
+                    outname = pjoin(outdir,f'{region}_{distribution}_{year}.{ext}')
+                    fig.savefig( outname)
+                    print(f'Created file {outname}')
 def main():
     inpath = sys.argv[1]
     job_type = sys.argv[2]
