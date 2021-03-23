@@ -275,6 +275,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
         ak4_hf = ak4[is_hf_jet(ak4)]
         selection.add('at_least_one_hf_jet', ak4_hf.counts > 0)
 
+        # Test: Save events with leading jet |eta| > 2.9
+        leadak4_in_hf = (diak4.i0.abseta > 2.9).any()
+        selection.add('leadak4_in_hf', leadak4_in_hf)
+
         # Remove the ID requirement on the leading jet, depending on the config
         if cfg.RUN.JETID:
             leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
@@ -614,10 +618,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             if cfg.RUN.SAVE.TREE:
                 # For events that fail the new HF cuts, store the run/lumi/event information 
-                if region in ['sr_vbf_fail_hfcuts']:
-                    output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
-                    output['tree_int64'][region]["run"]       +=  processor.column_accumulator(df["run"][mask])
-                    output['tree_int64'][region]["lumi"]       +=  processor.column_accumulator(df["luminosityBlock"][mask])
+                if region in ['sr_vbf_fail_hfcuts', 'cr_vbf_leadak4_in_hf']:
+                    output['tree_int64'][region]["event"]             +=  processor.column_accumulator(df["event"][mask])
+                    output['tree_int64'][region]["run"]               +=  processor.column_accumulator(df["run"][mask])
+                    output['tree_int64'][region]["lumi"]              +=  processor.column_accumulator(df["luminosityBlock"][mask])
+                    output['tree_int64'][region]["leadak4_eta"]       +=  processor.column_accumulator(np.float16(diak4.i0.eta[mask]))
                 if region in ['cr_1e_vbf','cr_1m_vbf']:
                     output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
                     output['tree_float16'][region]["gen_v_pt"]    +=  processor.column_accumulator(np.float16(gen_v_pt[mask]))
