@@ -379,7 +379,9 @@ def vbfhinv_regions(cfg):
     regions['cr_2m_vbf_relaxed_sel'].remove('dphijj')
     regions['cr_2m_vbf_relaxed_sel'].remove('detajj')
     regions['cr_2m_vbf_relaxed_sel'].remove('hemisphere')
+    regions['cr_2m_vbf_relaxed_sel'].remove('recoil')
     regions['cr_2m_vbf_relaxed_sel'].append('small_met')
+    regions['cr_2m_vbf_relaxed_sel'].append('recoil_zmm')
     
     regions['cr_2m_vbf_relaxed_sel_nocleaningcuts'] = copy.deepcopy(regions['cr_2m_vbf_relaxed_sel'])
     regions['cr_2m_vbf_relaxed_sel_nocleaningcuts'].remove('max_neEmEF')

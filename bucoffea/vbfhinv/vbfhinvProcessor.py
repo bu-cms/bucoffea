@@ -260,6 +260,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('small_met', met_pt<50)
 
+        # Relaxed recoil cut for Zmm region
+        selection.add('recoil_zmm', df['recoil_pt']>100)
+
         # AK4 dijet
         diak4 = ak4[:,:2].distincts()
         leadak4_pt_eta = (diak4.i0.pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (np.abs(diak4.i0.eta) < cfg.SELECTION.SIGNAL.LEADAK4.ETA)
@@ -460,7 +463,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Single Ele CR
         selection.add('met_el', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
-        selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
+        # selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
         # Photon CR
         leadphoton_index=photons.pt.argmax()
