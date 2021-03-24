@@ -14,7 +14,7 @@ from pprint import pprint
 
 pjoin = os.path.join
 
-def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_diag=True, plot_cutslope=False, etaslice=None, xmax=0.3, ymax=0.3):
+def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_diag=True, etaslice=None, xmax=0.3, ymax=0.3):
     '''2D sigma eta vs. phi plot for the given region.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -45,7 +45,12 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
     else:
         raise RuntimeError(f'Check region: {region}')
 
-    ax.text(0., 1., f'{regiontag}, Data',
+    if dataset == 'MET_2017':
+        datatag = 'Data'
+    else:
+        datatag = 'MC'
+
+    ax.text(0., 1., f'{regiontag}, {datatag}',
         fontsize=14,
         ha='left',
         va='bottom',
@@ -88,12 +93,11 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
     if plot_diag:
         x = np.linspace(0, xmax)
         y = np.linspace(0, ymax)
-        ax.plot(x,y,color='k',lw=2, label='Diagonal')
+        # ax.plot(x,y,color='k',lw=2, label='Diagonal')
 
-        if plot_cutslope:
-            slope = 0.5
-            ycut = slope * x
-            ax.plot(x,ycut,color='red',lw=2,label=f'$\\sigma_{{\phi\phi}} = {slope:.1f} \\sigma_{{\\eta\\eta}}$')
+        # Diagonal representing the cut on the difference of sigma eta and phi
+        y2 = x - 0.03
+        ax.plot(x,y2,color='k',lw=2,label=r'$\sigma_{\eta\eta} - \sigma_{\phi\phi} = 0.03$')
 
     ax.legend()
 
@@ -109,7 +113,7 @@ def plot_eta_vs_phi(acc, outtag, distribution, region, dataset='MET_2017', plot_
     else:
         etaslicetag = ''
 
-    outpath = pjoin(outdir, f'MET_2017_{region}_{distribution}{etaslicetag}.pdf')
+    outpath = pjoin(outdir, f'{datatag}_2017_{region}_{distribution}{etaslicetag}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
     print(f'File saved: {outpath}')
@@ -124,7 +128,7 @@ def main():
 
     # 2D sigma eta/phi distributions for data and MC
     distributions = [
-        # 'ak4_sigma_eta_phi',
+        'ak4_sigma_eta_phi',
         'ak4_sigma_eta_phi0',
         'ak4_sigma_eta_phi1',
     ]
@@ -132,13 +136,12 @@ def main():
     # Two regions: Z(mumu) physics-enriched and QCD CR
     regions = [
         'cr_2m_vbf_relaxed_sel',
-        'cr_2m_vbf_relaxed_sel_with_met_cut',
         'cr_vbf_qcd',
     ]
 
     etaslices = [
-        slice(2.9, 3.25),
-        slice(3.25, 5.0),
+        # slice(2.9, 3.25),
+        # slice(3.25, 5.0),
         slice(2.9, 5.0),
     ]
 
@@ -150,7 +153,7 @@ def main():
                             distribution=distribution,
                             region=region,
                             etaslice=etaslice,
-                            plot_cutslope=False
+                            dataset=re.compile('DYJets.*2017')
                             )
         except KeyError:
             print(f'Region not found in this input: {region}, moving on.')
