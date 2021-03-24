@@ -73,6 +73,8 @@ def vbfhinv_accumulator(cfg):
     eta_hf_ax = Bin("jeta", r"Jet $|\eta|$", [2.9, 3.25, 5])
     ak40_abseta_ax = Bin("jeta", r"Jet $|\eta|$", [0, 2.5, 2.9, 5])
 
+    sigma_eta_phi_diff_ax = Bin("sigmaetaminusphi", r"$\sigma_{\eta\eta} - \sigma_{\phi\phi}$", 30, -0.3, 0.3)
+
     vecb_ax = Bin("vecb", r"VecB", 50, 0, 1)
 
     weight_type_ax = Cat("weight_type", "Weight type")
@@ -168,6 +170,8 @@ def vbfhinv_accumulator(cfg):
 
     items["ak4_sigma_eta_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, eta_hf_ax)
     items["ak4_sigma_phi_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax, eta_hf_ax)
+
+    items["ak4_sigma_eta_minus_phi_ak4_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_phi_diff_ax, jet_eta_ax_coarse)
 
     items["recoil_mjj"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, mjj_ax)
     items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
