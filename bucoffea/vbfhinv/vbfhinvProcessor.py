@@ -56,7 +56,6 @@ from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_regions,
                                            ak4_em_frac_weights,
                                            met_trigger_sf,
-                                           add_hfmask
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -325,8 +324,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         else:
             selection.add("metphihemextveto", pass_all)
             selection.add('no_el_in_hem', pass_all)
-
-        # selection = add_hfmask(selection, df)
 
         # Sigma eta & phi cut (only for v8 samples because we have the info there)
         if cfg.RUN.ULEGACYV8:
