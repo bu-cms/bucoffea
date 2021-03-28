@@ -327,24 +327,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Sigma eta & phi cut (only for v8 samples because we have the info there)
         if cfg.RUN.ULEGACYV8:
-            # sigma_eta_minus_phi = diak4.i0.setaeta - diak4.i0.sphiphi
-            # sphieta_cut = (sigma_eta_minus_phi < 0.03).any()
-            # selection.add('sigma_eta_minus_phi', sphieta_cut)
-
-            # stripsize_cut = (diak4.i0.hfcentralstripsize < 3).any()
-            # selection.add('central_stripsize_cut', stripsize_cut)
-
-            # Cut for QCD CR, these two SR cuts inverted
-            # hf_cut_inv = (~sphieta_cut) | (~stripsize_cut)
-            # selection.add('hf_cut_inv', hf_cut_inv)
-
-            fail_sigma_eta_minus_phi_cut_leadjet = (diak4.i0.setaeta - diak4.i0.sphiphi > 0.03).any()
-            fail_stripsize_cut_leadjet = (diak4.i0.hfcentralstripsize >= 3).any()
-
-            noise_cut_inv_leading_jet = (fail_sigma_eta_minus_phi_cut_leadjet) | (fail_stripsize_cut_leadjet)
-
-            selection.add('fail_hf_cuts', noise_cut_inv_leading_jet)
-
             jets_for_cut = ak4[(ak4.pt>80) & (ak4.abseta > 2.9) & (ak4.abseta < 5.0)]
 
             seta_minus_phi_alljets = jets_for_cut.setaeta - jets_for_cut.sphiphi
@@ -355,17 +337,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('sigma_eta_minus_phi', setaphi_cut_alljets)
             selection.add('central_stripsize_cut', stripsize_cut_alljets)
 
-            # This is for the events which fail at least one of the two HF shape cuts.
-            # Cut is applied on all HF jets with pt > 80 GeV
-            noise_cut_inv_alljets = (~setaphi_cut_alljets) | (~stripsize_cut_alljets)
-
-            selection.add('fail_hf_cuts_alljets', noise_cut_inv_alljets)
-
         else:
             selection.add('sigma_eta_minus_phi', pass_all)
             selection.add('central_stripsize_cut', pass_all)
-            selection.add('noise_cut_inv', pass_all)
-            selection.add('fail_hf_cuts', pass_all)
 
         selection.add('two_jets', diak4.counts>0)
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
@@ -376,8 +350,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('mjj', df['mjj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.MASS)
         selection.add('dphijj', df['dphijj'] < cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DPHI)
         selection.add('detajj', df['detajj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DETA)
-        
-        selection.add('high_mjj', df['mjj'] > 2000.)
 
         # Cleaning cuts for signal region
 
@@ -415,15 +387,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         both_jets_in_hf = (diak4.i0.abseta > 3.0) & (diak4.i1.abseta > 3.0)
         selection.add('veto_hfhf', ~both_jets_in_hf.any())
 
-        # Region where both leading jets are in HF
-        selection.add('hfhf_region', both_jets_in_hf.any())        
-
-        # Region where at least one jet is in HF
-        selection.add('at_least_one_jet_in_hf', at_least_one_jet_in_hf)        
-
-        # Region where at least one jet is in HF
-        selection.add('no_jet_in_hf', ~at_least_one_jet_in_hf)        
-
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
             two_central_jets = (np.abs(diak4.i0.eta) <= 2.4) & (np.abs(diak4.i1.eta) <= 2.4)
@@ -448,7 +411,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Diele CR
         leadelectron_index=electrons.pt.argmax()
 
-
         selection.add('one_electron', electrons.counts==1)
         selection.add('two_electrons', electrons.counts==2)
         selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
@@ -460,17 +422,17 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Single Ele CR
         selection.add('met_el', met_pt > cfg.SELECTION.CONTROL.SINGLEEL.MET)
-        # selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
+        selection.add('mt_el', df['MT_el'] < cfg.SELECTION.CONTROL.SINGLEEL.MT)
 
         # Photon CR
         leadphoton_index=photons.pt.argmax()
 
         df['is_tight_photon'] = photons.mediumId & photons.barrel
 
-        # selection.add('one_photon', photons.counts==1)
-        # selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
-        # selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
-        # selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
+        selection.add('one_photon', photons.counts==1)
+        selection.add('at_least_one_tight_photon', df['is_tight_photon'].any())
+        selection.add('photon_pt', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PT)
+        selection.add('photon_pt_trig', photons.pt.max() > cfg.PHOTON.CUTS.TIGHT.PTTRIG)
 
         # Fill histograms
         output = self.accumulator.identity()
@@ -557,8 +519,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         
         for region, cuts in regions.items():
             # Run on selected regions only
-            if not re.match(cfg.RUN.REGIONREGEX, region):
-                continue
             exclude = [None]
             region_weights = copy.deepcopy(weights)
 
@@ -742,9 +702,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
 
-            ezfill('ak4_central_eta',   jeteta=central_jet_eta[mask],   weight=w_diak4)
-            ezfill('ak4_forward_eta',   jeteta=forward_jet_eta[mask],   weight=w_diak4)
-
             if cfg.RUN.ULEGACYV8:
                 def is_hf_jet(_ak4, ptmin=100, etamin=2.9, etamax=5.0):
                     return (_ak4.pt > ptmin) & (_ak4.abseta > etamin) & (_ak4.abseta < etamax)
@@ -761,22 +718,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
                 ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
 
-                sigma_eta_minus_phi = (ak4[mask].setaeta - ak4[mask].sphiphi).flatten()
-
-                ezfill('ak4_sigma_eta_minus_phi_ak4_eta',  sigmaetaminusphi=sigma_eta_minus_phi,     jeteta=ak4[mask].eta.flatten(),    weight=w_alljets)
-
-                # Third jets in HF?
-                third_jet_is_in_hf = hfmask[:, :3][:, -1] 
-                third_jets = ak4[mask][:, :3][:, -1]
-
-                w_third_jets = np.where(
-                    third_jet_is_in_hf,
-                    rweight[mask],
-                    0.
-                )
-
-                # ezfill('ak4_sigma_eta_phi_third_jet', sigmaetaeta=third_jets.setaeta,  sigmaphiphi=third_jets.sphiphi,    weight=w_third_jets)
-
                 # 2D sigma eta vs. phi
                 ezfill('ak4_sigma_eta_phi',   
                         sigmaetaeta=ak4[mask].setaeta.flatten(),    
@@ -791,16 +732,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     jeta=ak4[mask].abseta.flatten(),
                     weight=w_hfjets
                     )
-
-                # Sigma eta vs. phi: Binned in leading jet eta
-                # Reshape the leading jet eta
-                # ak4_eta0 = (~np.isnan(ak4[mask].setaeta) * diak4.i0.abseta[mask].flatten()).flatten()
-                # ezfill('ak4_sigma_eta_phi_binned_in_ak4_eta0',
-                    # sigmaetaeta=ak4[mask].setaeta.flatten(),
-                    # sigmaphiphi=ak4[mask].sphiphi.flatten(),
-                    # jeta=ak4_eta0,
-                    # weight=w_hfjets
-                    # )
 
                 # Leading and trailing jets
                 hfmask_i0 = is_hf_jet(diak4.i0[mask])
@@ -845,37 +776,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     jeta=diak4.i1.abseta[mask].flatten(),
                     weight=w_hfjets_i1
                 )
-
-                # ezfill('ak4_sigma_eta_phi1_binned_in_ak4_eta0',
-                    # sigmaetaeta=diak4.i1.setaeta[mask].flatten(),
-                    # sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),
-                    # jeta=diak4.i0.abseta[mask].flatten(),
-                    # weight=w_hfjets_i1
-                # )
-
-                # Eta of the leading jet when the trailing jet is in HF, fill the trailing jet as well for testing
-                # ezfill('ak4_eta0_trailjetHF', jeteta=diak4.i0.eta[mask].flatten(),  weight=w_hfjets_i1)
-                # ezfill('ak4_eta1_trailjetHF', jeteta=diak4.i1.eta[mask].flatten(),  weight=w_hfjets_i1)
-
-                # ezfill('ak4_pt0_eta0_hf', jetpt=diak4.i0.pt[mask].flatten(),  jeta=diak4.i0.eta[mask].flatten(),  weight=w_hfjets_i0)
-
-                # ezfill('met_pt_ak40_hf',    met=met_pt[mask],    weight=w_hfjets_i0)
-                # ezfill('met_pt_ak41_hf',    met=met_pt[mask],    weight=w_hfjets_i1)
-
-            # Neutral EM fraction of leading jet ONLY if it's in endcap
-            w_ak4_nef0 = np.where(
-                (diak4.i0.abseta[mask] > 2.5) & (diak4.i0.abseta[mask] < 3.0),
-                w_diak4,
-                0,
-            )
-            w_ak4_nef1 = np.where(
-                (diak4.i1.abseta[mask] > 2.5) & (diak4.i1.abseta[mask] < 3.0),
-                w_diak4,
-                0,
-            )
-
-            ezfill('ak4_nef0_eeonly',      frac=diak4.i0.nef[mask].flatten(),      weight=w_ak4_nef0)
-            ezfill('ak4_nef1_eeonly',      frac=diak4.i1.nef[mask].flatten(),      weight=w_ak4_nef1)
 
             # B tag discriminator
             btag = getattr(ak4, cfg.BTAG.ALGO)
