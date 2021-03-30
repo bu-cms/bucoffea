@@ -799,8 +799,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
 
-            ezfill('vecb',        vecb=vec_b[mask],       weight=rweight[mask] )
-            ezfill('dphitkpf',    dphi=dphitkpf[mask],    weight=rweight[mask] )
+            ezfill('vecdphi',     vecdphi=vec_dphi[mask],       weight=rweight[mask] )
+            ezfill('vecb',        vecb=vec_b[mask],            weight=rweight[mask] )
+            ezfill('dphitkpf',    dphi=dphitkpf[mask],         weight=rweight[mask] )
 
             # Consider events where only (at least) one of the jets is in horn
             dpftkmet_weight = np.where(

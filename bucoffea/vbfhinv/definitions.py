@@ -76,6 +76,7 @@ def vbfhinv_accumulator(cfg):
     sigma_eta_phi_diff_ax = Bin("sigmaetaminusphi", r"$\sigma_{\eta\eta} - \sigma_{\phi\phi}$", 30, -0.3, 0.3)
 
     vecb_ax = Bin("vecb", r"VecB", 50, 0, 1)
+    vecdphi_ax = Bin("vecdphi", r"VecDPhi", 60, 0, 3)
 
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",100,0.5,1.5)
@@ -182,6 +183,7 @@ def vbfhinv_accumulator(cfg):
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
 
     items["vecb"] = Hist("Counts", dataset_ax, region_ax, vecb_ax)
+    items["vecdphi"] = Hist("Counts", dataset_ax, region_ax, vecdphi_ax)
     items["dphitkpf"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
     items["dPFTkMET"] = Hist("Counts", dataset_ax, region_ax, dpftk_ax)
 
