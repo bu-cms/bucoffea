@@ -224,6 +224,7 @@ default:
     datarun: True
     jetid: True
     at_least_one_hf_jet: False
+    apply_cleaning_cuts: False
     save:
       passing: False
       tree: False

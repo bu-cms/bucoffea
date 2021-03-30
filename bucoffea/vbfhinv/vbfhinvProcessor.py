@@ -518,6 +518,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus)
         
         for region, cuts in regions.items():
+            # For now, only run on SR
+            if region != 'sr_vbf':
+                continue
             # Run on selected regions only
             exclude = [None]
             region_weights = copy.deepcopy(weights)

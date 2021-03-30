@@ -280,9 +280,14 @@ def vbfhinv_regions(cfg):
         'veto_photon',
         'veto_tau',
         'veto_b',
-        'max_neEmEF',
-        'veto_hfhf',
     ]
+
+    # The regular ReReco cleaning cuts
+    if cfg.RUN.APPLY_CLEANING_CUTS:
+        common_cuts.extend([
+            'max_neEmEF',
+            'veto_hfhf',
+        ])
 
     if cfg.RUN.AT_LEAST_ONE_HF_JET:
         common_cuts.append('at_least_one_hf_jet')
@@ -292,6 +297,11 @@ def vbfhinv_regions(cfg):
 
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation', 'central_stripsize_cut', 'sigma_eta_minus_phi']
+
+    if not cfg.RUN.APPLY_CLEANING_CUTS:
+        regions['sr_vbf'].remove('hornveto')
+        regions['sr_vbf'].remove('dpfcalo_sr')
+        regions['sr_vbf'].remove('eemitigation')
 
     # For sync mode
     if cfg and cfg.RUN.SYNC:
