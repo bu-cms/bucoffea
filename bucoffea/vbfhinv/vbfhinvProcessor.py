@@ -334,12 +334,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
             setaphi_cut_alljets = (seta_minus_phi_alljets < 0.03).all() | (jets_for_cut.counts == 0)
             stripsize_cut_alljets = (jets_for_cut.hfcentralstripsize < 3).all() | (jets_for_cut.counts == 0)
 
+            fail_hf_cuts = (~setaphi_cut_alljets) | (~stripsize_cut_alljets)
+
             selection.add('sigma_eta_minus_phi', setaphi_cut_alljets)
             selection.add('central_stripsize_cut', stripsize_cut_alljets)
-
+            selection.add('fail_hf_cuts', fail_hf_cuts)
         else:
             selection.add('sigma_eta_minus_phi', pass_all)
             selection.add('central_stripsize_cut', pass_all)
+            selection.add('fail_hf_cuts', pass_all)
 
         selection.add('two_jets', diak4.counts>0)
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
@@ -519,7 +522,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         
         for region, cuts in regions.items():
             # For now, only run on SR
-            if region != 'sr_vbf':
+            if not region.startswith('sr'):
                 continue
             # Run on selected regions only
             exclude = [None]

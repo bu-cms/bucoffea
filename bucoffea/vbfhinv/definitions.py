@@ -305,6 +305,12 @@ def vbfhinv_regions(cfg):
         regions['sr_vbf'].remove('dpfcalo_sr')
         regions['sr_vbf'].remove('eemitigation')
 
+    # QCD CR with the HF shape cuts inverted
+    regions['sr_vbf_fail_hf_cuts'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_fail_hf_cuts'].remove('central_stripsize_cut')
+    regions['sr_vbf_fail_hf_cuts'].remove('sigma_eta_minus_phi')
+    regions['sr_vbf_fail_hf_cuts'].append('fail_hf_cuts')
+
     # For sync mode
     if cfg and cfg.RUN.SYNC:
         regions['cr_sync'] = [
