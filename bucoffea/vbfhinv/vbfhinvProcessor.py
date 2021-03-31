@@ -339,6 +339,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('sigma_eta_minus_phi', setaphi_cut_alljets)
             selection.add('central_stripsize_cut', stripsize_cut_alljets)
             selection.add('fail_hf_cuts', fail_hf_cuts)
+
+            # Calculate dphi between the HF jets and MET (to be used for noise region)
+            df['dPhiHFJetMET'] = dphi(jets_for_cut.phi.min(), df['MET_phi'])
+
         else:
             selection.add('sigma_eta_minus_phi', pass_all)
             selection.add('central_stripsize_cut', pass_all)
@@ -801,6 +805,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('dphijj',             dphi=df["dphijj"][mask],   weight=rweight[mask] )
             ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
+
+            ezfill('dphi_hfjet_met',     dphi=df["dPhiHFJetMET"][mask],    weight=rweight[mask])
 
             ezfill('vecdphi',     vecdphi=vec_dphi[mask],       weight=rweight[mask] )
             ezfill('vecb',        vecb=vec_b[mask],            weight=rweight[mask] )
