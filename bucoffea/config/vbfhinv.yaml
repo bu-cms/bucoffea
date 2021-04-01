@@ -219,8 +219,8 @@ default:
 
   run:
     sync: False
-    ulegacy: False
-    ulegacyv8: False
+    ulegacy: True
+    ulegacyv8: True
     datarun: True
     jetid: True
     at_least_one_hf_jet: False
