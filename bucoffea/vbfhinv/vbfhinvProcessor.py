@@ -537,9 +537,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus)
         
         for region, cuts in regions.items():
-            # For now, only run on SR
-            if not region.startswith('sr'):
-                continue
             # Run on selected regions only
             exclude = [None]
             region_weights = copy.deepcopy(weights)
@@ -557,7 +554,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 elif re.match(r'cr_g.*', region):
                     photon_trigger_sf(region_weights, photons, df)
 
-                region_weights = apply_hfmask_weights(ak4, region_weights, evaluator)
+                if 'sr_vbf' in region:
+                    region_weights = apply_hfmask_weights(ak4, region_weights, evaluator, met_phi)
 
                 # Veto weights
                 if re.match('.*no_veto.*', region):

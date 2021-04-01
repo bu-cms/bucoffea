@@ -9,7 +9,7 @@ from coffea.analysis_objects import JaggedCandidateArray
 import coffea.processor as processor
 from awkward import JaggedArray
 import numpy as np
-from bucoffea.helpers import object_overlap, sigmoid3
+from bucoffea.helpers import object_overlap, sigmoid3, dphi
 from bucoffea.helpers.dataset import extract_year
 from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.helpers.gen import find_first_parent
@@ -563,12 +563,16 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
     sf[np.isnan(sf) | np.isinf(sf)] == 1
     weights.add("trigger_met", sf)
 
-def apply_hfmask_weights(ak4, weights, evaluator):
+def apply_hfmask_weights(ak4, weights, evaluator, met_phi):
     '''On ReReco MC, apply the HF mask efficiency weights.'''
     hfak4 = ak4[(ak4.pt > 100) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
 
-    # Pt truncation here...
+    # Only consider jets that are back to back with MET
+    dphi_hfjet_met = dphi(hfak4.phi, met_phi)
+    hfak4 = hfak4[dphi_hfjet_met > 2.5]
 
-    weight = evaluator['hf_mask_efficiency_mc'](hfak4.abseta, hfak4.pt).prod()
+    hfweight = evaluator['hf_mask_efficiency_mc'](hfak4.abseta, hfak4.pt).prod()
+
+    weights.add('hfweight', hfweight)
 
     return weights
