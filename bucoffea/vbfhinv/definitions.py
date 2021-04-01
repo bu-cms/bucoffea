@@ -562,3 +562,13 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
 
     sf[np.isnan(sf) | np.isinf(sf)] == 1
     weights.add("trigger_met", sf)
+
+def apply_hfmask_weights(ak4, weights, evaluator):
+    '''On ReReco MC, apply the HF mask efficiency weights.'''
+    hfak4 = ak4[(ak4.pt > 100) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
+
+    # Pt truncation here...
+
+    weight = evaluator['hf_mask_efficiency_mc'](hfak4.abseta, hfak4.pt).prod()
+
+    return weights

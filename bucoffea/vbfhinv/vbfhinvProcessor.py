@@ -56,6 +56,7 @@ from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_regions,
                                            ak4_em_frac_weights,
                                            met_trigger_sf,
+                                           apply_hfmask_weights
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -327,12 +328,23 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Sigma eta & phi cut (only for v8 samples because we have the info there)
         if cfg.RUN.ULEGACYV8:
-            jets_for_cut = ak4[(ak4.pt>80) & (ak4.abseta > 2.9) & (ak4.abseta < 5.0)]
+            pt_thresh = 100
+            jets_for_cut = ak4[(ak4.pt > pt_thresh) & (ak4.abseta > 2.9) & (ak4.abseta < 5.0)]
+
+            # We will only consider jets that are back to back with MET i.e. dPhi(jet,MET) > 2.5
+            dphi_hfjet_met = dphi(jets_for_cut.phi, met_phi)
+            dphimask = dphi_hfjet_met > 2.5
+            jets_for_cut = jets_for_cut[dphimask]
 
             seta_minus_phi_alljets = jets_for_cut.setaeta - jets_for_cut.sphiphi
 
-            setaphi_cut_alljets = (seta_minus_phi_alljets < 0.03).all() | (jets_for_cut.counts == 0)
-            stripsize_cut_alljets = (jets_for_cut.hfcentralstripsize < 3).all() | (jets_for_cut.counts == 0)
+            setaphi_corner_cut = ~((jets_for_cut.setaeta < 0.02) & (jets_for_cut.sphiphi < 0.02))
+            setaphi_corner_cut = setaphi_corner_cut.all()
+
+            setaphi_diff_cut_alljets = (seta_minus_phi_alljets < 0.02).all()
+
+            setaphi_cut_alljets = setaphi_corner_cut & setaphi_diff_cut_alljets
+            stripsize_cut_alljets = (jets_for_cut.hfcentralstripsize < 3).all()
 
             fail_hf_cuts = (~setaphi_cut_alljets) | (~stripsize_cut_alljets)
 
@@ -545,6 +557,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 elif re.match(r'cr_g.*', region):
                     photon_trigger_sf(region_weights, photons, df)
 
+                region_weights = apply_hfmask_weights(ak4, region_weights, evaluator)
+
                 # Veto weights
                 if re.match('.*no_veto.*', region):
                     exclude = [
@@ -672,20 +686,21 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
 
-            # All jet eta, for the ones that pass the HF shape cut (if they are in the HF)            
-            def is_hf_jet(_ak4):
-                return (_ak4.pt>80) & (_ak4.abseta > 2.9) & (_ak4.abseta < 5.0)
+            if cfg.RUN.ULEGACYV8:
+                # All jet eta, for the ones that pass the HF shape cut (if they are in the HF)            
+                def is_hf_jet(_ak4):
+                    return (_ak4.pt>80) & (_ak4.abseta > 2.9) & (_ak4.abseta < 5.0)
 
-            sigma_eta_minus_phi = ak4.setaeta - ak4.sphiphi
-            hfmask = ((sigma_eta_minus_phi < 0.03) & (ak4.hfcentralstripsize < 3)) | (~is_hf_jet(ak4))
+                sigma_eta_minus_phi = ak4.setaeta - ak4.sphiphi
+                hfmask = ((sigma_eta_minus_phi < 0.03) & (ak4.hfcentralstripsize < 3)) | (~is_hf_jet(ak4))
 
-            w_alljets_hffiltered = np.where(
-                hfmask[mask].flatten(),
-                w_alljets,
-                0.
-            )
+                w_alljets_hffiltered = np.where(
+                    hfmask[mask].flatten(),
+                    w_alljets,
+                    0.
+                )
 
-            ezfill('ak4_eta_hf_filtered', jeteta=ak4[mask].eta.flatten(),  weight=w_alljets_hffiltered)
+                ezfill('ak4_eta_hf_filtered', jeteta=ak4[mask].eta.flatten(),  weight=w_alljets_hffiltered)
 
             ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
             ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
@@ -806,7 +821,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
 
-            ezfill('dphi_hfjet_met',     dphi=df["dPhiHFJetMET"][mask],    weight=rweight[mask])
+            if cfg.RUN.ULEGACYV8:
+                ezfill('dphi_hfjet_met',     dphi=df["dPhiHFJetMET"][mask],    weight=rweight[mask])
 
             ezfill('vecdphi',     vecdphi=vec_dphi[mask],       weight=rweight[mask] )
             ezfill('vecb',        vecb=vec_b[mask],            weight=rweight[mask] )

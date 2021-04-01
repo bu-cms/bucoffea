@@ -18,11 +18,11 @@ def parse_commandline():
 def main():
     # Test on old and new UL samples
     fileset = {
-        "MET_ver1_2017B" : [
-            "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/MET/MET_ver1_2017B/210205_210910/0000/tree_1.root"
-        ],
-        "DYJetsToLL_M-50-MLM_2017" : [
-            "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/DYJetsToLL_M-50-MLM_2017/210226_195924/0000/tree_13.root"
+        # "MET_ver1_2017B" : [
+            # "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/MET/MET_ver1_2017B/210205_210910/0000/tree_1.root"
+        # ],
+        "ZJetsToNuNu_HT-200To400-mg_2017" : [
+            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/03Sep20v7/ZJetsToNuNu_HT-200To400_13TeV-madgraph/ZJetsToNuNu_HT-200To400-mg_2017/200925_172931/0000/tree_20.root"
         ],
     }
 

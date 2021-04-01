@@ -219,8 +219,8 @@ default:
 
   run:
     sync: False
-    ulegacy: True
-    ulegacyv8: True
+    ulegacy: False
+    ulegacyv8: False
     datarun: True
     jetid: True
     at_least_one_hf_jet: False
@@ -513,6 +513,10 @@ era2017:
       histogram: sf_neg_endcap_2017
       file: data/sf/ak4/jet_id_sf_for_endcaps.root
 
+    hf_mask_efficiency_mc:
+      histogram: Efficiency_Data_2017
+      file: data/sf/hfmask/EffcySFandNoisePassRate.root
+
 era2018:
   triggers:
     met:
@@ -662,3 +666,7 @@ era2018:
     ak4_em_frac_sf_neg_endcap:
       histogram: sf_neg_endcap_2018
       file: data/sf/ak4/jet_id_sf_for_endcaps.root
+
+    hf_mask_efficiency_mc:
+      histogram: Efficiency_Data_2018
+      file: data/sf/hfmask/EffcySFandNoisePassRate.root
