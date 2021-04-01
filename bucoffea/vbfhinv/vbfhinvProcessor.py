@@ -343,7 +343,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             setaphi_diff_cut_alljets = (seta_minus_phi_alljets < 0.02).all()
 
-            setaphi_cut_alljets = setaphi_corner_cut & setaphi_diff_cut_alljets
+            setaphi_cut_higheta = ((jets_for_cut.setaeta < 0.1) & (jets_for_cut.sphiphi > 0.02)).all()
+
+            is_high_eta_jet = jets_for_cut.abseta > 4.0
+            setaphi_cut_alljets = (is_high_eta_jet * setaphi_cut_higheta + ~is_high_eta_jet * (setaphi_corner_cut & setaphi_diff_cut_alljets)).all()
+
             stripsize_cut_alljets = (jets_for_cut.hfcentralstripsize < 3).all()
 
             fail_hf_cuts = (~setaphi_cut_alljets) | (~stripsize_cut_alljets)
