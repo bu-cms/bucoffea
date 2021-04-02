@@ -425,6 +425,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('two_forward_jets', two_forward_jets.any())
             selection.add('one_jet_forward_one_jet_central', one_jet_forward_one_jet_central.any())
 
+        # Mask for 1/5th unlbinding
+        one_fifth_mask = ~pass_all
+
+        # Only pick each 5 entry
+        one_fifth_mask[::5] = True
+        selection.add('one_fifth_mask', one_fifth_mask)
+
         # Dimuon CR
         leadmuon_index=muons.pt.argmax()
         selection.add('at_least_one_tight_mu', df['is_tight_muon'].any())

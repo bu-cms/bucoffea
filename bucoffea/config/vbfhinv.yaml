@@ -221,6 +221,7 @@ default:
     sync: False
     ulegacy: True
     ulegacyv8: True
+    one_fifth_unblind: True
     datarun: False
     jetid: True
     at_least_one_hf_jet: False
