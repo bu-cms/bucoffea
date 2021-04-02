@@ -98,6 +98,12 @@ def plot(args):
                         acc[distribution] = merge_datasets(acc[distribution])
                         acc[distribution].axis('dataset').sorting = 'integral'
                         merged.add(distribution)
+
+                        # Scale the MC if we're using 1/5th unblinding on data
+                        if args.one_fifth_unblind:
+                            mcscale = 0.2
+                        else:
+                            mcscale = 1
                     try:
                         # The heavy lifting of making a plot is hidden
                         # in make_plot. We call it once using the LO MC
@@ -115,7 +121,9 @@ def plot(args):
                                 tag = 'losf',
                                 outdir=f'./output/{os.path.basename(indir)}/{region}',
                                 output_format='pdf',
-                                ratio=ratio)
+                                ratio=ratio,
+                                mcscale=mcscale
+                                )
                     except KeyError:
                         continue
 
@@ -124,6 +132,7 @@ def commandline():
     parser.add_argument('inpath', type=str, help='Input folder to use.')
     parser.add_argument('--region', type=str, default='.*', help='Region to plot.')
     parser.add_argument('--distribution', type=str, default='.*', help='Distribution to plot.')
+    parser.add_argument('--one_fifth_unblind', action='store_true', help='1/5th unblinding for data.')
     args = parser.parse_args()
     return args
 

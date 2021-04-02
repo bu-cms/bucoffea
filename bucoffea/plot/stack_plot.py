@@ -179,7 +179,7 @@ def channel_name(region):
     if '_v' in region:
         return 'Mono-V'
 
-def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf', ratio=True):
+def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='./output/stack/', integrate=None, ylim=None, xlim=None, rylim=None, tag=None, output_format='pdf', ratio=True, mcscale=1):
     """Creates a data vs MC comparison plot
 
     :param acc: Accumulator (processor output)
@@ -188,6 +188,12 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
     # Rebin
     s = Style()
     h = copy.deepcopy(acc[distribution])
+    
+    if region.startswith("sr"):
+        h.scale({
+            ds : (mcscale  if mc.match(ds) else 1) for ds in map(str,h.axis("dataset").identifiers())
+        }, axis='dataset')
+        
     assert(h)
     try:
         newax = s.get_binning(distribution, region)
@@ -324,7 +330,7 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
                 transform=ax.transAxes
                )
 
-    fig.text(1., 1., f'{channel_name(region)}, {lumi(year):.1f} fb$^{{-1}}$ ({year})',
+    fig.text(1., 1., f'{channel_name(region)}, {lumi(year, mcscale):.1f} fb$^{{-1}}$ ({year})',
                 fontsize=14,
                 horizontalalignment='right',
                 verticalalignment='bottom',
