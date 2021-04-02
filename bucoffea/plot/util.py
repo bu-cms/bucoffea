@@ -337,7 +337,7 @@ def load_xs():
     xs.update(tmp)
     return xs
 
-def lumi(year):
+def lumi(year, mcscale=1):
     """Golden JSON luminosity per for given year
 
     :param year: Year of data taking
@@ -346,11 +346,11 @@ def lumi(year):
     :rtype: float
     """
     if year==2018:
-        return 59.7
+        return 59.7 * mcscale
     if year==2017:
-        return 41.5
+        return 41.5 * mcscale
     if year==2016:
-        return 35.9
+        return 35.9 * mcscale
 
 def scale_xs_lumi(histogram, scale_lumi=True):
     """MC normalization so that it's ready to compare to data
