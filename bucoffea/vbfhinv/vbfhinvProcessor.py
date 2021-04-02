@@ -577,10 +577,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 if 'sr_vbf' in region:
                     region_weights = apply_hfmask_weights(ak4, region_weights, evaluator, met_phi)
 
-                if region == 'sr_vbf_fail_hf_cuts' and df['is_data'] and cfg.RUN.QCD_ESTIMATION:                                
-                    region_weights = apply_hf_weights_for_qcd_estimation(ak4, region_weights, evaluator, df)
-                elif region == 'sr_vbf' and not df['is_data'] and cfg.RUN.QCD_ESTIMATION:                                
-                    region_weights = apply_hf_weights_for_qcd_estimation(ak4, region_weights, evaluator, df)
+            if region == 'sr_vbf_fail_hf_cuts' and df['is_data'] and cfg.RUN.QCD_ESTIMATION:                                
+                region_weights = apply_hf_weights_for_qcd_estimation(ak4, region_weights, evaluator, df)
+            elif region == 'sr_vbf' and not df['is_data'] and cfg.RUN.QCD_ESTIMATION:                                
+                region_weights = apply_hf_weights_for_qcd_estimation(ak4, region_weights, evaluator, df)
 
                 # Veto weights
                 if re.match('.*no_veto.*', region):
