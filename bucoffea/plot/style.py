@@ -121,7 +121,7 @@ def plot_settings():
                 'ylim' : (1e0,1e6)
             },
             'mjj' : {
-                'ylim' : (1e-3,1e5)
+                'ylim' : (1e-4,1e4)
             },
             'detajj' : {
                 'ylim' : (1e-1,1e6)
@@ -146,6 +146,52 @@ def plot_settings():
             },
             'ak4_sigma_phi_phi1' : {
                 'ylim' : (1e-1,1e5)
+            },
+            'dPFTkMET' : {
+                'ylim' : (1e-1,1e5)
+            },
+            'vecb' : {
+                'ylim' : (1e-1,1e8)
+            },
+            'vecdphi' : {
+                'ylim' : (1e-1,1e8)
+            },
+            'dphitkpf' : {
+                'ylim' : (1e-1,1e8)
+            },
+        },
+        'sr_vbf_trk_ee' : {
+            'ak4_nef0' : {
+                'ylim' : (1e-2,1e6)
+            },
+            'ak4_nef1' : {
+                'ylim' : (1e-2,1e6)
+            },
+            'vecb' : {
+                'ylim' : (1e-1,1e8)
+            },
+            'vecdphi' : {
+                'ylim' : (1e-1,1e8)
+            },
+            'dphitkpf' : {
+                'ylim' : (1e-1,1e8)
+            },
+        },
+        'sr_vbf_ee_ee' : {
+            'ak4_nef0' : {
+                'ylim' : (1e-2,1e6)
+            },
+            'ak4_nef1' : {
+                'ylim' : (1e-2,1e6)
+            },
+            'vecb' : {
+                'ylim' : (1e-1,1e8)
+            },
+            'vecdphi' : {
+                'ylim' : (1e-1,1e8)
+            },
+            'dphitkpf' : {
+                'ylim' : (1e-1,1e8)
             },
         },
         'sr_j' : {
