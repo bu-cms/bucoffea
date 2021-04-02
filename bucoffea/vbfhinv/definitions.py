@@ -589,3 +589,23 @@ def apply_hfmask_weights(ak4, weights, evaluator, met_phi):
     weights.add('hfweight', hfweight)
 
     return weights
+
+def apply_hf_weights_for_qcd_estimation(ak4, weights, evaluator, df):
+    '''HF weights for the QCD estimation.'''
+    hfak4 = ak4[(ak4.pt > 80) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
+
+    transferfactor = evaluator['hf_mask_noise_passing_rate'](hfak4.abseta, hfak4.pt).prod() / (1 - evaluator['hf_mask_noise_passing_rate'](hfak4.abseta, hfak4.pt).prod())
+    transferfactor[np.isnan(transferfactor) | np.isinf(transferfactor)] = 0.
+    
+    # For data, we'll scale the event by P(pass | noise) / P(fail | noise)
+    if df['is_data']:
+        hfweight = transferfactor
+
+    # For MC, include the mistag rate
+    else:
+        mistagrate = 1 - evaluator['hf_mask_efficiency_mc'](hfak4.abseta, hfak4.pt).prod()
+        hfweight = mistagrate * transferfactor
+
+    weights.add('hfweight', hfweight)
+
+    return weights

@@ -219,11 +219,12 @@ default:
 
   run:
     sync: False
-    ulegacy: True
-    ulegacyv8: True
-    one_fifth_unblind: True
+    ulegacy: False
+    ulegacyv8: False
+    one_fifth_unblind: False
     datarun: False
     jetid: True
+    qcd_estimation: True
     at_least_one_hf_jet: False
     apply_cleaning_cuts: False
     save:
@@ -517,7 +518,10 @@ era2017:
     hf_mask_efficiency_mc:
       histogram: Efficiency_Data_2017
       file: data/sf/hfmask/EffcySFandNoisePassRate.root
-
+    hf_mask_noise_passing_rate:
+      histogram: NoisePassingRate_2017
+      file: data/sf/hfmask/EffcySFandNoisePassRate.root
+      
 era2018:
   triggers:
     met:
@@ -670,4 +674,7 @@ era2018:
 
     hf_mask_efficiency_mc:
       histogram: Efficiency_Data_2018
+      file: data/sf/hfmask/EffcySFandNoisePassRate.root
+    hf_mask_noise_passing_rate:
+      histogram: NoisePassingRate_2018
       file: data/sf/hfmask/EffcySFandNoisePassRate.root
