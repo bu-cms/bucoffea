@@ -120,6 +120,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nef0_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
     items["ak4_sigma_eta_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
@@ -131,6 +132,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi1"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nef1_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst1"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
     items["ak4_sigma_eta_eta1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
@@ -306,6 +308,14 @@ def vbfhinv_regions(cfg):
         regions['sr_vbf'].remove('hornveto')
         regions['sr_vbf'].remove('dpfcalo_sr')
         regions['sr_vbf'].remove('eemitigation')
+
+    # Trk-EE events in SR
+    regions['sr_vbf_trk_ee'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_trk_ee'].append('is_trk_ee_event')
+
+    # EE-EE events in SR
+    regions['sr_vbf_ee_ee'] = copy.deepcopy(regions['sr_vbf'])
+    regions['sr_vbf_ee_ee'].append('is_ee_ee_event')
 
     # QCD CR with the HF shape cuts inverted
     regions['sr_vbf_fail_hf_cuts'] = copy.deepcopy(regions['sr_vbf'])
@@ -565,7 +575,7 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
 
 def apply_hfmask_weights(ak4, weights, evaluator, met_phi):
     '''On ReReco MC, apply the HF mask efficiency weights.'''
-    hfak4 = ak4[(ak4.pt > 100) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
+    hfak4 = ak4[(ak4.pt > 80) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
 
     # Only consider jets that are back to back with MET
     dphi_hfjet_met = dphi(hfak4.phi, met_phi)

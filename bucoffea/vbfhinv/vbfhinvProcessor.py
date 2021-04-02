@@ -328,7 +328,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Sigma eta & phi cut (only for v8 samples because we have the info there)
         if cfg.RUN.ULEGACYV8:
-            pt_thresh = 100
+            pt_thresh = 80
             jets_for_cut = ak4[(ak4.pt > pt_thresh) & (ak4.abseta > 2.9) & (ak4.abseta < 5.0)]
 
             # We will only consider jets that are back to back with MET i.e. dPhi(jet,MET) > 2.5
@@ -384,7 +384,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         max_neEmEF_ak41 = (~ak41_in_endcap) | (diak4.i1.nef < 0.7) 
 
         max_neEmEF = (max_neEmEF_ak40 & max_neEmEF_ak41).any()
-        selection.add('max_neEmEF', max_neEmEF)
+        # selection.add('max_neEmEF', max_neEmEF)
         
         vec_b = calculate_vecB(ak4, met_pt, met_phi)
         vec_dphi = calculate_vecDPhi(ak4, met_pt, met_phi, df['TkMET_phi'])
@@ -404,11 +404,17 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         (no_jet_in_trk & at_least_one_jet_in_hf) & (vec_b < 0.2)
                     )
 
-        selection.add('eemitigation', eemitigation)
+        # selection.add('eemitigation', eemitigation)
 
         # HF-HF veto in SR
         both_jets_in_hf = (diak4.i0.abseta > 3.0) & (diak4.i1.abseta > 3.0)
-        selection.add('veto_hfhf', ~both_jets_in_hf.any())
+        # selection.add('veto_hfhf', ~both_jets_in_hf.any())
+
+        is_trk_ee_event = (ak40_in_endcap & (diak4.i1.abseta < 2.5)) | (ak41_in_endcap & (diak4.i0.abseta < 2.5).any())
+        is_ee_ee_event = ak40_in_endcap & ak41_in_endcap
+
+        selection.add('is_trk_ee_event', is_trk_ee_event.any())
+        selection.add('is_ee_ee_event', is_ee_ee_event.any())
 
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
@@ -716,6 +722,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_ptraw0',    jetpt=diak4.i0.ptraw[mask].flatten(),   weight=w_diak4)
             ezfill('ak4_chf0',      frac=diak4.i0.chf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nhf0',      frac=diak4.i0.nhf[mask].flatten(),      weight=w_diak4)
+            ezfill('ak4_nef0',      frac=diak4.i0.nef[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst0',   nconst=diak4.i0.nconst[mask].flatten(), weight=w_diak4)
 
             ezfill('ak4_pt0_eta0',  jetpt=diak4.i0.pt[mask].flatten(),     jeteta=diak4.i0.eta[mask].flatten(),     weight=w_diak4)
@@ -727,6 +734,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_ptraw1',    jetpt=diak4.i1.ptraw[mask].flatten(),   weight=w_diak4)
             ezfill('ak4_chf1',      frac=diak4.i1.chf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
+            ezfill('ak4_nef1',      frac=diak4.i1.nef[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
 
             if cfg.RUN.ULEGACYV8:
