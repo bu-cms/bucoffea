@@ -98,7 +98,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
     hist.plot1d(h[data], ax=ax, overlay='dataset', binwnorm=1, error_opts=data_err_opts)
     hist.plot1d(h[mc], ax=ax, overlay='dataset', stack=True, clear=False, binwnorm=1)
 
-    hep.histplot(h_qcd.values, h_qcd.edges, ax=ax, label='HF QCD Estimate', binwnorm=1, **qcd_err_opts)
+    hep.histplot(h_qcd.values * mcscale, h_qcd.edges, ax=ax, label='HF QCD Estimate', binwnorm=1, **qcd_err_opts)
 
     ax.set_yscale('log')
     ax.set_ylim(1e-4,1e4)
@@ -130,7 +130,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
 
     sumw_data, sumw2_data = h_data.values(sumw2=True)[()]
     # Add the QCD contribution to the MC
-    sumw_mc = h_mc.values()[()] + h_qcd.values
+    sumw_mc = h_mc.values()[()] + h_qcd.values * mcscale
 
     r = sumw_data / sumw_mc
     rerr = np.sqrt(sumw2_data) / sumw_mc
