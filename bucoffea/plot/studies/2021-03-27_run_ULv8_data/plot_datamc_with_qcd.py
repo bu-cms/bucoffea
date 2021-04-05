@@ -10,6 +10,7 @@ import mplhep as hep
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from coffea import hist
+from coffea.hist import poisson_interval
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi, fig_ratio, lumi
 from bucoffea.helpers.paths import bucoffea_path
 from klepto.archives import dir_archive
@@ -133,7 +134,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
     sumw_mc = h_mc.values()[()] + h_qcd.values * mcscale
 
     r = sumw_data / sumw_mc
-    rerr = np.sqrt(sumw2_data) / sumw_mc
+    rerr = np.abs(poisson_interval(r, sumw2_data / sumw_mc**2) - r)
 
     hep.histplot(
         r,
