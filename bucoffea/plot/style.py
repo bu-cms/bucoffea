@@ -159,6 +159,12 @@ def plot_settings():
             'dphitkpf' : {
                 'ylim' : (1e-1,1e8)
             },
+            'ak4_nef0' : {
+                'ylim' : (1e-2,1e6)
+            },
+            'ak4_nef1' : {
+                'ylim' : (1e-2,1e6)
+            },
         },
         'sr_vbf_trk_ee' : {
             'ak4_nef0' : {
