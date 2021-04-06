@@ -312,20 +312,6 @@ def vbfhinv_regions(cfg):
         regions['sr_vbf'].remove('dpfcalo_sr')
         regions['sr_vbf'].remove('eemitigation')
 
-    # Trk-EE events in SR
-    regions['sr_vbf_trk_ee'] = copy.deepcopy(regions['sr_vbf'])
-    regions['sr_vbf_trk_ee'].append('is_trk_ee_event')
-
-    # EE-EE events in SR
-    regions['sr_vbf_ee_ee'] = copy.deepcopy(regions['sr_vbf'])
-    regions['sr_vbf_ee_ee'].append('is_ee_ee_event')
-
-    # QCD CR with the HF shape cuts inverted
-    regions['sr_vbf_fail_hf_cuts'] = copy.deepcopy(regions['sr_vbf'])
-    regions['sr_vbf_fail_hf_cuts'].remove('central_stripsize_cut')
-    regions['sr_vbf_fail_hf_cuts'].remove('sigma_eta_minus_phi')
-    regions['sr_vbf_fail_hf_cuts'].append('fail_hf_cuts')
-
     # For sync mode
     if cfg and cfg.RUN.SYNC:
         regions['cr_sync'] = [
@@ -607,5 +593,16 @@ def apply_hf_weights_for_qcd_estimation(ak4, weights, evaluator, df):
         hfweight = mistagrate * transferfactor
 
     weights.add('hfweight', hfweight)
+
+    return weights
+
+def apply_jeteta_based_weights(diak4, weights, evaluator):
+    '''Jet eta based weights derived from UL data / ReReco MC.'''
+    w_ak40 = evaluator['endcap_w_rereco_mc_leadak4'](diak4.i0.eta).prod()
+    w_ak41 = evaluator['endcap_w_rereco_mc_trailak4'](diak4.i1.eta).prod()
+
+    w = w_ak40 * w_ak41
+
+    weights.add('endcap_weight', w)
 
     return weights

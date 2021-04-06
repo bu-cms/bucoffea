@@ -57,7 +57,8 @@ from bucoffea.vbfhinv.definitions import (
                                            ak4_em_frac_weights,
                                            met_trigger_sf,
                                            apply_hfmask_weights,
-                                           apply_hf_weights_for_qcd_estimation
+                                           apply_hf_weights_for_qcd_estimation,
+                                           apply_jeteta_based_weights
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -576,6 +577,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                 if 'sr_vbf' in region:
                     region_weights = apply_hfmask_weights(ak4, region_weights, evaluator, met_phi)
+                    region_weights = apply_jeteta_based_weights(diak4, region_weights, evaluator)
 
             if region == 'sr_vbf_fail_hf_cuts' and df['is_data'] and cfg.RUN.QCD_ESTIMATION:                                
                 region_weights = apply_hf_weights_for_qcd_estimation(ak4, region_weights, evaluator, df)

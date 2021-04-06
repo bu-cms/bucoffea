@@ -219,8 +219,8 @@ default:
 
   run:
     sync: False
-    ulegacy: True
-    ulegacyv8: True
+    ulegacy: False
+    ulegacyv8: False
     one_fifth_unblind: True
     datarun: False
     jetid: True
@@ -522,6 +522,13 @@ era2017:
       histogram: NoisePassingRate_2017
       file: data/sf/hfmask/EffcySFandNoisePassRate.root
       
+    endcap_w_rereco_mc_leadak4:
+      histogram: mc_weights_ak4_eta0
+      file: data/sf/mc/jet_eta_weights.root
+    endcap_w_rereco_mc_trailak4:
+      histogram: mc_weights_ak4_eta1
+      file: data/sf/mc/jet_eta_weights.root
+
 era2018:
   triggers:
     met:
@@ -678,3 +685,10 @@ era2018:
     hf_mask_noise_passing_rate:
       histogram: NoisePassingRate_2018
       file: data/sf/hfmask/EffcySFandNoisePassRate.root
+
+    endcap_w_rereco_mc_leadak4:
+      histogram: mc_weights_ak4_eta0
+      file: data/sf/mc/jet_eta_weights.root
+    endcap_w_rereco_mc_trailak4:
+      histogram: mc_weights_ak4_eta1
+      file: data/sf/mc/jet_eta_weights.root
