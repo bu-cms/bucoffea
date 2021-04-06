@@ -52,7 +52,7 @@ def derive_weights(acc, outtag, rootf, outdir, year=2017, distribution='ak4_eta0
 
     rsumw_err = np.abs(poisson_interval(rsumw, data_sumw2 / mc_sumw**2) - rsumw)
 
-    jet_in_endcap = (np.abs(eta_ax) > 2.5) & (np.abs(eta_ax) < 3.5)
+    jet_in_endcap = (np.abs(eta_ax) > 2.4) & (np.abs(eta_ax) < 3.5)
     ratio = np.where(
         jet_in_endcap,
         rsumw,
