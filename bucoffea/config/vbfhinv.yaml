@@ -221,7 +221,7 @@ default:
     sync: False
     ulegacy: False
     ulegacyv8: False
-    one_fifth_unblind: True
+    one_fifth_unblind: False
     datarun: False
     jetid: True
     qcd_estimation: False
