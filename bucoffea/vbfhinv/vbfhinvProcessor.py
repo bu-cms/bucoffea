@@ -472,7 +472,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             weights.add("bveto", (1-bsf_variations["central"]).prod())
 
             weights = pileup_weights(weights, df, evaluator, cfg)
-            weights = ak4_em_frac_weights(weights, diak4, evaluator)
+            if cfg.RUN.APPLY_CLEANING_CUTS:
+                weights = ak4_em_frac_weights(weights, diak4, evaluator)
             if not (gen_v_pt is None):
                 weights = theory_weights_vbf(weights, df, evaluator, gen_v_pt, df['mjj_gen'])
 

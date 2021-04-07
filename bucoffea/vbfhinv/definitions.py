@@ -306,7 +306,6 @@ def vbfhinv_regions(cfg):
 
     if not cfg.RUN.APPLY_CLEANING_CUTS:
         regions['sr_vbf'].remove('hornveto')
-        regions['sr_vbf'].remove('dpfcalo_sr')
         regions['sr_vbf'].remove('eemitigation')
 
     # For sync mode
