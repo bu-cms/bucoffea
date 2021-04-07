@@ -58,7 +58,7 @@ from bucoffea.vbfhinv.definitions import (
                                            met_trigger_sf,
                                            apply_hfmask_weights,
                                            apply_hf_weights_for_qcd_estimation,
-                                           apply_jeteta_based_weights
+                                           apply_endcap_weights
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -273,40 +273,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
         has_track0 = np.abs(diak4.i0.eta) <= 2.5
         has_track1 = np.abs(diak4.i1.eta) <= 2.5
 
-        def is_hf_jet(ak4, etamin=2.9, etamax=5.0, ptmin=100):
-            return (ak4.abseta > etamin) & (ak4.abseta < etamax) & (ak4.pt > ptmin)
-
-        # Pick events with at least one HF jet with high enough pt (> 100 GeV)        
-        ak4_hf = ak4[is_hf_jet(ak4)]
-        selection.add('at_least_one_hf_jet', ak4_hf.counts > 0)
-
-        # Test: Save events with leading jet |eta| > 2.9
-        leadak4_in_hf = (diak4.i0.abseta > 2.9).any()
-        selection.add('leadak4_in_hf', leadak4_in_hf)
-
-        # Remove the ID requirement on the leading jet, depending on the config
-        if cfg.RUN.JETID:
-            leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
-        else:
-            leadak4_id = has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0
-        
+        leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
         trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
-
-        # Store the eta of the more forward (and central) VBF jet
-        leadjet_more_central = diak4.i0.abseta <= diak4.i1.abseta
-        leadjet_more_forward = ~leadjet_more_central
-
-        central_jet_eta = np.where(
-            leadjet_more_central,
-            diak4.i0.eta.min(),
-            diak4.i1.eta.min(),
-        )
-
-        forward_jet_eta = np.where(
-            leadjet_more_forward,
-            diak4.i0.eta.min(),
-            diak4.i1.eta.min(),
-        )
 
         df['mjj'] = diak4.mass.max()
         df['dphijj'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
@@ -330,8 +298,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Sigma eta & phi cut (only for v8 samples because we have the info there)
         if cfg.RUN.ULEGACYV8:
-            pt_thresh = 80
-            jets_for_cut = ak4[(ak4.pt > pt_thresh) & (ak4.abseta > 2.9) & (ak4.abseta < 5.0)]
+            jets_for_cut = ak4[(ak4.pt > cfg.RUN.HF_PT_THRESH) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
 
             # We will only consider jets that are back to back with MET i.e. dPhi(jet,MET) > 2.5
             dphi_hfjet_met = dphi(jets_for_cut.phi, met_phi)
@@ -576,8 +543,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     photon_trigger_sf(region_weights, photons, df)
 
                 if 'sr_vbf' in region:
-                    region_weights = apply_hfmask_weights(ak4, region_weights, evaluator, met_phi)
-                    region_weights = apply_jeteta_based_weights(diak4, region_weights, evaluator)
+                    if cfg.RUN.APPLY_WEIGHTS.HFMASK:
+                        region_weights = apply_hfmask_weights(ak4, region_weights, evaluator, met_phi, cfg)
+                    if cfg.RUN.APPLY_WEIGHTS.ENDCAP:
+                        region_weights = apply_endcap_weights(diak4, region_weights, evaluator)
 
             if region == 'sr_vbf_fail_hf_cuts' and df['is_data'] and cfg.RUN.QCD_ESTIMATION:                                
                 region_weights = apply_hf_weights_for_qcd_estimation(ak4, region_weights, evaluator, df)

@@ -295,9 +295,6 @@ def vbfhinv_regions(cfg):
             'veto_hfhf',
         ])
 
-    if cfg.RUN.AT_LEAST_ONE_HF_JET:
-        common_cuts.append('at_least_one_hf_jet')
-
     regions = {}
     regions['inclusive'] = ['inclusive']
 
@@ -376,23 +373,21 @@ def vbfhinv_regions(cfg):
                                         'detajj',
                                         ]
 
-    # If only running over data, no need to create these additional regions
-    if not cfg.RUN.DATARUN:
-        tmp = {}
-        for region in regions.keys():
-            if not region.startswith("sr_"):
-                continue
-            new_region = f"{region}_no_veto_all"
-            tmp[new_region] = copy.deepcopy(regions[region])
-            tmp[new_region].remove("veto_muo")
-            tmp[new_region].remove("veto_tau")
-            tmp[new_region].remove("veto_ele")
-            tmp[new_region].remove("mindphijr")
-            tmp[new_region].remove("recoil")
-            tmp[new_region].append("met_sr")
-            tmp[new_region].append("mindphijm")
+    tmp = {}
+    for region in regions.keys():
+        if not region.startswith("sr_"):
+            continue
+        new_region = f"{region}_no_veto_all"
+        tmp[new_region] = copy.deepcopy(regions[region])
+        tmp[new_region].remove("veto_muo")
+        tmp[new_region].remove("veto_tau")
+        tmp[new_region].remove("veto_ele")
+        tmp[new_region].remove("mindphijr")
+        tmp[new_region].remove("recoil")
+        tmp[new_region].append("met_sr")
+        tmp[new_region].append("mindphijm")
 
-        regions.update(tmp)
+    regions.update(tmp)
 
     if cfg and cfg.RUN.TRIGGER_STUDY:
         # Trigger studies
@@ -562,9 +557,9 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
     sf[np.isnan(sf) | np.isinf(sf)] == 1
     weights.add("trigger_met", sf)
 
-def apply_hfmask_weights(ak4, weights, evaluator, met_phi):
+def apply_hfmask_weights(ak4, weights, evaluator, met_phi, cfg):
     '''On ReReco MC, apply the HF mask efficiency weights.'''
-    hfak4 = ak4[(ak4.pt > 80) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
+    hfak4 = ak4[(ak4.pt > cfg.RUN.HF_PT_THRESH) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
 
     # Only consider jets that are back to back with MET
     dphi_hfjet_met = dphi(hfak4.phi, met_phi)
@@ -596,7 +591,7 @@ def apply_hf_weights_for_qcd_estimation(ak4, weights, evaluator, df):
 
     return weights
 
-def apply_jeteta_based_weights(diak4, weights, evaluator):
+def apply_endcap_weights(diak4, weights, evaluator):
     '''Jet eta based weights derived from UL data / ReReco MC.'''
     w_ak40 = evaluator['endcap_w_rereco_mc_leadak4'](diak4.i0.eta).prod()
     w_ak41 = evaluator['endcap_w_rereco_mc_trailak4'](diak4.i1.eta).prod()

@@ -462,9 +462,6 @@ def setup_candidates(df, cfg):
     if cfg.OVERLAP.BTAG.PHOTON.CLEAN:
         bjets = bjets[object_overlap(bjets, photons, dr=cfg.OVERLAP.BTAG.PHOTON.DR)]
 
-    if cfg.RUN.JETID:
-        ak4 = ak4[ak4.looseId]
-
     if cfg.OVERLAP.AK4.MUON.CLEAN:
         ak4 = ak4[object_overlap(ak4, muons, dr=cfg.OVERLAP.AK4.MUON.DR)]
     if cfg.OVERLAP.AK4.ELECTRON.CLEAN:

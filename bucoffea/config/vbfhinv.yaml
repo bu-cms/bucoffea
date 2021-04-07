@@ -222,11 +222,12 @@ default:
     ulegacy: False
     ulegacyv8: False
     one_fifth_unblind: False
-    datarun: False
-    jetid: True
     qcd_estimation: False
-    at_least_one_hf_jet: False
     apply_cleaning_cuts: False
+    hf_pt_thresh: 80
+    apply_weights:
+      hfmask: False
+      endcap: False
     save:
       passing: False
       tree: False
