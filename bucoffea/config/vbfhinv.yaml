@@ -219,8 +219,7 @@ default:
 
   run:
     sync: False
-    ulegacy: False
-    ulegacyv8: False
+    ulegacyv8: True
     one_fifth_unblind: False
     qcd_estimation: False
     apply_cleaning_cuts: False

@@ -502,7 +502,7 @@ def setup_candidates(df, cfg):
     ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
     # No EE v2 fix in UL
-    if cfg.RUN.ULEGACY or cfg.RUN.ULEGACYV8:
+    if cfg.RUN.ULEGACYV8:
         met_branch = 'MET'
     else:
         if extract_year(df['dataset']) == 2017:
