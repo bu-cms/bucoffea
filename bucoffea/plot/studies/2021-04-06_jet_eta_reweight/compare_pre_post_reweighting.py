@@ -90,6 +90,15 @@ def compare_pre_post_reweighting(acc_dict, outtag, distribution='mjj', region='s
     loc = MultipleLocator(0.2)
     rax.yaxis.set_major_locator(loc)
 
+    new_xlabels = {
+        'ak4_eta0': r'Leading Jet $\eta$',
+        'ak4_eta1': r'Trailing Jet $\eta$',
+    }
+
+    if distribution in new_xlabels.keys():
+        ax.set_xlabel(new_xlabels[distribution])
+        rax.set_xlabel(new_xlabels[distribution])
+
     outdir = f'./output/{outtag}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -111,7 +120,8 @@ def main():
 
     outtag = '06Apr21'
 
-    compare_pre_post_reweighting(acc_dict, outtag)
+    for distribution in ['mjj', 'ak4_eta0', 'ak4_eta1']:
+        compare_pre_post_reweighting(acc_dict, outtag, distribution=distribution)
 
 if __name__ == '__main__':
     main()
