@@ -16,7 +16,7 @@ pjoin = os.path.join
 
 matplotlib_rc()
 
-def preprocess(h, acc, region, distribution, year=2017):
+def preprocess(h, acc, region, distribution, year=2017, plot='total_bkg'):
     h = merge_extensions(h, acc, reweight_pu=False)
     scale_xs_lumi(h)
     h = merge_datasets(h)
@@ -28,17 +28,22 @@ def preprocess(h, acc, region, distribution, year=2017):
         h = h.rebin('mjj',mjj_ax)
 
     # Get total MC bkg in SR
-    mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}')
+    if plot == 'total_bkg':
+        mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}')
+    elif plot == 'signal':
+        mc = re.compile(f'VBF_HToInv.*M125.*{year}')
+    else:
+        raise RuntimeError(f'Invalid parameter name for plot: {plot}x')
     h = h.integrate('dataset', mc)
 
     return h
 
-def compare_pre_post_reweighting(acc_dict, outtag, distribution='mjj', region='sr_vbf'):
+def compare_pre_post_reweighting(acc_dict, outtag, distribution='mjj', region='sr_vbf', plot='total_bkg'):
     '''Compare pre and post reweighting distributions of the total bkg.'''
     histos = {}
     for key, acc in acc_dict.items():
         acc.load(distribution)
-        histos[key] = preprocess(acc[distribution], acc, region, distribution)
+        histos[key] = preprocess(acc[distribution], acc, region, distribution, plot=plot)
 
     fig, ax, rax = fig_ratio()
     hist.plot1d(histos['withReweighting'], ax=ax)
@@ -54,7 +59,12 @@ def compare_pre_post_reweighting(acc_dict, outtag, distribution='mjj', region='s
         'No Reweighting',
     ])
 
-    ax.text(0.,1.,'ReReco MC Bkg 2017',
+    plot_to_text = {
+        'total_bkg' : 'ReReco MC Bkg 2017',
+        'signal' : 'VBF H(inv) 2017',
+    }
+
+    ax.text(0.,1., plot_to_text[plot],
         fontsize=14,
         ha='left',
         va='bottom',
@@ -102,7 +112,7 @@ def compare_pre_post_reweighting(acc_dict, outtag, distribution='mjj', region='s
     outdir = f'./output/{outtag}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    outpath = pjoin(outdir, f'{region}_{distribution}.pdf')
+    outpath = pjoin(outdir, f'{plot}_{region}_{distribution}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
 
@@ -120,8 +130,9 @@ def main():
 
     outtag = '06Apr21'
 
-    for distribution in ['mjj', 'ak4_eta0', 'ak4_eta1']:
-        compare_pre_post_reweighting(acc_dict, outtag, distribution=distribution)
+    for plot in ['signal','total_bkg']:
+        for distribution in ['mjj', 'ak4_eta0', 'ak4_eta1']:
+            compare_pre_post_reweighting(acc_dict, outtag, distribution=distribution, plot=plot)
 
 if __name__ == '__main__':
     main()
