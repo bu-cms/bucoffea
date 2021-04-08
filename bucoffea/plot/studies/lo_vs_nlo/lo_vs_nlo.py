@@ -12,6 +12,8 @@ from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
 
 
 def plot(args):
+        if not args.nlo:
+            print("Warning: You are plotting with LO VJets MC samples, which is not the recommended version. Please use --nlo")
         indir=os.path.abspath(args.inpath)
 
         # The processor output is stored in an
@@ -57,18 +59,36 @@ def plot(args):
                 'cr_1e_j' : f'EGamma_{year}',
                 'cr_2e_j' : f'EGamma_{year}',
                 'cr_g_j' : f'EGamma_{year}',
+                'sr_j' : f'MET_{year}',
             }
 
             # Same for MC selection
             # Match datasets by regular expressions
             # Here for LO V samples (HT binned)
-            mc_lo = {
-                'cr_1m_j' : re.compile(f'(Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
-                'cr_1e_j' : re.compile(f'(Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*|GJets_1j.*).*{year}'),
-                'cr_2m_j' : re.compile(f'(Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_2e_j' : re.compile(f'(Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL_M-50_HT_MLM)_{year}'),
-                'cr_g_j' : re.compile(f'(GJets_1j.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
-            }
+            if args.nlo:
+                tag = 'nlo'
+                if year==2017:
+                    wjets_nlo_regex = ".*WNJetsToLNu.*"
+                elif year==2018:
+                    wjets_nlo_regex = "WJetsToLNu.*FXFX.*"
+                mc_map = {
+                    'cr_1m_j' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|DYNJetsToLL|{wjets_nlo_regex}).*{year}'),
+                    'cr_1e_j' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|DYNJetsToLL|{wjets_nlo_regex}|GJets_1j_).*{year}'),
+                    'cr_2m_j' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|DYNJetsToLL).*{year}'),
+                    'cr_2e_j' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|DYNJetsToLL).*{year}'),
+                    'cr_g_j' : re.compile(f'(GJets_1j_|QCD_data|{wjets_nlo_regex}).*{year}'),
+                    'sr_j' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|DYNJetsToLL|{wjets_nlo_regex}|GJets_1j_|ZNJetsToNuNu.*FXFX).*{year}'),
+                    }
+            else:
+                tag = 'losf'
+                mc_map = {
+                    'cr_1m_j' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|.*DYJetsToLL_M-50_HT_MLM|.*WJetsToLNu.*HT).*{year}'),
+                    'cr_1e_j' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|.*DYJetsToLL_M-50_HT_MLM|.*WJetsToLNu.*HT|GJets_DR).*{year}'),
+                    'cr_2m_j' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|.*DYJetsToLL_M-50_HT_MLM).*{year}'),
+                    'cr_2e_j' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|DYJetsToLL_M-50_HT_MLM)_{year}'),
+                    'cr_g_j' : re.compile(f'(GJets_DR|QCD_data|WJetsToLNu.*HT).*{year}'),
+                    'sr_j' : re.compile(f'(Top_FXFX|Diboson|QCD_HT|DYNJetsToLL|WJetsToLNu.*HT|GJets_DR|ZJetsToNuNu).*{year}'),
+                }
 
             # Load ingredients from cache
             acc.load('sumw')
@@ -77,7 +97,7 @@ def plot(args):
 
             # Data / MC plots are made here
             # Loop over all regions
-            for region in mc_lo.keys():
+            for region in mc_map.keys():
                 if not re.match(args.region, region):
                         continue
                 # Make separate output direcotry for each region
@@ -105,27 +125,37 @@ def plot(args):
                         # The heavy lifting of making a plot is hidden
                         # in make_plot. We call it once using the LO MC
 
-                        imc = mc_lo[region]
+                        imc = mc_map[region]
                         if "cr_g" in region and distribution!="recoil":
                             imc = re.compile(imc.pattern.replace('QCD_data','QCD.*HT'))
+                        plotting_options = {
+                                "region"       : region,
+                                "distribution" : distribution,
+                                "year"         : year,
+                                "data"         : data[region],
+                                "mc"           : imc,
+                                "ylim"         : plotset[distribution].get('ylim',None),
+                                "xlim"         : plotset[distribution].get('xlim',None),
+                                "tag"          : tag,
+                                "outdir"       : f'./output/{os.path.basename(indir)}/{region}'
+                                }
+                        if args.mcscale and "sr" in region:
+                            plotting_options["mcscale"] = args.mcscale
                         make_plot(acc,
-                                region=region,
-                                distribution=distribution,
-                                year=year,
-                                data=data[region],
-                                mc=imc,
-                                ylim=plotset[distribution].get('ylim',None),
-                                xlim=plotset[distribution].get('xlim',None),
-                                tag = 'losf',
-                                outdir=f'./output/{os.path.basename(indir)}/{region}')
+                                **plotting_options)
 
                     except KeyError:
+                        continue
+                    except Exception:
+                        print(f"plotting failed for region={region}, distribution={distribution}, year={year}, data={data}, mc={imc}")
                         continue
 def commandline():
     parser = argparse.ArgumentParser(prog='Plotter.')
     parser.add_argument('inpath', type=str, help='Input folder to use.')
-    parser.add_argument('--region', type=str, default='.*', help='Region to plot.')
-    parser.add_argument('--distribution', type=str, default='.*', help='Distribution to plot.')
+    parser.add_argument('--region', type=str, default='(sr|cr_(1e|2e|1m|2m|g))_j', help='Region to plot.')
+    parser.add_argument('--nlo', action='store_true', help='Use NLO MC sample')
+    parser.add_argument('--distribution', type=str, default='(recoil$|met$|ak4_(pt0?$|eta|mult)|electron_(pt|eta|mt)|muon_(pt|eta|mt)|photon_(pt|eta)|di(electron|muon)_(pt|mass))', help='Distribution to plot.')
+    parser.add_argument('--mcscale', type=float, default=None, help='scale SR MC by factor')
     args = parser.parse_args()
     return args
 
