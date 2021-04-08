@@ -14,6 +14,7 @@ from coffea.hist import poisson_interval
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi, fig_ratio, lumi
 from bucoffea.helpers.paths import bucoffea_path
 from klepto.archives import dir_archive
+from pprint import pprint
 
 pjoin = os.path.join
 
@@ -37,7 +38,7 @@ legend_labels = {
     'EWKW.*LNu.*' : "EWK W$\\rightarrow\\ell\\nu$",
     'ZJetsToNuNu.*.*' : "QCD Z$\\rightarrow\\nu\\nu$",
     'EWKZ.*ZToNuNu.*' : "EWK Z$\\rightarrow\\nu\\nu$",
-    'QCD.*' : "QCD",
+    'QCD.*' : "QCD Estimation",
     'Top.*' : "Top quark",
     'Diboson.*' : "WW/WZ/ZZ",
     'MET|Single(Electron|Photon|Muon)|EGamma.*' : "Data"
@@ -50,6 +51,7 @@ colors = {
     'EWKZ.*ZToNuNu.*' : '#c4cae2',
     '.*Diboson.*' : '#4292c6',
     'Top.*' : '#6a51a3',
+    '.*QCD.*' : '#08306b',
     '.*TT.*' : '#6a51a3',
     '.*ST.*' : '#9e9ac8',
     'ZJetsToNuNu.*' : '#31a354',
@@ -73,7 +75,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
 
     h = h.integrate('region', region)
     data = f'MET_{year}'
-    mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}')
+    mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
     
     h.scale({
         ds : (mcscale  if mc.match(ds) else 1) for ds in map(str,h.axis("dataset").identifiers())
@@ -91,19 +93,38 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
         'elinewidth': 1,
     }
 
-    qcd_err_opts = {
-        'color':'crimson',
+    datasets = list(map(str, h[mc].identifiers('dataset')))
+
+    plot_info = {
+        'label' : datasets,
+        'sumw' : [],
     }
+
+    for dataset in datasets:
+        sumw = h.integrate('dataset', dataset).values()[()]
+
+        plot_info['sumw'].append(sumw)
+
+    # Add the QCD contribution
+    plot_info['label'].insert(2, 'QCD Estimation')
+    plot_info['sumw'].insert(2, h_qcd.values * mcscale)
 
     fig, ax, rax = fig_ratio()
     hist.plot1d(h[data], ax=ax, overlay='dataset', binwnorm=1, error_opts=data_err_opts)
-    hist.plot1d(h[mc], ax=ax, overlay='dataset', stack=True, clear=False, binwnorm=1)
 
-    hep.histplot(h_qcd.values * mcscale, h_qcd.edges, ax=ax, label='HF QCD Estimate', binwnorm=1, **qcd_err_opts)
+    hep.histplot(plot_info['sumw'], h_qcd.edges, 
+        ax=ax,
+        label=plot_info['label'], 
+        histtype='fill',
+        binwnorm=1,
+        stack=True
+        )
 
     ax.set_yscale('log')
     ax.set_ylim(1e-4,1e4)
     ax.set_ylabel('Events / GeV')
+    if distribution == 'mjj':
+        ax.set_xlim(0.,5000.)
 
     ax.yaxis.set_ticks_position('both')
 
@@ -172,7 +193,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
     outdir = f'./output/{outtag}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    outpath = pjoin(outdir, f'datamc_{distribution}.pdf')
+    outpath = pjoin(outdir, f'{region}_data_mc_{distribution}_{year}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
 
@@ -183,6 +204,7 @@ def commandline():
     parser.add_argument('inpath', type=str, help='Input folder to use.')
     parser.add_argument('--region', type=str, default='sr_vbf', help='Region to plot.')
     parser.add_argument('--distribution', type=str, default='.*', help='Regex specifying the distributions to plot.')
+    parser.add_argument('--years', nargs='*', default=[2017,2018], help='Years to run on.')
     parser.add_argument('--one_fifth_unblind', action='store_true', help='1/5th unblinded data.')
     args = parser.parse_args()
     return args
@@ -203,10 +225,11 @@ def main():
 
     distributions = ['mjj','ak4_eta0','ak4_eta1']
 
-    for distribution in distributions:
-        if not re.match(args.distribution, distribution):
-            continue
-        plot_datamc_with_qcd(acc, outtag, year=2017, mcscale=mcscale, distribution=distribution)
+    for year in args.years:
+        for distribution in distributions:
+            if not re.match(args.distribution, distribution):
+                continue
+            plot_datamc_with_qcd(acc, outtag, year=year, mcscale=mcscale, distribution=distribution)
 
 if __name__ == "__main__":
     main()
