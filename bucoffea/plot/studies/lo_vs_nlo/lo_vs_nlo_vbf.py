@@ -39,7 +39,7 @@ def plot(args):
         merged = set()
 
         # Separate plots per year
-        for year in [2017]:
+        for year in args.years:
             # The data to be used for each region
             # Muon regions use MET,
             # electron+photon regions use EGamma
@@ -136,6 +136,7 @@ def commandline():
     parser.add_argument('inpath', type=str, help='Input folder to use.')
     parser.add_argument('--region', type=str, default='.*', help='Region to plot.')
     parser.add_argument('--distribution', type=str, default='.*', help='Distribution to plot.')
+    parser.add_argument('--years', nargs='*', default=[2017,2018], help='Years to run on.')
     parser.add_argument('--one_fifth_unblind', action='store_true', help='1/5th unblinding for data.')
     args = parser.parse_args()
     return args

@@ -379,14 +379,29 @@ def make_plot(acc, region, distribution, year,  data, mc, signal=None, outdir='.
         if rylim:
             rax.set_ylim(*rylim)
         else:
-            rax.set_ylim(0.5,1.5)
-        loc1 = matplotlib.ticker.MultipleLocator(base=0.2)
-        loc2 = matplotlib.ticker.MultipleLocator(base=0.1)
+            if 'ak4_eta' in distribution:
+                rax.set_ylim(0.,2.)
+                loc1 = matplotlib.ticker.MultipleLocator(base=0.5)
+                loc2 = matplotlib.ticker.MultipleLocator(base=0.25)
+            else:
+                rax.set_ylim(0.5,1.5)
+                loc1 = matplotlib.ticker.MultipleLocator(base=0.2)
+                loc2 = matplotlib.ticker.MultipleLocator(base=0.1)
         rax.yaxis.set_major_locator(loc1)
         rax.yaxis.set_minor_locator(loc2)
         rax.grid(axis='y',which='minor',linestyle='--')
         rax.grid(axis='y',which='major',linestyle='--')
         rax.set_ylabel('Data / MC')
+
+        new_xlabels = {
+            'ak4_eta0' : r'Leading Jet $\eta$',
+            'ak4_eta1' : r'Trailing Jet $\eta$',
+        }
+
+        if distribution in new_xlabels.keys():
+            ax.set_xlabel(new_xlabels[distribution])
+            rax.set_xlabel(new_xlabels[distribution])
+
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
