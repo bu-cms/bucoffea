@@ -213,10 +213,10 @@ default:
     lowmassak8study: false
     novtagvetostudy: false
     histogram:
-      ak4_chf0: False
+      ak4_chf0: True
       ak4_deepcsv: false
       ak4_eta_phi: False
-      ak4_nef0: False
+      ak4_nef0: True
       ak4_phi: false
       ak4_pt0_over_recoil: false
       ak4_ptraw0: false

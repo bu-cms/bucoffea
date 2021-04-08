@@ -569,8 +569,8 @@ def monojet_regions(cfg):
     regions = {}
     regions['inclusive'] = ['inclusive']
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_v'] = ['trig_met','hemveto_metphi'] + common_cuts + v_cuts + ['prescale','dphipftkveto']
-    regions['sr_j'] = ['trig_met','hemveto_metphi'] + common_cuts + j_cuts + ['prescale','dphipftkveto']
+    regions['sr_v'] = ['trig_met','hemveto_metphi'] + common_cuts + v_cuts + ['dphipftkveto']
+    regions['sr_j'] = ['trig_met','hemveto_metphi'] + common_cuts + j_cuts + ['dphipftkveto']
 
     # Dimuon CR
     cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'dimuon_charge'] + common_cuts
