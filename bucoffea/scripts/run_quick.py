@@ -18,12 +18,12 @@ def parse_commandline():
 def main():
     # Test on old and new UL samples
     fileset = {
-        "MET_ver1_2017B" : [
-            "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/MET/MET_ver1_2017B/210205_210910/0000/tree_1.root"
-        ],
-        # "ZJetsToNuNu_HT-200To400-mg_2017" : [
-            # "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/03Sep20v7/ZJetsToNuNu_HT-200To400_13TeV-madgraph/ZJetsToNuNu_HT-200To400-mg_2017/200925_172931/0000/tree_20.root"
+        # "MET_ver1_2017B" : [
+            # "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/MET/MET_ver1_2017B/210205_210910/0000/tree_1.root"
         # ],
+        "ZJetsToNuNu_HT-200To400-mg_2017" : [
+            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/03Sep20v7/ZJetsToNuNu_HT-200To400_13TeV-madgraph/ZJetsToNuNu_HT-200To400-mg_2017/200925_172931/0000/tree_20.root"
+        ],
     }
 
     years = list(set(map(extract_year, fileset.keys())))

@@ -525,8 +525,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus)
         
         for region, cuts in regions.items():
-            if cfg.RUN.QCD_ESTIMATION and region not in ['sr_vbf', 'sr_vbf_fail_hf_cuts']:
-                continue
             # Run on selected regions only
             exclude = [None]
             region_weights = copy.deepcopy(weights)
@@ -575,6 +573,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                     region_weights.add("hem_weight", hem_weight)
 
+            # Weights for QCD estimation
+            if cfg.RUN.QCD_ESTIMATION:
+                apply_hf_weights_for_qcd_estimation(ak4, region_weights, evaluator, df, cfg, region) 
 
             # This is the default weight for this region
             rweight = region_weights.partial_weight(exclude=exclude)
