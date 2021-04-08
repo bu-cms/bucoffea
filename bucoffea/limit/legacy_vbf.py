@@ -137,7 +137,7 @@ def mjj_bins_2016():
     return [200., 400., 600., 900., 1200., 1500.,
             2000., 2750., 3500., 5000.]
 
-def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
+def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2018]):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
@@ -169,7 +169,7 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
     scale_xs_lumi(h)
     h = merge_datasets(h)
 
-    for year in [2017,2018]:
+    for year in years:
         signal = re.compile(f'VBF_HToInvisible.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_vbf_{year}.root'))
         data, mc = datasets(year, unblind=unblind)
