@@ -354,7 +354,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         max_neEmEF_ak41 = (~ak41_in_endcap) | (diak4.i1.nef < 0.7) 
 
         max_neEmEF = (max_neEmEF_ak40 & max_neEmEF_ak41).any()
-        # selection.add('max_neEmEF', max_neEmEF)
+        selection.add('max_neEmEF', max_neEmEF)
         
         vec_b = calculate_vecB(ak4, met_pt, met_phi)
         vec_dphi = calculate_vecDPhi(ak4, met_pt, met_phi, df['TkMET_phi'])
@@ -374,17 +374,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         (no_jet_in_trk & at_least_one_jet_in_hf) & (vec_b < 0.2)
                     )
 
-        # selection.add('eemitigation', eemitigation)
+        selection.add('eemitigation', eemitigation)
 
         # HF-HF veto in SR
         both_jets_in_hf = (diak4.i0.abseta > 3.0) & (diak4.i1.abseta > 3.0)
-        # selection.add('veto_hfhf', ~both_jets_in_hf.any())
-
-        is_trk_ee_event = (ak40_in_endcap & (diak4.i1.abseta < 2.5)) | (ak41_in_endcap & (diak4.i0.abseta < 2.5).any())
-        is_ee_ee_event = ak40_in_endcap & ak41_in_endcap
-
-        selection.add('is_trk_ee_event', is_trk_ee_event.any())
-        selection.add('is_ee_ee_event', is_ee_ee_event.any())
+        selection.add('veto_hfhf', ~both_jets_in_hf.any())
 
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
