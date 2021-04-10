@@ -83,7 +83,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
 
     # Get the QCD template (estimation from HF)
     qcdfilepath = bucoffea_path('data/templates/qcd_estimate_sr.root')    
-    h_qcd = uproot.open(qcdfilepath)[f'sr_template_{distribution}']
+    h_qcd = uproot.open(qcdfilepath)[f'sr_template_{year}_{distribution}']
 
     data_err_opts = {
         'linestyle':'none',
