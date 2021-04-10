@@ -291,6 +291,7 @@ def vbfhinv_regions(cfg):
         common_cuts.extend([
             'max_neEmEF',
             'veto_hfhf',
+            'leadak4_not_in_hf',
         ])
 
     regions = {}
