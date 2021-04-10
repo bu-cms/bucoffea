@@ -45,7 +45,7 @@ def datasets(year, unblind=False):
 
 def legacy_dataset_name_vbf(dataset):
 
-    m = re.match("VBF_HToInvisible_M(\d+)(_PSweights)?_pow_pythia8_201[0-9]", dataset)
+    m = re.match("VBF_HToInvisible_M(\d+)(_withDipoleRecoil)?(_PSweights)?_pow_pythia8_201[0-9]", dataset)
     if m:
         mh = m.groups()[0]
         if mh=="125":
@@ -170,7 +170,6 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2
     h = merge_datasets(h)
 
     for year in years:
-        signal = re.compile(f'VBF_HToInvisible.*{year}')
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_vbf_{year}.root'))
         data, mc = datasets(year, unblind=unblind)
         for region in regions:
