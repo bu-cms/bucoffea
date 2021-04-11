@@ -45,7 +45,7 @@ def datasets(year, unblind=False):
 
 def legacy_dataset_name_vbf(dataset):
 
-    m = re.match("VBF_HToInvisible_M(\d+)(_PSweights)?_pow_pythia8_201[0-9]", dataset)
+    m = re.match("VBF_HToInvisible_M(\d+)(_withDipoleRecoil)?(_PSweights)?_pow_pythia8_201[0-9]", dataset)
     if m:
         mh = m.groups()[0]
         if mh=="125":
