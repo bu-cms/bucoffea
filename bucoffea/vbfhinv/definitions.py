@@ -291,14 +291,20 @@ def vbfhinv_regions(cfg):
         common_cuts.extend([
             'max_neEmEF',
             'veto_hfhf',
-            'leadak4_not_in_hf',
+            # 'leadak4_not_in_hf',
         ])
 
     regions = {}
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
-    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation', 'central_stripsize_cut', 'sigma_eta_minus_phi']
+    regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
+
+    if cfg.RUN.APPLY_HF_CUTS:
+        regions['sr_vbf'].extend([
+            'central_stripsize_cut',
+            'sigma_eta_minus_phi'
+        ])
 
     if cfg.RUN.ONE_FIFTH_UNBLIND:
         regions['sr_vbf'].insert(0, 'one_fifth_mask')

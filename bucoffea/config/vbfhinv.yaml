@@ -221,11 +221,12 @@ default:
     sync: False
     ulegacyv8: False
     one_fifth_unblind: False
-    qcd_estimation: True
-    apply_cleaning_cuts: False
+    qcd_estimation: False
+    apply_cleaning_cuts: True
+    apply_hf_cuts: False
     hf_pt_thresh: 80
     apply_weights:
-      hfmask: True
+      hfmask: False
       endcap: False
     save:
       passing: False
