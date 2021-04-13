@@ -106,8 +106,8 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
         plot_info['sumw'].append(sumw)
 
     # Add the QCD contribution
-    plot_info['label'].insert(2, 'QCD Estimation')
-    plot_info['sumw'].insert(2, h_qcd.values * mcscale)
+    plot_info['label'].insert(6, 'QCD Estimation')
+    plot_info['sumw'].insert(6, h_qcd.values * mcscale)
 
     fig, ax, rax = fig_ratio()
     hist.plot1d(h[data], ax=ax, overlay='dataset', binwnorm=1, error_opts=data_err_opts)
@@ -121,8 +121,13 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
         )
 
     ax.set_yscale('log')
-    ax.set_ylim(1e-4,1e4)
-    ax.set_ylabel('Events / GeV')
+    if distribution == 'mjj':
+        ax.set_ylim(1e-4,1e4)
+        ax.set_ylabel('Events / GeV')
+    elif 'ak4_eta' in distribution:
+        ax.set_ylim(1e-2,1e6)
+        ax.set_ylabel('Events / Bin Width')
+    
     if distribution == 'mjj':
         ax.set_xlim(0.,5000.)
 
@@ -157,6 +162,9 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
     r = sumw_data / sumw_mc
     rerr = np.abs(poisson_interval(r, sumw2_data / sumw_mc**2) - r)
 
+    r[np.isnan(r)] = 1.
+    rerr[np.isnan(rerr)] = 0.
+
     hep.histplot(
         r,
         h_qcd.edges,
@@ -172,7 +180,10 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
         'ak4_eta1': r'Trailing Jet $\eta$',
     }
 
-    rax.set_xlabel(xlabels[distribution])
+    if distribution in xlabels.keys():
+        ax.set_xlabel(xlabels[distribution])
+        rax.set_xlabel(xlabels[distribution])
+    
     rax.set_ylabel('Data / MC')
     rax.set_ylim(0,2)
     rax.grid(True)
