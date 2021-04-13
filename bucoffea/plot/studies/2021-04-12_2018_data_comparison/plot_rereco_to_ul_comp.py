@@ -12,6 +12,7 @@ from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi, 
 from bucoffea.plot.style import matplotlib_rc
 from bucoffea.helpers.paths import bucoffea_path
 from matplotlib import pyplot as plt
+from matplotlib.ticker import MultipleLocator
 from klepto.archives import dir_archive
 from pprint import pprint
 
@@ -28,7 +29,7 @@ AX_YLIMS = {
 }
 
 RAX_YLIMS = {
-    'mjj' : (0.5,1.5),
+    'mjj' : (0,2),
     'ak4_eta0' : (0,2),
     'ak4_eta1' : (0,2),
 }
@@ -37,6 +38,8 @@ def parse_cli():
     parser = argparse.ArgumentParser()
     parser.add_argument('outtag', help='Outtag for the job.')
     parser.add_argument('--distribution', default='.*', help='Regex to match the distributions to plot.')
+    parser.add_argument('--years', type=int, nargs='*', default=[2017,2018], help='The years to run the comparison on.')
+    parser.add_argument('--proc', default='QCD_W', help='The process to run the comparison for.')
     args = parser.parse_args()
     return args
 
@@ -54,7 +57,7 @@ def preprocess(h, acc, dataset, distribution, region, _merge_datasets=True):
 
     return h
 
-def plot_rereco_to_ul_comparison(acc_dict, outtag, dataset='MET_2018', dataset_tag='MET_2018', distribution='mjj', region='sr_vbf'):
+def plot_rereco_to_ul_comparison(acc_dict, outtag, dataset='MET_2018', year=2018, dataset_tag='MET_2018', distribution='mjj', region='sr_vbf'):
     '''For the given dataset, plot the ReReco v7 vs. UL v8 comparison.'''
     histos = {}
     for key, acc in acc_dict.items():
@@ -73,14 +76,21 @@ def plot_rereco_to_ul_comparison(acc_dict, outtag, dataset='MET_2018', dataset_t
         'UL v8',
     ])
 
-    ax.text(0.,1.,f'{dataset_tag.replace("_", " ")}',
+    ax.text(0.,1.,f'{dataset_tag.replace("_", " ")} {year}',
         fontsize=14,
         ha='left',
         va='bottom',
         transform=ax.transAxes
     )
 
-    ax.text(1.,1.,'VBF SR (ReReco Cleaning Cuts)',
+    ax.text(0.05,0.9,r'$400 < H_T^{MG} < 1200 \ GeV$',
+        fontsize=14,
+        ha='left',
+        va='bottom',
+        transform=ax.transAxes
+    )
+
+    ax.text(1.,1.,'VBF SR (No Cleaning Cuts)',
         fontsize=14,
         ha='right',
         va='bottom',
@@ -108,6 +118,10 @@ def plot_rereco_to_ul_comparison(acc_dict, outtag, dataset='MET_2018', dataset_t
     rax.set_ylabel('v8 / v7')
     rax.set_ylim(RAX_YLIMS[distribution])
 
+    if RAX_YLIMS[distribution] == (0,2):
+        loc = MultipleLocator(0.5)
+        rax.yaxis.set_major_locator(loc)
+
     new_xlabels = {
         'ak4_eta0': r'Leading Jet $\eta$',
         'ak4_eta1': r'Trailing Jet $\eta$',
@@ -121,7 +135,7 @@ def plot_rereco_to_ul_comparison(acc_dict, outtag, dataset='MET_2018', dataset_t
     outdir = f'./output/{outtag}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    outpath = pjoin(outdir, f'{dataset_tag}_rereco_to_ul_comp_{region}_{distribution}.pdf')
+    outpath = pjoin(outdir, f'{dataset_tag}_rereco_to_ul_comp_{region}_{distribution}_{year}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
 
@@ -134,8 +148,8 @@ def main():
         raise RuntimeError('Please provide an outtag for this job!')
     
     acc_dict = {
-        '03Sep20v7' : dir_archive(bucoffea_path('submission/merged_2021-04-12_vbfhinv_03Sep20v7_QCD_W_2017_2018_rerecoCleaningCuts')),
-        'ULv8' : dir_archive(bucoffea_path('submission/merged_2021-04-12_vbfhinv_ULv8_QCD_W_2017_2018_rerecoCleaningCuts')),
+        '03Sep20v7' : dir_archive(bucoffea_path('submission/merged_2021-04-13_vbfhinv_03Sep20v7_QCD_W_HT_btw_400_1200_noCleaningCuts')),
+        'ULv8' : dir_archive(bucoffea_path('submission/merged_2021-04-13_vbfhinv_ULv8_QCD_W_HT_btw_400_1200_noCleaningCuts')),
         # '03Sep20v7' : dir_archive(bucoffea_path('submission/merged_2021-04-12_vbfhinv_03Sep20v7_MET_2018_rerecoCleaningCuts')),
         # 'ULv8' : dir_archive(bucoffea_path('submission/merged_2021-04-12_vbfhinv_ULv8_MET_2018_rerecoCleaningCuts')),
     }
@@ -145,13 +159,17 @@ def main():
 
     distributions = ['mjj', 'ak4_eta0', 'ak4_eta1']
 
-    dataset = re.compile('WJetsToLNu_HT-(400To600|600To800|800To1200|1200To2500)-MLM_2018')
-    dataset_tag = 'QCD_W_2018'
+    for year in args.years:
+        dataset_regex = {
+            'QCD_W' : re.compile(f'WJetsToLNu_HT.*{year}'),
+            'Data' : re.compile(f'MET.*{year}'),
+        }
+        dataset = dataset_regex[args.proc]
 
-    for distribution in distributions:
-        if not re.match(args.distribution, distribution):
-            continue
-        plot_rereco_to_ul_comparison(acc_dict, outtag, dataset=dataset, dataset_tag=dataset_tag, distribution=distribution)
+        for distribution in distributions:
+            if not re.match(args.distribution, distribution):
+                continue
+            plot_rereco_to_ul_comparison(acc_dict, outtag, dataset=dataset, year=year, dataset_tag=args.proc, distribution=distribution)
 
 if __name__ == '__main__':
     main()
