@@ -2318,8 +2318,12 @@ EWKWMinus2Jets_WToLNu_M-50-mg_2016:
   gen: 20.35
 EWKWMinus2Jets_WToLNu_M-50-mg_2017:
   gen: 23.19
+EWKWMinus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2017:
+  gen: 32.26
 EWKWMinus2Jets_WToLNu_M-50-mg_2018:
   gen: 23.08
+EWKWMinus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2018:
+  gen: 32.26
 EWKWMinus2Jets_WToLNu_M-50-mg_ext1_2016:
   gen: 20.21
 EWKWMinus2Jets_WToLNu_M-50-mg_ext2_2016:
@@ -2334,8 +2338,12 @@ EWKWPlus2Jets_WToLNu_M-50-mg_2016:
   gen: 25.81
 EWKWPlus2Jets_WToLNu_M-50-mg_2017:
   gen: 29.55
+EWKWPlus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2017:
+  gen: 39.33
 EWKWPlus2Jets_WToLNu_M-50-mg_2018:
   gen: 29.59
+EWKWPlus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2018:
+  gen: 39.33
 EWKWPlus2Jets_WToLNu_M-50-mg_ext1_2016:
   gen: 25.55
 EWKWPlus2Jets_WToLNu_M-50-mg_ext2_2016:
@@ -2350,8 +2358,12 @@ EWKZ2Jets_ZToLL_M-50-mg_2016:
   gen: 3.997
 EWKZ2Jets_ZToLL_M-50-mg_2017:
   gen: 4.324
+EWKZ2Jets_ZToLL_M-50_withDipoleRecoil-mg_2017:
+  gen: 6.22
 EWKZ2Jets_ZToLL_M-50-mg_2018:
   gen: 4.323
+EWKZ2Jets_ZToLL_M-50_withDipoleRecoil-mg_2018:
+  gen: 6.22
 EWKZ2Jets_ZToLL_M-50-mg_ext1_2016:
   gen: 3.937
 EWKZ2Jets_ZToLL_M-50-mg_ext2_2016:
@@ -2364,8 +2376,12 @@ EWKZ2Jets_ZToNuNu-mg_2016:
   gen: 10.03
 EWKZ2Jets_ZToNuNu-mg_2017:
   gen: 10.67
+EWKZ2Jets_ZToNuNu_M-50_withDipoleRecoil-mg_2017:
+  gen: 10.72
 EWKZ2Jets_ZToNuNu-mg_2018:
   gen: 10.68
+EWKZ2Jets_ZToNuNu_M-50_withDipoleRecoil-mg_2018:
+  gen: 10.72
 EWKZ2Jets_ZToNuNu-mg_ext1_2016:
   gen: 9.873
 EWKZ2Jets_ZToNuNu-mg_ext2_2016:
@@ -2980,12 +2996,16 @@ ST_t-channel_antitop_4f_InclusiveDecays-pow-madspin_2018:
 ST_t-channel_antitop_4f_inclusiveDecays-powV2-madspin_2017:
   gen: 67.91
   nnlo: 80.95
+ST_t-channel_antitop_4f_InclusiveDecays-pow-madspin_2017:
+  gen: 67.93
 ST_t-channel_top_4f_InclusiveDecays-pow-madspin_2018:
   gen: 115.3
   nnlo: 136.02
 ST_t-channel_top_4f_inclusiveDecays-powV2-madspin_2017:
   gen: 113.3
   nnlo: 136.02
+ST_t-channel_top_4f_InclusiveDecays-pow-madspin_2017:
+  gen: 113.43
 ST_t-channel_top_4f_inclusiveDecays-powV2-madspin_new_pmx_2017:
   gen: 113.3
   nnlo: 136.02
@@ -2995,9 +3015,13 @@ ST_tW_antitop_5f_inclusiveDecays-pow_2016:
 ST_tW_antitop_5f_inclusiveDecays-pow_2017:
   gen: 34.97
   nnlo: 35.85
+ST_tW_antitop_5f_NoFullyHadronicDecays-pow_2017:
+  gen: 32.51
 ST_tW_antitop_5f_inclusiveDecays-pow_2018:
   gen: 34.97
   nnlo: 35.85
+ST_tW_antitop_5f_NoFullyHadronicDecays-pow_2018:
+  gen: 32.51
 ST_tW_antitop_5f_inclusiveDecays-pow_ext1_2018:
   gen: 34.97
   nnlo: 35.85
@@ -3031,9 +3055,13 @@ ST_tW_top_5f_inclusiveDecays-pow_2016:
 ST_tW_top_5f_inclusiveDecays-pow_2017:
   gen: 34.91
   nnlo: 35.85
+ST_tW_top_5f_NoFullyHadronicDecays-pow_2017:
+  gen: 32.45
 ST_tW_top_5f_inclusiveDecays-pow_2018:
   gen: 34.91
   nnlo: 35.85
+ST_tW_top_5f_NoFullyHadronicDecays-pow_2018:
+  gen: 32.45
 ST_tW_top_5f_inclusiveDecays-pow_ext1_2018:
   gen: 34.91
   nnlo: 35.85
