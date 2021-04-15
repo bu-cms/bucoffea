@@ -321,13 +321,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
             stripsize_cut_alljets = (jets_for_cut.hfcentralstripsize < 3).all()
 
             fail_hf_cuts = (~setaphi_cut_alljets) | (~stripsize_cut_alljets)
-
+            
             selection.add('sigma_eta_minus_phi', setaphi_cut_alljets)
             selection.add('central_stripsize_cut', stripsize_cut_alljets)
             selection.add('fail_hf_cuts', fail_hf_cuts)
-
-            # Calculate dphi between the HF jets and MET (to be used for noise region)
-            df['dPhiHFJetMET'] = dphi(jets_for_cut.phi.min(), df['MET_phi'])
 
         else:
             selection.add('sigma_eta_minus_phi', pass_all)
@@ -677,22 +674,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
             ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
             ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
-
-            if cfg.RUN.ULEGACYV8:
-                # All jet eta, for the ones that pass the HF shape cut (if they are in the HF)            
-                def is_hf_jet(_ak4):
-                    return (_ak4.pt>80) & (_ak4.abseta > 2.9) & (_ak4.abseta < 5.0)
-
-                sigma_eta_minus_phi = ak4.setaeta - ak4.sphiphi
-                hfmask = ((sigma_eta_minus_phi < 0.03) & (ak4.hfcentralstripsize < 3)) | (~is_hf_jet(ak4))
-
-                w_alljets_hffiltered = np.where(
-                    hfmask[mask].flatten(),
-                    w_alljets,
-                    0.
-                )
-
-                ezfill('ak4_eta_hf_filtered', jeteta=ak4[mask].eta.flatten(),  weight=w_alljets_hffiltered)
 
             ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
             ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
