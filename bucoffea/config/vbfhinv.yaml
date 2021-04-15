@@ -221,9 +221,9 @@ default:
     sync: False
     ulegacyv8: True
     one_fifth_unblind: False
-    qcd_estimation: False
+    qcd_estimation: True
     apply_cleaning_cuts: False
-    regionregex: sr_vbf.*
+    regionregex: sr_vbf.*|cr_vbf_qcd
     apply_hf_cuts: True
     hf_pt_thresh: 80
     apply_weights:

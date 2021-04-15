@@ -313,13 +313,12 @@ def vbfhinv_regions(cfg):
         regions['sr_vbf'].remove('hornveto')
         regions['sr_vbf'].remove('eemitigation')
 
-    # Define two additional regions that are being used for QCD estimation
+    # QCD CR with the HF shape cuts inverted
     if cfg.RUN.QCD_ESTIMATION:
-        regions['sr_vbf_qcd_mc'] = copy.deepcopy(regions['sr_vbf'])
-        regions['sr_vbf_qcd_data'] = copy.deepcopy(regions['sr_vbf'])
-        regions['sr_vbf_qcd_data'].remove('central_stripsize_cut')
-        regions['sr_vbf_qcd_data'].remove('sigma_eta_minus_phi')
-        regions['sr_vbf_qcd_data'].append('fail_hf_cuts')
+        regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
+        regions['cr_vbf_qcd'].remove('central_stripsize_cut')
+        regions['cr_vbf_qcd'].remove('sigma_eta_minus_phi')
+        regions['cr_vbf_qcd'].append('fail_hf_cuts')
 
     # For sync mode
     if cfg and cfg.RUN.SYNC:
@@ -586,23 +585,15 @@ def apply_hfmask_weights(ak4, weights, evaluator, met_phi, cfg):
 def apply_hf_weights_for_qcd_estimation(ak4, weights, evaluator, df, cfg, region):
     '''HF weights for the QCD estimation.'''
     # Don't do anything except for the two QCD regions
-    if region not in ['sr_vbf_qcd_data', 'sr_vbf_qcd_mc']:
+    if region not in ['cr_vbf_qcd']:
         return
     hfak4 = ak4[(ak4.pt > cfg.RUN.HF_PT_THRESH) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
 
     transferfactor = evaluator['hf_mask_noise_passing_rate'](hfak4.abseta, hfak4.pt).prod() / (1 - evaluator['hf_mask_noise_passing_rate'](hfak4.abseta, hfak4.pt).prod())
     transferfactor[np.isnan(transferfactor) | np.isinf(transferfactor)] = 0.
-    
-    # For data, we'll scale the event by P(pass | noise) / P(fail | noise)
-    if df['is_data']:
-        hfweight = transferfactor
 
-    # For MC, include the mistag rate
-    else:
-        mistagrate = 1 - evaluator['hf_mask_efficiency_mc'](hfak4.abseta, hfak4.pt).prod()
-        hfweight = mistagrate * transferfactor
-
-    weights.add('hf_qcd_est_weight', hfweight)
+    # CR -> SR transfer factor
+    weights.add('hf_qcd_est_weight', transferfactor)
 
 def apply_endcap_weights(diak4, weights, evaluator):
     '''Jet eta based weights derived from UL data / ReReco MC.'''
