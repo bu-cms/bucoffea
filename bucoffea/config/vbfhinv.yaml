@@ -226,7 +226,6 @@ default:
     regionregex: sr_vbf.*|cr_vbf_qcd
     apply_hf_cuts: True
     hf_pt_thresh: 80
-    pu_weight: True
     apply_weights:
       hfmask: False
       endcap: False

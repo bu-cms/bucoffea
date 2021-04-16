@@ -313,6 +313,9 @@ def vbfhinv_regions(cfg):
         regions['sr_vbf'].remove('hornveto')
         regions['sr_vbf'].remove('eemitigation')
 
+    # SR without PU weights
+    regions['sr_vbf_no_pu'] = copy.deepcopy(regions['sr_vbf'])
+
     # QCD CR with the HF shape cuts inverted
     if cfg.RUN.QCD_ESTIMATION:
         regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
