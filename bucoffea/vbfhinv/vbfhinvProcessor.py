@@ -467,7 +467,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             bsf_variations = btag_weights(bjets,cfg)
             weights.add("bveto", (1-bsf_variations["central"]).prod())
 
-            weights = pileup_weights(weights, df, evaluator, cfg)
+            if cfg.RUN.PU_WEIGHT:
+                weights = pileup_weights(weights, df, evaluator, cfg)
             if cfg.RUN.APPLY_CLEANING_CUTS:
                 weights = ak4_em_frac_weights(weights, diak4, evaluator)
             if not (gen_v_pt is None):
@@ -511,7 +512,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
         if not df['is_data']:
             output['sumw'][dataset] +=  df['genEventSumw']
             output['sumw2'][dataset] +=  df['genEventSumw2']
-            output['sumw_pileup'][dataset] +=  weights._weights['pileup'].sum()
+            if cfg.RUN.PU_WEIGHT:
+                output['sumw_pileup'][dataset] +=  weights._weights['pileup'].sum()
 
         regions = vbfhinv_regions(cfg)
 
