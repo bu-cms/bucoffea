@@ -3683,6 +3683,8 @@ VBF_HToInvisible_M125_pow_pythia8_2016:
 VBF_HToInvisible_M125_pow_pythia8_2017:
   gen: 3.861
   nnlo: 3.782
+VBF_HToInvisible_M125_withDipoleRecoil_pow_pythia8_2017:
+  nnlo: 3.782
 VBF_HToInvisible_M125_pow_pythia8_2018:
   nnlo: 3.782
 VBF_HToInvisible_M150_pow_pythia8_2016:

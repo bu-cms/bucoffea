@@ -15,6 +15,7 @@ from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi, 
 from bucoffea.helpers.paths import bucoffea_path
 from klepto.archives import dir_archive
 from pprint import pprint
+from distributions import distributions, binnings, ylims
 
 pjoin = os.path.join
 
@@ -41,7 +42,8 @@ legend_labels = {
     'QCD.*' : "QCD Estimation",
     'Top.*' : "Top quark",
     'Diboson.*' : "WW/WZ/ZZ",
-    'MET|Single(Electron|Photon|Muon)|EGamma.*' : "Data"
+    'MET|Single(Electron|Photon|Muon)|EGamma.*' : "Data",
+    'VBF_HToInv.*' : "VBF H(inv)",
 }
 
 colors = {
@@ -58,7 +60,7 @@ colors = {
     'WJets.*' : '#feb24c',
 }
 
-def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj', mcscale=1):
+def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj', plot_signal=True, mcscale=1):
     '''Plot data/MC comparison with the QCD template included.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -72,9 +74,9 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
     scale_xs_lumi(h)
     h = merge_datasets(h)
 
-    if distribution == 'mjj':
-        mjj_ax = hist.Bin('mjj', r'$M_{jj} \ (GeV)$', [200., 400., 600., 900., 1200., 1500., 2000., 2750., 3500.])
-        h = h.rebin('mjj', mjj_ax)
+    if distribution in binnings.keys():
+        new_ax = binnings[distribution]
+        h = h.rebin(new_ax.name, new_ax)
 
     h.axis('dataset').sorting = 'integral'
 
@@ -139,12 +141,33 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
         stack=True
         )
 
+    if plot_signal:
+        signal = re.compile(f'VBF_HToInvisible.*withDipoleRecoil.*{year}')
+
+        signal_line_opts = {
+            'linestyle': '-',
+            'color': 'crimson',
+        }
+
+        hist.plot1d(
+            h.integrate('region', regions['mc'])[signal],
+            ax=ax,
+            overlay='dataset',
+            overflow=overflow,
+            line_opts=signal_line_opts,
+            binwnorm=1,
+            clear=False
+        )
+
     ax.set_yscale('log')
     if distribution == 'mjj':
         ax.set_ylim(1e-3,1e5)
         ax.set_ylabel('Events / GeV')
-    elif 'ak4_eta' in distribution:
-        ax.set_ylim(1e-2,1e6)
+    else:
+        if distribution in ylims.keys():
+            ax.set_ylim(ylims[distribution])
+        else:
+            ax.set_ylim(1e-2,1e6)
         ax.set_ylabel('Events / Bin Width')
     
     if distribution == 'mjj':
@@ -181,8 +204,8 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
     r = sumw_data / sumw_mc
     rerr = np.abs(poisson_interval(r, sumw2_data / sumw_mc**2) - r)
 
-    r[np.isnan(r)] = 1.
-    rerr[np.isnan(rerr)] = 0.
+    r[np.isnan(r) | np.isinf(r)] = 1.
+    rerr[np.isnan(rerr) | np.isinf(rerr)] = 0.
 
     hep.histplot(
         r,
@@ -275,8 +298,6 @@ def main():
         mcscale = 0.2
     else:
         mcscale = 1
-
-    distributions = ['mjj','ak4_eta0','ak4_eta1']
 
     for year in args.years:
         for distribution in distributions:

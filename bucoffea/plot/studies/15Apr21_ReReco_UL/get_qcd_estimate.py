@@ -11,8 +11,10 @@ from bucoffea.plot.util import merge_extensions, merge_datasets, scale_xs_lumi
 from coffea import hist
 from klepto.archives import dir_archive
 from pprint import pprint
+from distributions import distributions, binnings
 
 pjoin = os.path.join
+
 
 def get_qcd_estimate(acc, outtag, outrootfile, distribution):
     '''Calculate the QCD template in SR'''
@@ -27,9 +29,9 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
     if distribution == 'mjj':
         overflow = 'over'
 
-    if distribution == 'mjj':
-        mjj_ax = hist.Bin('mjj', r'$M_{jj} \ (GeV)$', [200., 400., 600., 900., 1200., 1500., 2000., 2750., 3500.])
-        h = h.rebin('mjj', mjj_ax)
+    if distribution in binnings.keys():
+        new_ax = binnings[distribution]
+        h = h.rebin(new_ax.name, new_ax)
     
     outdir = f'./output/{outtag}/qcd_estimate'
     if not os.path.exists(outdir):
@@ -132,7 +134,7 @@ def main():
     outrootfile = uproot.recreate(outrootpath)
     print(f'ROOT file initiated: {outrootpath}')
 
-    for distribution in ['mjj','ak4_eta0','ak4_eta1']:
+    for distribution in distributions:
         get_qcd_estimate(acc, outtag, outrootfile, distribution=distribution)
 
 if __name__ == '__main__':
