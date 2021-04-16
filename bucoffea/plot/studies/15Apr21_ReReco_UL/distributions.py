@@ -14,6 +14,7 @@ distributions = [
     'vecb',
     'vecdphi',
     'dphitkpf',
+    'met'
 ]
 
 binnings = {
@@ -23,6 +24,7 @@ binnings = {
     'ak4_nef0' : Bin('frac', 'Leading Jet Neutral EM Frac', 50, 0, 1),
     'ak4_nef1' : Bin('frac', 'Trailing Jet Neutral EM Frac', 50, 0, 1),
     'dphitkpf' : Bin('dphi', r'$\Delta\phi_{TK,PF}$', 50, 0, 3.5),
+    'met' : Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250)))
 }
 
 ylims = {
@@ -31,4 +33,5 @@ ylims = {
     'vecb' : (1e-1,1e9),
     'vecdphi' : (1e0,1e9),
     'dphitkpf' : (1e0,1e9),
+    'met' : (1e-3,1e5)
 }
