@@ -98,8 +98,9 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
     h_mc = h.integrate('region', regions['mc'])
 
     # Get the QCD template (estimation from HF)
-    qcdfilepath = bucoffea_path('data/templates/qcd_estimate_sr.root')    
-    h_qcd = uproot.open(qcdfilepath)[f'sr_template_{year}_{distribution}']
+    # qcdfilepath = bucoffea_path('data/templates/qcd_estimate_sr.root')    
+    qcdfilepath = 'output/merged_2021-04-16_vbfhinv_ULv8_05Feb21/qcd_estimate/hf_qcd_estimate.root'    
+    h_qcd = uproot.open(qcdfilepath)[f'qcd_estimate_{distribution}_{year}']
 
     data_err_opts = {
         'linestyle':'none',

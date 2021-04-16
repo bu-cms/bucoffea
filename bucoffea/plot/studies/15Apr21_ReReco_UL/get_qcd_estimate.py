@@ -23,6 +23,10 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
     scale_xs_lumi(h)
     h = merge_datasets(h)
 
+    overflow = 'none'
+    if distribution == 'mjj':
+        overflow = 'over'
+
     if distribution == 'mjj':
         mjj_ax = hist.Bin('mjj', r'$M_{jj} \ (GeV)$', [200., 400., 600., 900., 1200., 1500., 2000., 2750., 3500.])
         h = h.rebin('mjj', mjj_ax)
@@ -31,34 +35,45 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
+    new_xlabels = {
+        'ak4_eta0': r'Leading Jet $\eta$',
+        'ak4_eta1': r'Trailing Jet $\eta$',
+    }
+
     # Get data and MC yields in the QCD CR
     h = h.integrate('region', 'cr_vbf_qcd')
     for year in [2017, 2018]:
         data = f'MET_{year}'
-        mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
+        # mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
+        mc = re.compile(f'(ZJetsToNuNu.*|EW.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
 
         fig, ax = plt.subplots()
-        hist.plot1d(h.integrate('dataset', data), ax=ax, overflow='over')
-        hist.plot1d(h[mc], ax=ax, clear=False, overlay='dataset', stack=True, overflow='over')
+        hist.plot1d(h.integrate('dataset', data), ax=ax, overflow=overflow)
+        hist.plot1d(h.integrate('dataset', mc), ax=ax, clear=False, overflow=overflow)
 
         ax.set_yscale('log')
-        ax.set_ylim(1e-4,1e4)
+        ax.set_ylim(1e-2,1e6)
         
-        ax.text(0.,1.,'QCD CR',
+        ax.text(0.,1.,r'QCD CR $\times$ $CR \rightarrow SR$ TF',
             fontsize=14,
             ha='left',
             va='bottom',
             transform=ax.transAxes
         )
 
-        handles, labels = ax.get_legend_handles_labels()
-        for handle, label in zip(handles, labels):
-            if label == 'None':
-                handle.set_label('Data')
+        ax.text(1.,1.,year,
+            fontsize=14,
+            ha='right',
+            va='bottom',
+            transform=ax.transAxes
+        )
 
-        ax.legend(handles=handles)
+        ax.legend(labels=['Data', 'MC']) 
 
-        outpath = pjoin(outdir, f'qcd_cr_{year}.pdf')
+        if distribution in new_xlabels.keys():
+            ax.set_xlabel(new_xlabels[distribution])
+
+        outpath = pjoin(outdir, f'qcd_cr_{distribution}_{year}.pdf')
         fig.savefig(outpath)
         plt.close(fig)
         print(f'File saved: {outpath}')
@@ -70,9 +85,9 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
         h_mc.scale(-1)
         h_qcd.add(h_mc)
 
-        hist.plot1d(h_qcd, ax=ax, overflow='over')
+        hist.plot1d(h_qcd, ax=ax, overflow=overflow)
         ax.set_yscale('log')
-        ax.set_ylim(1e-4,1e2)
+        ax.set_ylim(1e-2,1e6)
         ax.get_legend().remove()
         
         ax.text(0.,1.,'QCD Estimate in SR',
@@ -82,14 +97,24 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
             transform=ax.transAxes
         )
 
-        outpath = pjoin(outdir, f'qcd_estimation_{year}.pdf')
+        ax.text(1.,1.,year,
+            fontsize=14,
+            ha='right',
+            va='bottom',
+            transform=ax.transAxes
+        )
+
+        if distribution in new_xlabels.keys():
+            ax.set_xlabel(new_xlabels[distribution])
+
+        outpath = pjoin(outdir, f'qcd_estimation_{distribution}_{year}.pdf')
         fig.savefig(outpath)
         plt.close(fig)
         print(f'File saved: {outpath}')
 
         # Write the estimate into the output root file
-        sumw = h_qcd.values(overflow='over')[()]
-        xedges = h_qcd.axes()[0].edges(overflow='over')
+        sumw = h_qcd.values(overflow=overflow)[()]
+        xedges = h_qcd.axes()[0].edges(overflow=overflow)
         outrootfile[f'qcd_estimate_{distribution}_{year}'] = (sumw, xedges)
 
 def main():
