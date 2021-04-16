@@ -181,7 +181,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         met_pt, met_phi, ak4, bjets, _, muons, electrons, taus, photons = setup_candidates(df, cfg)
 
         # Remove jets in accordance with the noise recipe
-        if df['year'] == 2017:
+        if not cfg.RUN.ULEGACYV8 and df['year'] == 2017:
             ak4   = ak4[(ak4.ptraw>50) | (ak4.abseta<2.65) | (ak4.abseta>3.139)]
             bjets = bjets[(bjets.ptraw>50) | (bjets.abseta<2.65) | (bjets.abseta>3.139)]
 
