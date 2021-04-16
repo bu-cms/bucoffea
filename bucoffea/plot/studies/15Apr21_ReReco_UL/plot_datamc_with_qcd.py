@@ -60,7 +60,7 @@ colors = {
     'WJets.*' : '#feb24c',
 }
 
-def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj', plot_signal=True, mcscale=1):
+def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj', plot_signal=True, mcscale=1, fformat='pdf'):
     '''Plot data/MC comparison with the QCD template included.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -101,7 +101,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
 
     # Get the QCD template (estimation from HF)
     # qcdfilepath = bucoffea_path('data/templates/qcd_estimate_sr.root')    
-    qcdfilepath = 'output/merged_2021-04-16_vbfhinv_ULv8_05Feb21/qcd_estimate/hf_qcd_estimate.root'    
+    qcdfilepath = f'output/{outtag}/qcd_estimate/hf_qcd_estimate.root'    
     h_qcd = uproot.open(qcdfilepath)[f'qcd_estimate_{distribution}_{year}']
 
     data_err_opts = {
@@ -269,7 +269,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
     outdir = f'./output/{outtag}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    outpath = pjoin(outdir, f'{region}_data_mc_{distribution}_{year}.pdf')
+    outpath = pjoin(outdir, f'{region}_data_mc_{distribution}_{year}.{fformat}')
     fig.savefig(outpath)
     plt.close(fig)
 
