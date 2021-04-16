@@ -51,7 +51,7 @@ colors = {
     'EWKZ.*ZToNuNu.*' : '#c4cae2',
     '.*Diboson.*' : '#4292c6',
     'Top.*' : '#6a51a3',
-    '.*QCD.*' : '#08306b',
+    '.*HF Noise.*' : '#08306b',
     '.*TT.*' : '#6a51a3',
     '.*ST.*' : '#9e9ac8',
     'ZJetsToNuNu.*' : '#31a354',
@@ -123,7 +123,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
         plot_info['sumw'].append(sumw)
 
     # Add the QCD contribution
-    plot_info['label'].insert(6, 'QCD Estimation')
+    plot_info['label'].insert(6, 'HF Noise Estimation')
     plot_info['sumw'].insert(6, h_qcd.values * mcscale)
 
     fig, ax, rax = fig_ratio()
