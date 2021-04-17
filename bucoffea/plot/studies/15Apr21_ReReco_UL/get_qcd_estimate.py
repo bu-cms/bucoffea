@@ -46,8 +46,7 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
     h = h.integrate('region', 'cr_vbf_qcd')
     for year in [2017, 2018]:
         data = f'MET_{year}'
-        # mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
-        mc = re.compile(f'(ZJetsToNuNu.*|EW.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
+        mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
 
         fig, ax = plt.subplots()
         hist.plot1d(h.integrate('dataset', data), ax=ax, overflow=overflow)
