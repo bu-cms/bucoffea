@@ -598,46 +598,38 @@ class vbfhinvProcessor(processor.ProcessorABC):
             mask = selection.all(*cuts)
 
             if cfg.RUN.SAVE.TREE:
-                # For events that fail the new HF cuts, store the run/lumi/event information 
-                if region in ['sr_vbf_fail_hfcuts', 'cr_vbf_leadak4_in_hf']:
+                if region in ['sr_vbf', 'sr_vbf_no_veto_all']:
                     output['tree_int64'][region]["event"]             +=  processor.column_accumulator(df["event"][mask])
                     output['tree_int64'][region]["run"]               +=  processor.column_accumulator(df["run"][mask])
                     output['tree_int64'][region]["lumi"]              +=  processor.column_accumulator(df["luminosityBlock"][mask])
-                    output['tree_int64'][region]["leadak4_eta"]       +=  processor.column_accumulator(np.float16(diak4.i0.eta[mask]))
-                if region in ['cr_1e_vbf','cr_1m_vbf']:
-                    output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
-                    output['tree_float16'][region]["gen_v_pt"]    +=  processor.column_accumulator(np.float16(gen_v_pt[mask]))
-                    output['tree_float16'][region]["gen_mjj"]     +=  processor.column_accumulator(np.float16(df['mjj_gen'][mask]))
-                    output['tree_float16'][region]["recoil_pt"]   +=  processor.column_accumulator(np.float16(df["recoil_pt"][mask]))
-                    output['tree_float16'][region]["recoil_phi"]  +=  processor.column_accumulator(np.float16(df["recoil_phi"][mask]))
-                    output['tree_float16'][region]["mjj"]         +=  processor.column_accumulator(np.float16(df["mjj"][mask]))
                     
-                    output['tree_float16'][region]["leadak4_pt"]         +=  processor.column_accumulator(np.float16(diak4.i0.pt[mask]))
-                    output['tree_float16'][region]["leadak4_eta"]        +=  processor.column_accumulator(np.float16(diak4.i0.eta[mask]))
-                    output['tree_float16'][region]["leadak4_phi"]        +=  processor.column_accumulator(np.float16(diak4.i0.phi[mask]))
+                    output['tree_float16'][region]["leadak4_pt"]        +=  processor.column_accumulator(np.float16(diak4.i0.pt[mask]))
+                    output['tree_float16'][region]["leadak4_eta"]       +=  processor.column_accumulator(np.float16(diak4.i0.eta[mask]))
+                    output['tree_float16'][region]["leadak4_phi"]       +=  processor.column_accumulator(np.float16(diak4.i0.phi[mask]))
+                    output['tree_float16'][region]["leadak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i0.setaeta[mask]))
+                    output['tree_float16'][region]["leadak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i0.sphiphi[mask]))
+                    output['tree_float16'][region]["leadak4_cssize"]    +=  processor.column_accumulator(np.float16(diak4.i0.hfcentralstripsize[mask]))
+                
+                    output['tree_float16'][region]["trailak4_pt"]        +=  processor.column_accumulator(np.float16(diak4.i1.pt[mask]))
+                    output['tree_float16'][region]["trailak4_eta"]       +=  processor.column_accumulator(np.float16(diak4.i1.eta[mask]))
+                    output['tree_float16'][region]["trailak4_phi"]       +=  processor.column_accumulator(np.float16(diak4.i1.phi[mask]))
+                    output['tree_float16'][region]["trailak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i1.setaeta[mask]))
+                    output['tree_float16'][region]["trailak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i1.sphiphi[mask]))
+                    output['tree_float16'][region]["trailak4_cssize"]    +=  processor.column_accumulator(np.float16(diak4.i1.hfcentralstripsize[mask]))
 
-                    output['tree_float16'][region]["trailak4_pt"]         +=  processor.column_accumulator(np.float16(diak4.i1.pt[mask]))
-                    output['tree_float16'][region]["trailak4_eta"]        +=  processor.column_accumulator(np.float16(diak4.i1.eta[mask]))
-                    output['tree_float16'][region]["trailak4_phi"]        +=  processor.column_accumulator(np.float16(diak4.i1.phi[mask]))
-
+                    output['tree_float16'][region]["mjj"]               +=  processor.column_accumulator(np.float16(df["mjj"][mask]))
+                    output['tree_float16'][region]["recoil_pt"]         +=  processor.column_accumulator(np.float16(df["recoil_pt"][mask]))
                     output['tree_float16'][region]["minDPhiJetRecoil"]  +=  processor.column_accumulator(np.float16(df["minDPhiJetRecoil"][mask]))
-                    if '_1e_' in region:
-                        output['tree_float16'][region]["leadlep_pt"]   +=  processor.column_accumulator(np.float16(electrons.pt.max()[mask]))
-                        output['tree_float16'][region]["leadlep_eta"]   +=  processor.column_accumulator(np.float16(electrons[electrons.pt.argmax()].eta.max()[mask]))
-                        output['tree_float16'][region]["leadlep_phi"]   +=  processor.column_accumulator(np.float16(electrons[electrons.pt.argmax()].phi.max()[mask]))
-                    elif '_1m_' in region:
-                        output['tree_float16'][region]["leadlep_pt"]   +=  processor.column_accumulator(np.float16(muons.pt.max()[mask]))
-                        output['tree_float16'][region]["leadlep_eta"]   +=  processor.column_accumulator(np.float16(muons[muons.pt.argmax()].eta.max()[mask]))
-                        output['tree_float16'][region]["leadlep_phi"]   +=  processor.column_accumulator(np.float16(muons[muons.pt.argmax()].phi.max()[mask]))
 
+                    output['tree_float16'][region]["vecb"]              +=  processor.column_accumulator(np.float16(vec_b[mask]))
+                    output['tree_float16'][region]["vecdphi"]           +=  processor.column_accumulator(np.float16(vec_dphi[mask]))
+                    output['tree_float16'][region]["dphitkpf"]          +=  processor.column_accumulator(np.float16(dphitkpf[mask]))
+                    
                     for name, w in region_weights._weights.items():
                         output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w[mask]))
+                    
                     output['tree_float16'][region][f"weight_total"] += processor.column_accumulator(np.float16(rweight[mask]))
-                if region=='inclusive':
-                    output['tree_int64'][region]["event"]       +=  processor.column_accumulator(df["event"][mask])
-                    for name in selection.names:
-                        output['tree_bool'][region][name] += processor.column_accumulator(np.bool_(selection.all(*[name])[mask]))
-            # Save the event numbers of events passing this selection
+
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 output['selected_events'][region] += list(df['event'][mask])

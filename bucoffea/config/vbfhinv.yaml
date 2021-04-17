@@ -231,7 +231,7 @@ default:
       endcap: False
     save:
       passing: False
-      tree: False
+      tree: True
     kinematics:
       save: False
       events:
