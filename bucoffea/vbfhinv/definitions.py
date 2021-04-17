@@ -317,14 +317,14 @@ def vbfhinv_regions(cfg):
     # SR without PU weights
     # regions['sr_vbf_no_pu'] = copy.deepcopy(regions['sr_vbf'])
 
-    if not cfg.RUN.APPLY_HF_CUTS and cfg.RUN.QCD_ESTIMATION:
-        raise RuntimeError('If HF cuts are not applied, cannot define a QCD CR')
-
     # QCD CR with the HF shape cuts inverted
     if cfg.RUN.QCD_ESTIMATION:
         regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
-        regions['cr_vbf_qcd'].remove('central_stripsize_cut')
-        regions['cr_vbf_qcd'].remove('sigma_eta_minus_phi')
+        try:
+            regions['cr_vbf_qcd'].remove('central_stripsize_cut')
+            regions['cr_vbf_qcd'].remove('sigma_eta_minus_phi')
+        except:
+            pass
         regions['cr_vbf_qcd'].append('fail_hf_cuts')
 
     # For sync mode
