@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import numpy as np
 from coffea import hist
 
 Bin = hist.Bin
@@ -14,7 +15,8 @@ distributions = [
     'vecb',
     'vecdphi',
     'dphitkpf',
-    'met'
+    'met',
+    'met_phi',
 ]
 
 binnings = {
@@ -24,7 +26,8 @@ binnings = {
     'ak4_nef0' : Bin('frac', 'Leading Jet Neutral EM Frac', 50, 0, 1),
     'ak4_nef1' : Bin('frac', 'Trailing Jet Neutral EM Frac', 50, 0, 1),
     'dphitkpf' : Bin('dphi', r'$\Delta\phi_{TK,PF}$', 50, 0, 3.5),
-    'met' : Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250)))
+    'met' : Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
+    'met_phi' : Bin("phi", r"$\phi_{MET}$", 50, -np.pi, np.pi)
 }
 
 ylims = {

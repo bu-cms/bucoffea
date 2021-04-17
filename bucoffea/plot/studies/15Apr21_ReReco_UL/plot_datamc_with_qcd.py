@@ -301,10 +301,9 @@ def main():
 
     for year in args.years:
         for distribution in distributions:
-            for fformat in ['pdf','png']:
-                if not re.match(args.distribution, distribution):
-                    continue
-                plot_datamc_with_qcd(acc, outtag, year=year, mcscale=mcscale, distribution=distribution, fformat=fformat)
+            if not re.match(args.distribution, distribution):
+                continue
+            plot_datamc_with_qcd(acc, outtag, year=year, mcscale=mcscale, distribution=distribution)
 
 if __name__ == "__main__":
     main()
