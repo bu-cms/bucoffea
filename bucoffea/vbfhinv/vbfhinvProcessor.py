@@ -58,7 +58,8 @@ from bucoffea.vbfhinv.definitions import (
                                            met_trigger_sf,
                                            apply_hfmask_weights,
                                            apply_hf_weights_for_qcd_estimation,
-                                           apply_endcap_weights
+                                           apply_endcap_weights,
+                                           hfmask_sf
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -542,6 +543,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     photon_trigger_sf(region_weights, photons, df)
 
                 if 'sr_vbf' in region:
+                    region_weights = hfmask_sf(ak4, region_weights, evaluator, df, cfg)
                     if cfg.RUN.APPLY_WEIGHTS.HFMASK:
                         region_weights = apply_hfmask_weights(ak4, region_weights, evaluator, met_phi, cfg)
                     if cfg.RUN.APPLY_WEIGHTS.ENDCAP:

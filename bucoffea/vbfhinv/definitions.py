@@ -598,6 +598,13 @@ def apply_hf_weights_for_qcd_estimation(ak4, weights, evaluator, df, cfg, region
     # CR -> SR transfer factor
     weights.add('hf_qcd_est_weight', transferfactor)
 
+def hfmask_sf(ak4, weights, evaluator, df, cfg):
+    '''Apply data/MC SF to account for the HF shape cuts.'''
+    hfak4 = ak4[(ak4.pt > cfg.RUN.HF_PT_THRESH) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
+    sf = evaluator['hf_cuts_sf'](hfak4.abseta, hfak4.pt).prod()
+    weights.add('hfmask_sf', sf)
+    return weights
+
 def apply_endcap_weights(diak4, weights, evaluator):
     '''Jet eta based weights derived from UL data / ReReco MC.'''
     w_ak40 = evaluator['endcap_w_rereco_mc_leadak4'](diak4.i0.eta).prod()
