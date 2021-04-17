@@ -223,7 +223,7 @@ default:
     one_fifth_unblind: False
     qcd_estimation: True
     apply_cleaning_cuts: False
-    regionregex: sr_vbf.*|cr_vbf_qcd
+    regionregex: sr_vbf.*|cr_vbf_qcd|cr_(1m|2m)_vbf
     apply_hf_cuts: True
     hf_pt_thresh: 80
     apply_weights:
