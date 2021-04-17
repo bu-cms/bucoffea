@@ -284,6 +284,7 @@ def vbfhinv_regions(cfg):
         'veto_photon',
         'veto_tau',
         'veto_b',
+        'leadak4_clean'
     ]
 
     # The regular ReReco cleaning cuts

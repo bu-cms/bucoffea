@@ -379,8 +379,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('veto_hfhf', ~both_jets_in_hf.any())
 
         # Leading jet |eta| < 2.9
-        leadak4_not_in_hf = (diak4.i0.abseta < 2.9).any()
-        selection.add('leadak4_not_in_hf', leadak4_not_in_hf)
+        # leadak4_not_in_hf = (diak4.i0.abseta < 2.9).any()
+        # selection.add('leadak4_not_in_hf', leadak4_not_in_hf)
+
+        # Reject events where the leading jet has momentum > 6.5 TeV
+        leadak4_clean = diak4.i0.pt * np.cosh(diak4.i0.eta) < 6500
+        selection.add('leadak4_clean', leadak4_clean.any())
 
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
