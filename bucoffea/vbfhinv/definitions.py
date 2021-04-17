@@ -315,7 +315,7 @@ def vbfhinv_regions(cfg):
         regions['sr_vbf'].remove('eemitigation')
 
     # SR without PU weights
-    regions['sr_vbf_no_pu'] = copy.deepcopy(regions['sr_vbf'])
+    # regions['sr_vbf_no_pu'] = copy.deepcopy(regions['sr_vbf'])
 
     if not cfg.RUN.APPLY_HF_CUTS and cfg.RUN.QCD_ESTIMATION:
         raise RuntimeError('If HF cuts are not applied, cannot define a QCD CR')
