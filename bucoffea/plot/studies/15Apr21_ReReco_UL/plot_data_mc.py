@@ -124,7 +124,8 @@ def make_plot(args):
                         mc_region=mc_region,
                         distribution=distribution,
                         mcscale=mcscale,
-                        plot_signal=data_region == 'sr_vbf'
+                        plot_signal=data_region == 'sr_vbf',
+                        fformat=args.fformat
                     )
                 except KeyError:
                     print(f'WARNING: {data_region} not found in inputs, skipping.')
@@ -342,8 +343,9 @@ def commandline():
     parser.add_argument('inpath', type=str, help='Input folder to use.')
     parser.add_argument('--region', type=str, default='.*', help='Region to plot.')
     parser.add_argument('--distribution', type=str, default='.*', help='Regex specifying the distributions to plot.')
-    parser.add_argument('--years', nargs='*', default=[2017,2018], help='Years to run on.')
+    parser.add_argument('--years', type=int, nargs='*', default=[2017,2018], help='Years to run on.')
     parser.add_argument('--one_fifth_unblind', action='store_true', help='1/5th unblinded data.')
+    parser.add_argument('--fformat', default='pdf', help='Output file format for the plots, default is PDF.')
     args = parser.parse_args()
     return args
 
