@@ -546,12 +546,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 elif re.match(r'cr_g.*', region):
                     photon_trigger_sf(region_weights, photons, df)
 
-                if 'sr_vbf' in region:
+                if cfg.RUN.APPLY_HF_CUTS:
                     region_weights = hfmask_sf(ak4, region_weights, evaluator, df, cfg)
-                    if cfg.RUN.APPLY_WEIGHTS.HFMASK:
-                        region_weights = apply_hfmask_weights(ak4, region_weights, evaluator, met_phi, cfg)
-                    if cfg.RUN.APPLY_WEIGHTS.ENDCAP:
-                        region_weights = apply_endcap_weights(diak4, region_weights, evaluator)
+                if cfg.RUN.APPLY_WEIGHTS.HFMASK:
+                    region_weights = apply_hfmask_weights(ak4, region_weights, evaluator, met_phi, cfg)
+                if cfg.RUN.APPLY_WEIGHTS.ENDCAP:
+                    region_weights = apply_endcap_weights(diak4, region_weights, evaluator)
 
                 # Veto weights
                 if re.match('.*no_veto.*', region):

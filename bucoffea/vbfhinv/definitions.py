@@ -287,6 +287,12 @@ def vbfhinv_regions(cfg):
         'leadak4_clean'
     ]
 
+    if cfg.RUN.APPLY_HF_CUTS:
+        common_cuts.extend([
+            'central_stripsize_cut',
+            'sigma_eta_minus_phi'
+        ])
+
     # The regular ReReco cleaning cuts
     if cfg.RUN.APPLY_CLEANING_CUTS:
         common_cuts.extend([
@@ -300,12 +306,6 @@ def vbfhinv_regions(cfg):
 
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
-
-    if cfg.RUN.APPLY_HF_CUTS:
-        regions['sr_vbf'].extend([
-            'central_stripsize_cut',
-            'sigma_eta_minus_phi'
-        ])
 
     if cfg.RUN.ONE_FIFTH_UNBLIND:
         regions['sr_vbf'].insert(0, 'one_fifth_mask')
