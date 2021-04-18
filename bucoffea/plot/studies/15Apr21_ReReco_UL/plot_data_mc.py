@@ -46,6 +46,15 @@ legend_labels = {
     'VBF_HToInv.*' : "VBF H(inv)",
 }
 
+legend_titles = {
+    'sr_vbf' : 'VBF Signal Region',
+    'cr_1m_vbf' : r'VBF $1\mu$ Region',
+    'cr_2m_vbf' : r'VBF $2\mu$ Region',
+    'cr_1e_vbf' : r'VBF $1e$ Region',
+    'cr_2e_vbf' : r'VBF $2e$ Region',
+    'cr_g_vbf' : r'VBF $\gamma$ Region',
+}
+
 colors = {
     'DY.*' : '#ffffcc',
     'EWKW.*' : '#c6dbef',
@@ -60,7 +69,68 @@ colors = {
     'WJets.*' : '#feb24c',
 }
 
-def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj', plot_signal=True, mcscale=1, fformat='pdf'):
+def make_plot(args):
+    acc = dir_archive(args.inpath)
+    acc.load('sumw')
+    acc.load('sumw2')
+
+    outtag = re.findall('merged_.*', args.inpath)[0].replace('/','')
+
+    if args.one_fifth_unblind:
+        mcscale = 0.2
+    else:
+        mcscale = 1
+
+            # plot_datamc_with_qcd(acc, outtag, year=year, mcscale=mcscale, distribution=distribution)
+    for year in args.years:
+        data = {
+            'sr_vbf' : f'MET_{year}',
+            'cr_1m_vbf' : f'MET_{year}',
+            'cr_2m_vbf' : f'MET_{year}',
+            'cr_1e_vbf' : f'EGamma_{year}',
+            'cr_2e_vbf' : f'EGamma_{year}',
+            'cr_g_vbf'  : f'EGamma_{year}',
+        }
+
+        mc = {
+            'sr_vbf_no_veto_all' : re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_1m_vbf' : re.compile(f'(EWKW.*|EWKZ.*ZToLL.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_1e_vbf' : re.compile(f'(EWKW.*|EWKZ.*ZToLL.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_2m_vbf' : re.compile(f'(EWKZ.*ZToLL.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+            'cr_2e_vbf' : re.compile(f'(EWKZ.*ZToLL.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*).*{year}'),
+            'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
+        }
+
+        for data_region in data.keys():
+            if not re.match(args.region, data_region):
+                continue
+
+            if data_region == 'sr_vbf':
+                mc_region = 'sr_vbf_no_veto_all'
+            else:
+                mc_region = data_region
+
+            _data = data[data_region]
+            _mc = mc[mc_region]
+
+            for distribution in distributions:
+                if not re.match(args.distribution, distribution):
+                    continue
+                try:
+                    plot_data_mc(acc, outtag, year,
+                        data=_data,
+                        mc=_mc,
+                        data_region=data_region,
+                        mc_region=mc_region,
+                        distribution=distribution,
+                        mcscale=mcscale,
+                        plot_signal=data_region == 'sr_vbf'
+                    )
+                except KeyError:
+                    print(f'WARNING: {data_region} not found in inputs, skipping.')
+                    continue
+
+def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distribution='mjj', plot_signal=True, mcscale=1, fformat='pdf'):
     '''Plot data/MC comparison with the QCD template included.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -80,24 +150,12 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
 
     h.axis('dataset').sorting = 'integral'
 
-    mc_region_suffix = ''
-    if region == 'sr_vbf':
-        mc_region_suffix = '_no_veto_all'
-
-    regions = {
-        'data': f'{region}',
-        'mc': f'{region}{mc_region_suffix}',
-    }
-
-    data = f'MET_{year}'
-    mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
-    
     h.scale({
         ds : (mcscale  if mc.match(ds) else 1) for ds in map(str,h.axis("dataset").identifiers())
     }, axis='dataset')
 
-    h_data = h.integrate('region', regions['data'])
-    h_mc = h.integrate('region', regions['mc'])
+    h_data = h.integrate('region', data_region)
+    h_mc = h.integrate('region', mc_region)
 
     # Get the QCD template (estimation from HF)
     # qcdfilepath = bucoffea_path('data/templates/qcd_estimate_sr.root')    
@@ -124,9 +182,10 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
 
         plot_info['sumw'].append(sumw)
 
-    # Add the QCD contribution
-    plot_info['label'].insert(6, 'HF Noise Estimation')
-    plot_info['sumw'].insert(6, h_qcd.values * mcscale)
+    # Add the QCD contribution (for SR only)
+    if data_region == 'sr_vbf':
+        plot_info['label'].insert(6, 'HF Noise Estimate')
+        plot_info['sumw'].insert(6, h_qcd.values * mcscale)
 
     fig, ax, rax = fig_ratio()
     hist.plot1d(h_data[data], ax=ax, overflow=overflow, overlay='dataset', binwnorm=1, error_opts=data_err_opts)
@@ -150,7 +209,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
         }
 
         hist.plot1d(
-            h.integrate('region', regions['mc'])[signal],
+            h.integrate('region', mc_region)[signal],
             ax=ax,
             overlay='dataset',
             overflow=overflow,
@@ -191,15 +250,18 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
                 handle.set_linestyle('-')
                 handle.set_edgecolor('k')
 
-    ax.legend(title='VBF Signal Region', handles=handles, ncol=2)
+
+    ax.legend(title=legend_titles[data_region], handles=handles, ncol=2)
 
     # Plot ratio
     h_data = h_data.integrate('dataset', data)
     h_mc = h_mc.integrate('dataset', mc)
 
     sumw_data, sumw2_data = h_data.values(overflow=overflow, sumw2=True)[()]
+    sumw_mc = h_mc.values(overflow=overflow)[()]
     # Add the QCD contribution to the MC
-    sumw_mc = h_mc.values(overflow=overflow)[()] + h_qcd.values * mcscale
+    if data_region == 'sr_vbf':
+        sumw_mc = sumw_mc + h_qcd.values * mcscale
 
     r = sumw_data / sumw_mc
     rerr = np.abs(poisson_interval(r, sumw2_data / sumw_mc**2) - r)
@@ -266,10 +328,10 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
                 transform=ax.transAxes
                )
 
-    outdir = f'./output/{outtag}'
+    outdir = f'./output/{outtag}/{data_region}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    outpath = pjoin(outdir, f'{region}_data_mc_{distribution}_{year}.{fformat}')
+    outpath = pjoin(outdir, f'{data_region}_data_mc_{distribution}_{year}.{fformat}')
     fig.savefig(outpath)
     plt.close(fig)
 
@@ -278,7 +340,7 @@ def plot_datamc_with_qcd(acc, outtag, year, region='sr_vbf', distribution='mjj',
 def commandline():
     parser = argparse.ArgumentParser(prog='Plotter.')
     parser.add_argument('inpath', type=str, help='Input folder to use.')
-    parser.add_argument('--region', type=str, default='sr_vbf', help='Region to plot.')
+    parser.add_argument('--region', type=str, default='.*', help='Region to plot.')
     parser.add_argument('--distribution', type=str, default='.*', help='Regex specifying the distributions to plot.')
     parser.add_argument('--years', nargs='*', default=[2017,2018], help='Years to run on.')
     parser.add_argument('--one_fifth_unblind', action='store_true', help='1/5th unblinded data.')
@@ -287,23 +349,7 @@ def commandline():
 
 def main():
     args = commandline()
-    
-    acc = dir_archive(args.inpath)
-    acc.load('sumw')
-    acc.load('sumw2')
-
-    outtag = re.findall('merged_.*', args.inpath)[0].replace('/','')
-
-    if args.one_fifth_unblind:
-        mcscale = 0.2
-    else:
-        mcscale = 1
-
-    for year in args.years:
-        for distribution in distributions:
-            if not re.match(args.distribution, distribution):
-                continue
-            plot_datamc_with_qcd(acc, outtag, year=year, mcscale=mcscale, distribution=distribution)
+    make_plot(args)    
 
 if __name__ == "__main__":
     main()
