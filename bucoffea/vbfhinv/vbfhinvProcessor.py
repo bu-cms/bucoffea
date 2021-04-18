@@ -606,16 +606,18 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["leadak4_pt"]        +=  processor.column_accumulator(np.float16(diak4.i0.pt[mask]))
                     output['tree_float16'][region]["leadak4_eta"]       +=  processor.column_accumulator(np.float16(diak4.i0.eta[mask]))
                     output['tree_float16'][region]["leadak4_phi"]       +=  processor.column_accumulator(np.float16(diak4.i0.phi[mask]))
-                    output['tree_float16'][region]["leadak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i0.setaeta[mask]))
-                    output['tree_float16'][region]["leadak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i0.sphiphi[mask]))
-                    output['tree_float16'][region]["leadak4_cssize"]    +=  processor.column_accumulator(np.float16(diak4.i0.hfcentralstripsize[mask]))
+                    if cfg.RUN.ULEGACYV8:
+                        output['tree_float16'][region]["leadak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i0.setaeta[mask]))
+                        output['tree_float16'][region]["leadak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i0.sphiphi[mask]))
+                        output['tree_float16'][region]["leadak4_cssize"]    +=  processor.column_accumulator(np.float16(diak4.i0.hfcentralstripsize[mask]))
                 
                     output['tree_float16'][region]["trailak4_pt"]        +=  processor.column_accumulator(np.float16(diak4.i1.pt[mask]))
                     output['tree_float16'][region]["trailak4_eta"]       +=  processor.column_accumulator(np.float16(diak4.i1.eta[mask]))
                     output['tree_float16'][region]["trailak4_phi"]       +=  processor.column_accumulator(np.float16(diak4.i1.phi[mask]))
-                    output['tree_float16'][region]["trailak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i1.setaeta[mask]))
-                    output['tree_float16'][region]["trailak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i1.sphiphi[mask]))
-                    output['tree_float16'][region]["trailak4_cssize"]    +=  processor.column_accumulator(np.float16(diak4.i1.hfcentralstripsize[mask]))
+                    if cfg.RUN.ULEGACYV8:
+                        output['tree_float16'][region]["trailak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i1.setaeta[mask]))
+                        output['tree_float16'][region]["trailak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i1.sphiphi[mask]))
+                        output['tree_float16'][region]["trailak4_cssize"]    +=  processor.column_accumulator(np.float16(diak4.i1.hfcentralstripsize[mask]))
 
                     output['tree_float16'][region]["mjj"]               +=  processor.column_accumulator(np.float16(df["mjj"][mask]))
                     output['tree_float16'][region]["recoil_pt"]         +=  processor.column_accumulator(np.float16(df["recoil_pt"][mask]))
