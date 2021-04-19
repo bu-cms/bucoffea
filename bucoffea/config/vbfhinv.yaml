@@ -220,7 +220,7 @@ default:
   run:
     sync: False
     ulegacyv8: True
-    one_fifth_unblind: False
+    one_fifth_unblind: True
     qcd_estimation: True
     apply_cleaning_cuts: False
     regionregex: sr_vbf.*|cr_vbf_qcd|cr_(1m|2m)_vbf

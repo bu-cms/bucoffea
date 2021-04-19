@@ -322,6 +322,8 @@ def vbfhinv_regions(cfg):
     # QCD CR with the HF shape cuts inverted
     if cfg.RUN.QCD_ESTIMATION:
         regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
+        if 'one_fifth_mask' in regions['cr_vbf_qcd']:
+            regions['cr_vbf_qcd'].remove('one_fifth_mask')
         try:
             regions['cr_vbf_qcd'].remove('central_stripsize_cut')
             regions['cr_vbf_qcd'].remove('sigma_eta_minus_phi')
