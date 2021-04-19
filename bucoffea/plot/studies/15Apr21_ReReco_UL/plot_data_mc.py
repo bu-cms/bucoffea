@@ -267,7 +267,7 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
     r = sumw_data / sumw_mc
     rerr = np.abs(poisson_interval(r, sumw2_data / sumw_mc**2) - r)
 
-    r[np.isnan(r) | np.isinf(r)] = 1.
+    r[np.isnan(r) | np.isinf(r)] = 0.
     rerr[np.isnan(rerr) | np.isinf(rerr)] = 0.
 
     hep.histplot(

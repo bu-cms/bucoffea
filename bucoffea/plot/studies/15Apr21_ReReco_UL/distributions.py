@@ -12,11 +12,14 @@ distributions = [
     'ak4_pt1',
     'ak4_nef0',
     'ak4_nef1',
+    'ak4_mt0',
+    'ak4_mt1',
     'vecb',
     'vecdphi',
     'dphitkpf',
     'met',
     'met_phi',
+    'ak4_mult',
 ]
 
 binnings = {
@@ -27,7 +30,10 @@ binnings = {
     'ak4_nef1' : Bin('frac', 'Trailing Jet Neutral EM Frac', 50, 0, 1),
     'dphitkpf' : Bin('dphi', r'$\Delta\phi_{TK,PF}$', 50, 0, 3.5),
     'met' : Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
-    'met_phi' : Bin("phi", r"$\phi_{MET}$", 50, -np.pi, np.pi)
+    'met_phi' : Bin("phi", r"$\phi_{MET}$", 50, -np.pi, np.pi),
+    'ak4_mult' : Bin("multiplicity", r"AK4 multiplicity", 10, -0.5, 9.5),
+    'ak4_mt0' : Bin("mt", r"Leading AK4 $M_{T}$ (GeV)", 50, 0, 1000),
+    'ak4_mt1' : Bin("mt", r"Trailing AK4 $M_{T}$ (GeV)", 50, 0, 1000),
 }
 
 ylims = {
@@ -36,5 +42,6 @@ ylims = {
     'vecb' : (1e-1,1e9),
     'vecdphi' : (1e0,1e9),
     'dphitkpf' : (1e0,1e9),
-    'met' : (1e-3,1e5)
+    'met' : (1e-3,1e5),
+    'ak4_mult' : (1e-1,1e8),
 }
