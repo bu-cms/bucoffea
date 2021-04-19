@@ -159,10 +159,10 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
     h_data = h.integrate('region', data_region)
     h_mc = h.integrate('region', mc_region)
 
-    # Get the QCD template (estimation from HF)
-    # qcdfilepath = bucoffea_path('data/templates/qcd_estimate_sr.root')    
-    qcdfilepath = f'output/{outtag}/qcd_estimate/hf_qcd_estimate.root'    
-    h_qcd = uproot.open(qcdfilepath)[f'qcd_estimate_{distribution}_{year}']
+    # Get the QCD template (estimation from HF), only to be used in SR for now
+    if data_region == 'sr_vbf':
+        qcdfilepath = f'output/{outtag}/qcd_estimate/hf_qcd_estimate.root'    
+        h_qcd = uproot.open(qcdfilepath)[f'qcd_estimate_{distribution}_{year}']
 
     data_err_opts = {
         'linestyle':'none',
@@ -180,10 +180,11 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
     }
 
     # Temporary fix for sorting
-    if 'WJetsToLNu' in datasets[-1]:
-        tmp = datasets[-2]
-        datasets[-2] = datasets[-1]
-        datasets[-1] = tmp
+    if data_region == 'sr_vbf':
+        if 'WJetsToLNu' in datasets[-1]:
+            tmp = datasets[-2]
+            datasets[-2] = datasets[-1]
+            datasets[-1] = tmp
 
     for dataset in datasets:
         sumw = h_mc.integrate('dataset', dataset).values(overflow=overflow)[()]
