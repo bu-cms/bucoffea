@@ -20,6 +20,8 @@ distributions = [
     'met',
     'met_phi',
     'ak4_mult',
+    'ak4_mt0',
+    'ak4_mt1',
 ]
 
 binnings = {
