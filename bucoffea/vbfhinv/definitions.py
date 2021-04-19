@@ -123,6 +123,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
     items["ak4_sigma_eta_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
     items["ak4_sigma_phi_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+    items["ak4_mt0"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
 
     items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_ptraw1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -135,6 +136,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_nconst1"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
     items["ak4_sigma_eta_eta1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
     items["ak4_sigma_phi_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+    items["ak4_mt1"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
 
     # Eta of the leading jet when the trailing jet is in HF
     items["ak4_eta0_trailjetHF"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)

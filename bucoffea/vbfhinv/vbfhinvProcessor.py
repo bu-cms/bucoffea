@@ -281,6 +281,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['dphijj'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
         df['detajj'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
 
+        df['ak4_mt0'] = mt(diak4.i0.pt, diak4.i0.phi, met_pt, met_phi).max()
+        df['ak4_mt1'] = mt(diak4.i1.pt, diak4.i1.phi, met_pt, met_phi).max()
+        
         leading_jet_in_horn = ((diak4.i0.abseta<3.2) & (diak4.i0.abseta>2.8)).any()
         trailing_jet_in_horn = ((diak4.i1.abseta<3.2) & (diak4.i1.abseta>2.8)).any()
 
@@ -695,6 +698,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_nhf0',      frac=diak4.i0.nhf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nef0',      frac=diak4.i0.nef[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst0',   nconst=diak4.i0.nconst[mask].flatten(), weight=w_diak4)
+            ezfill('ak4_mt0',       mt=df['ak4_mt0'][mask],                 weight=w_diak4)
 
             ezfill('ak4_pt0_eta0',  jetpt=diak4.i0.pt[mask].flatten(),     jeteta=diak4.i0.eta[mask].flatten(),     weight=w_diak4)
 
@@ -707,6 +711,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nef1',      frac=diak4.i1.nef[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
+            ezfill('ak4_mt1',       mt=df['ak4_mt1'][mask],                 weight=w_diak4)
 
             if cfg.RUN.ULEGACYV8:
                 def is_hf_jet(_ak4, ptmin=100, etamin=2.9, etamax=5.0):
