@@ -117,16 +117,17 @@ def make_plot(args):
                 if not re.match(args.distribution, distribution):
                     continue
                 try:
-                    plot_data_mc(acc, outtag, year,
-                        data=_data,
-                        mc=_mc,
-                        data_region=data_region,
-                        mc_region=mc_region,
-                        distribution=distribution,
-                        mcscale=mcscale,
-                        plot_signal=data_region == 'sr_vbf',
-                        fformat=args.fformat
-                    )
+                    for fformat in args.fformat:
+                        plot_data_mc(acc, outtag, year,
+                            data=_data,
+                            mc=_mc,
+                            data_region=data_region,
+                            mc_region=mc_region,
+                            distribution=distribution,
+                            mcscale=mcscale,
+                            plot_signal=data_region == 'sr_vbf',
+                            fformat=fformat
+                        )
                 except KeyError:
                     print(f'WARNING: {data_region} not found in inputs, skipping.')
                     continue
@@ -177,6 +178,12 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
         'label' : datasets,
         'sumw' : [],
     }
+
+    # Temporary fix for sorting
+    if 'WJetsToLNu' in datasets[-1]:
+        tmp = datasets[-2]
+        datasets[-2] = datasets[-1]
+        datasets[-1] = tmp
 
     for dataset in datasets:
         sumw = h_mc.integrate('dataset', dataset).values(overflow=overflow)[()]
@@ -345,7 +352,7 @@ def commandline():
     parser.add_argument('--distribution', type=str, default='.*', help='Regex specifying the distributions to plot.')
     parser.add_argument('--years', type=int, nargs='*', default=[2017,2018], help='Years to run on.')
     parser.add_argument('--one_fifth_unblind', action='store_true', help='1/5th unblinded data.')
-    parser.add_argument('--fformat', default='pdf', help='Output file format for the plots, default is PDF.')
+    parser.add_argument('--fformat', nargs='*', default=['pdf'], help='Output file format for the plots, default is PDF only.')
     args = parser.parse_args()
     return args
 
