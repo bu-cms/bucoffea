@@ -217,8 +217,11 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
             'color': 'crimson',
         }
 
+        h_signal = h.integrate('region', mc_region)[signal]
+        h_signal.scale(mcscale)
+
         hist.plot1d(
-            h.integrate('region', mc_region)[signal],
+            h_signal,
             ax=ax,
             overlay='dataset',
             overflow=overflow,
