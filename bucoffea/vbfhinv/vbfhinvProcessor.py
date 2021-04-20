@@ -612,10 +612,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_int64'][region]["run"]               +=  processor.column_accumulator(df["run"][mask])
                     output['tree_int64'][region]["lumi"]              +=  processor.column_accumulator(df["luminosityBlock"][mask])
                     
-                    if not df['is_data']:
-                        output['tree_float16'][region]["sumw"]        +=  processor.column_accumulator((np.ones(df.size) * output["sumw"][df["dataset"]])[mask])
-                        output['tree_float16'][region]["sumw2"]       +=  processor.column_accumulator((np.ones(df.size) * output["sumw2"][df["dataset"]])[mask])
-                    
                     output['tree_float16'][region]["leadak4_pt"]        +=  processor.column_accumulator(np.float16(diak4.i0.pt[mask]))
                     output['tree_float16'][region]["leadak4_eta"]       +=  processor.column_accumulator(np.float16(diak4.i0.eta[mask]))
                     output['tree_float16'][region]["leadak4_phi"]       +=  processor.column_accumulator(np.float16(diak4.i0.phi[mask]))
