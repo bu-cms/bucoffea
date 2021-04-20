@@ -288,6 +288,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
         trailing_jet_in_horn = ((diak4.i1.abseta<3.2) & (diak4.i1.abseta>2.8)).any()
 
         selection.add('hornveto', (df['dPFTkSR'] < 0.8) | ~(leading_jet_in_horn | trailing_jet_in_horn))
+        
+        df['htmiss'] = ak4[ak4.pt>30].p4.sum().pt
+        df['ht'] = ak4[ak4.pt>30].pt.sum()
 
         if df['year'] == 2018:
             if df['is_data']:
@@ -616,6 +619,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["leadak4_pt"]        +=  processor.column_accumulator(np.float16(diak4.i0.pt[mask]))
                     output['tree_float16'][region]["leadak4_eta"]       +=  processor.column_accumulator(np.float16(diak4.i0.eta[mask]))
                     output['tree_float16'][region]["leadak4_phi"]       +=  processor.column_accumulator(np.float16(diak4.i0.phi[mask]))
+                    output['tree_float16'][region]["leadak4_nef"]       +=  processor.column_accumulator(np.float16(diak4.i0.nef[mask]))
+                    output['tree_float16'][region]["leadak4_nhf"]       +=  processor.column_accumulator(np.float16(diak4.i0.nhf[mask]))
+                    output['tree_float16'][region]["leadak4_chf"]       +=  processor.column_accumulator(np.float16(diak4.i0.chf[mask]))
+                    
                     if cfg.RUN.ULEGACYV8:
                         output['tree_float16'][region]["leadak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i0.setaeta[mask]))
                         output['tree_float16'][region]["leadak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i0.sphiphi[mask]))
@@ -624,6 +631,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["trailak4_pt"]        +=  processor.column_accumulator(np.float16(diak4.i1.pt[mask]))
                     output['tree_float16'][region]["trailak4_eta"]       +=  processor.column_accumulator(np.float16(diak4.i1.eta[mask]))
                     output['tree_float16'][region]["trailak4_phi"]       +=  processor.column_accumulator(np.float16(diak4.i1.phi[mask]))
+                    output['tree_float16'][region]["trailak4_nef"]       +=  processor.column_accumulator(np.float16(diak4.i1.nef[mask]))
+                    output['tree_float16'][region]["trailak4_nhf"]       +=  processor.column_accumulator(np.float16(diak4.i1.nhf[mask]))
+                    output['tree_float16'][region]["trailak4_chf"]       +=  processor.column_accumulator(np.float16(diak4.i1.chf[mask]))
+                    
                     if cfg.RUN.ULEGACYV8:
                         output['tree_float16'][region]["trailak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i1.setaeta[mask]))
                         output['tree_float16'][region]["trailak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i1.sphiphi[mask]))
@@ -631,8 +642,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                     output['tree_float16'][region]["mjj"]               +=  processor.column_accumulator(np.float16(df["mjj"][mask]))
                     output['tree_float16'][region]["recoil_pt"]         +=  processor.column_accumulator(np.float16(df["recoil_pt"][mask]))
+                    output['tree_float16'][region]["met_pt"]            +=  processor.column_accumulator(np.float16(met_pt[mask]))
                     output['tree_float16'][region]["minDPhiJetRecoil"]  +=  processor.column_accumulator(np.float16(df["minDPhiJetRecoil"][mask]))
 
+                    output['tree_float16'][region]["htmiss"]            +=  processor.column_accumulator(np.float16(df['htmiss'][mask]))
+                    output['tree_float16'][region]["ht"]                +=  processor.column_accumulator(np.float16(df['ht'][mask]))
                     output['tree_float16'][region]["vecb"]              +=  processor.column_accumulator(np.float16(vec_b[mask]))
                     output['tree_float16'][region]["vecdphi"]           +=  processor.column_accumulator(np.float16(vec_dphi[mask]))
                     output['tree_float16'][region]["dphitkpf"]          +=  processor.column_accumulator(np.float16(dphitkpf[mask]))
