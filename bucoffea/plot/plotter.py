@@ -268,7 +268,10 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
                 handle.set_edgecolor('k')
 
 
-    ax.legend(title=legend_titles[data_region], handles=handles, ncol=2)
+    try:
+        ax.legend(title=legend_titles[data_region], handles=handles, ncol=2)
+    except KeyError:
+        ax.legend(handles=handles, ncol=2)
 
     # Plot ratio
     h_data = h_data.integrate('dataset', data)
