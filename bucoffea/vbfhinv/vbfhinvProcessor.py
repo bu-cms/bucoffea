@@ -638,7 +638,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                     output['tree_float16'][region]["mjj"]               +=  processor.column_accumulator(np.float16(df["mjj"][mask]))
                     output['tree_float16'][region]["recoil_pt"]         +=  processor.column_accumulator(np.float16(df["recoil_pt"][mask]))
+                    output['tree_float16'][region]["recoil_phi"]        +=  processor.column_accumulator(np.float16(df["recoil_phi"][mask]))
                     output['tree_float16'][region]["met_pt"]            +=  processor.column_accumulator(np.float16(met_pt[mask]))
+                    output['tree_float16'][region]["met_phi"]           +=  processor.column_accumulator(np.float16(met_phi[mask]))
+                    output['tree_float16'][region]["minDPhiJetMet"]     +=  processor.column_accumulator(np.float16(df["minDPhiJetMet"][mask]))
                     output['tree_float16'][region]["minDPhiJetRecoil"]  +=  processor.column_accumulator(np.float16(df["minDPhiJetRecoil"][mask]))
 
                     output['tree_float16'][region]["htmiss"]            +=  processor.column_accumulator(np.float16(df['htmiss'][mask]))
