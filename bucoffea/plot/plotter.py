@@ -132,7 +132,7 @@ colors = {
     'WJets.*' : '#feb24c',
 }
 
-def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distribution='mjj', plot_signal=True, mcscale=1, fformat='pdf', qcd_file=None):
+def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distribution='mjj', plot_signal=True, mcscale=1, fformat='pdf', qcd_file=None, jes_file=None):
     '''Plot data/MC comparison with the QCD template included.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -329,6 +329,33 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
         np.r_[denom_unc[1], denom_unc[1, -1]],
         **opts
     )
+
+    # If a JES/JER uncertainty file is given, plot the uncertainties in the ratio pad
+    if jes_file and distribution == 'mjj':
+        jes_src = uproot.open(jes_file)
+        h_jerUp = jes_src[f'MTR_{year}_jerUp']
+        h_jerDown = jes_src[f'MTR_{year}_jerDown']
+        h_jesTotalUp = jes_src[f'MTR_{year}_jesTotalUp']
+        h_jesTotalDown = jes_src[f'MTR_{year}_jesTotalDown']
+
+        # Combine JER + JES
+        jecUp = 1 + np.hypot(np.abs(h_jerUp.values - 1), np.abs(h_jesTotalUp.values - 1))
+        jecDown = 1 - np.hypot(np.abs(h_jerDown.values - 1), np.abs(h_jesTotalDown.values - 1))
+
+        # Since we're looking at data/MC, take the reciprocal of these variations
+        jecUp = 1/jecUp
+        jecDown = 1/jecDown
+
+        opts = {"step": "post", "facecolor": "blue", "alpha": 0.3, "linewidth": 0, "label": "JES+JER"}
+
+        rax.fill_between(
+            xedges,
+            np.r_[jecUp, jecUp[-1]],
+            np.r_[jecDown, jecDown[-1]],
+            **opts
+        )
+
+        rax.legend()
 
     rax.grid(axis='y',which='both',linestyle='--')
 

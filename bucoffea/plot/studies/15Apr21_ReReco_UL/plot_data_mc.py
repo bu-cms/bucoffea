@@ -74,8 +74,9 @@ def make_plot(args):
                             mc_region=mc_region,
                             distribution=distribution,
                             mcscale=mcscale,
-                            plot_signal=data_region == 'sr_vbf',
-                            fformat=fformat
+                            plot_signal=False,
+                            fformat=fformat,
+                            jes_file='./jec/jes_uncs.root' if args.jes else None
                         )
                 except KeyError:
                     print(f'WARNING: {data_region} not found in inputs, skipping.')
@@ -89,6 +90,7 @@ def commandline():
     parser.add_argument('--years', type=int, nargs='*', default=[2017,2018], help='Years to run on.')
     parser.add_argument('--one_fifth_unblind', action='store_true', help='1/5th unblinded data.')
     parser.add_argument('--fformat', nargs='*', default=['pdf'], help='Output file format for the plots, default is PDF only.')
+    parser.add_argument('--jes', action='store_true', help='Plot JES+JER uncertainty bands.')
     args = parser.parse_args()
     return args
 
