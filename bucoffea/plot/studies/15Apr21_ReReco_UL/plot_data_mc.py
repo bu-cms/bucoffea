@@ -26,11 +26,6 @@ def make_plot(args):
 
     outtag = re.findall('merged_.*', args.inpath)[0].replace('/','')
 
-    if args.one_fifth_unblind:
-        mcscale = 0.2
-    else:
-        mcscale = 1
-
     for year in args.years:
         data = {
             'sr_vbf' : f'MET_{year}',
@@ -53,6 +48,11 @@ def make_plot(args):
         for data_region in data.keys():
             if not re.match(args.region, data_region):
                 continue
+
+            if args.one_fifth_unblind and data_region == 'sr_vbf':
+                mcscale = 0.2
+            else:
+                mcscale = 1
 
             if data_region == 'sr_vbf':
                 mc_region = 'sr_vbf_no_veto_all'
