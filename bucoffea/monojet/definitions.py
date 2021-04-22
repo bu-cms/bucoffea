@@ -901,8 +901,8 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     year = extract_year(df['dataset'])
     # Muon ID and Isolation for tight and loose WP
     # Function of pT, eta (Order!)
-    weight_muons_id_tight = evaluator['muon_id_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod()
-    weight_muons_iso_tight = evaluator['muon_iso_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod()
+    weight_muons_id_tight = evaluator['muon_id_tight'](muons[df['is_tight_muon']].abseta, muons[df['is_tight_muon']].pt).prod()
+    weight_muons_iso_tight = evaluator['muon_iso_tight'](muons[df['is_tight_muon']].abseta, muons[df['is_tight_muon']].pt).prod()
 
     if cfg.SF.DIMUO_ID_SF.USE_AVERAGE:
         tight_dimuons = muons[df["is_tight_muon"]].distincts()
