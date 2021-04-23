@@ -43,15 +43,36 @@ def datasets(year, unblind=False):
 
     return data, mc
 
-def legacy_dataset_name_vbf(dataset):
-
+def legacy_dataset_name_vbf(dataset, vbf_with_dipole_recoil=True):
+    # For the VBF samples, we have two processes:
+    # VBF with dipole recoil ON / OFF
+    # The default one (as provided in the function argument) will be mapped to "vbf"
     m = re.match("VBF_HToInvisible_M(\d+)(_PSweights)?_pow_pythia8_201[0-9]", dataset)
     if m:
         mh = m.groups()[0]
-        if mh=="125":
-            return "vbf"
+        if vbf_with_dipole_recoil:
+            dr_suffix = '_noDR'
         else:
-            return f"vbf{mh}"
+            dr_suffix = ''
+        
+        if mh=="125":
+            return f"vbf{dr_suffix}"
+        else:
+            return f"vbf{mh}{dr_suffix}"
+
+    m = re.match("VBF_HToInvisible_M(\d+)_withDipoleRecoil(_PSweights)?_pow_pythia8_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if vbf_with_dipole_recoil:
+            dr_suffix = ''
+        else:
+            dr_suffix = '_withDR'
+
+        if mh=="125":
+            return f"vbf{dr_suffix}"
+        else:
+            return f"vbf{mh}{dr_suffix}"
+
     m = re.match("ZH_ZToQQ_HToInvisible_M(\d+)(_PSweights)?_pow_pythia8_201[0-9]", dataset)
     if m:
         mh = m.groups()[0]
@@ -195,7 +216,10 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
 
                 th1 = export1d(ih.integrate('dataset', dataset))
                 try:
-                    histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name_vbf(dataset)}'
+                    # Patch for now: We only have the DR sample for 2018
+                    # So we modify the function "DR" argument based on which year we're looking at
+                    use_dr = year == 2018
+                    histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name_vbf(dataset, vbf_with_dipole_recoil=use_dr )}'
                     print(f'Saved under histogram: {histo_name}')
                 except:
                     print(f"Skipping {dataset}")
