@@ -183,7 +183,8 @@ def btag_weights(bjets, cfg):
                         systematic=variation,
                         flavor=bjets.hadflav,
                         abseta=bjets.abseta,
-                        pt=bjets.pt)
+                        pt=bjets.pt,
+                        ignore_missing=True)
 
         # Cap the weights just in case
         weights[np.abs(weights)>5] = 1

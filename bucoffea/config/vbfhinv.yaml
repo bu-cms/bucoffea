@@ -428,12 +428,12 @@ era2017:
         medium : 0.8838
         tight : 0.9693
       deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-        loose : 0.1522
-        medium: 0.4941
-        tight: 0.8001
+        loose : 0.1355
+        medium: 0.4506
+        tight: 0.7738
   sf:
     deepcsv:
-      file: data/sf/btag/DeepCSV_94XSF_WP_V4_B_F.csv
+      file: data/sf/btag/DeepCSV_106XUL17SF.csv
     ele_reco:
       histogram: EGamma_SF2D
       file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
@@ -575,12 +575,12 @@ era2018:
     wp: medium
     cuts:
       deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
-        loose : 0.1241
-        medium: 0.4184
-        tight: 0.7527
+        loose : 0.1208
+        medium: 0.4168
+        tight: 0.7665
   sf:
     deepcsv:
-      file: data/sf/btag/DeepCSV_102XSF_WP_V1.csv
+      file: data/sf/btag/DeepCSV_106XUL18SF.csv
 
     ele_reco:
       histogram: EGamma_SF2D
