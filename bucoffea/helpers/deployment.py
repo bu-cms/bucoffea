@@ -25,10 +25,10 @@ def get_repo_files():
 
 
 
-def pack_repo(path_to_gridpack):
+def pack_repo(path_to_gridpack, overwrite=False):
     '''Creates a gridpack containing the bucoffea repo'''
-    if os.path.exists(path_to_gridpack):
-        raise RuntimeError(f"Gridpack file already exists. Will not overwrite {path_to_gridpack}.")
+    if os.path.exists(path_to_gridpack) and not overwrite:
+        raise RuntimeError(f"Gridpack file already exists. Will not overwrite {path_to_gridpack} unless 'overwrite=True' is specified.")
     tar = tarfile.open(path_to_gridpack,'w')
     files = get_repo_files()
     for f in files:

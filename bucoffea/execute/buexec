@@ -171,8 +171,8 @@ def do_submit(args):
     timetag = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     if args.name:
         subdir = os.path.abspath(pjoin("./submission/", args.name))
-        if os.path.exists(subdir) and not args.force:
-            raise RuntimeError(f"Will not overwrite existing task directory unless '--force' is specified: {subdir}")
+        if os.path.exists(subdir) and not (args.force | args.append):
+            raise RuntimeError(f"Will not use existing task directory unless '--force' or '--append' is specified: {subdir}")
     else:
         subdir = os.path.abspath(pjoin("./submission/", timetag))
     if not os.path.exists(subdir):
@@ -201,7 +201,9 @@ def do_submit(args):
     input_files = []
     if args.send_pack:
         gridpack_path = pjoin(subdir, 'gridpack.tgz')
-        pack_repo(gridpack_path)
+        gridpack_exists = os.path.exists(gridpack_path)
+        if (not gridpack_exists) or args.force:
+            pack_repo(gridpack_path, overwrite=args.force)
         input_files.append(gridpack_path)
 
     for dataset, files in dataset_files.items():
@@ -326,7 +328,8 @@ def main():
     parser_submit.add_argument('--no-prefetch', action="store_true", default=False, help='DEPRECATED. Prefetching is now disabled by default. Use --prefetch to activate prefetching.')
     parser_submit.add_argument('--dry', action="store_true", default=False, help='Do not trigger submission, just dry run.')
     parser_submit.add_argument('--test', action="store_true", default=False, help='Only run over one file per dataset for testing.')
-    parser_submit.add_argument('--force', action="store_true", default=False, help='Overwrite existing submission folder with same tag.')
+    parser_submit.add_argument('--force', action="store_true", default=False, help='Overwrite existing submission folder and gridpack with same tag.')
+    parser_submit.add_argument('--append', action="store_true", default=False, help='Submit in existing submission folder with same tag, keeping original gridpack.')
     parser_submit.add_argument('--asynchronous', action="store_true", default=False, help='Submit asynchronously.')
     parser_submit.add_argument('--async', action="store_true", default=False, help='Deprecated. Use --asynchronous instead.')
     parser_submit.add_argument('--debug', action="store_true", default=False, help='Print debugging info.')
