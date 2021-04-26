@@ -33,7 +33,7 @@ def read_logs(directories):
     for directory in directories:
         for path, _, files in os.walk(directory):
             logs.extend([os.path.join(path, x) for x in files if x.startswith("log_")])
-    return logs
+    return list(map(os.path.abspath, logs))
 
 class ConJob():
     '''Condor Job'''
@@ -156,10 +156,7 @@ class ConMan():
         self.pkl = pjoin(directory, "jobs.pkl")
         self.autoresub = False
 
-        if os.path.exists(self.pkl):
-            self.jobs = pickle.load( open( self.pkl, "rb" ) )
-        else:
-            self.init_jobs()
+        self.init_jobs()
 
     @property
     def directory(self):
@@ -189,8 +186,22 @@ class ConMan():
         self._autoresub = autoresub
 
     def init_jobs(self):
-        logs = read_logs([self.directory])
-        jobs = list(map(ConJob, logs))
+        '''
+        Builds an internal list of ConJob objects for given task directory.
+
+        If available, previously processed jobs are loaded from
+        the cache pickle file. Jobs that are not present in
+        the cache are initalized from scratch.
+        '''
+        jobs = []
+        if os.path.exists(self.pkl):
+            jobs.extend(pickle.load( open( self.pkl, "rb" ) ))
+
+        all_logs = set(read_logs([self.directory]))
+        existing_logs = set([os.path.abspath(job.log) for job in jobs])
+        logs_to_initialize = all_logs - existing_logs
+        jobs.extend(map(ConJob, logs_to_initialize))
+
         self.jobs = jobs
 
     def update(self):
