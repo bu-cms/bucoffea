@@ -287,7 +287,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         leading_jet_in_horn = ((diak4.i0.abseta<3.2) & (diak4.i0.abseta>2.8)).any()
         trailing_jet_in_horn = ((diak4.i1.abseta<3.2) & (diak4.i1.abseta>2.8)).any()
 
-        selection.add('hornveto', (df['dPFTkSR'] < 0.8) | ~(leading_jet_in_horn | trailing_jet_in_horn))
+        # selection.add('hornveto', (df['dPFTkSR'] < 0.8) | ~(leading_jet_in_horn | trailing_jet_in_horn))
         
         df['htmiss'] = ak4[ak4.pt>30].p4.sum().pt
         df['ht'] = ak4[ak4.pt>30].pt.sum()
@@ -358,7 +358,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         max_neEmEF_ak41 = (~ak41_in_endcap) | (diak4.i1.nef < 0.7) 
 
         max_neEmEF = (max_neEmEF_ak40 & max_neEmEF_ak41).any()
-        selection.add('max_neEmEF', max_neEmEF)
+        # selection.add('max_neEmEF', max_neEmEF)
         
         vec_b = calculate_vecB(ak4, met_pt, met_phi)
         vec_dphi = calculate_vecDPhi(ak4, met_pt, met_phi, df['TkMET_phi'])
@@ -394,13 +394,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Divide into three categories for trigger study
         if cfg.RUN.TRIGGER_STUDY:
-            two_central_jets = (np.abs(diak4.i0.eta) <= 2.4) & (np.abs(diak4.i1.eta) <= 2.4)
-            two_forward_jets = (np.abs(diak4.i0.eta) > 2.4) & (np.abs(diak4.i1.eta) > 2.4)
-            one_jet_forward_one_jet_central = (~two_central_jets) & (~two_forward_jets)
-            selection.add('two_central_jets', two_central_jets.any())
-            selection.add('two_forward_jets', two_forward_jets.any())
-            selection.add('one_jet_forward_one_jet_central', one_jet_forward_one_jet_central.any())
+            two_central_jets = (np.abs(diak4.i0.eta) <= 2.5) & (np.abs(diak4.i1.eta) <= 2.5)
+            two_hf_jets = (np.abs(diak4.i0.eta) > 3.0) & (np.abs(diak4.i1.eta) > 3.0)
+            one_jet_forward_one_jet_central = (~two_central_jets) & (~two_hf_jets)
 
+            selection.add('two_central_jets', two_central_jets.any())
+            selection.add('one_jet_forward_one_jet_central', one_jet_forward_one_jet_central.any())
+        
         # Mask for 1/5th unlbinding
         one_fifth_mask = ~pass_all
 
