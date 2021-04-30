@@ -283,7 +283,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         df['ak4_mt0'] = mt(diak4.i0.pt, diak4.i0.phi, met_pt, met_phi).max()
         df['ak4_mt1'] = mt(diak4.i1.pt, diak4.i1.phi, met_pt, met_phi).max()
-        
+
+        df['dphi_ak40_met'] = dphi(diak4.i0.phi.min(), met_phi)
+        df['dphi_ak41_met'] = dphi(diak4.i1.phi.min(), met_phi)
+
         leading_jet_in_horn = ((diak4.i0.abseta<3.2) & (diak4.i0.abseta>2.8)).any()
         trailing_jet_in_horn = ((diak4.i1.abseta<3.2) & (diak4.i1.abseta>2.8)).any()
 
@@ -647,8 +650,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["recoil_phi"]        +=  processor.column_accumulator(np.float16(df["recoil_phi"][mask]))
                     output['tree_float16'][region]["met_pt"]            +=  processor.column_accumulator(np.float16(met_pt[mask]))
                     output['tree_float16'][region]["met_phi"]           +=  processor.column_accumulator(np.float16(met_phi[mask]))
+                    output['tree_float16'][region]["CaloMet_pt"]        +=  processor.column_accumulator(np.float16(df['CaloMET_pt'][mask]))
+                    output['tree_float16'][region]["CaloMet_phi"]       +=  processor.column_accumulator(np.float16(df['CaloMET_phi'][mask]))
                     output['tree_float16'][region]["minDPhiJetMet"]     +=  processor.column_accumulator(np.float16(df["minDPhiJetMet"][mask]))
                     output['tree_float16'][region]["minDPhiJetRecoil"]  +=  processor.column_accumulator(np.float16(df["minDPhiJetRecoil"][mask]))
+                    output['tree_float16'][region]["dphi_ak40_met"]     +=  processor.column_accumulator(np.float16(df["dphi_ak40_met"][mask]))
+                    output['tree_float16'][region]["dphi_ak41_met"]     +=  processor.column_accumulator(np.float16(df["dphi_ak41_met"][mask]))
 
                     output['tree_float16'][region]["htmiss"]            +=  processor.column_accumulator(np.float16(df['htmiss'][mask]))
                     output['tree_float16'][region]["ht"]                +=  processor.column_accumulator(np.float16(df['ht'][mask]))
