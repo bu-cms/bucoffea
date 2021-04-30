@@ -618,7 +618,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["leadak4_nef"]       +=  processor.column_accumulator(np.float16(diak4.i0.nef[mask]))
                     output['tree_float16'][region]["leadak4_nhf"]       +=  processor.column_accumulator(np.float16(diak4.i0.nhf[mask]))
                     output['tree_float16'][region]["leadak4_chf"]       +=  processor.column_accumulator(np.float16(diak4.i0.chf[mask]))
-                    
+                    output['tree_float16'][region]["leadak4_cef"]       +=  processor.column_accumulator(np.float16(diak4.i0.cef[mask]))
+
                     if cfg.RUN.ULEGACYV8:
                         output['tree_float16'][region]["leadak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i0.setaeta[mask]))
                         output['tree_float16'][region]["leadak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i0.sphiphi[mask]))
@@ -631,7 +632,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["trailak4_nef"]       +=  processor.column_accumulator(np.float16(diak4.i1.nef[mask]))
                     output['tree_float16'][region]["trailak4_nhf"]       +=  processor.column_accumulator(np.float16(diak4.i1.nhf[mask]))
                     output['tree_float16'][region]["trailak4_chf"]       +=  processor.column_accumulator(np.float16(diak4.i1.chf[mask]))
-                    
+                    output['tree_float16'][region]["trailak4_cef"]       +=  processor.column_accumulator(np.float16(diak4.i1.cef[mask]))
+
                     if cfg.RUN.ULEGACYV8:
                         output['tree_float16'][region]["trailak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i1.setaeta[mask]))
                         output['tree_float16'][region]["trailak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i1.sphiphi[mask]))
@@ -639,6 +641,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         output['tree_float16'][region]["trailak4_btagDeepFlavQG"]    +=  processor.column_accumulator(np.float16(diak4.i1.btagdf[mask]))
 
                     output['tree_float16'][region]["mjj"]               +=  processor.column_accumulator(np.float16(df["mjj"][mask]))
+                    output['tree_float16'][region]["detajj"]            +=  processor.column_accumulator(np.float16(df["detajj"][mask]))
+                    output['tree_float16'][region]["dphijj"]            +=  processor.column_accumulator(np.float16(df["dphijj"][mask]))
                     output['tree_float16'][region]["recoil_pt"]         +=  processor.column_accumulator(np.float16(df["recoil_pt"][mask]))
                     output['tree_float16'][region]["recoil_phi"]        +=  processor.column_accumulator(np.float16(df["recoil_phi"][mask]))
                     output['tree_float16'][region]["met_pt"]            +=  processor.column_accumulator(np.float16(met_pt[mask]))

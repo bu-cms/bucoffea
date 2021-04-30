@@ -419,6 +419,7 @@ def setup_candidates(df, cfg):
         csvv2=df["Jet_btagCSVV2"],
         deepcsv=df['Jet_btagDeepB'],
         nef=df['Jet_neEmEF'],
+        cef=df['Jet_chEmEF'],
         nhf=df['Jet_neHEF'],
         chf=df['Jet_chHEF'],
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
