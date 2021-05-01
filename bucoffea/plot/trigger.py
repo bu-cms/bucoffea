@@ -324,7 +324,7 @@ def read_smooth_scale_facs(file):
     '''From an input txt file, get smoothed scale factors for different jet eta configs.'''
     data=np.loadtxt(file,skiprows=2)
     recoil = data[:,0]
-    jeteta_configs = ['two_central_jets', 'one_jet_forward_one_jet_central', 'inclusive_nohfhf']
+    jeteta_configs = ['two_central_jets', 'one_jet_forward_one_jet_central']
 
     sf = {}
 
@@ -342,7 +342,7 @@ def plot_smooth_scale_facs(tag, outtag, distribution='recoil'):
     outdir = f"./output/{tag}/{outtag}/smoothed"
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    jeteta_configs = ['two_central_jets', 'one_jet_forward_one_jet_central', 'inclusive_nohfhf']
+    jeteta_configs = ['two_central_jets', 'one_jet_forward_one_jet_central']
 
     pretty_legend_label = {
         'two_central_jets' : 'Two Central Jets',
@@ -561,7 +561,7 @@ def plot_scalefactors(tag, outtag, ymin=0.9, ymax=1.1, distribution='recoil', ou
     opts = markers('data')
     emarker = opts.pop('emarker', '')
     outdir = f"./output/{tag}/{outtag}"
-    jeteta_configs = ['two_central_jets', 'one_jet_forward_one_jet_central', 'inclusive_nohfhf']
+    jeteta_configs = ['two_central_jets', 'one_jet_forward_one_jet_central']
 
     for year in [2017,2018]:
         for region in regions:
@@ -605,14 +605,14 @@ def plot_scalefactors(tag, outtag, ymin=0.9, ymax=1.1, distribution='recoil', ou
                 ysferr_new = {}
                 ysferr_new['two_central_jets'] = [ ysferr['two_central_jets'][0][recoil_cut], ysferr['two_central_jets'][1][recoil_cut] ] 
                 ysferr_new['one_jet_forward_one_jet_central'] = [ ysferr['one_jet_forward_one_jet_central'][0][recoil_cut], ysferr['one_jet_forward_one_jet_central'][1][recoil_cut] ]
-                ysferr_new['inclusive_nohfhf'] = [ ysferr['inclusive_nohfhf'][0][recoil_cut], ysferr['inclusive_nohfhf'][1][recoil_cut] ]
+                # ysferr_new['inclusive_nohfhf'] = [ ysferr['inclusive_nohfhf'][0][recoil_cut], ysferr['inclusive_nohfhf'][1][recoil_cut] ]
 
             opts['color'] = 'k'
             ax.errorbar(xsf, ysf['two_central_jets'][recoil_cut], yerr=ysferr_new['two_central_jets'],label=f'Two central jets', **opts)
             opts['color'] = 'g'
             ax.errorbar(xsf, ysf['one_jet_forward_one_jet_central'][recoil_cut], yerr=ysferr_new['one_jet_forward_one_jet_central'],label=f'Mixed', **opts)
             opts['color'] = 'r'
-            ax.errorbar(xsf, ysf['inclusive_nohfhf'][recoil_cut], yerr=ysferr_new['inclusive_nohfhf'],label=f'Inclusive (no HF-HF)', **opts)
+            # ax.errorbar(xsf, ysf['inclusive_nohfhf'][recoil_cut], yerr=ysferr_new['inclusive_nohfhf'],label=f'Inclusive (no HF-HF)', **opts)
      
             ax.legend()
             ax.set_ylabel('Data / MC SF') 
@@ -810,7 +810,7 @@ def compare_scale_factors(tag, outtag, distribution='recoil', smoothed=False):
 
         # Other case: Calculate the non-smoothed scale factors
         else:
-            jeteta_configs = ['two_central_jets', 'one_jet_forward_one_jet_central', 'inclusive_nohfhf']
+            jeteta_configs = ['two_central_jets', 'one_jet_forward_one_jet_central']
             for jeteta_config in jeteta_configs:
                 fnum = f'output/{tag}/{outtag}/table_1m_recoil_SingleMuon_{year}_{jeteta_config}.txt'
                 fden = f'output/{tag}/{outtag}/table_1m_recoil_WJetsToLNu_HT_MLM_{year}_{jeteta_config}.txt'
@@ -896,9 +896,9 @@ def met_trigger_eff(distribution, regions=['1m']):
             tag = '120pfht_mu_mjj'
         elif distribution == 'recoil':
             tag = '120pfht_mu_recoil'
-            indir = bucoffea_path('submission/merged_2020-10-20_vbfhinv_03Sep20v7_trigger_study')
+            indir = bucoffea_path('submission/merged_2021-05-01_vbfhinv_ULv8_05Feb21_METtrig')
             # Output tag to name output directory accordingly
-            outtag = 'merged_2020-10-20_vbfhinv_03Sep20v7_trigger_study'
+            outtag = 'merged_2021-05-01_vbfhinv_ULv8_05Feb21_METtrig'
 
         acc = dir_archive(
                           indir,
@@ -913,7 +913,7 @@ def met_trigger_eff(distribution, regions=['1m']):
         acc.load('sumw2')      
 
         for year in [2017, 2018]:
-            for jeteta_config in ['two_central_jets', 'inclusive_nohfhf', 'one_jet_forward_one_jet_central']:
+            for jeteta_config in ['two_central_jets', 'one_jet_forward_one_jet_central']:
                 # Single muon CR
                 region_tag='1m'
                 if region_tag in regions:
@@ -941,7 +941,7 @@ def met_trigger_eff(distribution, regions=['1m']):
                                     jeteta_config=jeteta_config,
                                     output_format='pdf')        
 
-        for jeteta_config in ['two_central_jets', 'inclusive_nohfhf', 'one_jet_forward_one_jet_central']:
+        for jeteta_config in ['two_central_jets', 'one_jet_forward_one_jet_central']:
             data_mc_comparison_plot(tag, outtag=outtag, distribution=distribution, jeteta_config=jeteta_config, output_format='pdf')
 
         plot_scalefactors(tag, outtag, distribution=distribution)
