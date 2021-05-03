@@ -337,13 +337,14 @@ class monojetProcessor(processor.ProcessorABC):
 
         df['leadak8_pt']       = ak8.pt[leadak8_index]
         df['leadak8_eta']      = ak8.eta[leadak8_index]
+        df['leadak8_abseta']   = ak8.abseta[leadak8_index]
         df['leadak8_tau21']    = ak8.tau2[leadak8_index] / ak8.tau1[leadak8_index]
         df['leadak8_mass']     = ak8.mass[leadak8_index]
         df['leadak8_wvsqcdmd'] = ak8.wvsqcdmd[leadak8_index]
         df['leadak8_wvsqcd']   = ak8.wvsqcd[leadak8_index]
 
         leadak8_pt_eta = (df['leadak8_pt'].max() > cfg.SELECTION.SIGNAL.leadak8.PT) \
-                         & (df['leadak8_eta'] < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
+                         & (df['leadak8_abseta'] < cfg.SELECTION.SIGNAL.leadak8.ETA).any()
 
         selection.add('leadak8_pt_eta', leadak8_pt_eta)
         selection.add('leadak8_id',(ak8.tightId[leadak8_index]).any())
@@ -979,6 +980,7 @@ class monojetProcessor(processor.ProcessorABC):
 
                 ezfill('dimuon_pt',     pt=dimuons.pt[mask].flatten(),              weight=w_dimu)
                 ezfill('dimuon_eta',    eta=dimuons.eta[mask].flatten(),            weight=w_dimu)
+                ezfill('dimuon_rapidity',  eta=np.arctanh(dimuons[mask].p4.z/dimuons[mask].p4.t).flatten(),            weight=w_dimu)
                 ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
                 ezfill('dimuon_dr',   dr=dimuons.i0.p4.delta_r(dimuons.i1.p4)[mask].flatten(), weight=w_dimu )
 
@@ -1010,6 +1012,7 @@ class monojetProcessor(processor.ProcessorABC):
                 w_diel = weight_shape(dielectrons.pt[mask], region_weights.partial_weight(exclude=exclude)[mask])
                 ezfill('dielectron_pt',     pt=dielectrons.pt[mask].flatten(),                  weight=w_diel)
                 ezfill('dielectron_eta',    eta=dielectrons.eta[mask].flatten(),                weight=w_diel)
+                ezfill('dielectron_rapidity',  eta=np.arctanh(dielectrons.p4.z[mask]/dielectrons.p4.t[mask]).flatten(),            weight=w_diel)
                 ezfill('dielectron_mass',   dilepton_mass=dielectrons.mass[mask].flatten(),     weight=w_diel)
                 ezfill('dielectron_dr',   dr=dielectrons.i0.p4.delta_r(dielectrons.i1.p4)[mask].flatten(), weight=w_diel )
 

@@ -249,6 +249,7 @@ def monojet_accumulator(cfg):
     items["muon_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
     items["dimuon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["dimuon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["dimuon_rapidity"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["dimuon_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
     items["dimuon_dr"] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
@@ -268,6 +269,7 @@ def monojet_accumulator(cfg):
     items["electron_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
     items["dielectron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["dielectron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    items["dielectron_rapidity"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items["dielectron_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
     items["dielectron_dr"] = Hist("Counts", dataset_ax, region_ax, dr_ax)
 
