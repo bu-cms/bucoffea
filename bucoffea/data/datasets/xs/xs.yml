@@ -2314,16 +2314,32 @@ DYJetsToLL_M-50_HT-800to1200-MLM_new_pmx_2017:
   gen: 0.8059
 DYJetsToLL_M-50_HT-800to1200_PSweights-MLM_2018:
   gen: 0.8076
+DYJetsToLL_Pt-100To250_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 94.2
+DYJetsToLL_Pt-100To250_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 94.46
+DYJetsToLL_Pt-250To400_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 3.637
+DYJetsToLL_Pt-250To400_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 3.628
+DYJetsToLL_Pt-400To650_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 0.4965
+DYJetsToLL_Pt-400To650_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 0.4998
+DYJetsToLL_Pt-50To100_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 397.9
+DYJetsToLL_Pt-50To100_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 397.7
+DYJetsToLL_Pt-650ToInf_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 0.04741
+DYJetsToLL_Pt-650ToInf_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 0.04676
 EWKWMinus2Jets_WToLNu_M-50-mg_2016:
   gen: 20.35
 EWKWMinus2Jets_WToLNu_M-50-mg_2017:
   gen: 23.19
-EWKWMinus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2017:
-  gen: 32.26
 EWKWMinus2Jets_WToLNu_M-50-mg_2018:
   gen: 23.08
-EWKWMinus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2018:
-  gen: 32.26
 EWKWMinus2Jets_WToLNu_M-50-mg_ext1_2016:
   gen: 20.21
 EWKWMinus2Jets_WToLNu_M-50-mg_ext2_2016:
@@ -2334,16 +2350,16 @@ EWKWMinus2Jets_WToLNu_M-50_ForwardLep-mg_2017:
   gen: 5.384
 EWKWMinus2Jets_WToLNu_M-50_ForwardLep-mg_2018:
   gen: 5.384
+EWKWMinus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2017:
+  gen: 32.26
+EWKWMinus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2018:
+  gen: 32.26
 EWKWPlus2Jets_WToLNu_M-50-mg_2016:
   gen: 25.81
 EWKWPlus2Jets_WToLNu_M-50-mg_2017:
   gen: 29.55
-EWKWPlus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2017:
-  gen: 39.33
 EWKWPlus2Jets_WToLNu_M-50-mg_2018:
   gen: 29.59
-EWKWPlus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2018:
-  gen: 39.33
 EWKWPlus2Jets_WToLNu_M-50-mg_ext1_2016:
   gen: 25.55
 EWKWPlus2Jets_WToLNu_M-50-mg_ext2_2016:
@@ -2354,16 +2370,16 @@ EWKWPlus2Jets_WToLNu_M-50_ForwardLep-mg_2017:
   gen: 5.496
 EWKWPlus2Jets_WToLNu_M-50_ForwardLep-mg_2018:
   gen: 5.496
+EWKWPlus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2017:
+  gen: 39.33
+EWKWPlus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2018:
+  gen: 39.33
 EWKZ2Jets_ZToLL_M-50-mg_2016:
   gen: 3.997
 EWKZ2Jets_ZToLL_M-50-mg_2017:
   gen: 4.324
-EWKZ2Jets_ZToLL_M-50_withDipoleRecoil-mg_2017:
-  gen: 6.22
 EWKZ2Jets_ZToLL_M-50-mg_2018:
   gen: 4.323
-EWKZ2Jets_ZToLL_M-50_withDipoleRecoil-mg_2018:
-  gen: 6.22
 EWKZ2Jets_ZToLL_M-50-mg_ext1_2016:
   gen: 3.937
 EWKZ2Jets_ZToLL_M-50-mg_ext2_2016:
@@ -2372,22 +2388,26 @@ EWKZ2Jets_ZToLL_M-50-mg_new_pmx_2017:
   gen: 4.324
 EWKZ2Jets_ZToLL_M-50_PSweights-mg_2018:
   gen: 4.321
+EWKZ2Jets_ZToLL_M-50_withDipoleRecoil-mg_2017:
+  gen: 6.22
+EWKZ2Jets_ZToLL_M-50_withDipoleRecoil-mg_2018:
+  gen: 6.22
 EWKZ2Jets_ZToNuNu-mg_2016:
   gen: 10.03
 EWKZ2Jets_ZToNuNu-mg_2017:
   gen: 10.67
-EWKZ2Jets_ZToNuNu_M-50_withDipoleRecoil-mg_2017:
-  gen: 10.72
 EWKZ2Jets_ZToNuNu-mg_2018:
   gen: 10.68
-EWKZ2Jets_ZToNuNu_M-50_withDipoleRecoil-mg_2018:
-  gen: 10.72
 EWKZ2Jets_ZToNuNu-mg_ext1_2016:
   gen: 9.873
 EWKZ2Jets_ZToNuNu-mg_ext2_2016:
   gen: 9.889
 EWKZ2Jets_ZToNuNu-mg_new_pmx_2017:
   gen: 10.66
+EWKZ2Jets_ZToNuNu_M-50_withDipoleRecoil-mg_2017:
+  gen: 10.72
+EWKZ2Jets_ZToNuNu_M-50_withDipoleRecoil-mg_2018:
+  gen: 10.72
 EWKZ2Jets_ZToNuNu_PSweights-mg_2018:
   gen: 10.67
 G1Jet_Pt-100To250-amcatnlo_2016:
@@ -2990,38 +3010,38 @@ ST_s-channel_top_leptonDecays-PSweights_pow-pythia_2017:
 ST_s-channel_top_leptonDecays-PSweights_pow-pythia_2018:
   gen: 5.756
   nlo: 2.0574
+ST_t-channel_antitop_4f_InclusiveDecays-pow-madspin_2017:
+  gen: 67.93
 ST_t-channel_antitop_4f_InclusiveDecays-pow-madspin_2018:
   gen: 69.09
   nnlo: 80.95
 ST_t-channel_antitop_4f_inclusiveDecays-powV2-madspin_2017:
   gen: 67.91
   nnlo: 80.95
-ST_t-channel_antitop_4f_InclusiveDecays-pow-madspin_2017:
-  gen: 67.93
+ST_t-channel_top_4f_InclusiveDecays-pow-madspin_2017:
+  gen: 113.43
 ST_t-channel_top_4f_InclusiveDecays-pow-madspin_2018:
   gen: 115.3
   nnlo: 136.02
 ST_t-channel_top_4f_inclusiveDecays-powV2-madspin_2017:
   gen: 113.3
   nnlo: 136.02
-ST_t-channel_top_4f_InclusiveDecays-pow-madspin_2017:
-  gen: 113.43
 ST_t-channel_top_4f_inclusiveDecays-powV2-madspin_new_pmx_2017:
   gen: 113.3
   nnlo: 136.02
+ST_tW_antitop_5f_NoFullyHadronicDecays-pow_2017:
+  gen: 32.51
+ST_tW_antitop_5f_NoFullyHadronicDecays-pow_2018:
+  gen: 32.51
 ST_tW_antitop_5f_inclusiveDecays-pow_2016:
   gen: 34.97
   nnlo: 35.85
 ST_tW_antitop_5f_inclusiveDecays-pow_2017:
   gen: 34.97
   nnlo: 35.85
-ST_tW_antitop_5f_NoFullyHadronicDecays-pow_2017:
-  gen: 32.51
 ST_tW_antitop_5f_inclusiveDecays-pow_2018:
   gen: 34.97
   nnlo: 35.85
-ST_tW_antitop_5f_NoFullyHadronicDecays-pow_2018:
-  gen: 32.51
 ST_tW_antitop_5f_inclusiveDecays-pow_ext1_2018:
   gen: 34.97
   nnlo: 35.85
@@ -3049,19 +3069,19 @@ ST_tW_antitop_5f_inclusiveDecaysup-pow_2018:
 ST_tW_antitop_5f_inclusiveDecaysup_PSweights-pow_2017:
   gen: 34.97
   nnlo: 35.85
+ST_tW_top_5f_NoFullyHadronicDecays-pow_2017:
+  gen: 32.45
+ST_tW_top_5f_NoFullyHadronicDecays-pow_2018:
+  gen: 32.45
 ST_tW_top_5f_inclusiveDecays-pow_2016:
   gen: 34.91
   nnlo: 35.85
 ST_tW_top_5f_inclusiveDecays-pow_2017:
   gen: 34.91
   nnlo: 35.85
-ST_tW_top_5f_NoFullyHadronicDecays-pow_2017:
-  gen: 32.45
 ST_tW_top_5f_inclusiveDecays-pow_2018:
   gen: 34.91
   nnlo: 35.85
-ST_tW_top_5f_NoFullyHadronicDecays-pow_2018:
-  gen: 32.45
 ST_tW_top_5f_inclusiveDecays-pow_ext1_2018:
   gen: 34.91
   nnlo: 35.85
@@ -3675,17 +3695,17 @@ VBF_HToInvisible_M110_pow_pythia8_2016:
 VBF_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 3.861
   nnlo: 3.782
-VBF_HToInvisible_M125_withDipoleRecoil_pow_pythia8_2018:
-  nnlo: 3.782
 VBF_HToInvisible_M125_pow_pythia8_2016:
   gen: 0.0
   nnlo: 3.782
 VBF_HToInvisible_M125_pow_pythia8_2017:
   gen: 3.861
   nnlo: 3.782
+VBF_HToInvisible_M125_pow_pythia8_2018:
+  nnlo: 3.782
 VBF_HToInvisible_M125_withDipoleRecoil_pow_pythia8_2017:
   nnlo: 3.782
-VBF_HToInvisible_M125_pow_pythia8_2018:
+VBF_HToInvisible_M125_withDipoleRecoil_pow_pythia8_2018:
   nnlo: 3.782
 VBF_HToInvisible_M150_pow_pythia8_2016:
   gen: 0.0
