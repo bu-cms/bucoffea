@@ -316,7 +316,7 @@ def monojet_accumulator(cfg):
     items['npv_vs_recoil'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax,recoil_ax_vcoarse)
     items['npvgood_vs_recoil'] = Hist('Number of good primary vertices', dataset_ax, region_ax, nvtx_ax,recoil_ax_vcoarse)
     items['npv_vs_recoil_nopu'] = Hist('Number of primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax,recoil_ax_vcoarse)
-    items['npvgood_vs_recoilnopu'] = Hist('Number of good primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax,recoil_ax_vcoarse)
+    items['npvgood_vs_recoil_nopu'] = Hist('Number of good primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax,recoil_ax_vcoarse)
 
     items['rho_all_vs_recoil'] = Hist(r'$\rho$ for all PF candidates', dataset_ax, region_ax, rho_ax,recoil_ax_vcoarse)
     items['rho_central_vs_recoil'] = Hist(r'$\rho$ for central PF candidates', dataset_ax, region_ax, rho_ax,recoil_ax_vcoarse)
