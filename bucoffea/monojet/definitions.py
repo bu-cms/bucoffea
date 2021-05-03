@@ -54,6 +54,7 @@ def monojet_accumulator(cfg):
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
     recoil_ax_coarse = Bin("recoil", r"Recoil (GeV)", 20, 0, 2000)
+    recoil_ax_vcoarse = Bin("recoil", r"Recoil (GeV)", 10, 0, 200)
     gen_v_pt_ax = Bin("pt", r"pt (GeV)", 200, 0, 2000)
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
@@ -312,6 +313,17 @@ def monojet_accumulator(cfg):
     items['rho_central'] = Hist(r'$\rho$ for central PF candidates', dataset_ax, region_ax, rho_ax)
     items['rho_all_nopu'] = Hist(r'$\rho$ for all PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax)
     items['rho_central_nopu'] = Hist(r'$\rho$ for central PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax)
+
+
+    items['npv_vs_recoil'] = Hist('Number of primary vertices', dataset_ax, region_ax, nvtx_ax,recoil_ax_vcoarse)
+    items['npvgood_vs_recoil'] = Hist('Number of good primary vertices', dataset_ax, region_ax, nvtx_ax,recoil_ax_vcoarse)
+    items['npv_vs_recoil_nopu'] = Hist('Number of primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax,recoil_ax_vcoarse)
+    items['npvgood_vs_recoil_nopu'] = Hist('Number of good primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax,recoil_ax_vcoarse)
+
+    items['rho_all_vs_recoil'] = Hist(r'$\rho$ for all PF candidates', dataset_ax, region_ax, rho_ax,recoil_ax_vcoarse)
+    items['rho_central_vs_recoil'] = Hist(r'$\rho$ for central PF candidates', dataset_ax, region_ax, rho_ax,recoil_ax_vcoarse)
+    items['rho_all_vs_recoil_nopu'] = Hist(r'$\rho$ for all PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax,recoil_ax_vcoarse)
+    items['rho_central_vs_recoil_nopu'] = Hist(r'$\rho$ for central PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax,recoil_ax_vcoarse)
 
     return  processor.dict_accumulator(items)
 
