@@ -1034,16 +1034,29 @@ class monojetProcessor(processor.ProcessorABC):
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], region_weights.partial_weight(exclude=exclude)[mask])
 
             # PV
-            ezfill('npv', nvtx=df['PV_npvs'][mask], weight=region_weights.partial_weight(exclude=exclude)[mask])
-            ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=region_weights.partial_weight(exclude=exclude)[mask])
+            rweight = region_weights.partial_weight(exclude=exclude)
+            rweight_nopu = region_weights.partial_weight(exclude=['pileup']+exclude)
+            ezfill('npv', nvtx=df['PV_npvs'][mask], weight=rweight[mask])
+            ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=rweight[mask])
 
-            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
-            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
+            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=rweight_nopu[mask])
+            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=rweight_nopu[mask])
 
-            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=region_weights.partial_weight(exclude=exclude)[mask])
-            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=region_weights.partial_weight(exclude=exclude)[mask])
-            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
-            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=region_weights.partial_weight(exclude=['pileup']+exclude)[mask])
+            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=rweight[mask])
+            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=rweight[mask])
+            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=rweight_nopu[mask])
+            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=rweight_nopu[mask])
+
+            ezfill('npv_vs_recoil',     nvtx=df['PV_npvs'][mask],     recoil=recoil_pt[mask],   weight=rweight[mask])
+            ezfill('npvgood_vs_recoil', nvtx=df['PV_npvsGood'][mask], recoil=recoil_pt[mask],   weight=rweight[mask])
+
+            ezfill('npv_vs_recoil_nopu',     nvtx=df['PV_npvs'][mask],     recoil=recoil_pt[mask], weight=rweight_nopu[mask])
+            ezfill('npvgood_vs_recoil_nopu', nvtx=df['PV_npvsGood'][mask], recoil=recoil_pt[mask], weight=rweight_nopu[mask])
+
+            ezfill('rho_all_vs_recoil',          rho=df['fixedGridRhoFastjetAll'][mask],     recoil=recoil_pt[mask], weight=rweight[mask])
+            ezfill('rho_central_vs_recoil',      rho=df['fixedGridRhoFastjetCentral'][mask], recoil=recoil_pt[mask], weight=rweight[mask])
+            ezfill('rho_all_vs_recoil_nopu',     rho=df['fixedGridRhoFastjetAll'][mask],     recoil=recoil_pt[mask], weight=rweight_nopu[mask])
+            ezfill('rho_central_vs_recoil_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], recoil=recoil_pt[mask], weight=rweight_nopu[mask])
         return output
 
     def postprocess(self, accumulator):
