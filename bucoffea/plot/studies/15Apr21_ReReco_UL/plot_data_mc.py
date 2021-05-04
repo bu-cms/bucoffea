@@ -74,7 +74,7 @@ def make_plot(args):
                             mc_region=mc_region,
                             distribution=distribution,
                             mcscale=mcscale,
-                            plot_signal=False,
+                            plot_signal=True,
                             fformat=fformat,
                             jes_file='./jec/jes_uncs.root' if args.jes else None
                         )
