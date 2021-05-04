@@ -54,7 +54,7 @@ def monojet_accumulator(cfg):
     met_ax = Bin("met", r"$p_{T}^{miss}$ (GeV)", 40, 0, 2000)
     recoil_ax = Bin("recoil", r"Recoil (GeV)", 200, 0, 2000)
     recoil_ax_coarse = Bin("recoil", r"Recoil (GeV)", 20, 0, 2000)
-    recoil_ax_vcoarse = Bin("recoil", r"Recoil (GeV)", 10, 0, 200)
+    recoil_ax_vcoarse = Bin("recoil", r"Recoil (GeV)", 10, 0, 2000)
     gen_v_pt_ax = Bin("pt", r"pt (GeV)", 200, 0, 2000)
 
     jet_pt_ax = Bin("jetpt", r"$p_{T}$ (GeV)", 50, 0, 1000)
