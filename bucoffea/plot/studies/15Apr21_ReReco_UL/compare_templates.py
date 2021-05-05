@@ -36,7 +36,7 @@ def preprocess(h, acc, distribution, region, dataset_regex):
     h = h.integrate('region', region).integrate('dataset', dataset_regex)
     return h
 
-def compare_templates(acc_dict, outtag, dataset_tag, dataset_regex, distribution='mjj', region='sr_vbf_no_veto_all'):
+def compare_templates(acc_dict, outtag, dataset_tag, dataset_regex, distribution='mjj', region='sr_vbf_no_veto_all', outputformat='pdf'):
     '''Compare the two templates.'''
     histos = {}
     for key, acc in acc_dict.items():
@@ -101,7 +101,7 @@ def compare_templates(acc_dict, outtag, dataset_tag, dataset_regex, distribution
     outdir = f'./output/{outtag}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    outpath = pjoin(outdir, f'{dataset_tag}_{distribution}.pdf')
+    outpath = pjoin(outdir, f'{dataset_tag}_{distribution}.{outputformat}')
     fig.savefig(outpath)
     plt.close(fig)
 
@@ -127,10 +127,12 @@ def main():
         dataset_regex = re.compile(f'(ZJetsToNuNu|WJetsToLNu|EWK|Top|Diboson).*{year}')
         dataset_tag = f'mc_all_{year}'
 
-        compare_templates(acc_dict, outtag,
-            dataset_tag=dataset_tag,
-            dataset_regex=dataset_regex,
-        )
+        for outputformat in ['pdf', 'png']:
+            compare_templates(acc_dict, outtag,
+                dataset_tag=dataset_tag,
+                dataset_regex=dataset_regex,
+                outputformat=outputformat
+            )
 
 if __name__ == '__main__':
     main()

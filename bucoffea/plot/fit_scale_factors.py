@@ -5,6 +5,7 @@ import sys
 import re
 import numpy as np
 import uproot
+import mplhep as hep
 
 from scipy.optimize import curve_fit
 from matplotlib import pyplot as plt
@@ -60,7 +61,7 @@ def do_fit(xsf, ysf, ysferr):
 
     return fit_params
 
-def fit_efficiencies(fdata, fmc, jeteta_config, year, outputrootfile, outdir):
+def fit_efficiencies(fdata, fmc, jeteta_config, year, outputrootfile, outdir, outputformat='pdf'):
     '''Fit the efficiency with a sigmoid function.'''
     x_data, x_edg_data, y_data, yerr_data = get_xy(fdata)
     x_mc, _, y_mc, yerr_mc = get_xy(fmc)
@@ -137,7 +138,7 @@ def fit_efficiencies(fdata, fmc, jeteta_config, year, outputrootfile, outdir):
         transform=ax.transAxes
         )
 
-    outpath = pjoin(outdir, f'eff_fit_{jeteta_config}_{year}.pdf')
+    outpath = pjoin(outdir, f'eff_fit_{jeteta_config}_{year}.{outputformat}')
     fig.savefig(outpath)
     plt.close(fig)
     print(f'File saved: {outpath}')
@@ -145,6 +146,60 @@ def fit_efficiencies(fdata, fmc, jeteta_config, year, outputrootfile, outdir):
     x_edges = np.array(list(x_edg_data[0]) + [x_edg_data[1][-1]])
 
     outputrootfile[f'sf_{jeteta_config}_{year}'] = (sf_fit, x_edges)
+
+def compare_with_previous_sf(new_rootfile, prev_rootfile, outdir, outputformat='pdf'):
+    '''Given two root files with old and new trig SF, make a comparison plot.'''
+    f_prev = uproot.open(prev_rootfile)
+    f_new = uproot.open(new_rootfile)
+
+    for year in [2017,2018]:
+        prev_sf = {}
+        new_sf = {}
+        fig, ax, rax = fig_ratio()
+        for tag in ['two_central_jets', 'one_jet_forward_one_jet_central']:
+            xedges = f_prev[f'sf_{tag}_{year}'].edges
+            prev_sf[tag] = f_prev[f'sf_{tag}_{year}'].values
+            new_sf[tag] = f_new[f'sf_{tag}_{year}'].values
+        
+            hep.histplot(prev_sf[tag], xedges, ax=ax, label=f'{get_pretty_legend_label(tag)} Old', histtype='errorbar')
+            hep.histplot(new_sf[tag], xedges, ax=ax, label=f'{get_pretty_legend_label(tag)} New', histtype='errorbar')
+
+        ax.legend()
+        ax.set_ylabel('Data / MC SF')
+        ax.set_xlabel('Recoil (GeV)')
+        ax.set_ylim(0.8,1.1)
+        ax.set_xlim(left=200)
+        ax.axvline(250, ymin=0, ymax=1, color='k')
+
+        ax.text(1.,1.,year,
+            ha='right',
+            va='bottom',
+            transform=ax.transAxes
+        )
+
+        # Plot the ratio between old and new
+        opts = {
+            'markersize' : 12.,
+            'linestyle' : 'none',
+            'marker' : '.',
+        }
+        xcenters = 0.5 * (xedges + np.roll(xedges, -1))[:-1]
+
+        for tag in ['two_central_jets', 'one_jet_forward_one_jet_central']:
+            ratio = new_sf[tag] / prev_sf[tag]
+            rax.plot(xcenters, ratio, label=get_pretty_legend_label(tag), **opts)
+
+        rax.set_xlabel('Recoil (GeV)')
+        rax.set_ylabel('UL / EOY')
+        rax.set_ylim(0.9,1.1)
+        rax.grid(True)
+        rax.legend(ncol=2)
+        rax.axvline(250, ymin=0, ymax=1, color='k', lw=2)
+
+        outpath = pjoin(outdir, f'trig_sf_comparison_{year}.{outputformat}')
+        fig.savefig(outpath)
+        plt.close(fig)
+        print(f'File saved: {outpath}')
 
 def compare_with_current_sf(new_rootfile, outdir):
     '''Plot the newly calculated SF and compare with the original one.'''
@@ -252,13 +307,24 @@ def main():
             # Check the file paths
             check_files(f_data, f_mc)
 
-            fit_efficiencies(f_data, f_mc, 
-                jeteta_config=jeteta_config, 
-                year=year, 
-                outdir=outdir,
-                outputrootfile=outputrootfile)
-
-    compare_with_current_sf(outputrootpath, outdir)
+            for outputformat in ['pdf', 'png']:
+                fit_efficiencies(f_data, f_mc, 
+                    jeteta_config=jeteta_config, 
+                    year=year, 
+                    outdir=outdir,
+                    outputrootfile=outputrootfile,
+                    outputformat=outputformat
+                    )
+    
+    # ROOT file with old version of the trigger SF
+    prev_rootfile = bucoffea_path('plot/output/120pfht_mu_recoil/merged_2020-10-20_vbfhinv_03Sep20v7_trigger_study/sigmoid_fit/with_normalization/fitted_sf.root')
+    for outputformat in ['pdf', 'png']:
+        compare_with_previous_sf(
+            outputrootpath,
+            prev_rootfile,
+            outdir=outdir,
+            outputformat=outputformat
+        )
 
 if __name__ == '__main__':
     main()
