@@ -161,7 +161,7 @@ def compare_with_previous_sf(new_rootfile, prev_rootfile, outdir, outputformat='
             prev_sf[tag] = f_prev[f'sf_{tag}_{year}'].values
             new_sf[tag] = f_new[f'sf_{tag}_{year}'].values
         
-            hep.histplot(prev_sf[tag], xedges, ax=ax, label=f'{get_pretty_legend_label(tag)} Old', histtype='errorbar')
+            hep.histplot(prev_sf[tag], xedges, ax=ax, label=f'{get_pretty_legend_label(tag)} Old', histtype='errorbar', marker='^', markersize=8.)
             hep.histplot(new_sf[tag], xedges, ax=ax, label=f'{get_pretty_legend_label(tag)} New', histtype='errorbar')
 
         ax.legend()
