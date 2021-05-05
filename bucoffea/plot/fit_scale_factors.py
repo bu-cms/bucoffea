@@ -20,6 +20,8 @@ pjoin = os.path.join
 
 matplotlib_rc()
 
+COLORS = plt.rcParams['axes.prop_cycle'].by_key()['color']
+
 def get_pretty_legend_label(tag):
     pretty_legend_label = {
         'two_central_jets' : 'Two Central Jets',
@@ -156,13 +158,13 @@ def compare_with_previous_sf(new_rootfile, prev_rootfile, outdir, outputformat='
         prev_sf = {}
         new_sf = {}
         fig, ax, rax = fig_ratio()
-        for tag in ['two_central_jets', 'one_jet_forward_one_jet_central']:
+        for idx, tag in enumerate(['two_central_jets', 'one_jet_forward_one_jet_central']):
             xedges = f_prev[f'sf_{tag}_{year}'].edges
             prev_sf[tag] = f_prev[f'sf_{tag}_{year}'].values
             new_sf[tag] = f_new[f'sf_{tag}_{year}'].values
         
-            hep.histplot(prev_sf[tag], xedges, ax=ax, label=f'{get_pretty_legend_label(tag)} Old', histtype='errorbar', marker='^', markersize=8.)
-            hep.histplot(new_sf[tag], xedges, ax=ax, label=f'{get_pretty_legend_label(tag)} New', histtype='errorbar')
+            hep.histplot(prev_sf[tag], xedges, ax=ax, label=f'{get_pretty_legend_label(tag)} Old', histtype='errorbar', marker='^', markersize=8., color=COLORS[idx])
+            hep.histplot(new_sf[tag], xedges, ax=ax, label=f'{get_pretty_legend_label(tag)} New', histtype='errorbar', color=COLORS[idx])
 
         ax.legend()
         ax.set_ylabel('Data / MC SF')
