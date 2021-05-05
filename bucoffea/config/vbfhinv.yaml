@@ -584,7 +584,7 @@ era2018:
 
     ele_reco:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/egammaEffi_ptAbove20_txt_EGM2D_UL2018.root
+      file: data/sf/egamma/ul/egammaEffi_ptAbove20_txt_EGM2D_UL2018.root
 
     ele_reco_pt_lt_20:
       histogram: EGamma_SF2D
