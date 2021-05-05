@@ -154,7 +154,7 @@ def commandline():
     parser.add_argument('inpath', type=str, help='Input folder to use.')
     parser.add_argument('--region', type=str, default='(sr|cr_(1e|2e|1m|2m|g))_j', help='Region to plot.')
     parser.add_argument('--nlo', action='store_true', help='Use NLO MC sample')
-    parser.add_argument('--distribution', type=str, default='(recoil$|met$|ak4_(pt0?$|eta|mult)|electron_(pt|eta|mt)|muon_(pt|eta|mt)|photon_(pt|eta)|di(electron|muon)_(pt|mass))', help='Distribution to plot.')
+    parser.add_argument('--distribution', type=str, default='(recoil$|met$|ak4_(pt0?$|eta|mult|nef0|chf0|nhf0|cef0)|electron_(pt|eta|mt)|muon_(pt|eta|mt)|photon_(pt|eta)|di(electron|muon)_(pt|eta|mass))', help='Distribution to plot.')
     parser.add_argument('--mcscale', type=float, default=None, help='scale SR MC by factor')
     args = parser.parse_args()
     return args

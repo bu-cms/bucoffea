@@ -147,6 +147,24 @@ def plot_settings():
             'ak4_eta0' : {
                 'xlim' : (-2.5,2.5)
             },
+            'ak4_pt0' : {
+                'ylim' : (1e-1,1e6)
+            },
+            'ak4_cef0' : {
+                'ylim' : (1e1,1e8)
+            },
+            'ak4_nhf0' : {
+                'ylim' : (1e1,1e8)
+            },
+            'ak4_nef0' : {
+                'ylim' : (1e1,1e8)
+            },
+            'ak4_chf0' : {
+                'ylim' : (1e1,1e8)
+            },
+            'ak4_mult' : {
+                'ylim' : (1e0,1e6)
+            },
             'dpfcalo' : {
                 'xlim' : (-0.5,0.5)
             }
@@ -222,6 +240,10 @@ def plot_settings():
                 'ylim' : (1e-1,1e8)
             },
             'dimuon_eta' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e0,1e7)
+            },
+            'dimuon_rapidity' : {
                 'xlim' : (-3,3),
                 'ylim' : (1e0,1e7)
             },
@@ -357,6 +379,10 @@ def plot_settings():
                 'ylim' : (1e-1,1e6)
             },
             'dielectron_eta' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e-1,1e5)
+            },
+            'dielectron_rapidity' : {
                 'xlim' : (-3,3),
                 'ylim' : (1e-1,1e5)
             },
@@ -762,6 +788,10 @@ def plot_settings():
                 'xlim' : (-3,3),
                 'ylim' : (1e3,1e5)
             },
+            'dimuon_rapidity' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e3,1e5)
+            },
             'dimuon_dr' : {
                 'xlim' : (0,2),
                 'ylim' : (1e1,1e6)
@@ -885,6 +915,10 @@ def plot_settings():
                 'ylim' : (1e3,1e5)
             },
             'dielectron_eta' : {
+                'xlim' : (-3,3),
+                'ylim' : (1e3,1e5)
+            },
+            'dielectron_rapidity' : {
                 'xlim' : (-3,3),
                 'ylim' : (1e3,1e5)
             },

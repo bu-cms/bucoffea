@@ -18,7 +18,7 @@ def commandline():
     parser.add_argument('inpath', type=str, help='Input folder to use.')
     parser.add_argument('--region', type=str, default='(sr|cr_(1e|2e|1m|2m|g))_(loose|tight)_v', help='Region to plot.')
     parser.add_argument('--nlo', action='store_true', help='Use NLO MC sample')
-    parser.add_argument('--distribution', type=str, default='(recoil$|met$|ak8_(pt|eta|mass)|electron_(pt|eta)|muon_(pt|eta|mt)|photon_(pt|eta)|di(electron|muon)_mass)', help='Distribution to plot.')
+    parser.add_argument('--distribution', type=str, default='(recoil$|met$|ak8_(pt|eta|mass)|electron_(pt|eta)|muon_(pt|eta|mt)|photon_(pt|eta)|di(electron|muon)_(pt|mass|eta|rapidity))', help='Distribution to plot.')
     parser.add_argument('--njobs','-j', type=int, default=6, help='number of jobs running plotter in parallell')
     parser.add_argument('--mcscale', type=float, default=None, help='scale SR MC by factor')
     args = parser.parse_args()
@@ -67,7 +67,7 @@ def main(sysargs):
     acc.load('sumw_pileup')
     acc.load('nevents')
 
-    distributions_0=['recoil','met','ak8_pt0','ak8_eta0','ak8_tau210','ak8_mass0','ak8_wvsqcd0','ak8_wvsqcdmd0','dimuon_pt','muon_pt0','muon_eta0','muon_phi0','electron_pt0','electron_eta0','electron_phi0','ak8_wvstqcd0','ak8_wvstqcdmd0','ak8_tvsqcd0','ak8_tvsqcdmd0']
+    distributions_0=['recoil','met','ak8_pt0','ak8_eta0','ak8_tau210','ak8_mass0','ak8_wvsqcd0','ak8_wvsqcdmd0','dimuon_pt', 'dimuon_mass', 'dimuon_eta', 'dimuon_rapidity', 'muon_pt0','muon_eta0','muon_phi0','electron_pt0','electron_eta0','electron_phi0', 'dielectron_pt', 'dielectron_mass', 'dielectron_eta', 'dielectron_rapidity', 'ak8_wvstqcd0','ak8_wvstqcdmd0','ak8_tvsqcd0','ak8_tvsqcdmd0']
     print("preparing the acc for plotting ... ")
     for distribution in distributions_0:
         if not re.match(sysargs.distribution, distribution):
@@ -123,7 +123,8 @@ def main(sysargs):
                 mc = mc_map[raw_region]
 
                 distributions=['recoil','met','ak8_pt0','ak8_eta0','ak8_tau210','ak8_mass0','ak8_wvsqcd0','ak8_wvsqcdmd0']
-                if '_2m_' in region: distributions.append('dimuon_pt')
+                if '_2m_' in region: distributions+=['dimuon_pt', 'dimuon_mass', 'dimuon_eta', 'dimuon_rapidity']
+                if '_2e_' in region: distributions+=['dielectron_pt', 'dielectron_mass', 'dielectron_eta', 'dielectron_rapidity']
                 if '_1m_' in region: distributions+=['muon_pt0','muon_eta0','muon_phi0']
                 if '_1e_' in region: distributions+=['electron_pt0','electron_eta0','electron_phi0']
                 for distribution in distributions:
