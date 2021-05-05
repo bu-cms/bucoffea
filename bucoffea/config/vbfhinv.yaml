@@ -223,7 +223,7 @@ default:
     one_fifth_unblind: False
     qcd_estimation: True
     apply_cleaning_cuts: False
-    regionregex: (sr_vbf|cr_vbf_qcd|cr_(1m|2m)).*
+    regionregex: cr_(1|2)e_vbf
     apply_hf_cuts: True
     hf_pt_thresh: 100
     apply_weights:
@@ -436,25 +436,25 @@ era2017:
       file: data/sf/btag/DeepCSV_106XUL17SF.csv
     ele_reco:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
+      file: data/sf/egamma/ul/egammaEffi_ptAbove20_txt_EGM2D_UL2017.root
 
     ele_reco_pt_lt_20:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO_lowEt.root
+      file: data/sf/egamma/ul/egammaEffi_ptBelow20_txt_EGM2D_UL2017.root
 
     ele_id_loose:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2_BU.root
+      file: data/sf/egamma/ul/egammaEffi_txt_EGM2D_Veto_UL17.root
 
     ele_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronTight_Fall17V2_BU.root
+      file: data/sf/egamma/ul/egammaEffi_txt_EGM2D_Tight_UL17.root
 
     photon:
-      usetnp: True
+      usetnp: False
     photon_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_PhotonsMedium_capped.root
+      file: data/sf/egamma/ul/egammaEffi_txt_EGM2D_PHO_Tight_UL17.root
     photon_id_tight_tnp:
       histogram: photon_medium_id_sf_2017
       file: data/sf/egamma/photon_medium_id_sf_v0.root
@@ -584,21 +584,25 @@ era2018:
 
     ele_reco:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_egammaEffi_txt_EGM2D_updatedAll.root
+      file: data/sf/egamma/egammaEffi_ptAbove20_txt_EGM2D_UL2018.root
+
+    ele_reco_pt_lt_20:
+      histogram: EGamma_SF2D
+      file: data/sf/egamma/ul/egammaEffi_ptBelow20_txt_EGM2D_UL2018.root
 
     ele_id_loose:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_ElectronWPVeto_Fall17V2_BU.root
+      file: data/sf/egamma/ul/egammaEffi_txt_Ele_Veto_EGM2D_UL18.root
 
     ele_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_ElectronTight_Fall17V2_BU.root
+      file: data/sf/egamma/ul/egammaEffi_txt_Ele_Tight_EGM2D_UL18.root
 
     photon:
-      usetnp: True
+      usetnp: False
     photon_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_PhotonsMedium_capped.root
+      file: data/sf/egamma/ul/egammaEffi_txt_EGM2D_Pho_Tight_UL18.root
     photon_id_tight_tnp:
       histogram: photon_medium_id_sf_2018
       file: data/sf/egamma/photon_medium_id_sf_v0.root
