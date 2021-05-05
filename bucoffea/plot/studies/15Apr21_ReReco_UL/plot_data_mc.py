@@ -74,7 +74,7 @@ def make_plot(args):
                             mc_region=mc_region,
                             distribution=distribution,
                             mcscale=mcscale,
-                            plot_signal=True,
+                            plot_signal='sr_vbf' in data_region,
                             fformat=fformat,
                             jes_file='./jec/jes_uncs.root' if args.jes else None
                         )
