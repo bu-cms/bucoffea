@@ -3,6 +3,9 @@ from bucoffea.plot.stack_plot import *
 from coffea.hist.plot import clopper_pearson_interval
 from klepto.archives import dir_archive
 import ROOT
+from effparts import plot_effparts
+
+
 
 #inpath = "../../../input/merged_2020_11_18_03Sep20v7_use_1p0_for_wtag_medium_wp"
 #inpath = "../../../input/merged_2020_10_14_update_mistag"
@@ -220,7 +223,7 @@ def main():
                     'cr_nobveto_v' : re.compile(f'(QCD_HT|{wjets_nlo_regex}|GJets_1j|.*ZNJetsTo.*LHE.*).*{year}'),
                     'sr_v'         : re.compile(f'(QCD_HT|{wjets_nlo_regex}|GJets_1j|.*ZNJetsTo.*LHE.*).*{year}'),
                 }
-            for wp in ['loose','tight','medium']:
+            for wp in ['loose','tight']:
                 region_all = f'cr_{lepton_flag}_hasmass_inclusive_v'
                 region_all_nomass = f'cr_{lepton_flag}_inclusive_v'
                 region_pass= f'cr_{lepton_flag}_nomistag_{wp}_v'
@@ -239,33 +242,13 @@ def main():
                 # print(acc[distribution_Vmatched][mc_All].integrate("region",region_pass).values())
                 #############
                 #make stack_plot for all and pass
-                try:
-                    acc["alskjxkjo"]
-                    make_plot(acc, region=region_all, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
-                    make_plot(acc, region=region_all_nomass, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
-                    make_plot(acc, region=region_all_nomass, distribution=distribution_mass, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
-                    make_plot(acc, region=region_all, distribution=distribution, year=year, data=None, mc=mc_Real, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3), ratio=False, tag="MCHasV")
-                    make_plot(acc, region=region_all, distribution=distribution_Vmatched, year=year, data=None, mc=mc_Real, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3), ratio=False, tag="MCHasV")
-                    make_plot(acc, region=region_all, distribution=distribution, year=year, data=None, mc=mc_False, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3), ratio=False, tag="MCNoV")
-                    make_plot(acc, region=region_all, distribution=distribution, year=year, data=data, mc=None, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3), ratio=False, tag="data")
-                    make_plot(acc, region=region_pass, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
-                    make_plot(acc, region=region_pass_nomass, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
-                    make_plot(acc, region=region_pass_nomass, distribution=distribution_mass, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
-                    make_plot(acc, region=region_pass, distribution=distribution, year=year, data=None, mc=mc_Real, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3), ratio=False, tag="MCHasV")
-                    make_plot(acc, region=region_pass, distribution=distribution_Vmatched, year=year, data=None, mc=mc_Real, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3), ratio=False, tag="MCHasV")
-                    make_plot(acc, region=region_pass, distribution=distribution, year=year, data=None, mc=mc_False, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3), ratio=False, tag="MCNoV")
-                    make_plot(acc, region=region_pass, distribution=distribution, year=year, data=data, mc=None, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3), ratio=False, tag="data")
-                except ValueError:
-                    print(f"Warning(ValueError): skipping plots for lepton_flag={lepton_flag} year={year} wp={wp} due to negative or zero bins")
-                except AssertionError:
-                    print(f"Warning(AssertionError): skipping plots for lepton_flag={lepton_flag} year={year} wp={wp} due to negative or zero bins")
-                except KeyError:
-                    print(f"Warning(KeyError): skipping plots for lepton_flag={lepton_flag} year={year} wp={wp} due to negative or zero bins")
-                try:
-                    make_plot(acc, region=region_pass_nomass, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
-                    make_plot(acc, region=region_pass_nomass, distribution=distribution_mass, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
-                except:
-                    pass
+                plot_effparts(acc, region=region_all, distribution=distribution, distribution_Vmatched=distribution_Vmatched, year=year, data=data, mc_all=mc_All, mc_realV=mc_Real, mc_fakeV=mc_False, outdir=f'{outdir}/stack_plots', output_format='pdf', tag="effparts",  ylim=(10e-4,5e3))
+                plot_effparts(acc, region=region_pass, distribution=distribution, distribution_Vmatched=distribution_Vmatched, year=year, data=data, mc_all=mc_All, mc_realV=mc_Real, mc_fakeV=mc_False, outdir=f'{outdir}/stack_plots', output_format='pdf', tag="effparts", ylim=(10e-4,5e3))
+                #try:
+                #make_plot(acc, region=region_all, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
+                #make_plot(acc, region=region_pass, distribution=distribution, year=year, data=data, mc=mc_All, outdir=f'{outdir}/stack_plots', output_format='png', ylim=(10e-4,5e3))
+                #except:
+                #    pass
     
     
         
@@ -328,10 +311,11 @@ def main():
                         teff_mistag_rate_data.Write()
                         teff_mistag_rate_mc.Write()
                         th1_mistag_SF.Write()
+
     
     # soup togather all CR using a weighted_average between the regions:
     for year in [2017,2018]:
-        for wp in ['loose','tight','medium']:
+        for wp in ['loose','tight']:
             for sysvar in all_sysvar:
                 if sysvar=="nominal":
                     sysvar_tag = ""
