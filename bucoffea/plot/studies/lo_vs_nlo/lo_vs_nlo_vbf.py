@@ -66,7 +66,7 @@ def plot(args):
                 'cr_1e_vbf' : re.compile(f'(EWKW.*|Top_FXFX.*|Diboson.*|.*DYJetsToLL_M-50_HT_MLM.*|.*WJetsToLNu.*HT.*).*{year}'),
                 'cr_2m_vbf' : re.compile(f'(EWKZ.*ZToLL.*|Top_FXFX.*|Diboson.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
                 'cr_2e_vbf' : re.compile(f'(EWKZ.*ZToLL.*|Top_FXFX.*|Diboson.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-                'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
+                'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM.*EWK).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
             }
 
             # Load ingredients from cache
@@ -136,7 +136,7 @@ def commandline():
     parser.add_argument('inpath', type=str, help='Input folder to use.')
     parser.add_argument('--region', type=str, default='.*', help='Region to plot.')
     parser.add_argument('--distribution', type=str, default='.*', help='Distribution to plot.')
-    parser.add_argument('--years', nargs='*', default=[2017,2018], help='Years to run on.')
+    parser.add_argument('--years', nargs='*', type=int, default=[2017,2018], help='Years to run on.')
     parser.add_argument('--one_fifth_unblind', action='store_true', help='1/5th unblinding for data.')
     args = parser.parse_args()
     return args
