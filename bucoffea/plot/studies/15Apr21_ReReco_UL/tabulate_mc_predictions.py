@@ -63,6 +63,8 @@ def tabulate_bkg_predictions(acc,outtag,region='sr_vbf_no_veto_all', isUL=True):
         ]
 
         table = []
+        d_sumw = {}
+        d_err = {}
 
         for tag, regex in datasets:
             _h = h.integrate('dataset', regex)
@@ -74,12 +76,30 @@ def tabulate_bkg_predictions(acc,outtag,region='sr_vbf_no_veto_all', isUL=True):
             avgerr = 0.5 * (err[0] + err[1])
 
             data = [tag]
+            
+            d_sumw[tag] = sumw
+            d_err[tag] = avgerr
 
             # Per mjj bin table
             for _sumw, _err in zip(sumw, avgerr):
                 data.append(f'{_sumw if _sumw > 0 else 0.:.1f} +- {_err if not (np.isnan(_err) or _sumw < 0) else 0.:.1f}')
 
             table.append(data)
+
+        # Combined prediction + error
+        sumwlist = list(d_sumw.values())
+        errlist = list(d_err.values())
+        
+        err2list = [x**2 for x in errlist]
+
+        total_bkg = np.sum(sumwlist, axis=0)
+        total_err = np.sqrt(np.sum(err2list, axis=0))
+
+        data_to_add = ["Total prediction"]
+        for bkg, err in zip(total_bkg, total_err):
+            data_to_add.append(f'{bkg:.1f} +- {err:.1f}')
+
+        table.append(data_to_add)
 
         # Write the table to an output file
         outpath = pjoin(outdir, f'table_{year}_{"ul" if isUL else "eoy"}.txt')
