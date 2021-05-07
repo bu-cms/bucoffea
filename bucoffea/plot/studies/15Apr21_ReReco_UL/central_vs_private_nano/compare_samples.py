@@ -25,6 +25,15 @@ BINNINGS = {
     'ak4_pt1' : hist.Bin('jetpt',r'Trailing AK4 jet $p_{T}$ (GeV)',list(range(40,600,20)) + list(range(600,1000,20)) ),
 }
 
+TAGS = {
+    'ewk_wlv' : r'EWK $W(\mu\nu)$',
+    'ewk_zvv' : r'EWK $Z(\nu\nu)$',
+}
+
+RAX_YLIMS = {
+    'mjj' : (0.8,1.2)
+}
+
 def preprocess(h, acc, region, distribution='mjj'):
     h = merge_extensions(h, acc)
     scale_xs_lumi(h)
@@ -35,8 +44,6 @@ def preprocess(h, acc, region, distribution='mjj'):
         new_ax = BINNINGS[distribution]
         h = h.rebin(new_ax.name, new_ax)
 
-    h = h.integrate('region', region)
-    
     return h
 
 def compare_samples(acc_dict, region, distribution='mjj', years=[2017]):
@@ -55,12 +62,12 @@ def compare_samples(acc_dict, region, distribution='mjj', years=[2017]):
 
     for year in years:
         datasets = [
-            ('ewk_wlv', re.compile(f'EWKW2Jets.*{year}')),
-            ('ewk_zvv', re.compile(f'EWKZ2Jets.*ZToNuNu.*{year}')),
+            ('ewk_wlv', re.compile(f'EWKW2Jets.*{year}'), 'cr_1m_vbf'),
+            ('ewk_zvv', re.compile(f'EWKZ2Jets.*ZToNuNu.*{year}'), 'sr_vbf_no_veto_all'),
         ]
-        for tag, regex in datasets:
-            h_private = histos['private'].integrate('dataset', regex)        
-            h_central = histos['central'].integrate('dataset', regex)
+        for tag, regex, region in datasets:
+            h_private = histos['private'].integrate('dataset', regex).integrate('region', region)        
+            h_central = histos['central'].integrate('dataset', regex).integrate('region', region)
 
             fig, ax, rax = fig_ratio()
             hist.plot1d(h_private, ax=ax, overflow='over')
@@ -70,7 +77,7 @@ def compare_samples(acc_dict, region, distribution='mjj', years=[2017]):
             ax.set_ylim(1e-2,1e4)
             ax.legend(title='Nano', labels=['Private', 'Central'])
 
-            ax.text(0.,1.,tag,
+            ax.text(0.,1.,TAGS[tag],
                 fontsize=14,
                 ha='left',
                 va='bottom',
@@ -97,7 +104,10 @@ def compare_samples(acc_dict, region, distribution='mjj', years=[2017]):
                 rax.set_xlabel(new_xlabels[distribution])
 
             rax.grid(True)
-            rax.set_ylim(0.5,1.5)
+            if distribution in RAX_YLIMS.keys():
+                rax.set_ylim(*RAX_YLIMS[distribution])
+            else:
+                rax.set_ylim(0.5,1.5)
             rax.set_ylabel('Private / Central')
 
             outdir = './output'
