@@ -116,6 +116,10 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
         # Write the estimate into the output root file
         sumw = h_qcd.values(overflow=overflow)[()]
         xedges = h_qcd.axes()[0].edges(overflow=overflow)
+
+        # Get rid of negative values
+        sumw[sumw < 0.] = 0.
+
         outrootfile[f'qcd_estimate_{distribution}_{year}'] = (sumw, xedges)
 
 def main():
