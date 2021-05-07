@@ -34,7 +34,7 @@ RAX_YLIMS = {
     'mjj' : (0.8,1.2)
 }
 
-def preprocess(h, acc, region, distribution='mjj'):
+def preprocess(h, acc, distribution='mjj'):
     h = merge_extensions(h, acc)
     scale_xs_lumi(h)
     h = merge_datasets(h)
@@ -46,12 +46,12 @@ def preprocess(h, acc, region, distribution='mjj'):
 
     return h
 
-def compare_samples(acc_dict, region, distribution='mjj', years=[2017]):
+def compare_samples(acc_dict, distribution='mjj', years=[2017]):
     '''Compare samples from private and central Nano production.'''
     histos = {}
     for key, acc in acc_dict.items():
         acc.load(distribution)
-        histos[key] = preprocess(acc[distribution], acc, region, distribution)
+        histos[key] = preprocess(acc[distribution], acc, distribution)
     
     data_err_opts = {
         'linestyle':'none',
@@ -120,7 +120,7 @@ def compare_samples(acc_dict, region, distribution='mjj', years=[2017]):
 
 def main():
     acc_dict = {
-        'private' : dir_archive( bucoffea_path('submission/merged_2021-05-03_vbfhinv_ULv8_05Feb21_trigSF_update') ),
+        'private' : dir_archive( bucoffea_path('submission/merged_2021-05-07_vbfhinv_ULv8_05Feb21_private_EWK_V') ),
         'central' : dir_archive( bucoffea_path('submission/merged_2021-05-07_vbfhinv_ULv8_05Feb21_central_EWK_V') ),
     }
     
@@ -138,7 +138,7 @@ def main():
     ]
 
     for distribution in distributions:
-        compare_samples(acc_dict, region='sr_vbf_no_veto_all', distribution=distribution)
+        compare_samples(acc_dict, distribution=distribution)
 
 if __name__ == '__main__':
     main()
