@@ -45,16 +45,12 @@ distributions = [
     'ak4_nhf1',
     'ak4_chf0',
     'ak4_chf1',
-    'ak4_mt0',
-    'ak4_mt1',
     'vecb',
     'vecdphi',
     'dphitkpf',
     'met',
     'met_phi',
     'ak4_mult',
-    'ak4_mt0',
-    'ak4_mt1',
 ]
 
 binnings = {
@@ -73,8 +69,6 @@ binnings = {
     'met' : Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
     'met_phi' : Bin("phi", r"$\phi_{MET}$", 50, -np.pi, np.pi),
     'ak4_mult' : Bin("multiplicity", r"AK4 multiplicity", 10, -0.5, 9.5),
-    'ak4_mt0' : Bin("mt", r"Leading AK4 $M_{T}$ (GeV)", 50, 0, 1000),
-    'ak4_mt1' : Bin("mt", r"Trailing AK4 $M_{T}$ (GeV)", 50, 0, 1000),
 }
 
 ylims = {
@@ -94,7 +88,7 @@ ylims = {
 }
 
 legend_labels = {
-    'GJets_DR-0p4.*' : "QCD $\\gamma$+jets",
+    'GJets_(DR-0p4|HT).*' : "QCD $\\gamma$+jets",
     'GJets_SM.*' : "EWK $\\gamma$+jets",
     'DY.*' : "QCD Z$\\rightarrow\\ell\\ell$",
     'EWKZ.*ZToLL.*' : "EWK Z$\\rightarrow\\ell\\ell$",
@@ -130,6 +124,9 @@ colors = {
     '.*ST.*' : '#9e9ac8',
     'ZJetsToNuNu.*' : '#31a354',
     'WJets.*' : '#feb24c',
+    'GJets_(DR-0p4|HT).*' : '#fc4e2a',
+    'GJets_SM.*' : '#a76b51',
+    'QCD.*' : '#a6bddb',
 }
 
 def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distribution='mjj', plot_signal=True, mcscale=1, fformat='pdf', qcd_file=None, jes_file=None):
@@ -158,7 +155,7 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
 
     h_data = h.integrate('region', data_region)
     h_mc = h.integrate('region', mc_region)
-
+    
     # Get the QCD template (estimation from HF), only to be used in SR for now
     if data_region == 'sr_vbf':
         # If a path to QCD file has been given, use it!
