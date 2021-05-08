@@ -223,7 +223,7 @@ default:
     one_fifth_unblind: False
     qcd_estimation: True
     apply_cleaning_cuts: False
-    regionregex: cr_(1|2)e_vbf
+    regionregex: .*
     apply_hf_cuts: True
     hf_pt_thresh: 100
     apply_weights:
@@ -231,7 +231,7 @@ default:
       endcap: False
     save:
       passing: False
-      tree: True
+      tree: False
     kinematics:
       save: False
       events:
