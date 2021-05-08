@@ -425,7 +425,6 @@ def setup_candidates(df, cfg):
         ptraw=df['Jet_pt']*(1-df['Jet_rawFactor']),
         nconst=df['Jet_nConstituents'],
         hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour'],
-        btagdf=df['Jet_btagDeepFlavQG'],
     )
 
     # Only fur UL v8 samples, the new HF shape variables
@@ -435,6 +434,7 @@ def setup_candidates(df, cfg):
             'sphiphi': df['Jet_hfsigmaPhiPhi'],
             'hfcentralstripsize': df['Jet_hfcentralEtaStripSize'],
             'hfadjacentstripsize': df['Jet_hfadjacentEtaStripsSize'],
+            'btagdf': df['Jet_btagDeepFlavQG'],
         }
         ak4.add_attributes(**kwargs)
 
