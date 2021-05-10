@@ -26,8 +26,11 @@ BINNINGS = {
 }
 
 TAGS = {
-    'ewk_wlv' : r'EWK $W(\mu\nu)$',
+    'ewk_wmv' : r'EWK $W(\mu\nu)$',
+    'ewk_wev' : r'EWK $W(e\nu)$',
     'ewk_zvv' : r'EWK $Z(\nu\nu)$',
+    'ewk_zee' : r'EWK $Z(ee)$',
+    'ewk_zmm' : r'EWK $Z(\mu\mu)$',
 }
 
 RAX_YLIMS = {
@@ -62,7 +65,10 @@ def compare_samples(acc_dict, distribution='mjj', years=[2017]):
 
     for year in years:
         datasets = [
-            ('ewk_wlv', re.compile(f'EWKW2Jets.*{year}'), 'cr_1m_vbf'),
+            ('ewk_wev', re.compile(f'EWKW2Jets.*{year}'), 'cr_1e_vbf'),
+            ('ewk_wmv', re.compile(f'EWKW2Jets.*{year}'), 'cr_1m_vbf'),
+            ('ewk_zee', re.compile(f'EWKZ2Jets.*ZToLL.*{year}'), 'cr_2e_vbf'),
+            ('ewk_zmm', re.compile(f'EWKZ2Jets.*ZToLL.*{year}'), 'cr_2m_vbf'),
             ('ewk_zvv', re.compile(f'EWKZ2Jets.*ZToNuNu.*{year}'), 'sr_vbf_no_veto_all'),
         ]
         for tag, regex, region in datasets:
@@ -110,7 +116,7 @@ def compare_samples(acc_dict, distribution='mjj', years=[2017]):
                 rax.set_ylim(0.5,1.5)
             rax.set_ylabel('Private / Central')
 
-            outdir = './output'
+            outdir = './output/10May21'
             if not os.path.exists(outdir):
                 os.makedirs(outdir)
             outpath = pjoin(outdir, f'private_vs_central_{tag}_{distribution}_{year}.pdf')
@@ -120,8 +126,8 @@ def compare_samples(acc_dict, distribution='mjj', years=[2017]):
 
 def main():
     acc_dict = {
-        'private' : dir_archive( bucoffea_path('submission/merged_2021-05-07_vbfhinv_ULv8_05Feb21_private_EWK_V') ),
-        'central' : dir_archive( bucoffea_path('submission/merged_2021-05-07_vbfhinv_ULv8_05Feb21_central_EWK_V') ),
+        'private' : dir_archive( bucoffea_path('submission/merged_2021-05-10_vbfhinv_ULv8_05Feb21_EWK_V') ),
+        'central' : dir_archive( bucoffea_path('submission/merged_2021-05-10_vbfhinv_ULv8_05Feb21_central_EWK_V') ),
     }
     
     for acc in acc_dict.values():
@@ -133,8 +139,8 @@ def main():
         'mjj', 
         'ak4_eta0', 
         'ak4_eta1',
-        'ak4_pt0',
-        'ak4_pt1',
+        # 'ak4_pt0',
+        # 'ak4_pt1',
     ]
 
     for distribution in distributions:
