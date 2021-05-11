@@ -56,7 +56,7 @@ def tabulate_bkg_predictions(acc,outtag,region='sr_vbf_no_veto_all', isUL=True):
             ('EWK Z(vv)',   re.compile(f'EWKZ2Jets.*ZToNuNu.*{year}')),
             ('QCD W(lv)',  re.compile(f'WJetsToLNu_HT.*{year}')),
             ('EWK W(lv)',  re.compile(f'EWKW2Jets.*{year}')),
-            ('QCD Z(ll)', re.compile(f'DYJetsToLL.*{year}')),
+            ('QCD Z(ll)', re.compile(f'DYJetsToLL.*HT.*{year}')),
             ('EWK Z(ll)', re.compile(f'EWKZ2Jets.*ZToLL.*{year}')),
             ('Top', re.compile(f'Top.*{year}')),
             ('Diboson', re.compile(f'Diboson.*{year}')),
