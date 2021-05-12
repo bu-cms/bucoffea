@@ -18,16 +18,14 @@ distributions = [
     'ak4_nhf1',
     'ak4_chf0',
     'ak4_chf1',
-    'ak4_mt0',
-    'ak4_mt1',
+    # 'ak4_mt0',
+    # 'ak4_mt1',
     'vecb',
     'vecdphi',
     'dphitkpf',
     'met',
     'met_phi',
     'ak4_mult',
-    'ak4_mt0',
-    'ak4_mt1',
 ]
 
 binnings = {
