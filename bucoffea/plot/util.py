@@ -241,8 +241,8 @@ def create_dataset_mapping(all_datasets):
         'DYJetsToLL_Pt_FXFX_{year}' : 'DYJetsToLL_Pt-(\d+)To.*FXFX_{year}',
         'WJetsToLNu_HT_MLM_{year}' : 'WJetsToLNu_HT-(\d+)To.*-MLM_{year}',
 
-        'Top_FXFX_{year}' : '(TTJets-amcatnloFXFX|ST_((s|t)-channel|tW)_(anti)?top).*_{year}',
-        'Top_MLM_{year}' : '(TTJets.*MLM|ST_((s|t)-channel|tW)_(anti)?top).*_{year}',
+        'Top_FXFX_{year}' : '(TTJets-amcatnloFXFX|ST_((s|t)-channel|tW)).*_{year}',
+        'Top_MLM_{year}' : '(TTJets.*MLM|ST_((s|t)-channel|tW)).*_{year}',
         'TT_pow_{year}' : '(TTTo.*pow|ST).*{year}',
 
         'QCD_HT_{year}' : 'QCD_HT.*_{year}',
