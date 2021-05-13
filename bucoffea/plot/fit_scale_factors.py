@@ -26,7 +26,7 @@ def get_pretty_legend_label(tag):
     pretty_legend_label = {
         'two_central_jets' : 'Two Central Jets',
         'one_jet_forward_one_jet_central' : 'Mixed',
-        'inclusive_nohfhf' : 'Inclusive (No HF-HF)'
+        'inclusive_no_hfhf' : 'Inclusive (No HF-HF)'
     }
     return pretty_legend_label[tag]
 
@@ -235,7 +235,7 @@ def compare_with_current_sf(new_rootfile, outdir):
             'marker' : '.'
         }
 
-        jeteta_configs = ['two_central_jets', 'one_jet_forward_one_jet_central']
+        jeteta_configs = ['two_central_jets', 'one_jet_forward_one_jet_central', 'inclusive_no_hfhf']
         for idx, jeteta_config in enumerate(jeteta_configs):
             new_sf = f_new[f'sf_{jeteta_config}_{year}'].values
             new_sf_edges = f_new[f'sf_{jeteta_config}_{year}'].edges
@@ -284,12 +284,13 @@ def compare_with_current_sf(new_rootfile, outdir):
 
 def main():
     # Input directory to read txt files from
-    input_dir = './output/120pfht_mu_recoil/merged_2021-05-01_vbfhinv_ULv8_05Feb21_METtrig'
+    input_dir = './output/120pfht_mu_recoil/merged_2021-05-13_vbfhinv_ULv8_05Feb21_METtrig'
     outtag = input_dir.split('/')[-1]
 
     jeteta_configs = [
         'two_central_jets',
         'one_jet_forward_one_jet_central',
+        'inclusive_no_hfhf'
     ]
 
     # Save the SFs to an output ROOT file
