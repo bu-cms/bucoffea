@@ -26,8 +26,6 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
     h = merge_datasets(h)
 
     overflow = 'none'
-    if distribution == 'mjj':
-        overflow = 'over'
 
     if distribution in binnings.keys():
         new_ax = binnings[distribution]
