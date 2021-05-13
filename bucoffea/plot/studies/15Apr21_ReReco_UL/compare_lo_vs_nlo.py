@@ -29,8 +29,8 @@ def compare_lo_vs_nlo(acc, outtag, tag, lo_regex, nlo_regex, distribution='mjj',
     pretty_region_tag = {
         'sr_vbf_no_veto_all' : 'VBF SR',       
         'cr_2m_vbf' : r'$Z(\mu\mu)$ CR',       
+        'cr_2e_vbf' : r'$Z(ee)$ CR',       
     }
-
 
     for year in [2017, 2018]:
         _h = h.integrate('region', region)[re.compile(f'(({lo_regex})|({nlo_regex})).*{year}')]
@@ -46,6 +46,13 @@ def compare_lo_vs_nlo(acc, outtag, tag, lo_regex, nlo_regex, distribution='mjj',
         ax.text(0.,1.,pretty_region_tag[region],
             fontsize=14,
             ha='left',
+            va='bottom',
+            transform=ax.transAxes
+        )
+
+        ax.text(1.,1.,year,
+            fontsize=14,
+            ha='right',
             va='bottom',
             transform=ax.transAxes
         )
@@ -96,7 +103,7 @@ def main():
 
     outtag = re.findall('merged_.*', inpath)[0].replace('/','')
 
-    for region in ['sr_vbf_no_veto_all', 'cr_2m_vbf']:
+    for region in ['sr_vbf_no_veto_all', 'cr_2m_vbf', 'cr_2e_vbf']:
         compare_lo_vs_nlo(acc, outtag,
             tag='dy',
             lo_regex='DYJetsToLL.*HT.*',
