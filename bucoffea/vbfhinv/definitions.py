@@ -492,8 +492,6 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
     year = extract_year(df['dataset'])
     x = df['recoil_pt']
     
-    # WARNING: "Two central jets" and "mixed" categories are updated to UL.
-    # Currently, "inclusive (no HF-HF)" category is still at EOY.
     data_params = {
         'two_central_jets' : {
             2017 : (0.048, 165.562, 0.989),
@@ -504,8 +502,8 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
             2018 : (0.041, 179.190, 0.991)
         },
         'inclusive' : {
-            2017 : (0.043, 167.896, 0.99),
-            2018 : (0.044, 178.364, 0.992)
+            2017 : (0.047, 165.573, 0.989),
+            2018 : (0.045, 175.975, 0.991)
         }
     }
 
@@ -519,8 +517,8 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
             2018 : (0.045, 160.679, 0.992)
         },
         'inclusive' : {
-            2017 : (0.044, 147.932, 0.994),
-            2018 : (0.051, 155.016, 0.993)
+            2017 : (0.048, 150.315, 0.992),
+            2018 : (0.049, 158.786, 0.992)
         }
     }
 
