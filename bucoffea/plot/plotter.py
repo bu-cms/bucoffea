@@ -129,7 +129,7 @@ colors = {
     'QCD.*' : '#a6bddb',
 }
 
-def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distribution='mjj', plot_signal=True, mcscale=1, fformat='pdf', qcd_file=None, jes_file=None):
+def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distribution='mjj', plot_signal=True, nlo=False, mcscale=1, fformat='pdf', qcd_file=None, jes_file=None):
     '''Plot data/MC comparison with the QCD template included.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -372,7 +372,10 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
                 transform=ax.transAxes
                )
 
-    outdir = f'./output/{outtag}/{data_region}'
+    if not nlo:
+        outdir = f'./output/{outtag}/{data_region}'
+    else:
+        outdir = f'./output/{outtag}/nlo_mc/{data_region}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     outpath = pjoin(outdir, f'{data_region}_data_mc_{distribution}_{year}.{fformat}')

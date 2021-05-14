@@ -45,6 +45,11 @@ def make_plot(args):
             'cr_g_vbf' : re.compile(f'(GJets_(HT|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
         }
 
+        mc_nlo = {
+            'cr_2m_vbf' : re.compile(f'(EWKZ.*ZToLL.*|Top_FXFX.*|Diboson.*|DYJetsToLL_Pt_FXFX.*).*{year}'),
+            'cr_2e_vbf' : re.compile(f'(EWKZ.*ZToLL.*|Top_FXFX.*|Diboson.*|DYJetsToLL_Pt_FXFX.*).*{year}'),
+        }
+
         for data_region in data.keys():
             if not re.match(args.region, data_region):
                 continue
@@ -60,7 +65,17 @@ def make_plot(args):
                 mc_region = data_region
 
             _data = data[data_region]
-            _mc = mc[mc_region]
+            if not args.nlo:
+                _mc = mc[mc_region]
+            # If we have NLO MC for this region, use those
+            # Otherwise stick with LO
+            else:
+                try:
+                    _mc = mc_nlo[mc_region]
+                    nlo = True
+                except KeyError:
+                    _mc = mc[mc_region]
+                    nlo = False
 
             for distribution in distributions:
                 if not re.match(args.distribution, distribution):
@@ -76,6 +91,7 @@ def make_plot(args):
                             mcscale=mcscale,
                             plot_signal='sr_vbf' in data_region,
                             fformat=fformat,
+                            nlo=nlo,
                             jes_file='./jec/jes_uncs.root' if args.jes else None
                         )
                 except KeyError:
@@ -91,6 +107,7 @@ def commandline():
     parser.add_argument('--one_fifth_unblind', action='store_true', help='1/5th unblinded data.')
     parser.add_argument('--fformat', nargs='*', default=['pdf'], help='Output file format for the plots, default is PDF only.')
     parser.add_argument('--jes', action='store_true', help='Plot JES+JER uncertainty bands.')
+    parser.add_argument('--nlo', action='store_true', help='Use NLO samples where available (Z regions currently).')
     args = parser.parse_args()
     return args
 
