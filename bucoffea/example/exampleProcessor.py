@@ -1,7 +1,10 @@
+#!/usr/bin/env python
+
 from coffea import hist
 import coffea.processor as processor
 import os
 
+from matplotlib import pyplot as plt
 import matplotlib
 # This just tells matplotlib not to open any
 # interactive windows.
@@ -91,7 +94,8 @@ def main():
 
     for name in ["met", "jet_pt", "new_variable","jet_pt_met100"]:
         histogram = output[name]
-        fig, ax, _ = hist.plot1d(histogram,overlay="dataset")
+        fig, ax = plt.subplots()
+        hist.plot1d(histogram, ax=ax, overlay="dataset")
         ax.set_yscale('log')
         ax.set_ylim(0.1,1e5)
 
