@@ -5,6 +5,7 @@ import ROOT,os
 def produce_pol1_fitted_hist(raw_hist, nbins=100, xlim=None):
     raw_name = raw_hist.GetName()
     fit_name = raw_name+"_pol1"
+    print("########\n\n######### working on: "+fit_name)
     plot_dir_name = "pol1FitPlots"
     if not os.path.exists(plot_dir_name):
         os.makedirs(plot_dir_name)
@@ -19,7 +20,10 @@ def produce_pol1_fitted_hist(raw_hist, nbins=100, xlim=None):
         ftr = raw_hist.Fit("pol1","NS")
         p0 = ftr.Parameter(0)
         p1 = ftr.Parameter(1)
+        cor01 = ftr.Correlation(0,1)
+        print("p0-p1 correlation: \t  = "+str(cor01))
     else:
+        print("Skip fit for single bin SF")
         p0 = raw_hist.GetBinContent(1)
         p1 = 0
     fit_hist = ROOT.TH1F(fit_name,"",nbins,xlow,xhigh)
