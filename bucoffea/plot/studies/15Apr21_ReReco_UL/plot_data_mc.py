@@ -67,6 +67,7 @@ def make_plot(args):
             _data = data[data_region]
             if not args.nlo:
                 _mc = mc[mc_region]
+                nlo = False
             # If we have NLO MC for this region, use those
             # Otherwise stick with LO
             else:
@@ -77,7 +78,7 @@ def make_plot(args):
                     _mc = mc[mc_region]
                     nlo = False
 
-            for distribution in distributions:
+            for distribution in distributions[data_region]:
                 if not re.match(args.distribution, distribution):
                     continue
                 try:

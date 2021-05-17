@@ -4,8 +4,12 @@ from coffea import hist
 
 Bin = hist.Bin
 
-distributions = [
+
+common_distributions = [
     'mjj',
+    'detajj',
+    'dphijj',
+    'recoil',
     'ak4_eta0',
     'ak4_eta1',
     'ak4_phi0',
@@ -27,6 +31,16 @@ distributions = [
     'met_phi',
     'ak4_mult',
 ]
+
+# Distributions to plot for each region
+distributions = {
+    'sr_vbf' : common_distributions,
+    'cr_1m_vbf' : common_distributions + ['muon_pt0', 'muon_eta0', 'muon_phi0'],
+    'cr_1e_vbf' : common_distributions + ['electron_pt0', 'electron_eta0', 'electron_phi0'],
+    'cr_2m_vbf' : common_distributions + ['muon_pt0', 'muon_eta0', 'muon_phi0', 'muon_pt1', 'muon_eta1', 'muon_phi1'],
+    'cr_2e_vbf' : common_distributions + ['electron_pt0', 'electron_eta0', 'electron_phi0', 'electron_pt1', 'electron_eta1', 'electron_phi1'],
+    'cr_g_vbf'  : common_distributions + ['photon_pt0', 'photon_eta0', 'photon_phi0'],
+} 
 
 binnings = {
     'mjj': Bin('mjj', r'$M_{jj} \ (GeV)$', [200., 400., 600., 900., 1200., 1500., 2000., 2750., 3500., 5000.]),

@@ -31,27 +31,7 @@ pylab.rcParams.update(params)
 
 Bin = hist.Bin
 
-distributions = [
-    'mjj',
-    'ak4_eta0',
-    'ak4_eta1',
-    'ak4_phi0',
-    'ak4_phi1',
-    'ak4_pt0',
-    'ak4_pt1',
-    'ak4_nef0',
-    'ak4_nef1',
-    'ak4_nhf0',
-    'ak4_nhf1',
-    'ak4_chf0',
-    'ak4_chf1',
-    'vecb',
-    'vecdphi',
-    'dphitkpf',
-    'met',
-    'met_phi',
-    'ak4_mult',
-]
+recoil_bins_2016 = [ 250,  280,  310,  340,  370,  400,  430,  470,  510, 550,  590,  640,  690,  740,  790,  840,  900,  960, 1020, 1090, 1160, 1250, 1400]
 
 binnings = {
     'mjj': Bin('mjj', r'$M_{jj} \ (GeV)$', [200., 400., 600., 900., 1200., 1500., 2000., 2750., 3500.]),
@@ -69,6 +49,12 @@ binnings = {
     'met' : Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
     'met_phi' : Bin("phi", r"$\phi_{MET}$", 50, -np.pi, np.pi),
     'ak4_mult' : Bin("multiplicity", r"AK4 multiplicity", 10, -0.5, 9.5),
+    'electron_pt0' : hist.Bin('pt',r'Leading electron $p_{T}$ (GeV)',list(range(0,600,20))),
+    'electron_pt1' : hist.Bin('pt',r'Trailing electron $p_{T}$ (GeV)',list(range(0,600,20))),
+    'muon_pt0' : hist.Bin('pt',r'Leading muon $p_{T}$ (GeV)',list(range(0,600,20))),
+    'muon_pt1' : hist.Bin('pt',r'Trailing muon $p_{T}$ (GeV)',list(range(0,600,20))),
+    'photon_pt0' : hist.Bin('pt',r'Photon $p_{T}$ (GeV)',list(range(200,600,20)) + list(range(600,1000,20)) ),
+    'recoil' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
 }
 
 ylims = {
