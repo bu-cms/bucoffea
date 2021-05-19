@@ -225,7 +225,7 @@ default:
     apply_cleaning_cuts: False
     regionregex: .*
     apply_hf_cuts: True
-    hf_pt_thresh: 100
+    hf_pt_thresh: 80
     apply_weights:
       hfmask: False
       endcap: False
