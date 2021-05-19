@@ -4,6 +4,7 @@ import os
 import sys
 import re
 import uproot
+import warnings
 import numpy as np
 
 from matplotlib import pyplot as plt
@@ -13,6 +14,8 @@ from klepto.archives import dir_archive
 from pprint import pprint
 
 pjoin = os.path.join
+
+warnings.filterwarnings('ignore')
 
 def get_pretty_dataset_tag(dataset):
     mapping = {
@@ -33,7 +36,7 @@ def preprocess(h, acc, dataset, region, year):
 
     return h.integrate('region', region).integrate('dataset', re.compile(f'{dataset}.*{year}'))
 
-def get_btag_variations(acc, outtag, dataset='ZJetsToNuNu', region='sr_vbf_no_veto_all', year=2017):
+def get_btag_variations(acc, outtag, dataset='ZJetsToNuNu', region='sr_vbf_no_veto_all', year=2017, outputrootfile=None):
     '''Get b-tag weight variations as a function of mjj.'''
     distributions = {'central' : 'mjj', 'up' : 'mjj_bveto_up', 'down' : 'mjj_bveto_down'}
     histograms = {}
@@ -86,11 +89,12 @@ def get_btag_variations(acc, outtag, dataset='ZJetsToNuNu', region='sr_vbf_no_ve
         ax=rax,
         unc='num',
         label='Down',
-        error_opts=data_err_opts        
+        error_opts=data_err_opts,
+        clear=False
     )
 
     rax.grid(True)
-    rax.set_ylim(0.8,1.2)
+    rax.set_ylim(0.9,1.1)
     rax.set_ylabel('Variation / Nominal')
     rax.legend()
 
@@ -102,6 +106,14 @@ def get_btag_variations(acc, outtag, dataset='ZJetsToNuNu', region='sr_vbf_no_ve
     plt.close(fig)
 
     print(f'File saved: {outpath}')
+
+    # Save the variations to ROOT
+    xedges = histograms['central'].axis('mjj').edges()
+    r_up = histograms['up'].values()[()] / histograms['central'].values()[()]
+    r_down = histograms['down'].values()[()] / histograms['central'].values()[()]
+
+    outputrootfile[f'{dataset}_{year}_btagUp'] = (r_up, xedges)
+    outputrootfile[f'{dataset}_{year}_btagDown'] = (r_down, xedges)
 
 def main():
     inpath = sys.argv[1]
@@ -118,12 +130,21 @@ def main():
         'DYJetsToLL',
     ]
 
+    # Output ROOT file to save the variations per dataset
+    outdir = f'./output/{outtag}'
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    outputrootfile = uproot.recreate( pjoin(outdir, 'btag_variations.root') )
+
+
     for year in [2017, 2018]:
         for dataset in datasets:
             get_btag_variations(acc,
                 outtag=outtag,
                 dataset=dataset,
-                year=year
+                year=year,
+                outputrootfile=outputrootfile
             )
 
 if __name__ == '__main__':
