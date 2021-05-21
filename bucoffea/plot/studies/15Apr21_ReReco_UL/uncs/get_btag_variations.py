@@ -22,6 +22,7 @@ def get_pretty_dataset_tag(dataset):
         'ZJetsToNuNu' : r'QCD $Z(\nu\nu)$',
         'WJetsToLNu' : r'QCD $W(\ell\nu)$',
         'DYJetsToLL' : r'QCD $Z(\ell\ell)$',
+        'Top_FXFX' : r'Single top, $t\bar{t}$',
     }
     return mapping[dataset]
 
@@ -94,7 +95,10 @@ def get_btag_variations(acc, outtag, dataset='ZJetsToNuNu', region='sr_vbf_no_ve
     )
 
     rax.grid(True)
-    rax.set_ylim(0.9,1.1)
+    if not 'Top' in dataset:
+        rax.set_ylim(0.9,1.1)
+    else:
+        rax.set_ylim(0.8,1.2)
     rax.set_ylabel('Variation / Nominal')
     rax.legend()
 
@@ -128,6 +132,7 @@ def main():
         'ZJetsToNuNu',
         'WJetsToLNu',
         'DYJetsToLL',
+        'Top_FXFX'
     ]
 
     # Output ROOT file to save the variations per dataset
