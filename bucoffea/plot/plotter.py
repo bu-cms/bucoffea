@@ -49,12 +49,19 @@ binnings = {
     'met' : Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
     'met_phi' : Bin("phi", r"$\phi_{MET}$", 50, -np.pi, np.pi),
     'ak4_mult' : Bin("multiplicity", r"AK4 multiplicity", 10, -0.5, 9.5),
+    'electron_pt' : hist.Bin('pt',r'Electron $p_{T}$ (GeV)',list(range(0,600,20))),
     'electron_pt0' : hist.Bin('pt',r'Leading electron $p_{T}$ (GeV)',list(range(0,600,20))),
     'electron_pt1' : hist.Bin('pt',r'Trailing electron $p_{T}$ (GeV)',list(range(0,600,20))),
+    'electron_mt' : hist.Bin('mt',r'Electron $M_{T}$ (GeV)',list(range(0,800,20))),
+    'muon_pt' : hist.Bin('pt',r'Muon $p_{T}$ (GeV)',list(range(0,600,20))),
     'muon_pt0' : hist.Bin('pt',r'Leading muon $p_{T}$ (GeV)',list(range(0,600,20))),
     'muon_pt1' : hist.Bin('pt',r'Trailing muon $p_{T}$ (GeV)',list(range(0,600,20))),
+    'muon_mt' : hist.Bin('mt',r'Muon $M_{T}$ (GeV)',list(range(0,800,20))),
     'photon_pt0' : hist.Bin('pt',r'Photon $p_{T}$ (GeV)',list(range(200,600,20)) + list(range(600,1000,20)) ),
     'recoil' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
+    'dphijr' : Bin("dphi", r"min $\Delta\phi(j,recoil)$", 50, 0, 3.5),
+    'dimuon_mass' : hist.Bin('dilepton_mass',r'M($\mu^{+}\mu^{-}$)',30,60,120),
+    'dielectron_mass' : hist.Bin('dilepton_mass',r'M($e^{+}e^{-}$)',30,60,120),
 }
 
 ylims = {
