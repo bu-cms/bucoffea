@@ -21,8 +21,9 @@ def get_pretty_dataset_tag(dataset):
     mapping = {
         'ZJetsToNuNu' : r'QCD $Z(\nu\nu)$',
         'WJetsToLNu' : r'QCD $W(\ell\nu)$',
-        'DYJetsToLL' : r'QCD $Z(\ell\ell)$',
+        'DYJetsToLL' : r'QCD $Z(\mu\mu)$',
         'Top_FXFX' : r'Single top, $t\bar{t}$',
+        'GJets_HT_MLM' : r'$\gamma$ + jets'
     }
     return mapping[dataset]
 
@@ -132,8 +133,17 @@ def main():
         'ZJetsToNuNu',
         'WJetsToLNu',
         'DYJetsToLL',
-        'Top_FXFX'
+        'Top_FXFX',
+        'GJets_HT_MLM'
     ]
+
+    datasets_and_regions = {
+        'ZJetsToNuNu' : 'sr_vbf_no_veto_all',
+        'WJetsToLNu' : 'sr_vbf_no_veto_all',
+        'DYJetsToLL' : 'cr_2m_vbf',
+        'Top_FXFX' : 'sr_vbf_no_veto_all',
+        'GJets_HT_MLM' : 'cr_g_vbf'
+    }
 
     # Output ROOT file to save the variations per dataset
     outdir = f'./output/{outtag}'
@@ -144,12 +154,13 @@ def main():
 
 
     for year in [2017, 2018]:
-        for dataset in datasets:
+        for dataset, region in datasets_and_regions.items():
             get_btag_variations(acc,
                 outtag=outtag,
                 dataset=dataset,
                 year=year,
-                outputrootfile=outputrootfile
+                outputrootfile=outputrootfile,
+                region=region
             )
 
 if __name__ == '__main__':
