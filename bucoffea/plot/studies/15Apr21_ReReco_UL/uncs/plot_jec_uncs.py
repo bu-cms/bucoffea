@@ -30,7 +30,7 @@ def pretty_legend_label(dataset, region):
             return r'QCD $W(e\nu)$'
     elif 'DYJetsToLL' in dataset:
         if region == 'cr_2m_vbf':
-            return r'QCD $Z(\mu\nu)$'
+            return r'QCD $Z(\mu\mu)$'
         else:
             return r'QCD $Z(ee)$'
     elif 'GJets' in dataset:
