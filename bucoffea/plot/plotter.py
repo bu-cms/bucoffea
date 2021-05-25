@@ -7,6 +7,7 @@ import uproot
 import numpy as np
 import mplhep as hep
 
+from collections import OrderedDict
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from coffea import hist
@@ -45,7 +46,7 @@ binnings = {
     'ak4_nhf1' : Bin('frac', 'Trailing Jet Neutral Hadronic Frac', 50, 0, 1),
     'ak4_chf0' : Bin('frac', 'Leading Jet Charged Hadronic Frac', 50, 0, 1),
     'ak4_chf1' : Bin('frac', 'Trailing Jet Charged Hadronic Frac', 50, 0, 1),
-    'dphitkpf' : Bin('dphi', r'$\Delta\phi_{TK,PF}$', 50, 0, 3.5),
+    # 'dphitkpf' : Bin('dphi', r'$\Delta\phi_{TK,PF}$', 50, 0, 3.5),
     'met' : Bin('met',r'$p_{T}^{miss}$ (GeV)',list(range(0,500,50)) + list(range(500,1000,100)) + list(range(1000,2000,250))),
     'met_phi' : Bin("phi", r"$\phi_{MET}$", 50, -np.pi, np.pi),
     'ak4_mult' : Bin("multiplicity", r"AK4 multiplicity", 10, -0.5, 9.5),
@@ -140,7 +141,15 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
         new_ax = binnings[distribution]
         h = h.rebin(new_ax.name, new_ax)
 
-    h.axis('dataset').sorting = 'integral'
+    # Specifically rebin dphitkpf distribution: Merge the bins in the tails
+    # Annoying approach but it works (due to float precision problems)
+    elif distribution == 'dphitkpf':
+        new_bins = [ibin.lo for ibin in h.identifiers('dphi') if ibin.lo < 2] + [3.5]
+        
+        new_ax = hist.Bin('dphi', r'$\Delta\phi_{TK,PF}$', new_bins)
+        h = h.rebin('dphi', new_ax)
+
+    # h.axis('dataset').sorting = 'integral'
 
     h.scale({
         ds : (mcscale  if mc.match(ds) else 1) for ds in map(str,h.axis("dataset").identifiers())

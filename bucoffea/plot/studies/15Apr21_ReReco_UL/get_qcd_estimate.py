@@ -31,6 +31,12 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
         new_ax = binnings[distribution]
         h = h.rebin(new_ax.name, new_ax)
     
+    elif distribution == 'dphitkpf':
+        new_bins = [ibin.lo for ibin in h.identifiers('dphi') if ibin.lo < 2] + [3.5]
+        
+        new_ax = hist.Bin('dphi', r'$\Delta\phi_{TK,PF}$', new_bins)
+        h = h.rebin('dphi', new_ax)
+
     outdir = f'./output/{outtag}/qcd_estimate'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
@@ -135,7 +141,7 @@ def main():
     outrootfile = uproot.recreate(outrootpath)
     print(f'ROOT file initiated: {outrootpath}')
 
-    for distribution in distributions:
+    for distribution in distributions['sr_vbf']:
         get_qcd_estimate(acc, outtag, outrootfile, distribution=distribution)
 
 if __name__ == '__main__':
