@@ -92,7 +92,7 @@ def get_qcd_estimation_for_etaslice(h, outtag, year, etaslice=slice(3, 3.25), ff
     # Return the histogram containing the QCD template
     return h_data
 
-def plot_dphitkpf(acc, outtag, year, region='sr_vbf', distribution='dphitkpf_ak4_eta0', etaslice=slice(3, 3.25), fformat='pdf'):
+def plot_dphitkpf(acc, outtag, year, region='sr_vbf', distribution='dphitkpf_ak4_eta0', etaslice=slice(3, 3.25), fformat='pdf', print_lastbin_yields=False):
     '''Plot dphitkpf distribution in data and MC in a stack plot, for the given eta slice for the leading jet.'''
     acc.load(distribution)
     h = preprocess(acc[distribution], acc, etaslice)
@@ -154,6 +154,12 @@ def plot_dphitkpf(acc, outtag, year, region='sr_vbf', distribution='dphitkpf_ak4
         'linestyle': '-',
         'color': 'crimson',
     }
+
+    if print_lastbin_yields:
+        print(f'HF estimate: {sumw_qcd[-1]:.3f}')
+        print(f'Data: {h_data.values()[()][-1]:.3f}')
+        print(f'Signal: {h[signal].integrate("dataset").values()[()][-1]:.3f}')
+        print(f'MC bkg: {h.integrate("dataset", mc).values()[()][-1]:.3f}')
 
     hist.plot1d(
         h[signal],
