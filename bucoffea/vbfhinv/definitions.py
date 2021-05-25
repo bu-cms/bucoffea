@@ -35,6 +35,8 @@ def vbfhinv_accumulator(cfg):
     jet_eta_ax_coarse = Bin("jeteta", r"$\eta$", 10, -5, 5)
     jet_phi_ax = Bin("jetphi", r"$\phi$", 50,-np.pi, np.pi)
 
+    jet_eta_ax_very_coarse = Bin("jeteta", r"$\eta$", [0, 2.5, 3, 3.25, 5])
+
     jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
 
     dpfcalo_ax = Bin("dpfcalo", r"$(PFMET-CaloMET) / Recoil$", 20, -1, 1)
@@ -190,6 +192,8 @@ def vbfhinv_accumulator(cfg):
     items["vecdphi"] = Hist("Counts", dataset_ax, region_ax, vecdphi_ax)
     items["dphitkpf"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
     items["dPFTkMET"] = Hist("Counts", dataset_ax, region_ax, dpftk_ax)
+
+    items["dphitkpf_ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, dphi_ax, jet_eta_ax_very_coarse)
 
     # Multiplicity histograms
     for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:

@@ -838,6 +838,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('vecb',        vecb=vec_b[mask],            weight=rweight[mask] )
             ezfill('dphitkpf',    dphi=dphitkpf[mask],         weight=rweight[mask] )
 
+            if region != 'inclusive':
+                ezfill('dphitkpf_ak4_eta0',  dphi=dphitkpf[mask],     jeteta=diak4.i0.abseta[mask].flatten(),     weight=rweight[mask])
+
             # Consider events where only (at least) one of the jets is in horn
             dpftkmet_weight = np.where(
                 leading_jet_in_horn | trailing_jet_in_horn,
