@@ -69,12 +69,7 @@ def medium_id_no_sieie_inv_iso(photons):
 
 def setup_photons(df):
     # Setup photons
-
-    if extract_year(df['dataset']) == 2016:
-        id_branch = 'Photon_cutBased'
-    else:
-        id_branch = 'Photon_cutBasedBitmap'
-
+    id_branch = 'Photon_cutBased'
 
     photons = JaggedCandidateArray.candidatesfromcounts(
         df['nPhoton'],
@@ -218,7 +213,7 @@ class photonPurityProcessor(processor.ProcessorABC):
                              cat='medium',
                              sieie=vals.flatten(),
                              pt=pt.flatten(),
-                             weights=weight_shape(
+                             weight=weight_shape(
                                                   vals,
                                                   weights.weight()[event_mask]
                                                   )
@@ -232,7 +227,7 @@ class photonPurityProcessor(processor.ProcessorABC):
                              cat='medium_nosieie',
                              sieie=vals.flatten(),
                              pt=pt.flatten(),
-                             weights=weight_shape(
+                             weight=weight_shape(
                                                   vals,
                                                   weights.weight()[event_mask]
                                                   )
@@ -246,7 +241,7 @@ class photonPurityProcessor(processor.ProcessorABC):
                              cat='medium_nosieie_invertiso',
                              sieie=vals.flatten(),
                              pt=pt.flatten(),
-                             weights=weight_shape(
+                             weight=weight_shape(
                                                   vals,
                                                   weights.weight()[event_mask]
                                                   )
