@@ -487,8 +487,8 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
     sf[np.isnan(sf) | np.isinf(sf)] == 1
     weights.add("trigger_met", sf)
 
-def recalculate_met_based_on_npv(df, met_pt, met_phi):
-    '''Apply the NPV based recipe to correct MET x and y components.'''
+def met_xy_correction(df, met_pt, met_phi):
+    '''Apply MET XY corrections (UL based).'''
     npv = df['PV_npvsGood']
 
     met_px = met_pt * np.cos(met_phi)

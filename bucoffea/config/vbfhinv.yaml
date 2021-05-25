@@ -44,6 +44,7 @@ default:
     jer: true
   met:
     jer: true
+    xycorr: true
   tau:
     cuts:
       pt: 20
@@ -219,7 +220,6 @@ default:
 
   run:
     sync: False
-    correct_met: True
     save:
       passing: False
       tree: False
