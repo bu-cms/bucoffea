@@ -489,6 +489,13 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
 
 def met_xy_correction(df, met_pt, met_phi):
     '''Apply MET XY corrections (UL based).'''
+    import yaml
+
+    correction_src_file = bucoffea_path('data/met/metxycorr.yaml')
+
+    with open(correction_src_file) as f:
+        xycorr = yaml.load(f.read(),Loader=yaml.SafeLoader)
+    
     npv = df['PV_npvsGood']
 
     met_px = met_pt * np.cos(met_phi)
@@ -497,25 +504,23 @@ def met_xy_correction(df, met_pt, met_phi):
     def correction(a,b):
         return -(a * npv + b)
 
+    dataset = df['dataset']
+    year = extract_year(df['dataset'])
+
     # Get the correction factors, depending on the run (if data)
-    correction_src_file = bucoffea_path('data/met/metxycorr.txt')
-    with open(correction_src_file, 'r') as f:
-        lines = [line for line in f.readlines() if not (line.startswith('#') or line == '\n')]
+    if df['is_data']:
+        # Extract the run information from the dataset name
+        run = re.findall('201\d([A-F])', dataset)[0]
+        # Get the corrections for this run
+        xycorrections = xycorr[year][run]
 
-        if df['is_data']:
-            # Extract the run information from the dataset name
-            dataset = df['dataset']
-            run = re.findall('201\d[A-F]', dataset)[0]
-            # Get the corrections for this run
-            xycorrections = [l.replace('\n', '') for l in lines if l.startswith(run)]
-
-            
-        else:
-            # No run info needed, just extract the corrections for MC, based on year
-            xycorrections = [l.replace('\n', '') for l in lines if l.startswith(f'{df["year"]}MC')]
-
-    xcorr_coef = list(map(float, xycorrections[0].split(' ')[2:]))
-    ycorr_coef = list(map(float, xycorrections[1].split(' ')[2:]))
+    else:
+        # No run info needed, just extract the corrections for MC, based on year
+        xycorrections = xycorr[year]['MC']
+    
+    # Extract the coefficients for the X and Y corrections
+    xcorr_coef = ( xycorrections['X']['a'], xycorrections['X']['b'] )
+    ycorr_coef = ( xycorrections['Y']['a'], xycorrections['Y']['b'] )
 
     met_xcorr = correction(*xcorr_coef)
     met_ycorr = correction(*ycorr_coef)
