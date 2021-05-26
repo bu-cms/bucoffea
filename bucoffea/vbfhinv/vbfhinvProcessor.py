@@ -55,7 +55,8 @@ from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,
                                            vbfhinv_regions,
                                            ak4_em_frac_weights,
-                                           met_trigger_sf
+                                           met_trigger_sf,
+                                           met_xy_correction
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -184,6 +185,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]
+
+        if cfg.MET.XYCORR:
+            # Recalculate MET pt and phi based on npv-corrections
+            met_pt, met_phi = met_xy_correction(df, met_pt, met_phi)
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
