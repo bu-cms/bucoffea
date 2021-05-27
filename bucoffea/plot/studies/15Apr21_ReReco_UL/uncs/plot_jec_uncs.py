@@ -18,6 +18,13 @@ from pprint import pprint
 
 pjoin = os.path.join
 
+def parse_cli():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('inpath', help='Path to merged coffea input.')
+    parser.add_argument('--eoy', action='store_true', help='Flag to denote EOY inputs.')
+    args = parser.parse_args()
+    return args
+
 def pretty_legend_label(dataset, region):
     if 'ZJetsToNuNu' in dataset:
         return r'QCD $Z(\nu\nu)$'
@@ -37,7 +44,7 @@ def pretty_legend_label(dataset, region):
         return r'$\gamma$ + jets'
 
 def plot_jer_uncertainties_in_singlebin(acc, outtag, dataset_regex, region, distribution='mjj'):
-    '''Plot JER up and down variations in a single bin (stats!).'''
+    '''Plot split JEC + JER up and down variations in a single mjj bin.'''
     acc.load(distribution)
     h = acc[distribution]
 
@@ -100,7 +107,8 @@ def plot_jer_uncertainties_in_singlebin(acc, outtag, dataset_regex, region, dist
         print(f'File saved: {outpath}')
 
 def main():
-    inpath = sys.argv[1]
+    args = parse_cli()
+    inpath = args.inpath
     acc = dir_archive(inpath)
     acc.load('sumw')
     acc.load('sumw_pileup')
@@ -112,8 +120,12 @@ def main():
         'ZJetsToNuNu.*HT.*': ['sr_vbf'],
         'WJetsToLNu_HT.*': ['sr_vbf', 'cr_1m_vbf', 'cr_1e_vbf'],
         'DYJetsToLL_M-50_HT.*': ['cr_2m_vbf', 'cr_2e_vbf'],
-        'GJets_HT.*': ['cr_g_vbf'],
     }
+
+    if args.eoy:
+        datasets_regions['GJets_DR-0p4.*'] = ['cr_g_vbf']
+    else:
+        datasets_regions['GJets_HT.*'] = ['cr_g_vbf']
 
     for dataset, regions in datasets_regions.items():
         for region in regions:
