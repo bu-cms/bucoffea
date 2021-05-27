@@ -180,9 +180,9 @@ def main():
         # Aesthetics
         ax.set_title(key)
         rax.set_ylim(*map(float, args.rlim.split(",")))
-        rax.set_xlabel("Recoil (GeV)")
+        rax.set_xlabel(r"$M_{jj}$ (GeV)")
         rax.set_ylabel("Ratio")
-        ax.set_ylabel("Events / bin")
+        ax.set_ylabel("Events / GeV")
         ax.set_yscale("log")
 
         try:
