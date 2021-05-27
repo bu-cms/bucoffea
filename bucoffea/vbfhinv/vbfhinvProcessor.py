@@ -480,6 +480,16 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             weights = candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg)
 
+            # EWK corrections to VBF signal
+            if cfg.RUN.APPLY_EWK_CORR_TO_SIGNAL:
+                if re.match('VBF_HToInv.*', df['dataset']):
+                    def ewk_correction(a, b):
+                        return 1 + a * df['GenMET_pt'] + b
+                     
+                    coeff = [-0.00035, -0.043]
+                    ewk_corr_signal = ewk_correction(*coeff)
+                    weights.add('ewk_corr_signal', ewk_corr_signal)
+
             # B jet veto weights
             bsf_variations = btag_weights(bjets,cfg)
             weights.add("bveto", (1-bsf_variations["central"]).prod())

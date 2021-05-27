@@ -244,6 +244,7 @@ default:
     trigger_study: False
     btag_study: False
     apply_categorized_sf: True
+    apply_ewk_corr_to_signal: False
   triggers:
     ht:
       gammaeff:
