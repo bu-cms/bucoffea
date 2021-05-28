@@ -844,6 +844,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
 
+            ezfill('gen_met_mjj',        met=df["GenMET_pt"][mask],     mjj=df["mjj"][mask],      weight=rweight[mask])
+
             ezfill('vecdphi',     vecdphi=vec_dphi[mask],       weight=rweight[mask] )
             ezfill('vecb',        vecb=vec_b[mask],            weight=rweight[mask] )
             ezfill('dphitkpf',    dphi=dphitkpf[mask],         weight=rweight[mask] )
