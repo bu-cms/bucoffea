@@ -26,7 +26,8 @@ def preprocess(h, acc, etaslice):
     h = merge_datasets(h)
 
     # Rebin dhitkpf (annoying but necessary)
-    new_bins = [ibin.lo for ibin in h.identifiers('dphi') if ibin.lo < 1] + [1.12, 1.2600000000000002, 1.4000000000000001, 1.9600000000000002, 3.5]
+    # new_bins = [ibin.lo for ibin in h.identifiers('dphi') if ibin.lo < 1] + [1.12, 1.2600000000000002, 1.4000000000000001, 1.9600000000000002, 3.5]
+    new_bins = [0, 0.49000000000000005, 0.9800000000000001, 1.4700000000000002, 1.9600000000000002, 3.1500000000000004]
     
     new_ax = hist.Bin('dphi', r'$\Delta\phi_{TK,PF}$', new_bins)
     h = h.rebin('dphi', new_ax)
@@ -132,10 +133,11 @@ def plot_dphitkpf(acc, outtag, year, region='sr_vbf', distribution='dphitkpf_ak4
         plot_info['sumw'].append(sumw)
 
     # Add the QCD contribution!
-    plot_info['label'].insert(6, 'HF Noise Estimate')
     sumw_qcd = h_qcd.values()[()]
     sumw_qcd[sumw_qcd < 0] = 0.
-    plot_info['sumw'].insert(6, sumw_qcd)
+    if not (sumw_qcd == 0).all():
+        plot_info['label'].insert(0, 'HF Noise Estimate')
+        plot_info['sumw'].insert(0, sumw_qcd)
 
     xedges = h_data.axis('dphi').edges()
 
