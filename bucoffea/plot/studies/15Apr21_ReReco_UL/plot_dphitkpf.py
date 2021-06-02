@@ -25,8 +25,8 @@ def preprocess(h, acc, etaslice):
     scale_xs_lumi(h)
     h = merge_datasets(h)
 
-    # Rebin dhitkpf
-    new_bins = [ibin.lo for ibin in h.identifiers('dphi') if ibin.lo < 2] + [3.5]
+    # Rebin dhitkpf (annoying but necessary)
+    new_bins = [ibin.lo for ibin in h.identifiers('dphi') if ibin.lo < 1] + [1.12, 1.2600000000000002, 1.4000000000000001, 1.9600000000000002, 3.5]
     
     new_ax = hist.Bin('dphi', r'$\Delta\phi_{TK,PF}$', new_bins)
     h = h.rebin('dphi', new_ax)
@@ -52,11 +52,11 @@ def get_qcd_estimation_for_etaslice(h, outtag, year, etaslice=slice(3, 3.25), ff
     h_data.add(h_mc)
 
     fig, ax = plt.subplots()
-    hist.plot1d(h_data, ax=ax)
+    hist.plot1d(h_data, ax=ax, binwnorm=1)
 
     ax.set_yscale('log')
     ax.set_ylim(1e-4,1e4)
-    ax.set_ylabel('HF Estimation')
+    ax.set_ylabel('HF Estimation / Bin Width')
 
     ax.get_legend().remove()
     ax.yaxis.set_ticks_position('both')
@@ -171,6 +171,7 @@ def plot_dphitkpf(acc, outtag, year, region='sr_vbf', distribution='dphitkpf_ak4
     )
     
     ax.set_yscale('log')
+    ax.set_ylabel('Events / Bin Width')
     ax.set_ylim(1e-2,1e6)
     ax.yaxis.set_ticks_position('both')
 
