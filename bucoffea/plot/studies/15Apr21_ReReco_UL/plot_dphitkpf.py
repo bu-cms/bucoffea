@@ -35,7 +35,7 @@ def preprocess(h, acc, etaslice):
     h = h.integrate('jeteta', etaslice)
     return h
 
-def get_qcd_estimation_for_etaslice(h, outtag, year, etaslice=slice(3, 3.25), fformat='pdf'):
+def get_qcd_estimation_for_etaslice(h, outtag, year, etaslice=slice(3, 3.25), fformat='pdf', logy=False):
     '''Get QCD estimation for the given leading jet eta slice.'''
     # QCD CR
     region = 'cr_vbf_qcd'
@@ -54,8 +54,9 @@ def get_qcd_estimation_for_etaslice(h, outtag, year, etaslice=slice(3, 3.25), ff
     fig, ax = plt.subplots()
     hist.plot1d(h_data, ax=ax, binwnorm=1)
 
-    ax.set_yscale('log')
-    ax.set_ylim(1e-4,1e4)
+    if logy:
+        ax.set_yscale('log')
+        ax.set_ylim(1e-4,1e4)
     ax.set_ylabel('HF Estimation / Bin Width')
 
     ax.get_legend().remove()
@@ -92,7 +93,7 @@ def get_qcd_estimation_for_etaslice(h, outtag, year, etaslice=slice(3, 3.25), ff
     # Return the histogram containing the QCD template
     return h_data
 
-def plot_dphitkpf(acc, outtag, year, region='sr_vbf', distribution='dphitkpf_ak4_eta0', etaslice=slice(3, 3.25), fformat='pdf', print_lastbin_yields=False):
+def plot_dphitkpf(acc, outtag, year, region='sr_vbf', distribution='dphitkpf_ak4_eta0', etaslice=slice(3, 3.25), fformat='pdf', logy=False, print_lastbin_yields=False):
     '''Plot dphitkpf distribution in data and MC in a stack plot, for the given eta slice for the leading jet.'''
     acc.load(distribution)
     h = preprocess(acc[distribution], acc, etaslice)
@@ -170,9 +171,11 @@ def plot_dphitkpf(acc, outtag, year, region='sr_vbf', distribution='dphitkpf_ak4
         clear=False
     )
     
-    ax.set_yscale('log')
+    if logy:
+        ax.set_yscale('log')
+        ax.set_ylim(1e-2,1e6)
+
     ax.set_ylabel('Events / Bin Width')
-    ax.set_ylim(1e-2,1e6)
     ax.yaxis.set_ticks_position('both')
 
     handles, labels = ax.get_legend_handles_labels()
