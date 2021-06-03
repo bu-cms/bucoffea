@@ -337,6 +337,10 @@ def vbfhinv_regions(cfg):
             pass
         regions['cr_vbf_qcd'].append('fail_hf_cuts')
 
+    # For prefiring study, SR without prefiring weights
+    if cfg.RUN.PREFIRE_STUDY:
+        regions['sr_vbf_no_pref'] = copy.deepcopy(regions['sr_vbf'])
+
     # For sync mode
     if cfg and cfg.RUN.SYNC:
         regions['cr_sync'] = [

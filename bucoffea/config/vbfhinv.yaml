@@ -243,6 +243,7 @@ default:
         - 51393664
     trigger_study: False
     btag_study: False
+    prefire_study: False
     apply_categorized_sf: True
     apply_ewk_corr_to_signal: False
   triggers:

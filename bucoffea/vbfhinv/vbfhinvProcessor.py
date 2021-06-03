@@ -590,6 +590,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         ]
                     region_weights.add("veto",veto_weights.partial_weight(include=["nominal"]))
 
+                # SR without prefiring weights applied
+                if region == 'sr_vbf_no_pref':
+                    exclude = ['prefire']
+
                 # HEM-veto weights for signal region MC
                 if re.match('^sr_vbf.*', region) and df['year'] == 2018:
                     # Events that lie in the HEM-veto region
