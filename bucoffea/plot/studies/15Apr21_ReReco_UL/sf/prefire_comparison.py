@@ -29,7 +29,7 @@ def prefire_comparison(acc, outtag, mc, distribution='mjj'):
         mjj_ax = hist.Bin('mjj', r'$M_{jj} \ (GeV)$', mjj_bins)
         h = h.rebin('mjj', mjj_ax)
 
-    h = h.integrate('dataset', mc)[re.compile('sr_vbf(_no_pref)?')]
+    h = h.integrate('dataset', mc)[re.compile('^(sr_vbf|sr_vbf_no_pref)$')]
 
     fig, ax, rax = fig_ratio()
     hist.plot1d(h, ax=ax, overlay='region', binwnorm=1)
@@ -38,6 +38,29 @@ def prefire_comparison(acc, outtag, mc, distribution='mjj'):
     ax.set_ylim(1e-4,1e4)
     ax.set_ylabel('Events / GeV')
     
+    ax.yaxis.set_ticks_position('both')
+
+    new_legend_labels = {
+        'sr_vbf' : 'Applied',
+        'sr_vbf_no_pref' : 'Not Applied',
+    }
+
+    handles, labels = ax.get_legend_handles_labels()
+
+    for handle, label in zip(handles, labels):
+        handle.set_label(
+            new_legend_labels[label]
+        )
+
+    ax.legend(title='Prefiring Weights', handles=handles)
+
+    ax.text(0., 1., 'VBF SR MC Bkg',
+        fontsize=14,
+        ha='left',
+        va='bottom',
+        transform=ax.transAxes
+    )
+
     data_err_opts = {
         'linestyle':'none',
         'marker': '.',
@@ -59,7 +82,7 @@ def prefire_comparison(acc, outtag, mc, distribution='mjj'):
     )
 
     rax.grid(True)
-    rax.set_ylim(0.8,1.2)
+    rax.set_ylim(0.5,1.5)
     rax.set_ylabel('With / Without Pref.')
 
     outdir = f'./output/{outtag}'
