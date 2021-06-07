@@ -59,7 +59,8 @@ from bucoffea.vbfhinv.definitions import (
                                            apply_hfmask_weights,
                                            apply_hf_weights_for_qcd_estimation,
                                            apply_endcap_weights,
-                                           hfmask_sf
+                                           hfmask_sf,
+                                           met_xy_correction
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -188,6 +189,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Filtering ak4 jets according to pileup ID
         ak4 = ak4[ak4.puid]
+
+        # Recalculate MET pt and phi based on npv-corrections
+        if cfg.MET.XYCORR:
+            met_pt, met_phi = met_xy_correction(df, met_pt, met_phi)
 
         # Muons
         df['is_tight_muon'] = muons.tightId \
