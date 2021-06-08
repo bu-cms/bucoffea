@@ -3,6 +3,7 @@
 import os
 import sys
 import re
+from numpy.lib.shape_base import dsplit
 import uproot
 import mplhep as hep
 import numpy as np
@@ -31,8 +32,15 @@ def dump_to_root(acc, dataset, region, outputrootfile, distribution='mjj'):
 
     h = h.integrate('region', region).integrate('dataset', dataset)
 
+    sumw = h.values(overflow='over')[()]
+    xedges = h.axis(distribution).edges()
+
+    # Add the overflow content to the last bin
+    sumw[-2] += sumw[-1]
+    sumw = sumw[:-1]
+
     # Save to output ROOT file
-    outputrootfile[f'{region}_mjj'] = hist.export1d(h)
+    outputrootfile[f'{region}_mjj'] = (sumw, xedges)
 
 def compare_data(bu_file, ic_file, year):
     '''Compare data templates between BU and IC.'''
@@ -130,7 +138,7 @@ def main():
         bu_root_path = pjoin(outdir, f'BU_data_templates_{year}.root')
         if not os.path.exists(bu_root_path):
             # Convert BU inputs to coffea histograms (if the file doesn't exist already)
-            bu_root_file = uproot.open(bu_root_path)
+            bu_root_file = uproot.recreate(bu_root_path)
             datasets_regions = [
                 (f'MET_{year}', 'sr_vbf'),
                 (f'MET_{year}', 'cr_1m_vbf'),
