@@ -6,7 +6,6 @@ from collections import defaultdict
 
 import uproot
 from coffea import hist
-from coffea.hist.export import export1d
 
 import ROOT as r
 from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
@@ -137,6 +136,21 @@ def mjj_bins_2016():
     return [200., 400., 600., 900., 1200., 1500.,
             2000., 2750., 3500., 5000.]
 
+def export_coffea_histogram(h, overflow='over'):
+    '''Helper function to: coffea histogram -> (sumw, xedges) with the desired overflow behavior.'''
+    if h.dim() != 1:
+        raise RuntimeError('The dimension of the histogram must be 1.')
+    
+    sumw = h.values(overflow=overflow)[()]
+    xedges = h.axis('mjj').edges()
+
+    # Add the contents of the overflow to the last bin
+    if overflow == 'over':
+        sumw[-2] += sumw[-1]
+        sumw = sumw[:-1]
+
+    return (sumw, xedges)
+
 def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2018]):
     """Writes ROOT TH1s to file as a limit input
 
@@ -184,7 +198,7 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2
                 if not (data[region].match(dataset) or mc[region].match(dataset)):
                     # Insert dummy data for the signal region
                     if region == 'sr_vbf' and re.match('ZJetsToNuNu.*', dataset) and not unblind:
-                        th1 = export1d(ih.integrate('dataset', dataset))
+                        th1 = export_coffea_histogram(ih.integrate('dataset', dataset))
                         histo_name = 'signal_data'
                         f[histo_name] = th1
                         continue
@@ -192,7 +206,7 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2
                         continue
                 print(f"Dataset: {dataset}")
 
-                th1 = export1d(ih.integrate('dataset', dataset))
+                th1 = export_coffea_histogram(ih.integrate('dataset', dataset))
                 try:
                     histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name_vbf(dataset)}'
                     print(f'Saved under histogram: {histo_name}')
