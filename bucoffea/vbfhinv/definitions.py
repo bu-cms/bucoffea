@@ -608,7 +608,7 @@ def met_xy_correction(df, met_pt, met_phi):
     with open(correction_src_file) as f:
         xycorr = yaml.load(f.read(),Loader=yaml.SafeLoader)
 
-    npv = df['PV_npvsGood']
+    npv = df['PV_npvs']
 
     met_px = met_pt * np.cos(met_phi)
     met_py = met_pt * np.sin(met_phi)
