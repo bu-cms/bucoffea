@@ -149,7 +149,7 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
         new_ax = hist.Bin('dphi', r'$\Delta\phi_{TK,PF}$', new_bins)
         h = h.rebin('dphi', new_ax)
 
-    # h.axis('dataset').sorting = 'integral'
+    h.axis('dataset').sorting = 'integral'
 
     h.scale({
         ds : (mcscale  if mc.match(ds) else 1) for ds in map(str,h.axis("dataset").identifiers())
