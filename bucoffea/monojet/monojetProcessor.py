@@ -440,6 +440,8 @@ class monojetProcessor(processor.ProcessorABC):
             veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=True)
 
         for region, cuts in regions.items():
+            if not re.match(cfg.RUN.REGIONREGEX, region):
+                continue
 
             if re.match('sr_.*', region):
                 recoil_pt = met_pt

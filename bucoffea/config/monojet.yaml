@@ -196,12 +196,14 @@ default:
 
   run:
     sync: False
+    ulegacyv8: True
+    regionregex: "tr_g.*"
     save:
       passing: False
       prescale: 1
       tree: False
       treeregions: "((sr|cr_.*)_j|inclusive)$"
-    trigger_study: False
+    trigger_study: True
     veto_study: False
     photon_id_study: False
     ele_id_study: False
