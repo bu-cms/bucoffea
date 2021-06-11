@@ -2,13 +2,14 @@
 import copy
 import os
 import re
+import numpy as np
 from collections import defaultdict
 
 import uproot
 from coffea import hist
 
 import ROOT as r
-from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
+from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi, URTH1
 from legacy_monojet import suppress_negative_bins
 pjoin = os.path.join
 
@@ -141,15 +142,17 @@ def export_coffea_histogram(h, overflow='over'):
     if h.dim() != 1:
         raise RuntimeError('The dimension of the histogram must be 1.')
     
-    sumw = h.values(overflow=overflow)[()]
+    sumw, sumw2 = h.values(overflow=overflow, sumw2=True)[()]
     xedges = h.axis('mjj').edges()
 
     # Add the contents of the overflow to the last bin
     if overflow == 'over':
         sumw[-2] += sumw[-1]
-        sumw = sumw[:-1]
+        sumw2[-2] += sumw2[-1]
+        sumw = np.r_[0, sumw[:-1], 0]
+        sumw2 = np.r_[0, sumw2[:-1], 0]
 
-    return (sumw, xedges)
+    return URTH1(edges=xedges, sumw=sumw, sumw2=sumw2)
 
 def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2018]):
     """Writes ROOT TH1s to file as a limit input
