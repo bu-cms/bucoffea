@@ -316,7 +316,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             jets_for_cut = ak4[(ak4.pt > cfg.RUN.HF_PT_THRESH) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
 
             # We will only consider jets that are back to back with MET i.e. dPhi(jet,MET) > 2.5
-            dphi_hfjet_met = dphi(jets_for_cut.phi, met_phi)
+            dphi_hfjet_met = dphi(jets_for_cut.phi, df['recoil_phi'])
             dphimask = dphi_hfjet_met > 2.5
             jets_for_cut = jets_for_cut[dphimask]
 
