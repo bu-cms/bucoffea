@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 import os
 from matplotlib import pyplot as plt
@@ -7,8 +8,8 @@ pjoin = os.path.join
 from bucoffea.plot.util import fig_ratio, lumi
 from bucoffea.helpers import sigmoid
 
-def load(tag, dataset, year):
-    fname = f'output/gamma/table_g_{tag}_photon_pt0_{dataset}_{year}.txt'
+def load(tag, outtag, dataset, year):
+    fname = f'output/gamma/{outtag}/table_g_{tag}_photon_pt0_{dataset}_{year}.txt'
     data = np.loadtxt(fname, skiprows=2)
     x = data[:,2]
     eff = data[:,5]
@@ -22,16 +23,16 @@ colors = {
     'mc' : 'mediumblue',
     'data' : 'darkorange',
 }
-def fit(tag, year):
-    outdir = './output/gamma/fit/'
+def fit(tag, outtag, year):
+    outdir = f'./output/gamma/{outtag}/fit/'
     try:
         os.makedirs(outdir)
     except FileExistsError:
         pass
 
     x, eff, eff_up, eff_down = {}, {}, {}, {}
-    x['data'], eff['data'], eff_up['data'], eff_down['data'] = load(tag, 'JetHT', year)
-    x['mc'], eff['mc'], eff_up['mc'], eff_down['mc'] = load(tag, 'GJets_HT_MLM', year)
+    x['data'], eff['data'], eff_up['data'], eff_down['data'] = load(tag, outtag, 'JetHT', year)
+    x['mc'], eff['mc'], eff_up['mc'], eff_down['mc'] = load(tag, outtag, 'GJets_HT_MLM', year)
 
     pars = {}
     cross = {}
@@ -119,9 +120,10 @@ def fit(tag, year):
 
 
 
-tags = ['HLT_PFHT1050_ht1500']
+tags = ['HLT_PFHT1050']
+outtag = 'merged_2021-06-11_monojet_ULv8_05Feb21_photon_trig'
 
 for tag in tags:
         for year in [2017,2018]:
-            fit(tag, year)
+            fit(tag, outtag, year)
 

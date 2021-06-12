@@ -91,7 +91,7 @@ def preprocess(h, acc, distribution, region_tag='1m', dataset='SingleMuon', nosc
     # Rebinning
     axis_name = distribution if not axis_name else axis_name
     if 'photon' in distribution:
-        newbin = hist.Bin(axis_name,f"{axis_name} (GeV)",np.array(list(range(0,250,10)) + list(range(250,400,50))+ list(range(400,1100,100))))
+        newbin = hist.Bin(axis_name,f"{axis_name} (GeV)",np.array(list(range(0,260,20)) + list(range(260,500,40))+ list(range(500,1100,100))))
     elif distribution == 'mjj':
         newbin = hist.Bin(axis_name,r'$M_{jj}$ (GeV)',np.array(list(range(200,600,200)) + list(range(600,1500,300)) + [1500,2000,2750,3500]))
     else:
@@ -189,13 +189,14 @@ def plot_recoil(acc,xmax=1e3,ymin=0,ymax=1.1, region_tag="1m", dataset='SingleMu
     fig.savefig(pjoin(outdir, f'eff_{outname}.pdf'))
     plt.close(fig)
 
-    # Plot smoothed efficiencies for data and MC
-    plot_smoothed_efficiency(hnum, hden, tag, outtag, 
-                dataset=dataset, 
-                jeteta_config=jeteta_config, 
-                region_tag=region_tag, 
-                distribution=distribution, 
-                year=year)
+    # Plot smoothed efficiencies for data and MC (not needed for photon trigger eff.)
+    if not "g" in region_tag:
+        plot_smoothed_efficiency(hnum, hden, tag, outtag, 
+                    dataset=dataset, 
+                    jeteta_config=jeteta_config, 
+                    region_tag=region_tag, 
+                    distribution=distribution, 
+                    year=year)
 
 def get_smoothed_version(x,y):
     '''Given the input (x,y), return the smoothed function.'''
@@ -674,8 +675,8 @@ def data_mc_comparison_plot(tag, outtag, ymin=0, ymax=1.1, distribution='recoil'
                 fden = f'output/{tag}/{outtag}/table_{region}_recoil_VDYJetsToLL_M-50_HT_MLM_{year}{"_"+jeteta_config if jeteta_config else ""}.txt'
                 xlabel = "Recoil (GeV)"
             elif 'g_' in region:
-                fnum = f'output/{tag}/table_{region}_photon_pt0_JetHT_{year}.txt'
-                fden = f'output/{tag}/table_{region}_photon_pt0_GJets_HT_MLM_{year}.txt'
+                fnum = f'output/{tag}/{outtag}/table_{region}_photon_pt0_JetHT_{year}.txt'
+                fden = f'output/{tag}/{outtag}/table_{region}_photon_pt0_GJets_HT_MLM_{year}.txt'
                 xlabel = "Photon $p_{T}$ (GeV)"
 
             if not os.path.exists(fnum):
@@ -700,7 +701,7 @@ def data_mc_comparison_plot(tag, outtag, ymin=0, ymax=1.1, distribution='recoil'
 #            rax.plot([0,1000],[0.99,0.99],color='blue',linestyle='--')
 
             if 'g_' in region:
-                ax.plot([215,215],[0.9,1.1],color='blue')
+                ax.plot([215,215],[0.,1.1],color='blue')
                 rax.plot([215,215],[0.95,1.05],color='blue')
             elif distribution == 'recoil':
                 ax.plot([250,250],[0.0,1.1],color='blue')
@@ -1041,8 +1042,14 @@ def photon_triggers_merged():
 
 def photon_triggers():
     tag = 'gamma'
-    indir = f"/home/albert/repos/bucoffea/bucoffea/plot/input/gamma_alltrig"
-    acc = acc_from_dir(indir)
+    indir = bucoffea_path("submission/merged_2021-06-11_monojet_ULv8_05Feb21_photon_trig")
+    acc = dir_archive(indir)
+
+    acc.load('sumw')
+    acc.load('sumw_pileup')
+    acc.load('nevents')
+
+    acc.load('photon_pt0')
 
     # All regions
     regions = []
@@ -1070,7 +1077,8 @@ def photon_triggers():
                         continue
                     plot_recoil(
                                 copy.deepcopy(acc),
-                                region,
+                                region_tag=region,
+                                outtag=os.path.basename(indir),
                                 dataset=dataset,
                                 year=year,
                                 tag=tag,
@@ -1080,7 +1088,7 @@ def photon_triggers():
                                 )
 
                     # plot_recoil(acc,region,dataset=dataset,year=year, tag=tag, distribution='recoil',axis_name='recoil')
-    data_mc_comparison_plot(tag, outtag=None)
+    data_mc_comparison_plot(tag, outtag=os.path.basename(indir))
 
 def photon_sf_plot(tag):
 
@@ -1143,11 +1151,9 @@ def photon_sf_plot(tag):
 
 def main():
     # indir = "/home/albert/repos/bucoffea/bucoffea/plot/input/eff/test"
-    met_trigger_eff('recoil')
-    # photon_triggers()
+    # met_trigger_eff('recoil')
+    photon_triggers()
     # photon_sf_plot('gamma')
-    # photon_triggers()
-
 
 if __name__ == "__main__":
     main()
