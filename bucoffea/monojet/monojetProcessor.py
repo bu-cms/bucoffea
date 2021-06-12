@@ -92,7 +92,7 @@ def trigger_selection(selection, df, cfg):
         selection.add('trig_ele', trig_ele)
 
         # Photon trigger:
-        if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset):
+        if (not df['is_data']) or ('SinglePhoton' in dataset) or ('EGamma' in dataset) or ('JetHT' in dataset):
             trig_photon = mask_or(df, cfg.TRIGGERS.PHOTON.SINGLE)
         else:
             trig_photon = pass_none
