@@ -462,6 +462,24 @@ def vbfhinv_regions(cfg):
         regions['tr_2m_den_two_central_jets'] = tr_2m_den_cuts + ['two_central_jets']
         regions['tr_2m_den_one_jet_forward_one_jet_central'] = tr_2m_den_cuts + ['one_jet_forward_one_jet_central']
 
+        # Photon region
+        tr_g_num_cuts = copy.deepcopy(cr_g_cuts)
+        tr_g_num_cuts.remove('recoil')
+        tr_g_num_cuts.remove('photon_pt')
+
+        tr_g_den_cuts = copy.deepcopy(tr_g_num_cuts)
+        tr_g_den_cuts.remove('trig_photon')
+
+        regions[f'tr_g_notrig_num'] = copy.deepcopy(tr_g_num_cuts)
+        regions[f'tr_g_notrig_den'] = copy.deepcopy(tr_g_den_cuts)
+
+        for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
+            regions[f'tr_g_{trgname}_num'] = tr_g_num_cuts + [trgname]
+            regions[f'tr_g_{trgname}_den'] = tr_g_den_cuts + [trgname]
+
+            regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
+            regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
+
     return regions
 
 def ak4_em_frac_weights(weights, diak4, evaluator):
