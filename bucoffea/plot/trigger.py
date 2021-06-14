@@ -1042,7 +1042,7 @@ def photon_triggers_merged():
 
 def photon_triggers():
     tag = 'gamma'
-    indir = bucoffea_path("submission/merged_2021-06-11_monojet_ULv8_05Feb21_photon_trig")
+    indir = bucoffea_path("submission/merged_2021-06-14_vbfhinv_ULv8_05Feb21_gammatrig")
     acc = dir_archive(indir)
 
     acc.load('sumw')
