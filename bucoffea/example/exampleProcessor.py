@@ -2,10 +2,12 @@
 
 from coffea import hist
 import coffea.processor as processor
+from coffea.analysis_objects import JaggedCandidateArray
 import os
 
 from matplotlib import pyplot as plt
 import matplotlib
+import numpy as np
 # This just tells matplotlib not to open any
 # interactive windows.
 matplotlib.use('Agg')
@@ -14,9 +16,9 @@ class exampleProcessor(processor.ProcessorABC):
     """Dummy processor used to demonstrate the processor principle"""
     def __init__(self):
         dataset_axis = hist.Cat("dataset", "Primary dataset")
-        met_axis = hist.Bin("met", r"$p_{T}^{miss}$ (GeV)", 600, 0.25, 1000)
-        jet_pt_axis = hist.Bin("jetpt", r"$p_{T}$", 600, 0.25, 1000)
-        new_axis = hist.Bin("new_variable", r"Leading jet $p_{T}$ + $p_{T}^{miss}$ (GeV) ", 600, 0.25, 1000)
+        met_axis = hist.Bin("met", r"$p_{T}^{miss}$ (GeV)", 100, 0, 1000)
+        jet_pt_axis = hist.Bin("jetpt", r"$p_{T}$", 100, 0, 1000)
+        new_axis = hist.Bin("new_variable", r"Leading jet $p_{T}$ + $p_{T}^{miss}$ (GeV) ", 100, 0, 1000)
 
         self._accumulator = processor.dict_accumulator({
             "met" : hist.Hist("Counts", dataset_axis, met_axis),
@@ -39,15 +41,26 @@ class exampleProcessor(processor.ProcessorABC):
         # outside of this function
         dataset = df["dataset"]
 
-        # And fill the histograms
+        # JaggedCandidateArray lets us combine
+        # multiple branches into an array of
+        # particle candidates to make our life easier
+        jets = JaggedCandidateArray.candidatesfromcounts(
+            df['nJet'],
+            pt=df[f'Jet_pt'],
+            eta=df['Jet_eta'],
+            phi=df['Jet_phi'],
+            mass=np.zeros_like(df['Jet_pt']),
+        )
+
+        # Fill the histograms
         output['met'].fill(dataset=dataset,
                             met=df["MET_pt"].flatten())
         output['jet_pt'].fill(dataset=dataset,
-                            jetpt=df["Jet_pt"].flatten())
+                            jetpt=jets.pt.flatten())
 
         # We can also do arbitrary transformations
         # E.g.: Sum of MET and the leading jet PTs
-        new_variable = df["MET_pt"] + df["Jet_pt"].max()
+        new_variable = df["MET_pt"] + jets.pt.max()
         output['new_variable'].fill(dataset=dataset,
                             new_variable=new_variable)
 
@@ -57,7 +70,7 @@ class exampleProcessor(processor.ProcessorABC):
 
         # And plot the leading jet pt for these events
         output['jet_pt_met100'].fill(dataset=dataset,
-                            jetpt=df["Jet_pt"][mask].max().flatten())
+                            jetpt=jets.pt[mask].max().flatten())
 
         return output
 
@@ -69,13 +82,12 @@ def main():
     # Inputs are defined in a dictionary
     # dataset : list of files
     fileset = {
-        'NonthDM' : [
-            "root://cms-xrd-global.cern.ch///store/mc/RunIISummer16NanoAODv4/NonthDMMonoJet_MX-1500_l1-2p_l2-0p04_13TeV-madgraph/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/260000/F78663A9-8E7F-B74E-8F6F-9C9A61A27AE5.root"
-
+        "ADD" : [
+            "root://cms-xrd-global.cern.ch///store/mc/RunIIFall17NanoAODv7/ADDMonoJet_MD_8_d_7_TuneCUETP8M1_13TeV_pythia8/NANOAODSIM/PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/230000/0202BA5A-A595-3C46-B1EB-EDF35E2BD642.root"
         ],
-        "Znunu_ht600to800" : [
-            "root://cms-xrd-global.cern.ch///store/mc/RunIISummer16NanoAODv4/ZJetsToNuNu_HT-600To800_13TeV-madgraph/NANOAODSIM/PUMoriond17_Nano14Dec2018_102X_mcRun2_asymptotic_v6-v1/280000/F4921B81-C2E3-6546-9C00-D908A264FFD8.root",
-        ]
+        # "Zjet" : [
+        #     "root://cms-xrd-global.cern.ch///store/mc/RunIIFall17NanoAODv7/ZJetsToNuNu_HT-400To600_13TeV-madgraph/NANOAODSIM/PU2017_12Apr2018_Nano02Apr2020_new_pmx_102X_mc2017_realistic_v8-v1/100000/50B7CBF1-0B29-C846-AD85-85259D438DA7.root"
+        # ]
     }
 
     # Run the processor
@@ -83,7 +95,7 @@ def main():
                                   treename='Events',
                                   processor_instance=exampleProcessor(),
                                   executor=processor.futures_executor,
-                                  executor_args={'workers': 1, 'function_args': {'flatten': False}},
+                                  executor_args={'workers': 1, 'flatten': True},
                                   chunksize=500000,
                                  )
 
