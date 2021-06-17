@@ -223,7 +223,7 @@ default:
     ulegacyv8: True
     one_fifth_unblind: False
     qcd_estimation: True
-    rebsmear_check: True
+    rebsmear_check: False
     apply_cleaning_cuts: False
     regionregex: .*
     apply_hf_cuts: True
@@ -246,6 +246,7 @@ default:
     trigger_study: False
     btag_study: False
     prefire_study: False
+    hemcheck: False
     apply_categorized_sf: True
     apply_ewk_corr_to_signal: False
   triggers:

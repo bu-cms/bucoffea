@@ -326,6 +326,11 @@ def vbfhinv_regions(cfg):
     # SR without PU weights
     # regions['sr_vbf_no_pu'] = copy.deepcopy(regions['sr_vbf'])
 
+    # SR without HEM veto
+    if cfg.RUN.HEMCHECK:
+        regions['sr_vbf_no_hem_veto'] = copy.deepcopy(regions['sr_vbf'])
+        regions['sr_vbf_no_hem_veto'].remove('metphihemextveto')
+
     # QCD CR with the HF shape cuts inverted
     if cfg.RUN.QCD_ESTIMATION:
         regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
