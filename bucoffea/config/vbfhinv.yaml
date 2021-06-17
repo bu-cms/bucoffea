@@ -247,6 +247,7 @@ default:
     btag_study: False
     prefire_study: False
     hemcheck: False
+    hfstudy_v2: False
     apply_categorized_sf: True
     apply_ewk_corr_to_signal: False
   triggers:
