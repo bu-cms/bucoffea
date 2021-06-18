@@ -159,7 +159,7 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
     h_mc = h.integrate('region', mc_region)
     
     # Get the QCD template (estimation from HF), only to be used in SR for now
-    if data_region == 'sr_vbf':
+    if 'sr_vbf' in data_region:
         # If a path to QCD file has been given, use it!
         # Otherwise, take the one from the relevant output directory
         if qcd_file:
@@ -360,7 +360,7 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
 
     rax.axhline(1., xmin=0, xmax=1, color=(0,0,0,0.4), ls='--')
 
-    fig.text(0., 1., 'UL Nanov8',
+    fig.text(0., 1., '$\\bf{CMS}$ internal',
                 fontsize=14,
                 horizontalalignment='left',
                 verticalalignment='bottom',

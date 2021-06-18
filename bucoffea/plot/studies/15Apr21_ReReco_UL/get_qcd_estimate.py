@@ -3,6 +3,7 @@
 import os
 import sys
 import re
+import argparse
 import uproot
 import numpy as np
 
@@ -15,8 +16,28 @@ from distributions import distributions, binnings
 
 pjoin = os.path.join
 
+legend_labels = {
+    'DY.*' : "QCD Z$\\rightarrow\\ell\\ell$",
+    'EWKZ.*ZToLL.*' : "EWK Z$\\rightarrow\\ell\\ell$",
+    'WN*J.*LNu.*' : "QCD W$\\rightarrow\\ell\\nu$",
+    'EWKW.*LNu.*' : "EWK W$\\rightarrow\\ell\\nu$",
+    'ZJetsToNuNu.*.*' : "QCD Z$\\rightarrow\\nu\\nu$",
+    'EWKZ.*ZToNuNu.*' : "EWK Z$\\rightarrow\\nu\\nu$",
+    'QCD.*' : "QCD",
+    'Top.*' : "Top quark",
+    'Diboson.*' : "WW/WZ/ZZ",
+    'MET.*' : "Data"
+}
 
-def get_qcd_estimate(acc, outtag, outrootfile, distribution):
+def parse_cli():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('inpath', help='Path to the merged coffea files.')
+    parser.add_argument('--years', nargs='*', type=int, default=[2017,2018], help='Years to run.')
+    parser.add_argument('--distribution', default='.*', help='Distributions to run.')
+    args = parser.parse_args()
+    return args
+
+def get_qcd_estimate(acc, outtag, outrootfile, distribution, years=[2017, 2018]):
     '''Calculate the QCD template in SR'''
     acc.load(distribution)
     h = acc[distribution]
@@ -48,17 +69,52 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
 
     # Get data and MC yields in the QCD CR
     h = h.integrate('region', 'cr_vbf_qcd')
-    for year in [2017, 2018]:
+    for year in years:
         data = f'MET_{year}'
         mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
 
+        data_err_opts = {
+            'linestyle':'none',
+            'marker': '.',
+            'markersize': 10.,
+            'color':'k',
+            'elinewidth': 1,
+        }
+
         fig, ax = plt.subplots()
-        hist.plot1d(h.integrate('dataset', data), ax=ax, overflow=overflow)
-        hist.plot1d(h.integrate('dataset', mc), ax=ax, clear=False, overflow=overflow)
+        hist.plot1d(
+            h[data], 
+            overlay='dataset', 
+            ax=ax, 
+            overflow=overflow, 
+            error_opts=data_err_opts
+            )
+
+        hist.plot1d(
+            h[mc],
+            overlay='dataset',
+            ax=ax,
+            stack=True,
+            clear=False
+        )
 
         ax.set_yscale('log')
         ax.set_ylim(1e-2,1e6)
-        
+        ax.yaxis.set_ticks_position('both')
+
+        handles, labels = ax.get_legend_handles_labels()
+
+        for handle, label in zip(handles, labels):
+            for regex, newlabel in legend_labels.items():
+                if re.match(regex, label):
+                    handle.set_label(newlabel)
+                    if newlabel != 'Data':
+                        handle.set_linestyle('-')
+                        handle.set_edgecolor('k')
+                    continue
+
+        ax.legend(title='QCD CR', ncol=2, handles=handles)
+
         ax.text(0.,1.,r'QCD CR $\times$ $CR \rightarrow SR$ TF',
             fontsize=14,
             ha='left',
@@ -73,7 +129,7 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
             transform=ax.transAxes
         )
 
-        ax.legend(labels=['Data', 'MC']) 
+        # ax.legend(labels=['Data', 'MC']) 
 
         if distribution in new_xlabels.keys():
             ax.set_xlabel(new_xlabels[distribution])
@@ -127,7 +183,8 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution):
         outrootfile[f'qcd_estimate_{distribution}_{year}'] = (sumw, xedges)
 
 def main():
-    inpath = sys.argv[1]
+    args = parse_cli()
+    inpath = args.inpath
     acc = dir_archive(inpath)
     acc.load('sumw')
     acc.load('sumw2')
@@ -142,7 +199,9 @@ def main():
     print(f'ROOT file initiated: {outrootpath}')
 
     for distribution in distributions['sr_vbf']:
-        get_qcd_estimate(acc, outtag, outrootfile, distribution=distribution)
+        if not re.match(args.distribution, distribution):
+            continue
+        get_qcd_estimate(acc, outtag, outrootfile, distribution=distribution, years=args.years)
 
 if __name__ == '__main__':
     main()
