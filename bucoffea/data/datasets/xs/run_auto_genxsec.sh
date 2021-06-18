@@ -18,16 +18,18 @@ get_xs(){
     fi
 
     # Source CMSSW
-    # pushd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_6_1/
-    if [[ "$DATASET"=*"Autumn18"* ]]; then
-        pushd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_2_5/src
-        eval `scramv1 runtime -sh`
-        popd;
-    elif [[ "$DATASET"=*"Fall17"* ]]; then
-        popd /cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_9_4_9/src;
-        eval `scramv1 runtime -sh`
-        popd;
-    fi
+    pushd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_6_21/
+    eval `scramv1 runtime -sh`
+    popd;
+    # if [[ "$DATASET"=*"Autumn18"* ]]; then
+        # pushd /cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_6_21/src
+        # eval `scramv1 runtime -sh`
+        # popd;
+    # elif [[ "$DATASET"=*"Fall17"* ]]; then
+        # popd /cvmfs/cms.cern.ch/slc7_amd64_gcc630/cms/cmssw/CMSSW_10_6_21/src;
+        # eval `scramv1 runtime -sh`
+        # popd;
+    # fi
     # Download GenXSecAnalyzer config
     if [ ! -e "./ana.py" ]; then
     curl "https://raw.githubusercontent.com/syuvivida/generator/master/cross_section/runJob/ana.py" -o "ana.py"
@@ -66,8 +68,4 @@ run_from_list() {
     done < ${LIST}
 }
 
-run_from_list ../datasets_2017.txt
-run_from_list ../datasets_2018.txt
-run_from_list ../datasets_2016.txt
-
-
+run_from_list ../datasets_ULv8_2017.txt
