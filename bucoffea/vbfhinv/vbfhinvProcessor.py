@@ -279,9 +279,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         has_track0 = np.abs(diak4.i0.eta) <= 2.5
         has_track1 = np.abs(diak4.i1.eta) <= 2.5
 
-        # Hemisphere requirement with the eta of the leading jet swapped
-        hemisphere_inv = ((-diak4.i0.eta) * diak4.i1.eta < 0).any()
-
         leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
         trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
 

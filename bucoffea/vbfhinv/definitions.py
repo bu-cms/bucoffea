@@ -343,12 +343,6 @@ def vbfhinv_regions(cfg):
             pass
         regions['cr_vbf_qcd'].append('fail_hf_cuts')
 
-        # Second QCD CR with the two leading jets in the same hemisphere (i.e. eta1 * eta2 > 0)
-        if cfg.RUN.HFSTUDY_V2:
-            regions['cr_vbf_qcd_same_hem'] = copy.deepcopy(regions['cr_vbf_qcd'])
-            regions['cr_vbf_qcd_same_hem'].remove('hemisphere')
-            regions['cr_vbf_qcd_same_hem'].append('hemisphere_inv')
-
     # QCD CR to check with deltaphi(jet,MET) cut inverted
     # Will be used to compare the yields with the QCD template obtained from R&S
     if cfg.RUN.REBSMEAR_CHECK:
