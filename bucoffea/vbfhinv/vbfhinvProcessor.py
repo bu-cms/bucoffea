@@ -358,7 +358,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('leadak4_pt_eta', leadak4_pt_eta.any())
         selection.add('trailak4_pt_eta', trailak4_pt_eta.any())
         selection.add('hemisphere', hemisphere)
-        selection.add('hemisphere_inv', hemisphere_inv)
         selection.add('leadak4_id',leadak4_id.any())
         selection.add('trailak4_id',trailak4_id.any())
         selection.add('mjj', df['mjj'] > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.MASS)
