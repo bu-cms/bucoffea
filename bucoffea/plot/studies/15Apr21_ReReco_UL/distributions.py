@@ -43,6 +43,8 @@ distributions = {
     'cr_g_vbf'  : common_distributions + ['photon_pt0', 'photon_eta0', 'photon_phi0'],
 } 
 
+recoil_bins_2016 = [ 250,  280,  310,  340,  370,  400,  430,  470,  510, 550,  590,  640,  690,  740,  790,  840,  900,  960, 1020, 1090, 1160, 1250, 1400]
+
 binnings = {
     'mjj': Bin('mjj', r'$M_{jj} \ (GeV)$', [200., 400., 600., 900., 1200., 1500., 2000., 2750., 3500., 5000.]),
     'ak4_pt0': Bin('jetpt',r'Leading AK4 jet $p_{T}$ (GeV)',list(range(80,600,20)) + list(range(600,1000,20)) ),
@@ -62,6 +64,7 @@ binnings = {
     'ak4_mt0' : Bin("mt", r"Leading AK4 $M_{T}$ (GeV)", 50, 0, 1000),
     'ak4_mt1' : Bin("mt", r"Trailing AK4 $M_{T}$ (GeV)", 50, 0, 1000),
     'dphijr' : Bin("dphi", r"$min\Delta\phi(j,recoil)$", 50, 0, 3.5),
+    'recoil' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
 }
 
 ylims = {
