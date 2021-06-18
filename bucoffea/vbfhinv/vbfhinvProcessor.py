@@ -285,6 +285,14 @@ class vbfhinvProcessor(processor.ProcessorABC):
         leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
         trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
 
+        def get_more_central_jeteta(diak4):
+            mask = diak4.i0.abseta > diak4.i1.abseta
+            return (mask * diak4.i1.eta) + (~mask * diak4.i0.eta)
+
+        def get_more_forward_jeteta(diak4):
+            mask = diak4.i0.abseta > diak4.i1.abseta
+            return (mask * diak4.i0.eta) + (~mask * diak4.i1.eta)
+
         df['mjj'] = diak4.mass.max()
         df['dphijj'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
         df['detajj'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
@@ -762,6 +770,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nef1',      frac=diak4.i1.nef[mask].flatten(),      weight=w_diak4)
             ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
+
+            # Eta of more central and more forward VBF jets
+            ezfill('ak4_central_eta',    jeteta=get_more_central_jeteta(diak4)[mask].flatten(),    weight=w_diak4)
+            ezfill('ak4_forward_eta',    jeteta=get_more_forward_jeteta(diak4)[mask].flatten(),    weight=w_diak4)
 
             if cfg.RUN.ULEGACYV8:
                 def is_hf_jet(_ak4, ptmin=100, etamin=2.9, etamax=5.0):
