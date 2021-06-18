@@ -30,7 +30,9 @@ common_distributions = [
     'met',
     'met_phi',
     'ak4_mult',
-    'dphijr'
+    'dphijr',
+    'ak4_central_eta',
+    'ak4_forward_eta',
 ]
 
 # Distributions to plot for each region
@@ -51,6 +53,8 @@ binnings = {
     'ak4_pt1': Bin('jetpt',r'Trailing AK4 jet $p_{T}$ (GeV)',list(range(40,600,20)) + list(range(600,1000,20)) ),
     'ak4_phi0' : Bin("jetphi", r"Leading AK4 jet $\phi$", 50,-np.pi, np.pi),
     'ak4_phi1' : Bin("jetphi", r"Trailing AK4 jet $\phi$", 50,-np.pi, np.pi),
+    'ak4_central_eta' : Bin("jeteta", r"More Central Jet $\eta$", 50, -5, 5),
+    'ak4_forward_eta' : Bin("jeteta", r"More Forward Jet $\eta$", 50, -5, 5),
     'ak4_nef0' : Bin('frac', 'Leading Jet Neutral EM Frac', 50, 0, 1),
     'ak4_nef1' : Bin('frac', 'Trailing Jet Neutral EM Frac', 50, 0, 1),
     'ak4_nhf0' : Bin('frac', 'Leading Jet Neutral Hadronic Frac', 50, 0, 1),
