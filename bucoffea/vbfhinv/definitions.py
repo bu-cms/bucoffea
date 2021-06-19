@@ -532,20 +532,6 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
     sf[np.isnan(sf) | np.isinf(sf)] == 1
     weights.add("trigger_met", sf)
 
-def apply_hfmask_weights(ak4, weights, evaluator, met_phi, cfg):
-    '''On ReReco MC, apply the HF mask efficiency weights.'''
-    hfak4 = ak4[(ak4.pt > cfg.RUN.HF_PT_THRESH) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
-
-    # Only consider jets that are back to back with MET
-    dphi_hfjet_met = dphi(hfak4.phi, met_phi)
-    hfak4 = hfak4[dphi_hfjet_met > 2.5]
-
-    hfweight = evaluator['hf_mask_efficiency_mc'](hfak4.abseta, hfak4.pt).prod()
-
-    weights.add('hfweight', hfweight)
-
-    return weights
-
 def apply_hf_weights_for_qcd_estimation(ak4, weights, evaluator, df, cfg, region):
     '''HF weights for the QCD estimation.'''
     # Don't do anything except for the two QCD regions
