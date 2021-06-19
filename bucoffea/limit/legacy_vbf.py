@@ -2,14 +2,14 @@
 import copy
 import os
 import re
+import numpy as np
 from collections import defaultdict
 
 import uproot
 from coffea import hist
-from coffea.hist.export import export1d
 
 import ROOT as r
-from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi
+from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi, URTH1
 from legacy_monojet import suppress_negative_bins
 pjoin = os.path.join
 
@@ -31,7 +31,7 @@ def datasets(year, unblind=False):
             'cr_1e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
             'cr_2e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|.*DYJetsToLL_M-50_HT_MLM.*).*{year}'),
-            'cr_g_vbf' : re.compile(f'(GJets_(DR-0p4|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
+            'cr_g_vbf' : re.compile(f'(GJets_((HT|DR-0p4)|SM).*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
             'sr_vbf' : re.compile('nomatch')
           }
 
@@ -43,35 +43,25 @@ def datasets(year, unblind=False):
 
     return data, mc
 
-def legacy_dataset_name_vbf(dataset, vbf_with_dipole_recoil=True):
+def legacy_dataset_name_vbf(dataset):
     # For the VBF samples, we have two processes:
     # VBF with dipole recoil ON / OFF
     # The default one (as provided in the function argument) will be mapped to "vbf"
-    m = re.match("VBF_HToInvisible_M(\d+)(_PSweights)?_pow_pythia8_201[0-9]", dataset)
+    m = re.match("VBF_HToInvisible_M(\d+)_withDipoleRecoil(_PSweights)?_pow_pythia8_201[0-9]", dataset)
     if m:
         mh = m.groups()[0]
-        if vbf_with_dipole_recoil:
-            dr_suffix = '_noDR'
-        else:
-            dr_suffix = ''
-        
         if mh=="125":
-            return f"vbf{dr_suffix}"
+            return f"vbf"
         else:
-            return f"vbf{mh}{dr_suffix}"
+            return f"vbf{mh}"
 
     m = re.match("VBF_HToInvisible_M(\d+)_withDipoleRecoil(_PSweights)?_pow_pythia8_201[0-9]", dataset)
     if m:
         mh = m.groups()[0]
-        if vbf_with_dipole_recoil:
-            dr_suffix = ''
-        else:
-            dr_suffix = '_withDR'
-
         if mh=="125":
-            return f"vbf{dr_suffix}"
+            return f"vbf"
         else:
-            return f"vbf{mh}{dr_suffix}"
+            return f"vbf{mh}"
 
     m = re.match("ZH_ZToQQ_HToInvisible_M(\d+)(_PSweights)?_pow_pythia8_201[0-9]", dataset)
     if m:
@@ -124,6 +114,7 @@ def legacy_dataset_name_vbf(dataset, vbf_with_dipole_recoil=True):
         'ZJetsToNuNu.*' : 'qcdzjets',
         'DYJets.*' : 'qcdzll',
         'GJets_DR-0p4.*' : 'qcdgjets',
+        'GJets.*HT.*' : 'qcdgjets',
         'GJets_SM_5f_EWK.*' : 'ewkgjets',
     }
 
@@ -157,6 +148,23 @@ def recoil_bins_2016():
 def mjj_bins_2016():
     return [200., 400., 600., 900., 1200., 1500.,
             2000., 2750., 3500., 5000.]
+
+def export_coffea_histogram(h, overflow='over'):
+    '''Helper function to: coffea histogram -> (sumw, xedges) with the desired overflow behavior.'''
+    if h.dim() != 1:
+        raise RuntimeError('The dimension of the histogram must be 1.')
+    
+    sumw, sumw2 = h.values(overflow=overflow, sumw2=True)[()]
+    xedges = h.axis('mjj').edges()
+
+    # Add the contents of the overflow to the last bin
+    if overflow == 'over':
+        sumw[-2] += sumw[-1]
+        sumw2[-2] += sumw2[-1]
+        sumw = np.r_[0, sumw[:-1], 0]
+        sumw2 = np.r_[0, sumw2[:-1], 0]
+
+    return URTH1(edges=xedges, sumw=sumw, sumw2=sumw2)
 
 def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
     """Writes ROOT TH1s to file as a limit input
@@ -206,7 +214,7 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
                 if not (data[region].match(dataset) or mc[region].match(dataset)):
                     # Insert dummy data for the signal region
                     if region == 'sr_vbf' and re.match('ZJetsToNuNu.*', dataset) and not unblind:
-                        th1 = export1d(ih.integrate('dataset', dataset))
+                        th1 = export_coffea_histogram(ih.integrate('dataset', dataset))
                         histo_name = 'signal_data'
                         f[histo_name] = th1
                         continue
@@ -214,12 +222,11 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False):
                         continue
                 print(f"Dataset: {dataset}")
 
-                th1 = export1d(ih.integrate('dataset', dataset))
+                th1 = export_coffea_histogram(ih.integrate('dataset', dataset))
                 try:
                     # Patch for now: We only have the DR sample for 2018
                     # So we modify the function "DR" argument based on which year we're looking at
-                    use_dr = year == 2018
-                    histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name_vbf(dataset, vbf_with_dipole_recoil=use_dr )}'
+                    histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name_vbf(dataset)}'
                     print(f'Saved under histogram: {histo_name}')
                 except:
                     print(f"Skipping {dataset}")
