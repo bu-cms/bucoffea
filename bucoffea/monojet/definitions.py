@@ -476,6 +476,17 @@ def setup_candidates(df, cfg):
         hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour']
     )
 
+    # Only fur UL v8 samples, the new HF shape variables
+    if cfg.RUN.ULEGACYV8:
+        kwargs = {
+            'setaeta': df['Jet_hfsigmaEtaEta'],
+            'sphiphi': df['Jet_hfsigmaPhiPhi'],
+            'hfcentralstripsize': df['Jet_hfcentralEtaStripSize'],
+            'hfadjacentstripsize': df['Jet_hfadjacentEtaStripsSize'],
+            'btagdf': df['Jet_btagDeepFlavQG'],
+        }
+        ak4.add_attributes(**kwargs)
+
     # Before cleaning, apply HEM veto
     hem_ak4 = ak4[ (ak4.pt>30) &
         (-3.0 < ak4.eta) &
@@ -543,10 +554,10 @@ def setup_candidates(df, cfg):
     )
     ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
-    if extract_year(df['dataset']) == 2017:
-        met_branch = 'METFixEE2017'
-    else:
+    if cfg.RUN.ULEGACYV8 or extract_year(df['dataset']) != 2017:
         met_branch = 'MET'
+    else:
+        met_branch = 'METFixEE2017'
 
     met_pt = df[f'{met_branch}_pt{jes_suffix_met}']
     met_phi = df[f'{met_branch}_phi{jes_suffix_met}']

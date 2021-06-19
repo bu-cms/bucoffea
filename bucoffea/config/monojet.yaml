@@ -196,6 +196,7 @@ default:
 
   run:
     sync: False
+    ulegacyv8: False
     save:
       passing: False
       prescale: 1

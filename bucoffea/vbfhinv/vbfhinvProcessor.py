@@ -303,7 +303,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         leading_jet_in_horn = ((diak4.i0.abseta<3.2) & (diak4.i0.abseta>2.8)).any()
         trailing_jet_in_horn = ((diak4.i1.abseta<3.2) & (diak4.i1.abseta>2.8)).any()
 
-        selection.add('hornveto', (df['dPFTkSR'] < 0.8) | ~(leading_jet_in_horn | trailing_jet_in_horn))
+        # selection.add('hornveto', (df['dPFTkSR'] < 0.8) | ~(leading_jet_in_horn | trailing_jet_in_horn))
         
         df['htmiss'] = ak4[ak4.pt>30].p4.sum().pt
         df['ht'] = ak4[ak4.pt>30].pt.sum()
@@ -375,7 +375,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         max_neEmEF_ak41 = (~ak41_in_endcap) | (diak4.i1.nef < 0.7) 
 
         max_neEmEF = (max_neEmEF_ak40 & max_neEmEF_ak41).any()
-        selection.add('max_neEmEF', max_neEmEF)
+        # selection.add('max_neEmEF', max_neEmEF)
         
         vec_b = calculate_vecB(ak4, met_pt, met_phi)
         vec_dphi = calculate_vecDPhi(ak4, met_pt, met_phi, df['TkMET_phi'])
@@ -865,9 +865,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('dphijj',             dphi=df["dphijj"][mask],   weight=rweight[mask] )
             ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
-
-            if not df['is_data']:
-                ezfill('gen_met_mjj',        met=df["GenMET_pt"][mask],     mjj=df["mjj"][mask],      weight=rweight[mask])
 
             ezfill('vecdphi',     vecdphi=vec_dphi[mask],       weight=rweight[mask] )
             ezfill('vecb',        vecb=vec_b[mask],            weight=rweight[mask] )

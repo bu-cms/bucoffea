@@ -533,13 +533,6 @@ era2017:
       histogram: EfficiencySF_2017
       file: data/sf/hfmask/EffcySFandNoisePassRate.root
 
-    endcap_w_rereco_mc_leadak4:
-      histogram: mc_weights_ak4_eta0
-      file: data/sf/mc/jet_eta_weights.root
-    endcap_w_rereco_mc_trailak4:
-      histogram: mc_weights_ak4_eta1
-      file: data/sf/mc/jet_eta_weights.root
-
 era2018:
   triggers:
     met:
@@ -704,10 +697,3 @@ era2018:
     hf_cuts_sf:
       histogram: EfficiencySF_2018
       file: data/sf/hfmask/EffcySFandNoisePassRate.root
-
-    endcap_w_rereco_mc_leadak4:
-      histogram: mc_weights_ak4_eta0
-      file: data/sf/mc/jet_eta_weights.root
-    endcap_w_rereco_mc_trailak4:
-      histogram: mc_weights_ak4_eta1
-      file: data/sf/mc/jet_eta_weights.root
