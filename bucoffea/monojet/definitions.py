@@ -988,8 +988,8 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     year = extract_year(df['dataset'])
     # Muon ID and Isolation for tight and loose WP
     # Function of pT, eta (Order!)
-    weight_muons_id_tight = evaluator['muon_id_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod()
-    weight_muons_iso_tight = evaluator['muon_iso_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod()
+    weight_muons_id_tight = evaluator['muon_id_tight'](muons[df['is_tight_muon']].abseta, muons[df['is_tight_muon']].pt).prod()
+    weight_muons_iso_tight = evaluator['muon_iso_tight'](muons[df['is_tight_muon']].abseta, muons[df['is_tight_muon']].pt).prod()
 
     if cfg.SF.DIMUO_ID_SF.USE_AVERAGE:
         tight_dimuons = muons[df["is_tight_muon"]].distincts()
@@ -1012,14 +1012,18 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     # Electron ID and reco
     # Function of eta, pT (Other way round relative to muons!)
 
-    # For 2017, the reco SF is split below/above 20 GeV
-    if year == 2017:
+    # For UL, both 2017 and 2018 have electron SF split by pt < 20 and pt > 20
+    # For EOY, this is only done for 2017
+    if cfg.RUN.ULEGACYV8 or year == 2017:
         high_et = electrons.pt>20
         ele_reco_sf = evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et]).prod()
         ele_reco_sf *= evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et]).prod()
+
     else:
         ele_reco_sf = evaluator['ele_reco'](electrons.etasc, electrons.pt).prod()
+
     weights.add("ele_reco", ele_reco_sf)
+
     # ID/iso SF is not split
     # in case of 2 tight electrons, we want to apply 0.5*(T1L2+T2L1) instead of T1T2
     weights_electrons_tight = evaluator['ele_id_tight'](electrons[df['is_tight_electron']].etasc, electrons[df['is_tight_electron']].pt).prod()
