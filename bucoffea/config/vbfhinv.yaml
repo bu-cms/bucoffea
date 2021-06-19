@@ -220,6 +220,17 @@ default:
 
   run:
     sync: False
+    ulegacyv8: True
+    one_fifth_unblind: False
+    qcd_estimation: True
+    rebsmear_check: False
+    apply_cleaning_cuts: False
+    regionregex: .*
+    apply_hf_cuts: True
+    hf_pt_thresh: 80
+    apply_weights:
+      hfmask: False
+      endcap: False
     save:
       passing: False
       tree: False
@@ -234,7 +245,11 @@ default:
         - 51393664
     trigger_study: False
     btag_study: False
+    prefire_study: False
+    hemcheck: False
+    hfstudy_v2: False
     apply_categorized_sf: True
+    apply_ewk_corr_to_signal: False
   triggers:
     ht:
       gammaeff:
@@ -312,17 +327,17 @@ era2016:
       file: data/sf/egamma/CSEV_ScaleFactors_2017.root
 
     muon_id_loose:
-      histogram: NUM_LooseID_DEN_genTracks_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ID.root
+      histogram: NUM_LooseID_DEN_TrackerMuons_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root
     muon_id_tight:
-      histogram: NUM_TightID_DEN_genTracks_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ID.root
+      histogram: NUM_TightID_DEN_TrackerMuons_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root
     muon_iso_tight:
-      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
+      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2017_UL_ISO.root
     muon_iso_loose:
-      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
+      histogram: NUM_LooseRelIso_DEN_LooseID_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2017_UL_ISO.root
     tau_id:
       histogram: tau_sf_VLoose_2016_cent
       file: data/sf/tau/tau_sf.root
@@ -419,33 +434,33 @@ era2017:
         medium : 0.8838
         tight : 0.9693
       deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
-        loose : 0.1522
-        medium: 0.4941
-        tight: 0.8001
+        loose : 0.1355
+        medium: 0.4506
+        tight: 0.7738
   sf:
     deepcsv:
-      file: data/sf/btag/DeepCSV_94XSF_WP_V4_B_F.csv
+      file: data/sf/btag/DeepCSV_106XUL17SF.csv
     ele_reco:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root
+      file: data/sf/egamma/ul/egammaEffi_ptAbove20_txt_EGM2D_UL2017.root
 
     ele_reco_pt_lt_20:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO_lowEt.root
+      file: data/sf/egamma/ul/egammaEffi_ptBelow20_txt_EGM2D_UL2017.root
 
     ele_id_loose:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronWPVeto_Fall17V2_BU.root
+      file: data/sf/egamma/ul/egammaEffi_txt_EGM2D_Veto_UL17.root
 
     ele_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_ElectronTight_Fall17V2_BU.root
+      file: data/sf/egamma/ul/egammaEffi_txt_EGM2D_Tight_UL17.root
 
     photon:
-      usetnp: True
+      usetnp: False
     photon_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2017_PhotonsMedium_capped.root
+      file: data/sf/egamma/ul/egammaEffi_txt_EGM2D_PHO_Tight_UL17.root
     photon_id_tight_tnp:
       histogram: photon_medium_id_sf_2017
       file: data/sf/egamma/photon_medium_id_sf_v0.root
@@ -457,17 +472,17 @@ era2017:
       file: data/sf/egamma/CSEV_ScaleFactors_2017.root
 
     muon_id_loose:
-      histogram: NUM_LooseID_DEN_genTracks_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ID.root
+      histogram: NUM_LooseID_DEN_TrackerMuons_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root
     muon_id_tight:
-      histogram: NUM_TightID_DEN_genTracks_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ID.root
+      histogram: NUM_TightID_DEN_TrackerMuons_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root
     muon_iso_tight:
-      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
+      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2017_UL_ISO.root
     muon_iso_loose:
-      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
-      file: data/sf/muon/2017_RunBCDEF_SF_ISO.root
+      histogram: NUM_LooseRelIso_DEN_LooseID_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2017_UL_ISO.root
     tau_id:
       histogram: tau_sf_2017_central
       file: data/sf/tau/tau_sf_deepTau.root
@@ -507,6 +522,23 @@ era2017:
     ak4_em_frac_sf_neg_endcap:
       histogram: sf_neg_endcap_2017
       file: data/sf/ak4/jet_id_sf_for_endcaps.root
+
+    hf_mask_efficiency_mc:
+      histogram: Efficiency_Data_2017
+      file: data/sf/hfmask/EffcySFandNoisePassRate.root
+    hf_mask_noise_passing_rate:
+      histogram: NoisePassingRate_2017
+      file: data/sf/hfmask/EffcySFandNoisePassRate.root
+    hf_cuts_sf:
+      histogram: EfficiencySF_2017
+      file: data/sf/hfmask/EffcySFandNoisePassRate.root
+
+    endcap_w_rereco_mc_leadak4:
+      histogram: mc_weights_ak4_eta0
+      file: data/sf/mc/jet_eta_weights.root
+    endcap_w_rereco_mc_trailak4:
+      histogram: mc_weights_ak4_eta1
+      file: data/sf/mc/jet_eta_weights.root
 
 era2018:
   triggers:
@@ -549,30 +581,34 @@ era2018:
     wp: medium
     cuts:
       deepcsv: # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
-        loose : 0.1241
-        medium: 0.4184
-        tight: 0.7527
+        loose : 0.1208
+        medium: 0.4168
+        tight: 0.7665
   sf:
     deepcsv:
-      file: data/sf/btag/DeepCSV_102XSF_WP_V1.csv
+      file: data/sf/btag/DeepCSV_106XUL18SF.csv
 
     ele_reco:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_egammaEffi_txt_EGM2D_updatedAll.root
+      file: data/sf/egamma/ul/egammaEffi_ptAbove20_txt_EGM2D_UL2018.root
+
+    ele_reco_pt_lt_20:
+      histogram: EGamma_SF2D
+      file: data/sf/egamma/ul/egammaEffi_ptBelow20_txt_EGM2D_UL2018.root
 
     ele_id_loose:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_ElectronWPVeto_Fall17V2_BU.root
+      file: data/sf/egamma/ul/egammaEffi_txt_Ele_Veto_EGM2D_UL18.root
 
     ele_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_ElectronTight_Fall17V2_BU.root
+      file: data/sf/egamma/ul/egammaEffi_txt_Ele_Tight_EGM2D_UL18.root
 
     photon:
-      usetnp: True
+      usetnp: False
     photon_id_tight:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/2018_PhotonsMedium_capped.root
+      file: data/sf/egamma/ul/egammaEffi_txt_EGM2D_Pho_Tight_UL18.root
     photon_id_tight_tnp:
       histogram: photon_medium_id_sf_2018
       file: data/sf/egamma/photon_medium_id_sf_v0.root
@@ -584,41 +620,42 @@ era2018:
       file: data/sf/egamma/CSEV_ScaleFactors_2017.root # TODO: Update to 2018 when available!
 
     muon_id_loose:
-      histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
+      histogram: NUM_LooseID_DEN_TrackerMuons_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root
     muon_id_loose_stat:
-      histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta_stat
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
+      histogram: NUM_LooseID_DEN_TrackerMuons_abseta_pt_stat
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root
     muon_id_loose_syst:
-      histogram: NUM_LooseID_DEN_TrackerMuons_pt_abseta_syst
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
+      histogram: NUM_LooseID_DEN_TrackerMuons_abseta_pt_syst
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root
     muon_id_tight:
-      histogram: NUM_TightID_DEN_TrackerMuons_pt_abseta
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
+      histogram: NUM_TightID_DEN_TrackerMuons_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root
     muon_id_tight_stat:
-      histogram: NUM_TightID_DEN_TrackerMuons_pt_abseta_stat
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
+      histogram: NUM_TightID_DEN_TrackerMuons_abseta_pt_stat
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root
     muon_id_tight_syst:
-      histogram: NUM_TightID_DEN_TrackerMuons_pt_abseta_syst
-      file: data/sf/muon/2018_RunABCD_SF_ID.root
+      histogram: NUM_TightID_DEN_TrackerMuons_abseta_pt_syst
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root
+    
     muon_iso_tight:
-      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
+      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root
     muon_iso_tight_stat:
-      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta_stat
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
+      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt_stat
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root
     muon_iso_tight_sys:
-      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta_syst
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
+      histogram: NUM_TightRelIso_DEN_TightIDandIPCut_abseta_pt_syst
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root
     muon_iso_loose:
-      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
+      histogram: NUM_LooseRelIso_DEN_LooseID_abseta_pt
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root
     muon_iso_loose_stat:
-      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_stat
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
+      histogram: NUM_LooseRelIso_DEN_LooseID_abseta_pt_stat
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root
     muon_iso_loose_sys:
-      histogram: NUM_LooseRelIso_DEN_LooseID_pt_abseta_syst
-      file: data/sf/muon/2018_RunABCD_SF_ISO.root
+      histogram: NUM_LooseRelIso_DEN_LooseID_abseta_pt_syst
+      file: data/sf/muon/Efficiencies_muon_generalTracks_Z_Run2018_UL_ISO.root
     tau_id:
       histogram: tau_sf_2018_central
       file: data/sf/tau/tau_sf_deepTau.root
@@ -657,3 +694,20 @@ era2018:
     ak4_em_frac_sf_neg_endcap:
       histogram: sf_neg_endcap_2018
       file: data/sf/ak4/jet_id_sf_for_endcaps.root
+
+    hf_mask_efficiency_mc:
+      histogram: Efficiency_Data_2018
+      file: data/sf/hfmask/EffcySFandNoisePassRate.root
+    hf_mask_noise_passing_rate:
+      histogram: NoisePassingRate_2018
+      file: data/sf/hfmask/EffcySFandNoisePassRate.root
+    hf_cuts_sf:
+      histogram: EfficiencySF_2018
+      file: data/sf/hfmask/EffcySFandNoisePassRate.root
+
+    endcap_w_rereco_mc_leadak4:
+      histogram: mc_weights_ak4_eta0
+      file: data/sf/mc/jet_eta_weights.root
+    endcap_w_rereco_mc_trailak4:
+      histogram: mc_weights_ak4_eta1
+      file: data/sf/mc/jet_eta_weights.root
