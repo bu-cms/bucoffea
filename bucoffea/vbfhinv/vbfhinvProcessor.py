@@ -54,7 +54,6 @@ from bucoffea.monojet.definitions import (
 from bucoffea.vbfhinv.definitions import (
                                            vbfhinv_accumulator,
                                            vbfhinv_regions,
-                                           ak4_em_frac_weights,
                                            met_trigger_sf,
                                            met_xy_correction
                                          )
