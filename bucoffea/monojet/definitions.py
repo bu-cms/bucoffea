@@ -312,17 +312,17 @@ def setup_candidates(df, cfg):
         dz=df['Muon_dz']
     )
 
+    # For MC, add the matched gen-particle info for checking
+    if not df['is_data']:
+        kwargs = {'genpartflav' : df['Muon_genPartFlav']}
+        muons.add_attributes(**kwargs) 
+
     # All muons must be at least loose
     muons = muons[muons.looseId \
                     & (muons.iso < cfg.MUON.CUTS.LOOSE.ISO) \
                     & (muons.pt > cfg.MUON.CUTS.LOOSE.PT) \
                     & (muons.abseta<cfg.MUON.CUTS.LOOSE.ETA) \
                     ]
-
-    # For MC, add the matched gen-particle info for checking
-    if not df['is_data']:
-        kwargs = {'genpartflav' : df['Muon_genPartFlav']}
-        muons.add_attributes(**kwargs) 
 
     electrons = JaggedCandidateArray.candidatesfromcounts(
         df['nElectron'],
@@ -340,6 +340,12 @@ def setup_candidates(df, cfg):
         dz=np.abs(df['Electron_dz']),
         barrel=np.abs(df['Electron_eta']+df['Electron_deltaEtaSC']) <= 1.4442
     )
+
+    # For MC, add the matched gen-particle info for checking
+    if not df['is_data']:
+        kwargs = {'genpartflav' : df['Electron_genPartFlav']}
+        electrons.add_attributes(**kwargs) 
+
     # All electrons must be at least loose
     pass_dxy = (electrons.barrel & (np.abs(electrons.dxy) < cfg.ELECTRON.CUTS.LOOSE.DXY.BARREL)) \
     | (~electrons.barrel & (np.abs(electrons.dxy) < cfg.ELECTRON.CUTS.LOOSE.DXY.ENDCAP))
@@ -356,11 +362,6 @@ def setup_candidates(df, cfg):
 
     if cfg.OVERLAP.ELECTRON.MUON.CLEAN:
         electrons = electrons[object_overlap(electrons, muons, dr=cfg.OVERLAP.ELECTRON.MUON.DR)]
-
-    # For MC, add the matched gen-particle info for checking
-    if not df['is_data']:
-        kwargs = {'genpartflav' : df['Electron_genPartFlav']}
-        electrons.add_attributes(**kwargs) 
 
     taus = JaggedCandidateArray.candidatesfromcounts(
         df['nTau'],
