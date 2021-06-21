@@ -417,7 +417,7 @@ era2017:
       - Flag_EcalDeadCellTriggerPrimitiveFilter
       - Flag_BadPFMuonFilter
       - Flag_eeBadScFilter
-      - Flag_ecalBadCalibFilterV2
+      - Flag_ecalBadCalibFilter
     mc:
       - Flag_goodVertices
       - Flag_globalSuperTightHalo2016Filter
@@ -425,7 +425,7 @@ era2017:
       - Flag_HBHENoiseIsoFilter
       - Flag_EcalDeadCellTriggerPrimitiveFilter
       - Flag_BadPFMuonFilter
-      - Flag_ecalBadCalibFilterV2
+      - Flag_ecalBadCalibFilter
 
   btag:
     algo: deepcsv
@@ -568,7 +568,7 @@ era2018:
       - Flag_EcalDeadCellTriggerPrimitiveFilter
       - Flag_BadPFMuonFilter
       - Flag_eeBadScFilter
-      - Flag_ecalBadCalibFilterV2
+      - Flag_ecalBadCalibFilter
     mc:
       - Flag_goodVertices
       - Flag_globalSuperTightHalo2016Filter
@@ -576,7 +576,7 @@ era2018:
       - Flag_HBHENoiseIsoFilter
       - Flag_EcalDeadCellTriggerPrimitiveFilter
       - Flag_BadPFMuonFilter
-      - Flag_ecalBadCalibFilterV2
+      - Flag_ecalBadCalibFilter
 
   btag:
     algo: deepcsv
