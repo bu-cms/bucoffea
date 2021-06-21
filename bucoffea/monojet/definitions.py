@@ -319,6 +319,10 @@ def setup_candidates(df, cfg):
                     & (muons.abseta<cfg.MUON.CUTS.LOOSE.ETA) \
                     ]
 
+    # For MC, add the matched gen-particle info for checking
+    if not df['is_data']:
+        kwargs = {'genpartflav' : df['Muon_genPartFlav']}
+        muons.add_attributes(**kwargs) 
 
     electrons = JaggedCandidateArray.candidatesfromcounts(
         df['nElectron'],
@@ -352,6 +356,11 @@ def setup_candidates(df, cfg):
 
     if cfg.OVERLAP.ELECTRON.MUON.CLEAN:
         electrons = electrons[object_overlap(electrons, muons, dr=cfg.OVERLAP.ELECTRON.MUON.DR)]
+
+    # For MC, add the matched gen-particle info for checking
+    if not df['is_data']:
+        kwargs = {'genpartflav' : df['Electron_genPartFlav']}
+        electrons.add_attributes(**kwargs) 
 
     taus = JaggedCandidateArray.candidatesfromcounts(
         df['nTau'],
