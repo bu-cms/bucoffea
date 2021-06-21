@@ -192,6 +192,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Recalculate MET pt and phi based on npv-corrections
         if cfg.MET.XYCORR:
+            met_pt_uncorr, met_phi_uncorr = met_pt, met_phi
             met_pt, met_phi = met_xy_correction(df, met_pt, met_phi)
 
         # Muons
@@ -224,6 +225,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         df['dRMuonJet'] = np.hypot(muonjet_pairs.i0.eta-muonjet_pairs.i1.eta , dphi(muonjet_pairs.i0.phi,muonjet_pairs.i1.phi)).min()
 
         # Recoil
+        df['recoil_pt_uncorr'], df['recoil_phi_uncorr'] = recoil(met_pt_uncorr, met_phi_uncorr, electrons, muons, photons)
         df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
 
         df["dPFCaloSR"] = (met_pt - df["CaloMET_pt"]) / met_pt
@@ -673,8 +675,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["mjj"]               +=  processor.column_accumulator(np.float16(df["mjj"][mask]))
                     output['tree_float16'][region]["detajj"]            +=  processor.column_accumulator(np.float16(df["detajj"][mask]))
                     output['tree_float16'][region]["dphijj"]            +=  processor.column_accumulator(np.float16(df["dphijj"][mask]))
+                    output['tree_float16'][region]["uncorr_recoil_pt"]  +=  processor.column_accumulator(np.float16(df["recoil_pt_uncorr"][mask]))
+                    output['tree_float16'][region]["uncorr_recoil_phi"] +=  processor.column_accumulator(np.float16(df["recoil_phi_uncorr"][mask]))
                     output['tree_float16'][region]["recoil_pt"]         +=  processor.column_accumulator(np.float16(df["recoil_pt"][mask]))
                     output['tree_float16'][region]["recoil_phi"]        +=  processor.column_accumulator(np.float16(df["recoil_phi"][mask]))
+                    output['tree_float16'][region]["uncorr_met_pt"]     +=  processor.column_accumulator(np.float16(met_pt_uncorr[mask]))
+                    output['tree_float16'][region]["uncorr_met_phi"]    +=  processor.column_accumulator(np.float16(met_phi_uncorr[mask]))
                     output['tree_float16'][region]["met_pt"]            +=  processor.column_accumulator(np.float16(met_pt[mask]))
                     output['tree_float16'][region]["met_phi"]           +=  processor.column_accumulator(np.float16(met_phi[mask]))
                     output['tree_float16'][region]["CaloMet_pt"]        +=  processor.column_accumulator(np.float16(df['CaloMET_pt'][mask]))
