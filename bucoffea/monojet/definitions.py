@@ -438,6 +438,8 @@ def setup_candidates(df, cfg):
         }
         ak4.add_attributes(**kwargs)
 
+    ak4 = ak4[ak4.looseId]
+
     # Before cleaning, apply HEM veto
     hem_ak4 = ak4[ (ak4.pt>30) &
         (-3.0 < ak4.eta) &
