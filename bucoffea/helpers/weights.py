@@ -97,7 +97,7 @@ def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=F
             veto_weight_ele = gen_check_for_leptons(electrons, veto_weight_ele)
         
         ### Muons
-        args = (muons.pt, muons.abseta)
+        args = (muons.abseta, muons.pt)
         veto_weight_muo = (1 - varied_weight("muon_id_loose", *args)*varied_weight("muon_iso_loose", *args)).prod()
 
         # Gen-checking for muons
