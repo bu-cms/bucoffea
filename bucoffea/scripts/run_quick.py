@@ -21,8 +21,8 @@ def main():
         # "MET_ver1_2017B" : [
             # "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/MET/MET_ver1_2017B/210205_210910/0000/tree_1.root"
         # ],
-        "MET_ver1_2017B" : [
-            "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/MET/MET_ver1_2017B/210205_210910/0000/tree_1.root"
+        "EWKWMinus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2017" : [
+            "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/EWKWMinus2Jets_WToLNu_M-50_TuneCP5_withDipoleRecoil_13TeV-madgraph-pythia8/EWKWMinus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2017/210607_164955/0000/tree_1.root"
         ],
     }
 

@@ -696,6 +696,30 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["vecdphi"]           +=  processor.column_accumulator(np.float16(vec_dphi[mask]))
                     output['tree_float16'][region]["dphitkpf"]          +=  processor.column_accumulator(np.float16(dphitkpf[mask]))
                     
+                    event_has_ele = electrons[mask].counts != 0
+                    ele_pt = np.where(event_has_ele, electrons.pt.max()[mask], -999)
+                    ele_eta = np.where(event_has_ele, electrons[electrons.pt.argmax()].eta.max()[mask], -999)
+                    ele_phi = np.where(event_has_ele, electrons[electrons.pt.argmax()].phi.max()[mask], -999)
+
+                    event_has_mu = muons[mask].counts != 0
+                    mu_pt = np.where(event_has_mu, muons.pt.max()[mask], -999)
+                    mu_eta = np.where(event_has_mu, muons[muons.pt.argmax()].eta.max()[mask], -999)
+                    mu_phi = np.where(event_has_mu, muons[muons.pt.argmax()].phi.max()[mask], -999)
+
+                    output['tree_float16'][region]["lead_ele_pt"]   +=  processor.column_accumulator(ele_pt)
+                    output['tree_float16'][region]["lead_ele_eta"]   +=  processor.column_accumulator(ele_eta)
+                    output['tree_float16'][region]["lead_ele_phi"]   +=  processor.column_accumulator(ele_phi)
+
+                    output['tree_float16'][region]["lead_muon_pt"]   +=  processor.column_accumulator(mu_pt)
+                    output['tree_float16'][region]["lead_muon_eta"]   +=  processor.column_accumulator(mu_eta)
+                    output['tree_float16'][region]["lead_muon_phi"]   +=  processor.column_accumulator(mu_phi)
+
+                    if not df['is_data']:                    
+                        ele_genpartflav = np.where(event_has_ele, electrons[electrons.pt.argmax()].genpartflav.max()[mask], -999)
+                        mu_genpartflav = np.where(event_has_mu, muons[muons.pt.argmax()].genpartflav.max()[mask], -999)
+                        output['tree_float16'][region]["lead_ele_genpartflav"]   +=  processor.column_accumulator(ele_genpartflav)
+                        output['tree_float16'][region]["lead_muon_genpartflav"]   +=  processor.column_accumulator(mu_genpartflav)
+
                     for name, w in region_weights._weights.items():
                         output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w[mask]))
                     
