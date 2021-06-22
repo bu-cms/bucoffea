@@ -576,7 +576,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
                     met_trigger_sf(region_weights, diak4, df, apply_categorized=cfg.RUN.APPLY_CATEGORIZED_SF)
                 elif re.match(r'cr_g.*', region):
-                    photon_trigger_sf(region_weights, photons, df)
+                    photon_trigger_sf(region_weights, photons, df, cfg)
 
                 if cfg.RUN.APPLY_HF_CUTS:
                     region_weights = hfmask_sf(ak4, region_weights, evaluator, df, cfg)

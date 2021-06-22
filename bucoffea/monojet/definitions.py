@@ -966,7 +966,7 @@ def pileup_weights(weights, df, evaluator, cfg):
     weights.add("pileup", pu_weight)
     return weights
 
-def photon_trigger_sf(weights, photons, df):
+def photon_trigger_sf(weights, photons, df, cfg):
     """MC-to-data photon trigger scale factor.
 
     The scale factor is obtained by separately fitting the
@@ -983,12 +983,21 @@ def photon_trigger_sf(weights, photons, df):
     """
     year = extract_year(df['dataset'])
     x = photons.pt.max()
+
+    coeff = {}
+
     if year == 2016:
         sf =  np.ones(df.size)
     elif year == 2017:
-        sf = sigmoid(x,1.140,219.12,0.086,0.996) / sigmoid(x,0.171,207.22,0.092,1.000)
+        if cfg.RUN.ULEGACYV8:
+            sf = sigmoid(x,1.140,219.12,0.086,0.996) / sigmoid(x,0.171,207.22,0.092,1.000)
+        else:
+            sf = sigmoid(x,0.335,217.91,0.065,0.996) / sigmoid(x,0.244,212.34,0.050,1.000)
     elif year == 2018:
-        sf = sigmoid(x,0.875, 218.14, 0.097, 0.996) / sigmoid(x, 0.944,218.67,0.080,1.000)
+        if cfg.RUN.ULEGACYV8:
+            sf = sigmoid(x,0.875, 218.14, 0.097, 0.996) / sigmoid(x, 0.944,218.67,0.080,1.000)
+        else:
+            sf = sigmoid(x,1.022, 218.39, 0.086, 0.999) / sigmoid(x, 0.301,212.83,0.062,1.000)
 
     sf[np.isnan(sf) | np.isinf(sf)] == 1
 
