@@ -932,8 +932,8 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     else:
         weights.add("muon_id_iso_tight", weight_muons_id_tight*weight_muons_iso_tight )
 
-    weights.add("muon_id_loose", evaluator['muon_id_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
-    weights.add("muon_iso_loose", evaluator['muon_iso_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
+    weights.add("muon_id_loose", evaluator['muon_id_loose'](muons[~df['is_tight_muon']].abseta, muons[~df['is_tight_muon']].pt).prod())
+    weights.add("muon_iso_loose", evaluator['muon_iso_loose'](muons[~df['is_tight_muon']].abseta, muons[~df['is_tight_muon']].pt).prod())
 
     # Electron ID and reco
     # Function of eta, pT (Other way round relative to muons!)
