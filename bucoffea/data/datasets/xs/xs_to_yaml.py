@@ -23,10 +23,13 @@ Example:
         gen: 0.9
 """
 
-data = np.loadtxt('xs.txt',dtype=str)
+infile = 'xs_UL.txt'
+outfile = 'xs_UL.yml'
 
-if os.path.exists('xs.yml'):
-    with open('xs.yml','r') as f:
+data = np.loadtxt(infile,dtype=str)
+
+if os.path.exists(outfile):
+    with open(outfile,'r') as f:
         xs_dict = yaml.load(f, Loader=yaml.FullLoader)
 else:
     xs_dict = {}
@@ -39,12 +42,12 @@ for line in data:
     if not 'gen' in xs_dict[dataset]:
         xs_dict[dataset]['gen'] = xs
 
-tmp = {}
-for k, v in xs_dict.items():
-    k = re.sub('(_ext\d+|_new_+pmx|_PSweights)','',k)
-    if k not in xs_dict:
-        tmp[k] = copy.deepcopy(v)
-xs_dict.update(tmp)
+# tmp = {}
+# for k, v in xs_dict.items():
+#     k = re.sub('(_ext\d+|_new_+pmx|_PSweights)','',k)
+#     if k not in xs_dict:
+#         tmp[k] = copy.deepcopy(v)
+# xs_dict.update(tmp)
 
-with open('xs.yml','w') as f:
+with open(outfile,'w') as f:
     yaml.dump(xs_dict, f)

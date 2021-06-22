@@ -46,12 +46,12 @@ get_xs(){
     # Go!
     cmsRun ana.py maxEvents=100000 inputFiles="$FILES" 2>&1 | tee "output/${OUTNAME}.txt"
     echo 'DATASET=${INPUT}' >> "output/${OUTNAME}.txt"
-    echo $INPUT $(grep 'final cross section' "output/${OUTNAME}.txt"  | sed 's|.*= ||;s|+-||;s|  | |') >> xs.txt
+    echo $INPUT $(grep 'final cross section' "output/${OUTNAME}.txt"  | sed 's|.*= ||;s|+-||;s|  | |') >> xs_UL.txt
     echo $DATASET $(grep 'final cross section' "output/${OUTNAME}.txt"  | sed 's|.*= ||;s|+-||;s|  | |') >> xs_mini.txt
 }
 run_from_list() {
     LIST=${1}
-    touch xs.txt
+    touch xs_UL.txt
     while read DATASET; do
         if [[ $DATASET == \#* ]]; then
                 echo $DATASET
@@ -60,7 +60,7 @@ run_from_list() {
                 echo ""
                 continue
         fi
-        if [[ $(grep -c "$DATASET" xs.txt) -gt 0 ]]; then
+        if [[ $(grep -c "$DATASET" xs_UL.txt) -gt 0 ]]; then
                 continue
         fi
 
@@ -68,4 +68,5 @@ run_from_list() {
     done < ${LIST}
 }
 
-run_from_list ../datasets_ULv8_2017.txt
+run_from_list ../datasets_UL_mini_2017.txt
+run_from_list ../datasets_UL_mini_2018.txt
