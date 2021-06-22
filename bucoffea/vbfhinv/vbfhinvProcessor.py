@@ -419,9 +419,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             selection.add('one_jet_forward_one_jet_central', one_jet_forward_one_jet_central.any())
         
         # Mask for 1/5th unlbinding
-        one_fifth_mask = ~pass_all
-        # Only pick each 5 entry in data
-        one_fifth_mask[::5] = True
+        one_fifth_mask = (df['event']%5)==0
+
         if df['is_data']:
             selection.add('one_fifth_mask', one_fifth_mask)
         else:
@@ -496,8 +495,12 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # EWK corrections to VBF signal
             if cfg.RUN.APPLY_EWK_CORR_TO_SIGNAL:
                 if re.match('VBF_HToInv.*', df['dataset']):
+                    # Get Higgs pt from GEN collection
+                    gen = setup_gen_candidates(df)
+                    higgs_pt = gen[(gen.pdg==25)&(gen.status==62)].pt.max()
+
                     def ewk_correction(a, b):
-                        return 1 + a * df['GenMET_pt'] + b
+                        return 1 + a * higgs_pt + b
                      
                     coeff = [-0.00035, -0.043]
                     ewk_corr_signal = ewk_correction(*coeff)
