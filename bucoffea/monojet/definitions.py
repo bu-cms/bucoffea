@@ -984,8 +984,6 @@ def photon_trigger_sf(weights, photons, df, cfg):
     year = extract_year(df['dataset'])
     x = photons.pt.max()
 
-    coeff = {}
-
     if year == 2016:
         sf =  np.ones(df.size)
     elif year == 2017:
