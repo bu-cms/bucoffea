@@ -1005,26 +1005,42 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     year = extract_year(df['dataset'])
     # Muon ID and Isolation for tight and loose WP
     # Function of pT, eta (Order!)
-    weight_muons_id_tight = evaluator['muon_id_tight'](muons[df['is_tight_muon']].abseta, muons[df['is_tight_muon']].pt).prod()
-    weight_muons_iso_tight = evaluator['muon_iso_tight'](muons[df['is_tight_muon']].abseta, muons[df['is_tight_muon']].pt).prod()
+
+    # Annoying but needed: Order is different for monojet (EOY) and VBF (UL)
+
+    if cfg.RUN.ULEGACYV8:
+        args = (muons[df['is_tight_muon']].abseta, muons[df['is_tight_muon']].pt)
+    else:
+        args = (muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta)
+
+    weight_muons_id_tight = evaluator['muon_id_tight'](*args).prod()
+    weight_muons_iso_tight = evaluator['muon_iso_tight'](*args).prod()
 
     if cfg.SF.DIMUO_ID_SF.USE_AVERAGE:
         tight_dimuons = muons[df["is_tight_muon"]].distincts()
-        t0 = (evaluator['muon_id_tight'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta) \
-             * evaluator['muon_iso_tight'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta)).prod()
-        t1 = (evaluator['muon_id_tight'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta) \
-             * evaluator['muon_iso_tight'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta)).prod()
-        l0 = (evaluator['muon_id_loose'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta) \
-             * evaluator['muon_iso_loose'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta)).prod()
-        l1 = (evaluator['muon_id_loose'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta) \
-             * evaluator['muon_iso_loose'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta)).prod()
-        weights_2m_tight = 0.5*( l0 * t1 + l1 * t0)
+        if cfg.RUN.ULEGACYV8:
+            args0 = (tight_dimuons.i0.abseta, tight_dimuons.i0.pt)
+            args1 = (tight_dimuons.i1.abseta, tight_dimuons.i1.pt)
+        else:
+            args0 = (tight_dimuons.i0.pt, tight_dimuons.i0.abseta)
+            args1 = (tight_dimuons.i1.pt, tight_dimuons.i1.abseta)
+
+        t0 = (evaluator['muon_id_tight'](*args0) * evaluator['muon_iso_tight'](*args0)).prod()
+        t1 = (evaluator['muon_id_tight'](*args1) * evaluator['muon_iso_tight'](*args1)).prod()
+        l0 = (evaluator['muon_id_loose'](*args0) * evaluator['muon_iso_loose'](*args0)).prod()
+        l1 = (evaluator['muon_id_loose'](*args1) * evaluator['muon_iso_loose'](*args1)).prod()
+        weights_2m_tight = 0.5 * ( l0 * t1 + l1 * t0 )
         weights.add("muon_id_iso_tight", weight_muons_id_tight*weight_muons_iso_tight*(tight_dimuons.counts!=1) + weights_2m_tight*(tight_dimuons.counts==1))
     else:
         weights.add("muon_id_iso_tight", weight_muons_id_tight*weight_muons_iso_tight )
 
-    weights.add("muon_id_loose", evaluator['muon_id_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
-    weights.add("muon_iso_loose", evaluator['muon_iso_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
+    if cfg.RUN.ULEGACYV8:
+        args = (muons[~df['is_tight_muon']].abseta, muons[~df['is_tight_muon']].pt)
+    else:
+        args = (muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta)
+
+    weights.add("muon_id_loose", evaluator['muon_id_loose'](*args).prod())
+    weights.add("muon_iso_loose", evaluator['muon_iso_loose'](*args).prod())
 
     # Electron ID and reco
     # Function of eta, pT (Other way round relative to muons!)

@@ -96,8 +96,11 @@ def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=F
         if cfg.ELECTRON.GENCHECK:
             veto_weight_ele = gen_check_for_leptons(electrons, veto_weight_ele)
         
-        ### Muons
-        args = (muons.abseta, muons.pt)
+        ### Muons (eta, pT order different for EOY and UL)
+        if cfg.RUN.ULEGACYV8:
+            args = (muons.abseta, muons.pt)
+        else:
+            args = (muons.pt, muons.abseta)
         veto_weight_muo = (1 - varied_weight("muon_id_loose", *args)*varied_weight("muon_iso_loose", *args)).prod()
 
         # Gen-checking for muons
