@@ -605,6 +605,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         ]
                     region_weights.add("veto",veto_weights.partial_weight(include=["nominal"]))
 
+                    # Individual contributions
+                    region_weights.add("veto_ele",veto_weights.partial_weight(include=["nominal_ele_veto"]))
+                    region_weights.add("veto_muo",veto_weights.partial_weight(include=["nominal_muo_veto"]))
+                    region_weights.add("veto_tau",veto_weights.partial_weight(include=["nominal_tau_veto"]))
+
                 # SR without prefiring weights applied
                 if region == 'sr_vbf_no_pref':
                     exclude = ['prefire']

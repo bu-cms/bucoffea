@@ -96,6 +96,8 @@ def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=F
         if cfg.ELECTRON.GENCHECK:
             veto_weight_ele = gen_check_for_leptons(electrons, veto_weight_ele)
         
+        veto_weights.add(f'{variation}_ele_veto', veto_weight_ele)
+
         ### Muons
         args = (muons.abseta, muons.pt)
         veto_weight_muo = (1 - varied_weight("muon_id_loose", *args)*varied_weight("muon_iso_loose", *args)).prod()
@@ -103,6 +105,8 @@ def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=F
         # Gen-checking for muons
         if cfg.MUON.GENCHECK:
             veto_weight_muo = gen_check_for_leptons(muons, veto_weight_muo)
+
+        veto_weights.add(f'{variation}_muo_veto', veto_weight_muo)
 
         ### Taus
         # Taus have their variations saves as separate histograms,
@@ -118,6 +122,8 @@ def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=F
         # with Tau_genPartFlav == 5, assign a weight of 0 and discard that event
         # Right now we're only doing this for VBF (specified in config)
         veto_weight_tau = gen_check_for_leptons(taus, veto_weight_tau, tau=True)
+
+        veto_weights.add(f'{variation}_tau_veto', veto_weight_tau)
 
         ### Combine
         total = veto_weight_ele * veto_weight_muo * veto_weight_tau
