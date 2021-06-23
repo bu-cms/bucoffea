@@ -67,7 +67,7 @@ def get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=F
 
 
         ### Electrons (For UL: Both 2017 and 2018 have their SFs split by electron pt)
-        if extract_year(df['dataset']) == 2017 and not cfg.RUN.ULEGACYV8:
+        if extract_year(df['dataset']) == 2017 or cfg.RUN.ULEGACYV8:
             high_et = electrons.pt>20
 
             # Low pt SFs

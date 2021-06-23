@@ -939,7 +939,7 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     # Function of eta, pT (Other way round relative to muons!)
 
     # For 2017 and 2018 (both years in UL), the reco SF is split below/above 20 GeV
-    if not cfg.RUN.ULEGACYV8 and extract_year(df['dataset']) == 2017:
+    if cfg.RUN.ULEGACYV8 or extract_year(df['dataset']) == 2017:
         high_et = electrons.pt>20
         ele_reco_sf = evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et]).prod()
         ele_reco_sf *= evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et]).prod()

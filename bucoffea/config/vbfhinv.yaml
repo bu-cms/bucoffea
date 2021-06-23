@@ -442,14 +442,16 @@ era2017:
   sf:
     deepcsv:
       file: data/sf/btag/DeepCSV_106XUL17SF.csv
+
     ele_reco:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/ul/egammaEffi_EGM2D_Veto_UL17_fix.root
-
+      file: data/sf/egamma/ul/egammaEffi_ptAbove20_txt_EGM2D_UL2017.root
+    ele_reco_pt_lt_20:
+      histogram: EGamma_SF2D
+      file: data/sf/egamma/ul/egammaEffi_ptBelow20_txt_EGM2D_UL2017.root
     ele_id_loose:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/ul/egammaEffi_txt_EGM2D_Veto_UL17.root
-
+      file: data/sf/egamma/ul/egammaEffi_EGM2D_Veto_UL17_fix.root
     ele_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/ul/egammaEffi_txt_EGM2D_Tight_UL17.root
@@ -588,12 +590,13 @@ era2018:
 
     ele_reco:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/ul/egammaEffi_EGM2D_Veto_UL18_fix.root
-
+      file: data/sf/egamma/ul/egammaEffi_ptAbove20_txt_EGM2D_UL2018.root
+    ele_reco_pt_lt_20:
+      histogram: EGamma_SF2D
+      file: data/sf/egamma/ul/egammaEffi_ptBelow20_txt_EGM2D_UL2018.root
     ele_id_loose:
       histogram: EGamma_SF2D
-      file: data/sf/egamma/ul/egammaEffi_txt_Ele_Veto_EGM2D_UL18.root
-
+      file: data/sf/egamma/ul/egammaEffi_EGM2D_Veto_UL18_fix.root
     ele_id_tight:
       histogram: EGamma_SF2D
       file: data/sf/egamma/ul/egammaEffi_txt_Ele_Tight_EGM2D_UL18.root
