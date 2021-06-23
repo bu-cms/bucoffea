@@ -42,7 +42,6 @@ def ele_trig_sf_uncs(acc, outtag, dataset, region, distribution='mjj_trig_weight
         'linestyle':'none',
         'marker': '.',
         'markersize': 10.,
-        'color':'k',
     }
 
     for year in [2017, 2018]:
@@ -81,7 +80,7 @@ def ele_trig_sf_uncs(acc, outtag, dataset, region, distribution='mjj_trig_weight
 
         rax.legend(ncol=2)
         rax.grid(True)
-        rax.set_ylim(0.9,1.1)
+        rax.set_ylim(0.95,1.05)
         rax.set_ylabel('Variation')
 
         outpath = pjoin(outdir, f'{dataset}_ele_trigsf_uncs_{year}.pdf')        
