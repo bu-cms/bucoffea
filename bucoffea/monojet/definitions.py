@@ -448,6 +448,9 @@ def setup_candidates(df, cfg):
         }
         ak4.add_attributes(**kwargs)
 
+    if not df['is_data']:
+        ak4.add_attributes(jercorr=df['Jet_corr_JER'])
+
     ak4 = ak4[ak4.looseId]
 
     # Before cleaning, apply HEM veto

@@ -207,11 +207,12 @@ def btag_weights(bjets, cfg):
 
 
     for variation in ["central","up","down"]:
+        # Use unsmeared jet pt while calculating the b-weights
         weights = bsf.eval(
                         systematic=variation,
                         flavor=bjets.hadflav,
                         abseta=bjets.abseta,
-                        pt=bjets.pt,
+                        pt=bjets.pt / bjets.jercorr,
                         ignore_missing=True)
 
         # Cap the weights just in case
