@@ -60,8 +60,8 @@ def ele_trig_sf_uncs(acc, outtag, dataset, region, distribution='mjj_ele_trig_we
         ax.set_ylim(1e-2,1e6)
 
         hist.plotratio(
-            _h.integrate('variation', 'trigger_ele_up'),
-            _h.integrate('variation', 'nominal'),
+            _h.integrate('variation', 'up'),
+            _h.integrate('variation', 'nom'),
             ax=rax,
             unc='num',
             label='Up',
@@ -69,8 +69,8 @@ def ele_trig_sf_uncs(acc, outtag, dataset, region, distribution='mjj_ele_trig_we
         )
 
         hist.plotratio(
-            _h.integrate('variation', 'trigger_ele_down'),
-            _h.integrate('variation', 'nominal'),
+            _h.integrate('variation', 'down'),
+            _h.integrate('variation', 'nom'),
             ax=rax,
             unc='num',
             label='Down',
