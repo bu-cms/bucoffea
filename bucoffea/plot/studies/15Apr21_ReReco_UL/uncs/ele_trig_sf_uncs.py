@@ -19,7 +19,7 @@ pretty_dataset_label = {
     'DYJetsToLL' : r'$Z(ee)$ {year}',
 }
 
-def ele_trig_sf_uncs(acc, outtag, dataset, region, distribution='mjj_trig_weight'):
+def ele_trig_sf_uncs(acc, outtag, dataset, region, distribution='mjj_ele_trig_weight'):
     acc.load(distribution)
     h = acc[distribution]
 
