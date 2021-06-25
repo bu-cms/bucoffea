@@ -498,10 +498,14 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # EWK corrections to VBF signal
             if cfg.RUN.APPLY_EWK_CORR_TO_SIGNAL:
                 if re.match('VBF_HToInv.*', df['dataset']):
+                    # Get Higgs pt from GEN collection
+                    gen = setup_gen_candidates(df)
+                    higgs_pt = gen[(gen.pdg==25)&(gen.status==62)].pt.max()
+
                     def ewk_correction(a, b):
-                        return 1 + a * df['GenMET_pt'] + b
+                        return (1 + a * higgs_pt + b) / 0.95
                      
-                    coeff = [-0.00035, -0.043]
+                    coeff = [-0.000372, -0.0304]
                     ewk_corr_signal = ewk_correction(*coeff)
                     weights.add('ewk_corr_signal', ewk_corr_signal)
 
