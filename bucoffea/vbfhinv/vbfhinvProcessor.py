@@ -701,6 +701,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["vecdphi"]           +=  processor.column_accumulator(np.float16(vec_dphi[mask]))
                     output['tree_float16'][region]["dphitkpf"]          +=  processor.column_accumulator(np.float16(dphitkpf[mask]))
                     
+                    output['tree_float16'][region]["nLooseMuon"]        +=  processor.column_accumulator(np.float16(muons.counts[mask]))
+                    output['tree_float16'][region]["nLooseElectron"]    +=  processor.column_accumulator(np.float16(electrons.counts[mask]))
+                    output['tree_float16'][region]["nLooseTau"]         +=  processor.column_accumulator(np.float16(taus.counts[mask]))
+                    
                     event_has_ele = electrons[mask].counts != 0
                     ele_pt = np.where(event_has_ele, electrons.pt.max()[mask], -999)
                     ele_eta = np.where(event_has_ele, electrons[electrons.pt.argmax()].eta.max()[mask], -999)
