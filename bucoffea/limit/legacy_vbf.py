@@ -137,7 +137,7 @@ def mjj_bins_2016():
     return [200., 400., 600., 900., 1200., 1500.,
             2000., 2750., 3500., 5000.]
 
-def export_coffea_histogram(h, overflow='over'):
+def export_coffea_histogram(h, overflow='over', suppress_last_bin=False):
     '''Helper function to: coffea histogram -> (sumw, xedges) with the desired overflow behavior.'''
     if h.dim() != 1:
         raise RuntimeError('The dimension of the histogram must be 1.')
@@ -151,6 +151,11 @@ def export_coffea_histogram(h, overflow='over'):
         sumw2[-2] += sumw2[-1]
         sumw = np.r_[0, sumw[:-1], 0]
         sumw2 = np.r_[0, sumw2[:-1], 0]
+
+    # If we want to suppress the last mjj bin, well here we go
+    if suppress_last_bin:
+        sumw = np.r_[sumw[:-2], 0, 0]
+        sumw2 = np.r_[sumw2[:-2], 0, 0]
 
     return URTH1(edges=xedges, sumw=sumw, sumw2=sumw2)
 
