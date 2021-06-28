@@ -221,3 +221,45 @@ def btag_weights(bjets, cfg):
         weight_variations[variation] = weights
 
     return weight_variations
+
+def get_varied_ele_sf(electrons, df, evaluator):
+    '''Electron ID and RECO scale factors with variations.'''
+    # Ignore the electrons in the gap region
+    mask_electron_nogap = (np.abs(electrons.etasc)<1.4442) | (np.abs(electrons.etasc)>1.566)
+    electrons_nogap = electrons[mask_electron_nogap]
+    electron_is_tight_electron = df['is_tight_electron'][mask_electron_nogap]
+
+    electrons_nogap_tight = electrons_nogap[ electron_is_tight_electron]
+    electrons_nogap_loose = electrons_nogap[~electron_is_tight_electron]
+    eletight_id_sf = {
+        "up":   evaluator['ele_id_tight'](electrons_nogap_tight.etasc, electrons_nogap_tight.pt) + evaluator['ele_id_tight_error'](electrons_nogap_tight.etasc, electrons_nogap_tight.pt),
+        "down": evaluator['ele_id_tight'](electrons_nogap_tight.etasc, electrons_nogap_tight.pt) - evaluator['ele_id_tight_error'](electrons_nogap_tight.etasc, electrons_nogap_tight.pt),
+        "nom":  evaluator['ele_id_tight'](electrons_nogap_tight.etasc, electrons_nogap_tight.pt)
+    }
+    eleloose_id_sf = {
+        "up":   evaluator['ele_id_loose'](electrons_nogap_loose.etasc, electrons_nogap_loose.pt) + evaluator['ele_id_loose_error'](electrons_nogap_loose.etasc, electrons_nogap_loose.pt),
+        "down": evaluator['ele_id_loose'](electrons_nogap_loose.etasc, electrons_nogap_loose.pt) - evaluator['ele_id_loose_error'](electrons_nogap_loose.etasc, electrons_nogap_loose.pt),
+        "nom":  evaluator['ele_id_loose'](electrons_nogap_loose.etasc, electrons_nogap_loose.pt)
+    }
+
+    high_et = electrons_nogap.pt>20
+    ele_reco_sf = evaluator['ele_reco'](electrons_nogap.etasc[high_et], electrons_nogap.pt[high_et]).prod() * \
+        evaluator['ele_reco_pt_lt_20'](electrons_nogap.etasc[~high_et], electrons_nogap.pt[~high_et]).prod()
+
+    ele_reco_sf_up = (evaluator['ele_reco'](electrons_nogap.etasc[high_et], electrons_nogap.pt[high_et]) + \
+        evaluator['ele_reco_error'](electrons_nogap.etasc[high_et], electrons_nogap.pt[high_et])).prod() * \
+        (evaluator['ele_reco_pt_lt_20'](electrons_nogap.etasc[~high_et], electrons_nogap.pt[~high_et]) + \
+        evaluator['ele_reco_pt_lt_20_error'](electrons_nogap.etasc[~high_et], electrons_nogap.pt[~high_et])).prod()
+
+    ele_reco_sf_down = (evaluator['ele_reco'](electrons_nogap.etasc[high_et], electrons_nogap.pt[high_et]) - \
+        evaluator['ele_reco_error'](electrons_nogap.etasc[high_et], electrons_nogap.pt[high_et])).prod() * \
+        (evaluator['ele_reco_pt_lt_20'](electrons_nogap.etasc[~high_et], electrons_nogap.pt[~high_et]) - \
+        evaluator['ele_reco_pt_lt_20_error'](electrons_nogap.etasc[~high_et], electrons_nogap.pt[~high_et])).prod()
+
+    ele_reco_sf =  {
+        "up" :  ele_reco_sf_up,
+        "down" :  ele_reco_sf_down,
+        "nom" :  ele_reco_sf,
+    }
+
+    return eleloose_id_sf, eletight_id_sf, ele_reco_sf

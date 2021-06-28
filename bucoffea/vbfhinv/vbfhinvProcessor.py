@@ -39,7 +39,8 @@ from bucoffea.helpers.gen import (
                                  )
 from bucoffea.helpers.weights import (
                                   get_veto_weights,
-                                  btag_weights
+                                  btag_weights,
+                                  get_varied_ele_sf
                                  )
 from bucoffea.monojet.definitions import (
                                           candidate_weights,
@@ -940,6 +941,23 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('gen_vpt', vpt=gen_v_pt[mask], weight=df['Generator_weight'][mask])
                 ezfill('gen_mjj', mjj=df['mjj_gen'][mask], weight=df['Generator_weight'][mask])
 
+
+            if cfg.RUN.ELE_SF_STUDY and re.match('cr_(\d)e_vbf', region):
+                eleloose_id_sf, eletight_id_sf, ele_reco_sf = get_varied_ele_sf(electrons, df, evaluator)
+                rw = region_weights.partial_weight(exclude=exclude+['ele_id_tight','ele_id_loose'])
+                for ele_id_variation in eletight_id_sf.keys():
+                    ezfill('mjj_ele_id', 
+                        mjj=df['mjj'][mask], 
+                        variation=ele_id_variation,
+                        weight=(rw * eletight_id_sf[ele_id_variation].prod() * eleloose_id_sf[ele_id_variation].prod())[mask],
+                    )
+
+                for ele_reco_variation, w in ele_reco_sf.items():
+                    ezfill('mjj_ele_reco',
+                        mjj=df['mjj'][mask],
+                        variation=ele_reco_variation,
+                        weight=(rw * w)[mask]
+                    )
 
             # Photon CR data-driven QCD estimate
             if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
