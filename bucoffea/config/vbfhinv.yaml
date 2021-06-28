@@ -253,6 +253,7 @@ default:
     apply_categorized_sf: True
     apply_ewk_corr_to_signal: False
     ele_sf_study: True
+    muon_sf_study: True
   triggers:
     ht:
       gammaeff:

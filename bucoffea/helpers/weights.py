@@ -263,3 +263,33 @@ def get_varied_ele_sf(electrons, df, evaluator):
     }
 
     return eleloose_id_sf, eletight_id_sf, ele_reco_sf
+
+def get_varied_muon_sf(muons, df, evaluator):
+    is_tight_muon = df['is_tight_muon']
+
+    muons_tight = muons[is_tight_muon]
+    muons_loose = muons[~is_tight_muon]
+
+    muon_tightid_sf = {
+        "up" : evaluator['muon_id_tight'](muons_tight.abseta, muons_tight.pt) + evaluator['muon_id_tight_error'](muons_tight.abseta, muons_tight.pt),
+        "down" : evaluator['muon_id_tight'](muons_tight.abseta, muons_tight.pt) - evaluator['muon_id_tight_error'](muons_tight.abseta, muons_tight.pt),
+        "nom" : evaluator['muon_id_tight'](muons_tight.abseta, muons_tight.pt),
+    }
+    muon_looseid_sf = {
+        "up" : evaluator['muon_id_loose'](muons_loose.abseta, muons_loose.pt) + evaluator['muon_id_loose_error'](muons_loose.abseta, muons_loose.pt),
+        "down" : evaluator['muon_id_loose'](muons_loose.abseta, muons_loose.pt) - evaluator['muon_id_loose_error'](muons_loose.abseta, muons_loose.pt),
+        "nom" : evaluator['muon_id_loose'](muons_loose.abseta, muons_loose.pt),
+    }
+
+    muon_tightiso_sf = {
+        "up" : evaluator['muon_iso_tight'](muons_tight.abseta, muons_tight.pt) + evaluator['muon_iso_tight_error'](muons_tight.abseta, muons_tight.pt),
+        "down" : evaluator['muon_iso_tight'](muons_tight.abseta, muons_tight.pt) - evaluator['muon_iso_tight_error'](muons_tight.abseta, muons_tight.pt),
+        "nom" : evaluator['muon_iso_tight'](muons_tight.abseta, muons_tight.pt),
+    }
+    muon_looseiso_sf = {
+        "up" : evaluator['muon_iso_loose'](muons_loose.abseta, muons_loose.pt) + evaluator['muon_iso_loose_error'](muons_loose.abseta, muons_loose.pt),
+        "down" : evaluator['muon_iso_loose'](muons_loose.abseta, muons_loose.pt) - evaluator['muon_iso_loose_error'](muons_loose.abseta, muons_loose.pt),
+        "nom" : evaluator['muon_iso_loose'](muons_loose.abseta, muons_loose.pt),
+    }
+
+    return muon_looseid_sf, muon_tightid_sf, muon_looseiso_sf, muon_tightiso_sf

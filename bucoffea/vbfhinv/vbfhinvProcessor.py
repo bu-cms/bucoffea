@@ -40,7 +40,8 @@ from bucoffea.helpers.gen import (
 from bucoffea.helpers.weights import (
                                   get_veto_weights,
                                   btag_weights,
-                                  get_varied_ele_sf
+                                  get_varied_ele_sf,
+                                  get_varied_muon_sf
                                  )
 from bucoffea.monojet.definitions import (
                                           candidate_weights,
@@ -957,6 +958,24 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         mjj=df['mjj'][mask],
                         variation=ele_reco_variation,
                         weight=(rw * w)[mask]
+                    )
+
+            if cfg.RUN.MUON_SF_STUDY and re.match('cr_(\d)m_vbf', region):
+                muon_looseid_sf, muon_tightid_sf, muon_looseiso_sf, muon_tightiso_sf = get_varied_muon_sf(muons, df, evaluator)
+                rw = region_weights.partial_weight(exclude=exclude+['muon_id_tight','muon_id_loose'])
+
+                for mu_id_variation in muon_looseid_sf.keys():
+                    ezfill('mjj_muon_id', 
+                        mjj=df['mjj'][mask], 
+                        variation=mu_id_variation,
+                        weight=(rw * muon_tightid_sf[mu_id_variation].prod() * muon_looseid_sf[mu_id_variation].prod())[mask],
+                    )
+
+                for mu_iso_variation in muon_looseiso_sf.keys():
+                    ezfill('mjj_muon_iso', 
+                        mjj=df['mjj'][mask], 
+                        variation=mu_iso_variation,
+                        weight=(rw * muon_tightiso_sf[mu_iso_variation].prod() * muon_looseiso_sf[mu_iso_variation].prod())[mask],
                     )
 
             # Photon CR data-driven QCD estimate
