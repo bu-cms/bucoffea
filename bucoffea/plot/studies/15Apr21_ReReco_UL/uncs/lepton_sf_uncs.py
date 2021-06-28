@@ -3,6 +3,7 @@
 import os
 import sys
 import re
+import uproot
 import numpy as np
 
 from matplotlib import pyplot as plt
@@ -89,7 +90,7 @@ def ele_trig_sf_uncs(acc, outtag, dataset, region, distribution='mjj_ele_trig_we
 
         print(f'File saved: {outpath}')
 
-def plot_lepton_sf_uncertainties(acc, outtag, sftag, region, dataset):
+def plot_lepton_sf_uncertainties(acc, outtag, sftag, region, dataset, outrootfile):
     '''Plot lepton ID/ISO/RECO SF uncertainties as a function of mjj.'''
     distribution = f'mjj_{sftag}'
     acc.load(distribution)
@@ -171,6 +172,26 @@ def plot_lepton_sf_uncertainties(acc, outtag, sftag, region, dataset):
 
         print(f'File saved: {outpath}')
 
+        # Save to output ROOT file
+        edges = _h.axis('mjj').edges()
+
+        if re.match('cr_(\d)m_vbf', region):
+            if 'DY' in dataset:
+                proctag = 'Zmumu'
+            else:
+                proctag = 'Wmunu'
+        elif re.match('cr_(\d)e_vbf', region):
+            if 'DY' in dataset:
+                proctag = 'Zee'
+            else:
+                proctag = 'Wenu'
+        else:
+            raise RuntimeError(f'Could not determine process tag for region: {region}')
+
+        r_up = _h.integrate('variation', 'up').values()[()] / _h.integrate('variation', 'nom').values()[()]
+        r_down = _h.integrate('variation', 'down').values()[()] / _h.integrate('variation', 'nom').values()[()]
+        outrootfile[f'{proctag}_{sftag}_{year}_up'] = (r_up, edges)
+        outrootfile[f'{proctag}_{sftag}_{year}_down'] = (r_down, edges)
 
 def main():
     inpath = sys.argv[1]
@@ -218,12 +239,17 @@ def main():
     }
 
     try:
+        outdir = f'./output/{outtag}'
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+        outrootfile = uproot.recreate(pjoin(outdir,  'lepton_sf_uncs.root'))
         for unc, data in lepton_sf_uncs.items():
             for entry in data:
                 plot_lepton_sf_uncertainties(acc, outtag, 
                     sftag=unc,
                     region=entry['region'],
-                    dataset=entry['dataset']
+                    dataset=entry['dataset'],
+                    outrootfile=outrootfile
                     )
     except KeyError:
         pass
