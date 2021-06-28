@@ -252,6 +252,7 @@ default:
     hfstudy_v2: False
     apply_categorized_sf: True
     apply_ewk_corr_to_signal: False
+    ele_sf_study: True
   triggers:
     ht:
       gammaeff:
