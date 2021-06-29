@@ -566,7 +566,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Get veto weights (only for MC)
         if not df['is_data']:
-            veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=cfg.RUN.TAU_VETOW_STUDY)
+            veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=cfg.RUN.VETO_WEIGHTS_STUDY)
         
         for region, cuts in regions.items():
             if not re.match(cfg.RUN.REGIONREGEX, region):
@@ -985,11 +985,14 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         weight=(rw_nopu * w)[mask]
                     )
 
-            if cfg.RUN.TAU_VETOW_STUDY and 'no_veto_all' in region:
-                variations = ['nominal', 'tau_id_up', 'tau_id_dn']
+            if cfg.RUN.VETO_WEIGHTS_STUDY and 'no_veto_all' in region:
+                variations = ['nominal', 'tau_id_up', 'tau_id_dn', 
+                    'ele_id_up', 'ele_id_dn', 'ele_reco_up', 'ele_reco_dn',
+                    'muon_id_up', 'muon_id_dn', 'muon_iso_up', 'muon_iso_dn'
+                    ]
                 rw_no_veto = region_weights.partial_weight(exclude=exclude+['veto'])
                 for v in variations:
-                    ezfill('mjj_tau_vetow',
+                    ezfill('mjj_veto_weight',
                         mjj=df['mjj'][mask],
                         variation=v,
                         weight=(rw_no_veto * veto_weights.partial_weight(include=[v]))[mask]

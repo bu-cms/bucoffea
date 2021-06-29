@@ -254,8 +254,8 @@ default:
     apply_ewk_corr_to_signal: False
     ele_sf_study: False
     muon_sf_study: False
-    tau_vetow_study: True
-    pileup_sf_study: True
+    veto_weights_study: True
+    pileup_sf_study: False
   triggers:
     ht:
       gammaeff:
