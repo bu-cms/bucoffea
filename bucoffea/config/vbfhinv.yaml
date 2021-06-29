@@ -251,7 +251,7 @@ default:
     hemcheck: False
     hfstudy_v2: False
     apply_categorized_sf: True
-    apply_ewk_corr_to_signal: False
+    apply_ewk_corr_to_signal: True
     ele_sf_study: False
     muon_sf_study: False
     veto_weights_study: True
