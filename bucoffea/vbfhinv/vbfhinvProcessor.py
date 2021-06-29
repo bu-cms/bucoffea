@@ -62,7 +62,8 @@ from bucoffea.vbfhinv.definitions import (
                                            apply_hf_weights_for_qcd_estimation,
                                            apply_endcap_weights,
                                            hfmask_sf,
-                                           met_xy_correction
+                                           met_xy_correction,
+                                           pileup_sf_variations
                                          )
 
 def trigger_selection(selection, df, cfg):
@@ -565,7 +566,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
         # Get veto weights (only for MC)
         if not df['is_data']:
-            veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus)
+            veto_weights = get_veto_weights(df, cfg, evaluator, electrons, muons, taus, do_variations=cfg.RUN.TAU_VETOW_STUDY)
         
         for region, cuts in regions.items():
             if not re.match(cfg.RUN.REGIONREGEX, region):
@@ -610,11 +611,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                             "tau_id"
                         ]
                     region_weights.add("veto",veto_weights.partial_weight(include=["nominal"]))
-
-                    # Individual contributions
-                    region_weights.add("veto_ele",veto_weights.partial_weight(include=["nominal_ele_veto"]))
-                    region_weights.add("veto_muo",veto_weights.partial_weight(include=["nominal_muo_veto"]))
-                    region_weights.add("veto_tau",veto_weights.partial_weight(include=["nominal_tau_veto"]))
 
                 # SR without prefiring weights applied
                 if region == 'sr_vbf_no_pref':
@@ -977,6 +973,28 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         variation=mu_iso_variation,
                         weight=(rw * muon_tightiso_sf[mu_iso_variation].prod() * muon_looseiso_sf[mu_iso_variation].prod())[mask],
                     )
+
+            if cfg.RUN.PILEUP_SF_STUDY:
+                rw_nopu = region_weights.partial_weight(exclude=exclude+['pileup'])
+
+                puweights = pileup_sf_variations(df, evaluator, cfg)
+                for puvar, w in puweights.items():
+                    ezfill('mjj_pu_weights',
+                        mjj=df['mjj'][mask],
+                        variation=puvar,
+                        weight=(rw_nopu * w)[mask]
+                    )
+
+            if cfg.RUN.TAU_VETOW_STUDY and 'no_veto_all' in region:
+                variations = ['nominal', 'tau_id_up', 'tau_id_dn']
+                rw_no_veto = region_weights.partial_weight(exclude=exclude+['veto'])
+                for v in variations:
+                    ezfill('mjj_tau_vetow',
+                        mjj=df['mjj'][mask],
+                        variation=v,
+                        weight=(rw_no_veto * veto_weights.partial_weight(include=[v]))[mask]
+                    )
+
 
             # Photon CR data-driven QCD estimate
             if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
