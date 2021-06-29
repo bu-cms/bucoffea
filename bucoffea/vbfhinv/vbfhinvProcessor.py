@@ -939,7 +939,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 ezfill('gen_mjj', mjj=df['mjj_gen'][mask], weight=df['Generator_weight'][mask])
 
 
-            if cfg.RUN.ELE_SF_STUDY and re.match('cr_(\d)e_vbf', region):
+            if cfg.RUN.ELE_SF_STUDY and re.match('cr_(\d)e_vbf', region) and not df['is_data']:
                 eleloose_id_sf, eletight_id_sf, ele_reco_sf = get_varied_ele_sf(electrons, df, evaluator)
                 rw = region_weights.partial_weight(exclude=exclude+['ele_id_tight','ele_id_loose'])
                 for ele_id_variation in eletight_id_sf.keys():
@@ -956,7 +956,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         weight=(rw * w)[mask]
                     )
 
-            if cfg.RUN.MUON_SF_STUDY and re.match('cr_(\d)m_vbf', region):
+            if cfg.RUN.MUON_SF_STUDY and re.match('cr_(\d)m_vbf', region) and not df['is_data']:
                 muon_looseid_sf, muon_tightid_sf, muon_looseiso_sf, muon_tightiso_sf = get_varied_muon_sf(muons, df, evaluator)
                 rw = region_weights.partial_weight(exclude=exclude+['muon_id_tight','muon_id_loose'])
 
@@ -974,7 +974,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         weight=(rw * muon_tightiso_sf[mu_iso_variation].prod() * muon_looseiso_sf[mu_iso_variation].prod())[mask],
                     )
 
-            if cfg.RUN.PILEUP_SF_STUDY:
+            if cfg.RUN.PILEUP_SF_STUDY and not df['is_data']:
                 rw_nopu = region_weights.partial_weight(exclude=exclude+['pileup'])
 
                 puweights = pileup_sf_variations(df, evaluator, cfg)
@@ -985,7 +985,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         weight=(rw_nopu * w)[mask]
                     )
 
-            if cfg.RUN.VETO_WEIGHTS_STUDY and 'no_veto_all' in region:
+            if cfg.RUN.VETO_WEIGHTS_STUDY and 'no_veto_all' in region and not df['is_data']:
                 variations = ['nominal', 'tau_id_up', 'tau_id_dn', 
                     'ele_id_up', 'ele_id_dn', 'ele_reco_up', 'ele_reco_dn',
                     'muon_id_up', 'muon_id_dn', 'muon_iso_up', 'muon_iso_dn'
