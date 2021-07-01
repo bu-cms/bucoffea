@@ -974,6 +974,44 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         weight=(rw * muon_tightiso_sf[mu_iso_variation].prod() * muon_looseiso_sf[mu_iso_variation].prod())[mask],
                     )
 
+            if cfg.RUN.ELE_TRIG_STUDY and not df['is_data'] and re.match('cr_(\d)e_vbf', region):
+                # Note that electrons in the gap do not count in this study
+                mask_electron_nogap = (np.abs(electrons.etasc)<1.4442) | (np.abs(electrons.etasc)>1.566)
+                electrons_nogap = electrons[mask_electron_nogap]
+
+                # Up and down variations: Vary the efficiency in data
+                data_eff_up = evaluator['trigger_electron_eff_data'](electrons_nogap.etasc, electrons_nogap.pt) + evaluator['trigger_electron_eff_data_error'](electrons_nogap.etasc, electrons_nogap.pt)
+                data_eff_down = evaluator['trigger_electron_eff_data'](electrons_nogap.etasc, electrons_nogap.pt) - evaluator['trigger_electron_eff_data_error'](electrons_nogap.etasc, electrons_nogap.pt)
+
+                p_pass_data = 1 - (1-evaluator["trigger_electron_eff_data"](electrons_nogap.etasc, electrons_nogap.pt)).prod()
+                p_pass_data_up = 1 - (1-data_eff_up).prod()
+                p_pass_data_down = 1 - (1-data_eff_down).prod()
+
+                p_pass_mc = 1 - (1-evaluator["trigger_electron_eff_mc"](electrons_nogap.etasc, electrons_nogap.pt)).prod()
+
+                trigger_weight_nom = p_pass_data / p_pass_mc
+                trigger_weight_up = p_pass_data_up / p_pass_mc
+                trigger_weight_down = p_pass_data_down / p_pass_mc
+
+                trigger_weight_nom[np.isnan(trigger_weight_nom) | np.isinf(trigger_weight_nom)] = 1.
+                trigger_weight_up[np.isnan(trigger_weight_up) | np.isinf(trigger_weight_up)] = 1.
+                trigger_weight_down[np.isnan(trigger_weight_down) | np.isinf(trigger_weight_down)] = 1.
+
+                ele_trig_sf = {
+                    "nom" : trigger_weight_nom,
+                    "up" : trigger_weight_up,
+                    "down" : trigger_weight_down,
+                }
+
+                for variation, trigw in ele_trig_sf.items():
+                    rw = region_weights.partial_weight(exclude=exclude+['trigger_ele'])
+                    ezfill(
+                        'mjj_ele_trig_weight',
+                        mjj=df['mjj'][mask],
+                        variation=variation,
+                        weight=(rw*trigw)[mask] 
+                    )
+
             if cfg.RUN.PILEUP_SF_STUDY and not df['is_data']:
                 rw_nopu = region_weights.partial_weight(exclude=exclude+['pileup'])
 
