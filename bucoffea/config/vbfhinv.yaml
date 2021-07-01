@@ -251,9 +251,12 @@ default:
     hemcheck: False
     hfstudy_v2: False
     apply_categorized_sf: True
-    apply_ewk_corr_to_signal: False
-    ele_sf_study: True
-    muon_sf_study: True
+    apply_ewk_corr_to_signal: True
+    ele_trig_study: False
+    ele_sf_study: False
+    muon_sf_study: False
+    veto_weights_study: False
+    pileup_sf_study: False
   triggers:
     ht:
       gammaeff:
@@ -365,13 +368,13 @@ era2016:
         file: data/sf/trigger/trig_sf_vbf.root
     trigger_electron:
       histogram: EGamma_SF2D
-      file: data/sf/trigger/electron_trigger_sf_2017.root
+      file: data/sf/trigger/ul/electron_trigger_sf_2017.root
     trigger_electron_eff_data:
       histogram: EGamma_EffData2D
-      file: data/sf/trigger/electron_trigger_sf_2017.root
+      file: data/sf/trigger/ul/electron_trigger_sf_2017.root
     trigger_electron_eff_mc:
       histogram: EGamma_EffMC2D
-      file: data/sf/trigger/electron_trigger_sf_2017.root
+      file: data/sf/trigger/ul/electron_trigger_sf_2017.root
 
   filters:
     data:
@@ -512,13 +515,13 @@ era2017:
       file: data/sf/trigger/trig_sf_vbf.root
     trigger_electron:
       histogram: EGamma_SF2D
-      file: data/sf/trigger/electron_trigger_sf_2017.root
+      file: data/sf/trigger/ul/electron_trigger_sf_2017.root
     trigger_electron_eff_data:
       histogram: EGamma_EffData2D
-      file: data/sf/trigger/electron_trigger_sf_2017.root
+      file: data/sf/trigger/ul/electron_trigger_sf_2017.root
     trigger_electron_eff_mc:
       histogram: EGamma_EffMC2D
-      file: data/sf/trigger/electron_trigger_sf_2017.root
+      file: data/sf/trigger/ul/electron_trigger_sf_2017.root
 
     ak4_em_frac_sf_pos_endcap:
       histogram: sf_pos_endcap_2017
@@ -677,13 +680,13 @@ era2018:
       file: data/sf/trigger/trig_sf_vbf.root
     trigger_electron:
       histogram: EGamma_SF2D
-      file: data/sf/trigger/electron_trigger_sf_2018.root
+      file: data/sf/trigger/ul/electron_trigger_sf_2018.root
     trigger_electron_eff_data:
       histogram: EGamma_EffData2D
-      file: data/sf/trigger/electron_trigger_sf_2018.root
+      file: data/sf/trigger/ul/electron_trigger_sf_2018.root
     trigger_electron_eff_mc:
       histogram: EGamma_EffMC2D
-      file: data/sf/trigger/electron_trigger_sf_2018.root
+      file: data/sf/trigger/ul/electron_trigger_sf_2018.root
 
     ak4_em_frac_sf_pos_endcap:
       histogram: sf_pos_endcap_2018
