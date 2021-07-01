@@ -26,7 +26,7 @@ def datasets(year, unblind=False):
     if unblind:
         data['sr_vbf'] = f'MET_{year}'
     mc = {
-            'sr_vbf_no_veto_all' : re.compile(f'(WH_WToQQ_Hinv_M125.*|ZH_ZToQQ_HToInv.*M125.*|(VBF|GluGlu)_HToInvisible.*M125.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
+            'sr_vbf_no_veto_all' : re.compile(f'(ttH_HToInvisible_M125.*|WH_WToQQ_Hinv_M125.*|ZH_ZToQQ_HToInv.*M125.*|(VBF|GluGlu)_HToInvisible.*M125.*|ggZH.*|ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_1e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
             'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}'),
@@ -52,6 +52,14 @@ def legacy_dataset_name_vbf(dataset):
             return "vbf"
         else:
             return f"vbf{mh}"
+    m = re.match("ttH_HToInvisible_M(\d+)_pow_pythia8_201[0-9]", dataset)
+    if m:
+        mh = m.groups()[0]
+        if mh=="125":
+            return "tth"
+        else:
+            return f"tth{mh}"
+
     m = re.match("ZH_ZToQQ_HToInvisible_M(\d+)(_PSweights)?_pow_pythia8_201[0-9]", dataset)
     if m:
         mh = m.groups()[0]
