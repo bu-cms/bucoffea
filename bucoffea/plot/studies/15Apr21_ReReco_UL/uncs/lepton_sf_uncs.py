@@ -16,9 +16,17 @@ from pprint import pprint
 pjoin = os.path.join
 
 pretty_dataset_label = {
-    'cr_2e_vbf': {
+    'cr_1e_vbf' : {
         'WJetsToLNu' : r'$W(e\nu)$ {year}',
+        'EWKW2Jets_WToLNu' : r'EWK $W(e\nu)$ {year}',
+    },
+    'cr_2e_vbf': {
         'DYJetsToLL' : r'$Z(ee)$ {year}',
+        'EWKZ2Jets_ZToLL' : r'EWK $Z(ee)$ {year}',
+    },
+    'cr_1m_vbf' : {
+        'WJetsToLNu' : r'$W(\mu\nu)$ {year}',
+        'EWKW2Jets_WToLNu' : r'EWK $W(\mu\nu)$ {year}',
     },
     'cr_2m_vbf': {
         'WJetsToLNu' : r'$W(\mu\nu)$ {year}',
@@ -253,20 +261,27 @@ def main():
         'ele_id' : [
             {'dataset' : 'WJetsToLNu', 'region': 'cr_1e_vbf'},
             {'dataset' : 'DYJetsToLL', 'region': 'cr_2e_vbf'},
+            {'dataset' : 'EWKW2Jets_WToLNu', 'region': 'cr_1e_vbf'},
+            {'dataset' : 'EWKZ2Jets_ZToLL', 'region': 'cr_2e_vbf'},
         ], 
         'ele_reco' : [
             {'dataset' : 'WJetsToLNu', 'region': 'cr_1e_vbf'},
             {'dataset' : 'DYJetsToLL', 'region': 'cr_2e_vbf'},
+            {'dataset' : 'EWKW2Jets_WToLNu', 'region': 'cr_1e_vbf'},
+            {'dataset' : 'EWKZ2Jets_ZToLL', 'region': 'cr_2e_vbf'},
         ], 
         'muon_id' : [
             {'dataset' : 'WJetsToLNu', 'region': 'cr_1m_vbf'},
             {'dataset' : 'DYJetsToLL', 'region': 'cr_2m_vbf'},
+            {'dataset' : 'EWKW2Jets_WToLNu', 'region': 'cr_1m_vbf'},
+            {'dataset' : 'EWKZ2Jets_ZToLL', 'region': 'cr_2m_vbf'},
         ], 
         'muon_iso' : [
             {'dataset' : 'WJetsToLNu', 'region': 'cr_1m_vbf'},
             {'dataset' : 'DYJetsToLL', 'region': 'cr_2m_vbf'},
+            {'dataset' : 'EWKW2Jets_WToLNu', 'region': 'cr_1m_vbf'},
+            {'dataset' : 'EWKZ2Jets_ZToLL', 'region': 'cr_2m_vbf'},
         ], 
-
     }
 
     outdir = f'./output/{outtag}'
@@ -284,7 +299,7 @@ def main():
                     outrootfile=outrootfile
                     )
             except (KeyError, AssertionError) as e:
-                print(f'Skipping: {unc}')
+                print(f'Skipping: {entry["dataset"]}')
                 continue
 
     # Lepton veto uncertainties
@@ -301,7 +316,7 @@ def main():
                 dataset=entry['dataset'],
                 outrootfile=outrootfile_veto
                 )
-        except KeyError:
+        except (KeyError, AssertionError) as e:
             print(f'Skipping: {entry["dataset"]}')
             continue
 
