@@ -3617,6 +3617,10 @@ Scalar_MonoV_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
   gen: 0.0003139
 Scalar_MonoV_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
   gen: 0.0003139
+ttH_HToInvisible_M125_pow_pythia8_2017:
+  gen: 0.4916
+ttH_HToInvisible_M125_pow_pythia8_2018:
+  gen: 0.4916
 TTJets-MLM_2016:
   gen: 510.0
 TTJets-MLM_2017:
