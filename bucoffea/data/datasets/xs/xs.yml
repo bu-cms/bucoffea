@@ -3615,9 +3615,9 @@ Scalar_MonoV_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2017:
 Scalar_MonoV_LO_Mphi-800_Mchi-1_gSM-1p0_gDM-1p0-mg_2018:
   gen: 0.0003139
 ttH_HToInvisible_M125_pow_pythia8_2017:
-  gen: 0.4916
+  gen: 0.5033
 ttH_HToInvisible_M125_pow_pythia8_2018:
-  gen: 0.4916
+  gen: 0.5033
 TTJets-MLM_2016:
   gen: 510.0
 TTJets-MLM_2017:
@@ -3962,22 +3962,22 @@ WZ_ext1_2016:
   nlo: 47.13
 WminusH_WToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.3654
-  nnlo: 0.36
+  nnlo: 0.5272
 WminusH_WToQQ_HToInvisible_M125_pow_pythia8_2017:
   gen: 0.3654
-  nnlo: 0.36
+  nnlo: 0.5272
 WminusH_WToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.3654
-  nnlo: 0.36
+  nnlo: 0.5272
 WplusH_WToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.585
-  nnlo: 0.5678
+  nnlo: 0.8313
 WplusH_WToQQ_HToInvisible_M125_pow_pythia8_2017:
   gen: 0.585
-  nnlo: 0.5678
+  nnlo: 0.8313
 WplusH_WToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.585
-  nnlo: 0.5678
+  nnlo: 0.8313
 Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_2017:
   gen: 18.08
 Z1JetsToNuNu_M-50_LHEZpT_150-250-FXFX_ext1_2017:
@@ -4012,13 +4012,13 @@ ZH_HToInv_JHU_ptH150_2017:
   gen: 0.114
 ZH_ZToQQ_HToInvisible_M125_PSweights_pow_pythia8_2018:
   gen: 0.554
-  nnlo: 0.532
+  nnlo: 0.8767
 ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2017:
   gen: 0.554
-  nnlo: 0.532
+  nnlo: 0.8767
 ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.554
-  nnlo: 0.532
+  nnlo: 0.8767
 ZJetsToNuNu_HT-100To200-mg_2016:
   gen: 93.51
 ZJetsToNuNu_HT-100To200-mg_2017:
