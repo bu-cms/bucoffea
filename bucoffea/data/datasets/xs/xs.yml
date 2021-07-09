@@ -2468,19 +2468,19 @@ GJets_DR-0p4_HT-100To200-MLM_2016:
   gen: 5386.0
 GJets_DR-0p4_HT-100To200-MLM_2018:
   gen: 5071.0
-GJets_DR-0p4_HT-100To200-MLM_v2_2017:
+GJets_DR-0p4_HT-100To200-MLM_2017:
   gen: 5031.0
 GJets_DR-0p4_HT-200To400-MLM_2016:
   gen: 1177.0
 GJets_DR-0p4_HT-200To400-MLM_2018:
   gen: 1123.0
-GJets_DR-0p4_HT-200To400-MLM_v2_2017:
+GJets_DR-0p4_HT-200To400-MLM_2017:
   gen: 1126.0
 GJets_DR-0p4_HT-400To600-MLM_2016:
   gen: 132.1
 GJets_DR-0p4_HT-400To600-MLM_2018:
   gen: 125.3
-GJets_DR-0p4_HT-400To600-MLM_v2_2017:
+GJets_DR-0p4_HT-400To600-MLM_2017:
   gen: 124.3
 GJets_DR-0p4_HT-40To100-MLM_2016:
   gen: 17520.0
@@ -3698,6 +3698,10 @@ TTToSemiLeptonic_PSweights-pow_2016:
 TTToSemiLeptonic_PSweights-pow_2017:
   gen: 687.1
   nnlo: 365.34
+VBFGamma_5f_DipoleRecoil-mg_2017:
+  gen: 21.08
+VBFGamma_5f_DipoleRecoil-mg_2018:
+  gen: 21.07
 VBF_HToInvisible_M1000_pow_pythia8_2016:
   gen: 0.0
 VBF_HToInvisible_M110_pow_pythia8_2016:
