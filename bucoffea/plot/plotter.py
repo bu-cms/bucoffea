@@ -84,8 +84,8 @@ ylims = {
 }
 
 legend_labels = {
-    'GJets_(DR-0p4|HT).*' : "QCD $\\gamma$+jets",
-    'GJets_SM.*' : "EWK $\\gamma$+jets",
+    'GJets_(DR-0p4).*' : "QCD $\\gamma$+jets",
+    '(VBFGamma|GJets_SM.*EWK).*' : "EWK $\\gamma$+jets",
     'DY.*' : "QCD Z$\\rightarrow\\ell\\ell$",
     'EWKZ.*ZToLL.*' : "EWK Z$\\rightarrow\\ell\\ell$",
     'WN*J.*LNu.*' : "QCD W$\\rightarrow\\ell\\nu$",
@@ -121,7 +121,7 @@ colors = {
     'ZJetsToNuNu.*' : '#31a354',
     'WJets.*' : '#feb24c',
     'GJets_(DR-0p4|HT).*' : '#fc4e2a',
-    'GJets_SM.*' : '#a76b51',
+    '(VBFGamma|GJets_SM.*EWK).*' : '#a76b51',
     'QCD.*' : '#a6bddb',
 }
 
