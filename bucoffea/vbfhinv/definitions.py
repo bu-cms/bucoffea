@@ -354,17 +354,9 @@ def vbfhinv_regions(cfg):
     # QCD CR to check with deltaphi(jet,MET) cut inverted
     # Will be used to compare the yields with the QCD template obtained from R&S
     if cfg.RUN.REBSMEAR_CHECK:
-        regions['cr_vbf_qcd_rs'] = [
-            'inclusive',
-            'mjj',
-            'detajj',
-            'dphijj',
-            'hemisphere',
-            'leadak4_pt_eta',
-            'trailak4_pt_eta',
-            'recoil',
-            'mindphijr_inv'
-        ]
+        regions['cr_vbf_qcd_rs'] = copy.deepcopy(regions['sr_vbf'])
+        regions['cr_vbf_qcd_rs'].remove('mindphijr')
+        regions['cr_vbf_qcd_rs'].append('mindphijr_inv')
 
     # For prefiring study, SR without prefiring weights
     if cfg.RUN.PREFIRE_STUDY:
