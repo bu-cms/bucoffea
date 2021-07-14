@@ -151,7 +151,9 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
         new_ax = hist.Bin('dphi', r'$\Delta\phi_{TK,PF}$', new_bins)
         h = h.rebin('dphi', new_ax)
 
-    h.axis('dataset').sorting = 'integral'
+    # This sorting messes up in SR for some reason
+    if data_region != 'sr_vbf':
+        h.axis('dataset').sorting = 'integral'
 
     h.scale({
         ds : (mcscale  if mc.match(ds) else 1) for ds in map(str,h.axis("dataset").identifiers())
@@ -184,13 +186,6 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
         'label' : datasets,
         'sumw' : [],
     }
-
-    # Temporary fix for sorting
-    if data_region == 'sr_vbf':
-        if 'WJetsToLNu' in datasets[-1]:
-            tmp = datasets[-2]
-            datasets[-2] = datasets[-1]
-            datasets[-1] = tmp
 
     for dataset in datasets:
         sumw = h_mc.integrate('dataset', dataset).values(overflow=overflow)[()]
@@ -267,7 +262,6 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
                 handle.set_color(col)
                 handle.set_linestyle('-')
                 handle.set_edgecolor('k')
-
 
     try:
         ax.legend(title=legend_titles[data_region], handles=handles, ncol=2)
@@ -382,9 +376,11 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
         outdir = f'./output/{outtag}/nlo_mc/{data_region}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    outpath = pjoin(outdir, f'{data_region}_data_mc_{distribution}_{year}.{fformat}')
-    fig.savefig(outpath)
+    outpath_pdf = pjoin(outdir, f'{data_region}_data_mc_{distribution}_{year}.pdf')
+    outpath_png = pjoin(outdir, f'{data_region}_data_mc_{distribution}_{year}.png')
+    fig.savefig(outpath_pdf)
+    fig.savefig(outpath_png)
     plt.close(fig)
 
-    print(f'File saved: {outpath}')
+    print(f'File saved: {outpath_pdf}')
 

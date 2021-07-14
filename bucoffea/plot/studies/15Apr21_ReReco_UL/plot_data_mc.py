@@ -2,22 +2,14 @@
 import argparse
 import os
 import re
-import sys
-import uproot
 import numpy as np
 import mplhep as hep
 
-from matplotlib import pyplot as plt
-from matplotlib.ticker import MultipleLocator
-from coffea import hist
-from coffea.hist import poisson_interval
-from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi, fig_ratio, lumi
 from bucoffea.plot.plotter import plot_data_mc
-from bucoffea.helpers.paths import bucoffea_path
 from klepto.archives import dir_archive
 from pprint import pprint
-from distributions import distributions, binnings, ylims
-
+from distributions import distributions
+from tqdm import tqdm
 
 def make_plot(args):
     acc = dir_archive(args.inpath)
@@ -78,23 +70,21 @@ def make_plot(args):
                     _mc = mc[mc_region]
                     nlo = False
 
-            for distribution in distributions[data_region]:
+            for distribution in tqdm(distributions[data_region]):
                 if not re.match(args.distribution, distribution):
                     continue
                 try:
-                    for fformat in args.fformat:
-                        plot_data_mc(acc, outtag, year,
-                            data=_data,
-                            mc=_mc,
-                            data_region=data_region,
-                            mc_region=mc_region,
-                            distribution=distribution,
-                            mcscale=mcscale,
-                            plot_signal='sr_vbf' in data_region,
-                            fformat=fformat,
-                            nlo=nlo,
-                            jes_file='./jec/jes_uncs.root' if args.jes else None
-                        )
+                    plot_data_mc(acc, outtag, year,
+                        data=_data,
+                        mc=_mc,
+                        data_region=data_region,
+                        mc_region=mc_region,
+                        distribution=distribution,
+                        mcscale=mcscale,
+                        plot_signal='sr_vbf' in data_region,
+                        nlo=nlo,
+                        jes_file='./jec/jes_uncs.root' if args.jes else None
+                    )
                 except KeyError:
                     print(f'WARNING: {data_region} not found in inputs, skipping.')
                     continue
