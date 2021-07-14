@@ -160,12 +160,12 @@ default:
       histogram: TH2F_kFactor
       file: data/sf/theory/kFactor_WToLNu_pT_Mjj.root
     qcd_nlo_w_2017_2d: # 2D QCD k factor for QCD W
-      histogram: 2d_wjet_vbf
-      file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
-    qcd_nlo_z_2017_2d: # 2D QCD k factor for QCD Z
-      histogram: 2d_dy_vbf
-      file: data/sf/theory/2017_gen_v_pt_qcd_sf.root
-    qcd_nlo_znn_2017_2d: # 2D QCD k factor for QCD Z
+      histogram: wjet_sf_ul
+      file: data/sf/theory/vjets_qcd_nlo_sf_vbf.root
+    qcd_nlo_z_2017_2d: # 2D QCD k factor for QCD Z(ll)
+      histogram: dy_sf_ul
+      file: data/sf/theory/vjets_qcd_nlo_sf_vbf.root
+    qcd_nlo_znn_2017_2d: # 2D QCD k factor for QCD Z(vv)
       histogram: kfactors_shape/kfactor_vbf
       file: data/sf/theory/2Dkfactor_VBF_znn.root
     qcd_nlo_g_2017_2d: # 2D QCD k factor for QCD photon
