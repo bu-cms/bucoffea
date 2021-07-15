@@ -167,7 +167,7 @@ def export_coffea_histogram(h, overflow='over', suppress_last_bin=False):
 
     return URTH1(edges=xedges, sumw=sumw, sumw2=sumw2)
 
-def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2018]):
+def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2018], ulxs=False):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
@@ -196,7 +196,7 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2
     newax = hist.Bin('mjj','$M_{jj}$ (GeV)', mjj_bins_2016())
     h = h.rebin(h.axis(newax.name), newax)
     h = merge_extensions(h, acc)
-    scale_xs_lumi(h)
+    scale_xs_lumi(h, ulxs=ulxs)
     h = merge_datasets(h)
 
     for year in years:
