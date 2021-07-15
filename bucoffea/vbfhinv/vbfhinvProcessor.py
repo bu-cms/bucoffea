@@ -914,6 +914,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
             ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
 
+            rweight_nopref = region_weights.partial_weight(exclude=exclude+['prefire'])
+            ezfill('mjj_nopref',                mjj=df["mjj"][mask],      weight=rweight_nopref[mask] )
+
             if not df['is_data']:
                 ezfill('gen_met_mjj',        met=df["GenMET_pt"][mask],     mjj=df["mjj"][mask],      weight=rweight[mask])
 

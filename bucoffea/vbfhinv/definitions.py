@@ -108,6 +108,7 @@ def vbfhinv_accumulator(cfg):
     items["met_pt_ak41_hf"] = Hist("Counts", dataset_ax, region_ax, met_ax)
 
     items["mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
+    items["mjj_nopref"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
     items["mjj_veto_weight"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
     items["mjj_ele_trig_weight"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
     items["mjj_ele_id"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
