@@ -210,6 +210,8 @@ def vbfhinv_accumulator(cfg):
     for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
         items[f"{cand}_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
 
+    items["extra_ak4_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
+
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_pt_abseta"] = Hist("Counts", dataset_ax, region_ax, pt_ax_mu, abseta_ax_mu)
     items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)

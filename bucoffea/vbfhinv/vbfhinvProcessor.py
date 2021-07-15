@@ -308,6 +308,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
         leading_jet_in_horn = ((diak4.i0.abseta<3.2) & (diak4.i0.abseta>2.8)).any()
         trailing_jet_in_horn = ((diak4.i1.abseta<3.2) & (diak4.i1.abseta>2.8)).any()
 
+        # Additional jets in the central region (|eta| < 2.5)
+        extra_ak4 = ak4[:,2:]
+        extra_ak4_central = extra_ak4[extra_ak4.abseta < 2.5]
+
         # selection.add('hornveto', (df['dPFTkSR'] < 0.8) | ~(leading_jet_in_horn | trailing_jet_in_horn))
         
         df['htmiss'] = ak4[ak4.pt>30].p4.sum().pt
@@ -758,6 +762,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             fill_mult('tight_muo_mult',muons[df['is_tight_muon']])
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
+            # Number of additional jets in the central region, |eta| < 2.5
+            fill_mult('extra_ak4_mult', extra_ak4_central)
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
