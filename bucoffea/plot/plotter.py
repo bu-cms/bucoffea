@@ -125,7 +125,7 @@ colors = {
     'QCD.*' : '#a6bddb',
 }
 
-def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distribution='mjj', plot_signal=True, nlo=False, mcscale=1, fformat='pdf', qcd_file=None, jes_file=None):
+def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distribution='mjj', plot_signal=True, nlo=False, mcscale=1, fformat='pdf', qcd_file=None, jes_file=None, ulxs=True):
     '''Plot data/MC comparison with the QCD template included.'''
     acc.load(distribution)
     h = acc[distribution]
@@ -136,7 +136,7 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
         overflow = 'none'
 
     h = merge_extensions(h, acc, reweight_pu=False)
-    scale_xs_lumi(h)
+    scale_xs_lumi(h, ulxs=ulxs)
     h = merge_datasets(h)
 
     if distribution in binnings.keys():

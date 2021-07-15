@@ -83,7 +83,8 @@ def make_plot(args):
                         mcscale=mcscale,
                         plot_signal='sr_vbf' in data_region,
                         nlo=nlo,
-                        jes_file='./jec/jes_uncs.root' if args.jes else None
+                        jes_file='./jec/jes_uncs.root' if args.jes else None,
+                        ulxs=not args.eoyxs
                     )
                 except KeyError:
                     print(f'WARNING: {data_region} not found in inputs, skipping.')
@@ -99,6 +100,7 @@ def commandline():
     parser.add_argument('--fformat', nargs='*', default=['pdf'], help='Output file format for the plots, default is PDF only.')
     parser.add_argument('--jes', action='store_true', help='Plot JES+JER uncertainty bands.')
     parser.add_argument('--nlo', action='store_true', help='Use NLO samples where available (Z regions currently).')
+    parser.add_argument('--eoyxs', action='store_true', help='Use EOY XS for normalization, otherwise use UL XS.')
     args = parser.parse_args()
     return args
 

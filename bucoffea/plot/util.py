@@ -302,13 +302,13 @@ def merge_datasets(histogram):
     return histogram
 
 
-def load_xs(ul=True):
+def load_xs(ulxs=True):
     """Function to read per-sample cross sections from file.
 
     :return: Mapping dataset -> cross-section
     :rtype: dict
     """
-    xsfile = bucoffea_path(f'data/datasets/xs/xs{"_UL" if ul else ""}.yml')
+    xsfile = bucoffea_path(f'data/datasets/xs/xs{"_UL" if ulxs else ""}.yml')
     with open(xsfile,'r') as f:
         xs_yml = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -353,7 +353,7 @@ def lumi(year, mcscale=1):
     if year==2016:
         return 35.9 * mcscale
 
-def scale_xs_lumi(histogram, scale_lumi=True, ul=True):
+def scale_xs_lumi(histogram, scale_lumi=True, ulxs=True):
     """MC normalization so that it's ready to compare to data
 
     :param histogram: Histogram to normalize
@@ -365,7 +365,7 @@ def scale_xs_lumi(histogram, scale_lumi=True, ul=True):
     mcs = [x for x in datasets if not is_data(x)]
 
     # Normalize to XS * lumi/ sumw
-    known_xs = load_xs(ul=ul)
+    known_xs = load_xs(ulxs=ulxs)
 
     xs_map = {}
     for mc in mcs:
