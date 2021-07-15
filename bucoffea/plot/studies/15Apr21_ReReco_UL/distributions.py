@@ -30,6 +30,7 @@ common_distributions = [
     'met',
     'met_phi',
     'ak4_mult',
+    'extra_ak4_mult',
     'dphijr',
     'ak4_central_eta',
     'ak4_forward_eta',
@@ -68,7 +69,8 @@ binnings = {
     'ak4_mt0' : Bin("mt", r"Leading AK4 $M_{T}$ (GeV)", 50, 0, 1000),
     'ak4_mt1' : Bin("mt", r"Trailing AK4 $M_{T}$ (GeV)", 50, 0, 1000),
     'dphijr' : Bin("dphi", r"$min\Delta\phi(j,recoil)$", 50, 0, 3.5),
-    'recoil' : hist.Bin('recoil','Recoil (GeV)', recoil_bins_2016),
+    'extra_ak4_mult' : Bin("multiplicity", r"Additional AK4 Jet Multiplicity", 10, -0.5, 9.5),
+    'recoil' : Bin('recoil','Recoil (GeV)', recoil_bins_2016),
 }
 
 ylims = {
