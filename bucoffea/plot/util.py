@@ -371,10 +371,7 @@ def scale_xs_lumi(histogram, scale_lumi=True, ulxs=True):
     xs_map = {}
     for mc in mcs:
         try:
-            if 'ZJetsToNuNu_HT' in mc:
-                ixs = known_xs[re.sub('MLM','mg',mc)]
-            else:
-                ixs = known_xs[re.sub('_new_*pmx','',mc)]
+            ixs = known_xs[re.sub('_new_*pmx','',mc)]
         except KeyError:
             print(f"WARNING: Cross section not found for dataset {mc}. Using 0.")
             ixs = 0
