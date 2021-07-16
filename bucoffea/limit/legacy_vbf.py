@@ -167,7 +167,7 @@ def export_coffea_histogram(h, overflow='over', suppress_last_bin=False):
 
     return URTH1(edges=xedges, sumw=sumw, sumw2=sumw2)
 
-def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2018], ulxs=False):
+def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2018], ulxs=False, one_fifth_unblind=False):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
@@ -222,7 +222,10 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2
                         continue
                 print(f"Dataset: {dataset}")
 
-                th1 = export_coffea_histogram(ih.integrate('dataset', dataset))
+                h_cof = ih.integrate('dataset', dataset)
+                if one_fifth_unblind and region == 'sr_vbf_no_veto_all':
+                    h_cof.scale(0.2)
+                th1 = export_coffea_histogram(h_cof)
                 try:
                     histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name_vbf(dataset)}'
                     print(f'Saved under histogram: {histo_name}')
