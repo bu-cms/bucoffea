@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import warnings
 import os
 import re
 import numpy as np
@@ -13,6 +14,8 @@ from datetime import datetime
 from tqdm import tqdm
 
 pjoin = os.path.join
+
+warnings.filterwarnings('ignore', category=RuntimeWarning)
 
 def make_plot(args):
     acc = dir_archive(args.inpath)

@@ -382,6 +382,3 @@ def plot_data_mc(acc, outtag, year, data, mc, data_region, mc_region, distributi
     fig.savefig(outpath_pdf)
     fig.savefig(outpath_png)
     plt.close(fig)
-
-    print(f'File saved: {outpath_pdf}')
-

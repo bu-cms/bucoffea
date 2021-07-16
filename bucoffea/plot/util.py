@@ -309,7 +309,6 @@ def load_xs(ulxs=True):
     :rtype: dict
     """
     xsfile = bucoffea_path(f'data/datasets/xs/xs{"_UL" if ulxs else ""}.yml')
-    print(f'INFO: Using XS file: {os.path.basename(xsfile)}')
     with open(xsfile,'r') as f:
         xs_yml = yaml.load(f, Loader=yaml.FullLoader)
 
