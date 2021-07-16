@@ -310,6 +310,10 @@ def vbfhinv_regions(cfg):
             'veto_hfhf',
             # 'leadak4_not_in_hf',
         ])
+    
+    # mjj > 1.2 TeV
+    if cfg.RUN.TIGHT_MJJ_CUT:
+        common_cuts.append('mjj_tight')
 
     regions = {}
     regions['inclusive'] = ['inclusive']
@@ -323,6 +327,7 @@ def vbfhinv_regions(cfg):
     if not cfg.RUN.APPLY_CLEANING_CUTS:
         regions['sr_vbf'].remove('hornveto')
         regions['sr_vbf'].remove('eemitigation')
+
 
     # SR without PU weights
     # regions['sr_vbf_no_pu'] = copy.deepcopy(regions['sr_vbf'])

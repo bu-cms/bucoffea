@@ -224,6 +224,7 @@ default:
     sync: False
     ulegacyv8: True
     one_fifth_unblind: True
+    tight_mjj_cut: False
     qcd_estimation: True
     rebsmear_check: False
     apply_cleaning_cuts: False
