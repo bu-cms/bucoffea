@@ -924,9 +924,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('vecb',        vecb=vec_b[mask],            weight=rweight[mask] )
             ezfill('dphitkpf',    dphi=dphitkpf[mask],         weight=rweight[mask] )
 
-            if region != 'inclusive':
-                ezfill('dphitkpf_ak4_eta0',  dphi=dphitkpf[mask],     jeteta=diak4.i0.abseta[mask].flatten(),     weight=rweight[mask])
-
             # Consider events where only (at least) one of the jets is in horn
             dpftkmet_weight = np.where(
                 leading_jet_in_horn | trailing_jet_in_horn,
@@ -1074,9 +1071,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         uncertainty=unc,
                         weight=w)
 
-            # Two dimensional
-            ezfill('recoil_mjj',         recoil=df["recoil_pt"][mask], mjj=df["mjj"][mask], weight=rweight[mask] )
-
             # Muons
             if '_1m_' in region or '_2m_' in region or 'no_veto' in region:
                 w_allmu = weight_shape(muons.pt[mask], rweight[mask])
@@ -1123,11 +1117,10 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             # Photon
             if '_g_' in region:
-                w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],rweight[mask]);
+                w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],rweight[mask])
                 ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
                 ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
                 ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
-                ezfill('photon_pt0_recoil',       pt=photons[leadphoton_index].pt[mask].flatten(), recoil=df['recoil_pt'][mask&(leadphoton_index.counts>0)],  weight=w_leading_photon)
                 ezfill('photon_eta_phi',          eta=photons[leadphoton_index].eta[mask].flatten(), phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
 
                 # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], rweight[mask])

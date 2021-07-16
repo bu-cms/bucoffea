@@ -170,11 +170,6 @@ def vbfhinv_accumulator(cfg):
     items["ak4_hfcentral_adjacent_etastripsize0"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
     items["ak4_hfcentral_adjacent_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
 
-    items["ak4_sigma_eta_phi_third_jet"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax)
-
-    items["ak4_sigma_eta_phi1_binned_in_ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, ak40_abseta_ax)
-    items["ak4_sigma_eta_phi_binned_in_ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, ak40_abseta_ax)
-
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
@@ -192,7 +187,6 @@ def vbfhinv_accumulator(cfg):
 
     items["ak4_sigma_eta_minus_phi_ak4_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_phi_diff_ax, jet_eta_ax_coarse)
 
-    items["recoil_mjj"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, mjj_ax)
     items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
 
     items["dpfcalo_cr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
@@ -204,8 +198,6 @@ def vbfhinv_accumulator(cfg):
     items["vecdphi"] = Hist("Counts", dataset_ax, region_ax, vecdphi_ax)
     items["dphitkpf"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
     items["dPFTkMET"] = Hist("Counts", dataset_ax, region_ax, dpftk_ax)
-
-    items["dphitkpf_ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, dphi_ax, jet_eta_ax_very_coarse)
 
     # Multiplicity histograms
     for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
@@ -248,8 +240,6 @@ def vbfhinv_accumulator(cfg):
     items['photon_pt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
     items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-
-    items['photon_pt0_recoil'] = Hist("Counts", dataset_ax, region_ax, pt_ax, recoil_ax)
 
     items["tau_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax_tau)
 
