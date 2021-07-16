@@ -4,6 +4,7 @@ import os
 from bucoffea.plot.util import acc_from_dir
 from klepto.archives import dir_archive
 import argparse
+from datetime import datetime
 pjoin = os.path.join
 
 def parse_commandline():
@@ -35,6 +36,21 @@ def main():
         acc = acc_from_dir(args.inpath)
 
     outdir = pjoin('./output/',list(filter(lambda x:x,args.inpath.split('/')))[-1])
+
+    # Store the command line arguments in the INFO.txt file
+    try:
+        os.makedirs(outdir)
+    except FileExistsError:
+        pass
+    
+    infofile = pjoin(outdir, 'INFO.txt')
+    with open(infofile, 'w+') as f:
+        f.write(f'Limit input creation: {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}\n')
+        f.write('Command line arguments:\n\n')
+        cli = vars(args)
+        for arg, val in cli.items():
+            f.write(f'{arg}: {val}\n')
+
     for channel in args.channel.split(','):
         print(channel)
         if channel == 'monojet':
