@@ -763,7 +763,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             fill_mult('tau_mult',taus)
             fill_mult('photon_mult',photons)
             # Number of additional jets in the central region, |eta| < 2.5
-            fill_mult('extra_ak4_mult', extra_ak4_central)
+            fill_mult('extra_ak4_mult', extra_ak4_central[extra_ak4_central.pt>30])
 
             def ezfill(name, **kwargs):
                 """Helper function to make filling easier."""
