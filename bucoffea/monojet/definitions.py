@@ -842,7 +842,7 @@ def theory_weights_monojet(weights, df, evaluator, gen_v_pt, gen_ak8_mass):
 
 def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
     if df['is_lo_w']:
-        theory_weights = evaluator["qcd_nlo_w_2017_2d"](mjj, gen_v_pt) * evaluator["ewk_nlo_w"](gen_v_pt)
+        theory_weights = evaluator["qcd_nlo_w_2017_2d"](gen_v_pt, mjj) * evaluator["ewk_nlo_w"](gen_v_pt)
     elif df['is_lo_w_ewk']:
         theory_weights = evaluator["qcd_nlo_w_ewk"](gen_v_pt, mjj)
     elif df['is_lo_z']:
@@ -850,7 +850,7 @@ def theory_weights_vbf(weights, df, evaluator, gen_v_pt, mjj):
         if df['is_lo_znunu']:
             w_qcd = evaluator["qcd_nlo_znn_2017_2d"](gen_v_pt, mjj)
         else:
-            w_qcd = evaluator["qcd_nlo_z_2017_2d"](mjj, gen_v_pt)
+            w_qcd = evaluator["qcd_nlo_z_2017_2d"](gen_v_pt, mjj)
         theory_weights = w_ewk * w_qcd
     elif df['is_lo_z_ewk']:
         theory_weights = evaluator["qcd_nlo_z_ewk"](gen_v_pt, mjj)
