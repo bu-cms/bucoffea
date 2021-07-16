@@ -48,14 +48,16 @@ def plot_mjj_pref_nopref(acc, outtag, region, dataset):
         'color':'k',
         'elinewidth': 1,
     }
-    hist.plot1d(h_withpref, ax=ax, error_opts=data_err_opts)
-    hist.plot1d(h_nopref, ax=ax, clear=False)
+    hist.plot1d(h_nopref, ax=ax, error_opts=data_err_opts)
+    hist.plot1d(h_withpref, ax=ax, clear=False)
 
     ax.legend(labels=['Applied', 'Not Applied'], title='Prefire Weight')
 
     ax.set_yscale('log')
-    ax.set_ylim(1e-4,1e4)
+    ax.set_ylim(1e-1,1e5)
     ax.set_ylabel('Events')
+
+    ax.yaxis.set_ticks_position('both')
 
     ax.text(0,1,get_process_label(region),
         fontsize=14,
