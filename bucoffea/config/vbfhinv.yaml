@@ -226,6 +226,7 @@ default:
     one_fifth_unblind: True
     tight_mjj_cut: False
     qcd_estimation: True
+    save_hf_variables: False
     rebsmear_check: False
     apply_cleaning_cuts: False
     regionregex: .*

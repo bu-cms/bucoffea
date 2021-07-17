@@ -822,19 +822,14 @@ class vbfhinvProcessor(processor.ProcessorABC):
             ezfill('ak4_central_eta',    jeteta=get_more_central_jeteta(diak4)[mask].flatten(),    weight=w_diak4)
             ezfill('ak4_forward_eta',    jeteta=get_more_forward_jeteta(diak4)[mask].flatten(),    weight=w_diak4)
 
-            if cfg.RUN.ULEGACYV8:
-                def is_hf_jet(_ak4, ptmin=100, etamin=2.9, etamax=5.0):
+            if cfg.RUN.ULEGACYV8 and cfg.RUN.SAVE_HF_VARIABLES:
+                def is_hf_jet(_ak4, ptmin=80, etamin=2.9, etamax=5.0):
                     return (_ak4.pt > ptmin) & (_ak4.abseta > etamin) & (_ak4.abseta < etamax)
 
                 hfmask = is_hf_jet(ak4[mask])
 
                 # Consider only high pt jets with pt > 100 GeV
-                w_hfjets = np.where(
-                    hfmask.flatten(),
-                    w_alljets,
-                    0.
-                )
-
+                w_hfjets = np.where( hfmask.flatten(), w_alljets, 0.)
                 ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
                 ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
 
@@ -847,27 +842,18 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     )
 
                 ezfill('ak4_hfcentral_adjacent_etastripsize',   
-                    centraletastripsize=ak4[mask].hfcentralstripsize.flatten(),
-                    adjacentetastripsize=ak4[mask].hfadjacentstripsize.flatten(),
-                    jeta=ak4[mask].abseta.flatten(),
-                    weight=w_hfjets
+                        centraletastripsize=ak4[mask].hfcentralstripsize.flatten(),
+                        adjacentetastripsize=ak4[mask].hfadjacentstripsize.flatten(),
+                        jeta=ak4[mask].abseta.flatten(),
+                        weight=w_hfjets
                     )
 
                 # Leading and trailing jets
                 hfmask_i0 = is_hf_jet(diak4.i0[mask])
                 hfmask_i1 = is_hf_jet(diak4.i1[mask])
 
-                w_hfjets_i0 = np.where(
-                    hfmask_i0.flatten(),
-                    w_diak4,
-                    0.
-                )
-
-                w_hfjets_i1 = np.where(
-                    hfmask_i1.flatten(),
-                    w_diak4,
-                    0.
-                )
+                w_hfjets_i0 = np.where(hfmask_i0.flatten(), w_diak4, 0.)
+                w_hfjets_i1 = np.where(hfmask_i1.flatten(), w_diak4, 0.)
 
                 ezfill('ak4_sigma_eta_phi0',   
                     sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    
@@ -918,9 +904,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
             rweight_nopref = region_weights.partial_weight(exclude=exclude+['prefire'])
             ezfill('mjj_nopref',                mjj=df["mjj"][mask],      weight=rweight_nopref[mask] )
-
-            if not df['is_data']:
-                ezfill('gen_met_mjj',        met=df["GenMET_pt"][mask],     mjj=df["mjj"][mask],      weight=rweight[mask])
 
             ezfill('vecdphi',     vecdphi=vec_dphi[mask],       weight=rweight[mask] )
             ezfill('vecb',        vecb=vec_b[mask],            weight=rweight[mask] )

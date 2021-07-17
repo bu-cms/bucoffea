@@ -102,8 +102,6 @@ def vbfhinv_accumulator(cfg):
     items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
     items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
-    items["gen_met_mjj"] = Hist("Counts", dataset_ax, region_ax, met_ax, mjj_ax)
-
     items["met_pt_ak40_hf"] = Hist("Counts", dataset_ax, region_ax, met_ax)
     items["met_pt_ak41_hf"] = Hist("Counts", dataset_ax, region_ax, met_ax)
 
@@ -133,8 +131,6 @@ def vbfhinv_accumulator(cfg):
     items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nef0_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
-    items["ak4_sigma_eta_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
-    items["ak4_sigma_phi_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
     items["ak4_mt0"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
 
     items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -146,8 +142,6 @@ def vbfhinv_accumulator(cfg):
     items["ak4_nef1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nef1_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst1"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
-    items["ak4_sigma_eta_eta1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
-    items["ak4_sigma_phi_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
     items["ak4_mt1"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
 
     # Eta of the leading jet when the trailing jet is in HF
@@ -163,13 +157,6 @@ def vbfhinv_accumulator(cfg):
     items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
     items["ak4_pt0_eta0_hf"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, eta_hf_ax)
 
-    items["ak4_sigma_eta_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
-    items["ak4_sigma_eta_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
-    items["ak4_sigma_eta_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
-    items["ak4_hfcentral_adjacent_etastripsize"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
-    items["ak4_hfcentral_adjacent_etastripsize0"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
-    items["ak4_hfcentral_adjacent_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
-
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
     items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
@@ -178,14 +165,7 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
-    items["ak4_eta_hf_filtered"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-
     items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax, jet_phi_ax)
-
-    items["ak4_sigma_eta_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, eta_hf_ax)
-    items["ak4_sigma_phi_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax, eta_hf_ax)
-
-    items["ak4_sigma_eta_minus_phi_ak4_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_phi_diff_ax, jet_eta_ax_coarse)
 
     items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
 
@@ -204,6 +184,22 @@ def vbfhinv_accumulator(cfg):
         items[f"{cand}_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
 
     items["extra_ak4_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
+
+    if cfg.RUN.SAVE_HF_VARIABLES:
+        items["ak4_sigma_eta_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
+        items["ak4_sigma_phi_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+        items["ak4_sigma_eta_eta1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
+        items["ak4_sigma_phi_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+        items["ak4_sigma_eta_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, eta_hf_ax)
+        items["ak4_sigma_phi_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax, eta_hf_ax)
+
+        # Two dimensional
+        items["ak4_sigma_eta_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
+        items["ak4_sigma_eta_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
+        items["ak4_sigma_eta_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
+        items["ak4_hfcentral_adjacent_etastripsize"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
+        items["ak4_hfcentral_adjacent_etastripsize0"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
+        items["ak4_hfcentral_adjacent_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
 
     items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
     items["muon_pt_abseta"] = Hist("Counts", dataset_ax, region_ax, pt_ax_mu, abseta_ax_mu)
