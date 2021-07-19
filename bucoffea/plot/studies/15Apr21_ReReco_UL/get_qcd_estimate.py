@@ -35,10 +35,11 @@ def parse_cli():
     parser.add_argument('--years', nargs='*', type=int, default=[2017,2018], help='Years to run.')
     parser.add_argument('--region', default='cr_vbf_qcd', help='Name of the control region as defined in the processor.')
     parser.add_argument('--distribution', default='.*', help='Distributions to run.')
+    parser.add_argument('--nlo', action='store_true', help='Use NLO samples while deriving the HF estimate.')
     args = parser.parse_args()
     return args
 
-def get_qcd_estimate(acc, outtag, outrootfile, distribution, years=[2017, 2018], region_name='cr_vbf_qcd'):
+def get_qcd_estimate(acc, outtag, outrootfile, distribution, years=[2017, 2018], region_name='cr_vbf_qcd', nlo=False):
     '''Calculate the QCD template in SR'''
     acc.load(distribution)
     h = acc[distribution]
@@ -72,8 +73,11 @@ def get_qcd_estimate(acc, outtag, outrootfile, distribution, years=[2017, 2018],
     h = h.integrate('region', region_name)
     for year in years:
         data = f'MET_{year}'
-        mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
-
+        if nlo:
+            mc = re.compile(f'(ZNJetsToNuNu_M-50_LHEFilterPtZ-FXFX.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_Pt_FXFX.*|WJetsToLNu_Pt-FXFX.*).*{year}')
+        else:
+            mc = re.compile(f'(ZJetsToNuNu.*|EW.*|Top_FXFX.*|Diboson.*|DYJetsToLL_M-50_HT_MLM.*|WJetsToLNu.*HT.*).*{year}')
+        
         data_err_opts = {
             'linestyle':'none',
             'marker': '.',
@@ -206,7 +210,8 @@ def main():
             outrootfile, 
             distribution=distribution, 
             years=args.years,
-            region_name=args.region
+            region_name=args.region,
+            nlo=args.nlo
             )
 
 if __name__ == '__main__':
