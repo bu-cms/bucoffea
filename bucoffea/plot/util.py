@@ -211,10 +211,10 @@ def create_dataset_mapping(all_datasets):
 
         'G1Jet_Pt-amcatnlo_2016' : [x for x in all_datasets if re.match('G1Jet_Pt-.*-amcatnlo_2016',x)],
 
-        'WJetsToLNu_Pt-FXFX_2017' : [x for x in all_datasets if re.match('WJetsToLNu_Pt-(\d+)To(\d+).*-FXFX_2017',x)],
-        'WJetsToLNu_Pt-FXFX_2018' : [x for x in all_datasets if re.match('WJetsToLNu_Pt-(\d+)To(\d+).*-FXFX_2018',x)],
+        'WJetsToLNu_Pt-FXFX_2017' : [x for x in all_datasets if re.match('WJetsToLNu_Pt-(\d+).*FXFX_2017',x)],
+        'WJetsToLNu_Pt-FXFX_2018' : [x for x in all_datasets if re.match('WJetsToLNu_Pt-(\d+).*FXFX_2018',x)],
         
-        'WNJetsToLNu_LHEWpT-FXFX_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_LHEWpT_(\d+)-.*-FXFX_2017',x)],
+        'WNJetsToLNu_LHEWpT-FXFX_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_LHEWpT_(\d+)To(\d+).*FXFX_2017',x)],
         'WNJetsToLNu-FXFX_2018' : [x for x in all_datasets if re.match('WJetsToLNu_(\d+)J-amcatnloFXFX_2018',x)],
 
         'DYNJetsToLL_M-50_LHEZpT-FXFX_2017' : [x for x in all_datasets if re.match('DY(\d+)JetsToLL_M-50_LHEZpT_(\d+)-.*-FXFX_2017',x)],

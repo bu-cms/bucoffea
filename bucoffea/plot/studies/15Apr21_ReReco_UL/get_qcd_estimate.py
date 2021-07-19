@@ -6,6 +6,7 @@ import re
 import argparse
 import uproot
 import numpy as np
+from datetime import datetime
 
 from matplotlib import pyplot as plt
 from bucoffea.plot.util import merge_extensions, merge_datasets, scale_xs_lumi
@@ -21,7 +22,7 @@ legend_labels = {
     'EWKZ.*ZToLL.*' : "EWK Z$\\rightarrow\\ell\\ell$",
     'WN*J.*LNu.*' : "QCD W$\\rightarrow\\ell\\nu$",
     'EWKW.*LNu.*' : "EWK W$\\rightarrow\\ell\\nu$",
-    'ZJetsToNuNu.*.*' : "QCD Z$\\rightarrow\\nu\\nu$",
+    'ZN*JetsToNuNu.*.*' : "QCD Z$\\rightarrow\\nu\\nu$",
     'EWKZ.*ZToNuNu.*' : "EWK Z$\\rightarrow\\nu\\nu$",
     'QCD.*' : "QCD",
     'Top.*' : "Top quark",
@@ -202,6 +203,15 @@ def main():
     outrootpath = pjoin(outdir, 'hf_qcd_estimate.root')
     outrootfile = uproot.recreate(outrootpath)
     print(f'ROOT file initiated: {outrootpath}')
+
+    # Store the command line arguments in the INFO.txt file
+    infofile = pjoin(outdir, 'INFO.txt')
+    with open(infofile, 'w+') as f:
+        f.write(f'QCD estimation most recently ran at: {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}\n')
+        f.write('Command line arguments:\n\n')
+        cli = vars(args)
+        for arg, val in cli.items():
+            f.write(f'{arg}: {val}\n')
 
     for distribution in distributions['sr_vbf']:
         if not re.match(args.distribution, distribution):
