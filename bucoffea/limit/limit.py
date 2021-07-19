@@ -14,6 +14,7 @@ def parse_commandline():
     parser.add_argument('--unblind', action='store_true', help='Include signal region data')
     parser.add_argument('--years', nargs='*', default=[2017, 2018], help='The years to prepare the limit input for')
     parser.add_argument('--eoyxs', action='store_true', help='Use the EOY XS for normalization, otherwise use UL XS')
+    parser.add_argument('--nlo', action='store_true', help='If specified, use NLO QCD V+jets samples from the limit input file')
     parser.add_argument('--one_fifth_unblind', action='store_true', help='1/5th unblinding: Scale the MC in signal region by 1/5')
     args = parser.parse_args()
 
@@ -62,8 +63,13 @@ def main():
             legacy_limit_input_monov(acc, outdir=outdir, unblind=args.unblind)
         elif channel == 'vbfhinv':
             from legacy_vbf import legacy_limit_input_vbf
-            legacy_limit_input_vbf(acc, outdir=outdir, unblind=args.unblind, years=args.years, ulxs=not args.eoyxs, one_fifth_unblind=args.one_fifth_unblind)
-
+            legacy_limit_input_vbf(acc, outdir=outdir, 
+                    unblind=args.unblind, 
+                    years=args.years, 
+                    ulxs=not args.eoyxs, 
+                    one_fifth_unblind=args.one_fifth_unblind,
+                    nlo=args.nlo
+                )
 
 if __name__ == "__main__":
     main()

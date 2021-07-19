@@ -13,7 +13,7 @@ from bucoffea.plot.util import merge_datasets, merge_extensions, scale_xs_lumi, 
 from legacy_monojet import suppress_negative_bins
 pjoin = os.path.join
 
-def datasets(year, unblind=False):
+def datasets(year, unblind=False, nlo=False):
 
     data = {
                     'cr_1m_vbf' : f'MET_{year}',
@@ -35,13 +35,27 @@ def datasets(year, unblind=False):
             'sr_vbf' : re.compile('nomatch')
           }
 
+    mc_nlo = {
+        'sr_vbf_no_veto_all' : re.compile(f'(ttH_HToInvisible_M125.*|WH_WToQQ_Hinv_M125.*|ZH_ZToQQ_HToInv.*M125.*|(VBF|GluGlu)_HToInvisible.*M125.*|ggZH.*|ZNJetsToNuNu_M-50_LHEFilterPtZ-FXFX.*|EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL_Pt_FXFX.*|WJetsToLNu_Pt-FXFX.*).*{year}'),
+        'cr_1m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL_Pt_FXFX.*|WJetsToLNu_Pt-FXFX.*).*{year}'),
+        'cr_1e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL_Pt_FXFX.*|WJetsToLNu_Pt-FXFX.*).*{year}'),
+        'cr_2m_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL_Pt_FXFX.*|WJetsToLNu_Pt-FXFX.*).*{year}'),
+        'cr_2e_vbf' : re.compile(f'(EW.*|Top_FXFX.*|Diboson.*|QCD_HT.*|DYJetsToLL_Pt_FXFX.*|WJetsToLNu_Pt-FXFX.*).*{year}'),
+        'cr_g_vbf' : re.compile(f'(GJets_DR-0p4.*|VBFGamma.*|QCD_data.*|WJetsToLNu.*HT.*).*{year}'),
+        'sr_vbf' : re.compile('nomatch')
+    }
+
     tmp = {}
 
     for k, v in data.items():
         tmp[k] = re.compile(v)
     data.update(tmp)
 
-    return data, mc
+    mc_dict = mc
+    if nlo:
+        mc_dict = mc_nlo
+
+    return data, mc_dict
 
 def legacy_dataset_name_vbf(dataset):
 
@@ -167,7 +181,7 @@ def export_coffea_histogram(h, overflow='over', suppress_last_bin=False):
 
     return URTH1(edges=xedges, sumw=sumw, sumw2=sumw2)
 
-def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2018], ulxs=False, one_fifth_unblind=False):
+def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2018], ulxs=False, one_fifth_unblind=False, nlo=False):
     """Writes ROOT TH1s to file as a limit input
 
     :param acc: Accumulator (processor output)
@@ -201,7 +215,7 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2
 
     for year in years:
         f = uproot.recreate(pjoin(outdir, f'legacy_limit_vbf_{year}.root'))
-        data, mc = datasets(year, unblind=unblind)
+        data, mc = datasets(year, unblind=unblind, nlo=nlo)
         for region in regions:
             print('='*20)
             print(f'Region {region}')

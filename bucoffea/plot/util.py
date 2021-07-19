@@ -211,6 +211,9 @@ def create_dataset_mapping(all_datasets):
 
         'G1Jet_Pt-amcatnlo_2016' : [x for x in all_datasets if re.match('G1Jet_Pt-.*-amcatnlo_2016',x)],
 
+        'WJetsToLNu_Pt-FXFX_2017' : [x for x in all_datasets if re.match('WJetsToLNu_Pt-(\d+)To(\d+).*-FXFX_2017',x)],
+        'WJetsToLNu_Pt-FXFX_2018' : [x for x in all_datasets if re.match('WJetsToLNu_Pt-(\d+)To(\d+).*-FXFX_2018',x)],
+        
         'WNJetsToLNu_LHEWpT-FXFX_2017' : [x for x in all_datasets if re.match('W(\d+)JetsToLNu_LHEWpT_(\d+)-.*-FXFX_2017',x)],
         'WNJetsToLNu-FXFX_2018' : [x for x in all_datasets if re.match('WJetsToLNu_(\d+)J-amcatnloFXFX_2018',x)],
 
@@ -254,6 +257,7 @@ def create_dataset_mapping(all_datasets):
         'ZZ_{year}' : 'ZZ(_PSweights)?_{year}',
         'WZ_{year}' : 'WZ(_PSweights)?_{year}',
 
+        'ZNJetsToNuNu_M-50_LHEFilterPtZ-FXFX_{year}' : 'Z\dJetsToNuN(u|U)_M-50_LHEFilterPtZ.*FXFX.*{year}',
         'ZNJetsToNuNu_M-50_LHEZpT-FXFX_{year}' : 'Z\dJetsToNuN(u|U)_M-50_LHEZpT.*FXFX.*{year}',
         'VQQGamma_FXFX_{year}' : '(W|Z)QQGamma_5f_NLO_FXFX-amcatnlo_{year}',
         'WQQGamma_FXFX_{year}' : 'WQQGamma_5f_NLO_FXFX-amcatnlo_{year}',
