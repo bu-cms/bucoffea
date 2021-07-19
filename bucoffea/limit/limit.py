@@ -38,6 +38,8 @@ def main():
         acc = acc_from_dir(args.inpath)
 
     outdir = pjoin('./output/',list(filter(lambda x:x,args.inpath.split('/')))[-1])
+    if args.nlo:
+        outdir = f'{outdir}_NLO_VJets'
 
     # Store the command line arguments in the INFO.txt file
     try:
