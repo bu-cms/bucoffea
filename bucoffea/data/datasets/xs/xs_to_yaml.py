@@ -24,7 +24,7 @@ Example:
 """
 
 infile = 'xs_UL.txt'
-outfile = 'xs_UL.yml'
+outfile = 'xs_UL_temp.yml'
 
 data = np.loadtxt(infile,dtype=str)
 

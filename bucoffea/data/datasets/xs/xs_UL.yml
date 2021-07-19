@@ -921,6 +921,22 @@ WJetsToLNu_HT-800To1200-MLM_2017:
   gen: 4.923
 WJetsToLNu_HT-800To1200-MLM_2018:
   gen: 4.923
+WJetsToLNu_Pt-100To250_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 763.5
+WJetsToLNu_Pt-100To250_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 757.9
+WJetsToLNu_Pt-250To400_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 27.53
+WJetsToLNu_Pt-250To400_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 27.46
+WJetsToLNu_Pt-400To600_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 3.514
+WJetsToLNu_Pt-400To600_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 3.46
+WJetsToLNu_Pt-600ToInf_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 0.538
+WJetsToLNu_Pt-600ToInf_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 0.5456
 WJetsToQQ_HT-800toInf_qc19_3j-MLM_2017:
   gen: 34.73
 WJetsToQQ_HT-800toInf_qc19_3j-MLM_2018:

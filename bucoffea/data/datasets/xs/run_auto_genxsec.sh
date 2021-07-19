@@ -4,10 +4,10 @@ get_xs(){
     INPUT=${1}
     echo "Input dataset: " $INPUT
 
-    if [[ "$INPUT" == *"JetsToLNu"*"FXFX"* ]]; then
-        echo "Skipping broken XS dataset: ${INPUT}"
-        return
-    elif [[ "$INPUT" == *"NANOAODSIM" ]]; then
+    # if [[ "$INPUT" == *"JetsToLNu"*"FXFX"* ]]; then
+    #     echo "Skipping broken XS dataset: ${INPUT}"
+    #     return
+    if [[ "$INPUT" == *"NANOAODSIM" ]]; then
         DATASET=$(dasgoclient --query="parent dataset=${INPUT}")
         echo "Input is NANO, so I will run on parent dataset ${DATASET}"
     elif [[ "$INPUT" == *"SIM" ]]; then
