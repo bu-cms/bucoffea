@@ -122,7 +122,7 @@ def legacy_dataset_name_vbf(dataset):
         'Diboson.*' : 'diboson',
         '(MET|EGamma).*' : 'data',
         'WJetsToLNu.*' : 'qcdwjets',
-        'ZJetsToNuNu.*' : 'qcdzjets',
+        'ZN*JetsToNuNu.*' : 'qcdzjets',
         'DYJets.*' : 'qcdzll',
         'GJets_DR-0p4.*HT.*' : 'qcdgjets',
         'VBFGamma.*' : 'ewkgjets',
