@@ -1059,6 +1059,38 @@ ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2017:
 ZH_ZToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.554
   nnlo: 0.7544
+Z1JetsToNuNu_M-50_LHEFilterPtZ-150To250_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 17.5
+Z1JetsToNuNu_M-50_LHEFilterPtZ-150To250_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 17.43
+Z1JetsToNuNu_M-50_LHEFilterPtZ-250To400_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 1.975
+Z1JetsToNuNu_M-50_LHEFilterPtZ-250To400_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 1.996
+Z1JetsToNuNu_M-50_LHEFilterPtZ-400ToInf_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 0.2151
+Z1JetsToNuNu_M-50_LHEFilterPtZ-400ToInf_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 0.2165
+Z1JetsToNuNu_M-50_LHEFilterPtZ-50To150_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 580.6
+Z1JetsToNuNu_M-50_LHEFilterPtZ-50To150_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 581.5
+Z2JetsToNuNu_M-50_LHEFilterPtZ-150To250_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 28.32
+Z2JetsToNuNu_M-50_LHEFilterPtZ-150To250_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 28.88
+Z2JetsToNuNu_M-50_LHEFilterPtZ-250To400_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 5.027
+Z2JetsToNuNu_M-50_LHEFilterPtZ-250To400_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 5.011
+Z2JetsToNuNu_M-50_LHEFilterPtZ-400ToInf_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 0.8139
+Z2JetsToNuNu_M-50_LHEFilterPtZ-400ToInf_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 0.8166
+Z2JetsToNuNu_M-50_LHEFilterPtZ-50To150_MatchEWPDG20-amcatnloFXFX_2017:
+  gen: 313.6
+Z2JetsToNuNu_M-50_LHEFilterPtZ-50To150_MatchEWPDG20-amcatnloFXFX_2018:
+  gen: 315.9
 ZJetsToNuNu_HT-100To200-mg_2016:
   gen: 93.51
 ZJetsToNuNu_HT-100To200-mg_ext1_2016:
