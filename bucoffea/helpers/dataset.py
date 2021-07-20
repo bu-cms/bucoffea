@@ -21,7 +21,7 @@ def is_lo_g(dataset):
     return bool(re.match(r'GJets.*HT.*', dataset))
 
 def is_lo_g_ewk(dataset):
-    return bool(re.match(r'GJets.*EWK.*', dataset))
+    return bool(re.match(r'VBFGamma_5f.*', dataset))
 
 def is_nlo_g(dataset):
     return bool(re.match(r'G(\d)*Jet.*(amc|NLO).*', dataset))
