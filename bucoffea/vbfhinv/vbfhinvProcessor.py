@@ -274,6 +274,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('small_met', met_pt<50)
 
+        selection.add('calo_metptnolep', df['CaloRecoil_pt'] > 200)
+
         # Relaxed recoil cut for Zmm region
         selection.add('recoil_zmm', df['recoil_pt']>100)
 

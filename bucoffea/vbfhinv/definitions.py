@@ -393,6 +393,12 @@ def vbfhinv_regions(cfg):
     # cr_2e_cuts.remove('veto_ele')
     regions['cr_2e_vbf'] = cr_2e_cuts
 
+    # Z CRs with CaloMETNoLep cut
+    if cfg.RUN.CALOMET_CHECK:
+        for r in ['cr_2e_vbf', 'cr_2m_vbf']:
+            regions[f'{r}_calocut'] = copy.deepcopy(regions[r])
+            regions[f'{r}_calocut'].append('calo_metptnolep')
+
     # Single electron CR
     cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:] + ['dpfcalo_cr', 'no_el_in_hem']
     # cr_1e_cuts.remove('veto_ele')

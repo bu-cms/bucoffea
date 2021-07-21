@@ -228,6 +228,7 @@ default:
     qcd_estimation: True
     save_hf_variables: False
     rebsmear_check: False
+    calomet_check: False
     apply_cleaning_cuts: False
     regionregex: .*
     apply_hf_cuts: True
