@@ -230,6 +230,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Recoil
         df['recoil_pt_uncorr'], df['recoil_phi_uncorr'] = recoil(met_pt_uncorr, met_phi_uncorr, electrons, muons, photons)
         df['recoil_pt'], df['recoil_phi'] = recoil(met_pt,met_phi, electrons, muons, photons)
+        df['CaloRecoil_pt'], df['CaloRecoil_phi'] = recoil(df["CaloMET_pt"],df["CaloMET_phi"], electrons, muons, photons)
 
         df["dPFCaloSR"] = (met_pt - df["CaloMET_pt"]) / met_pt
         df["dPFCaloCR"] = (met_pt - df["CaloMET_pt"]) / df["recoil_pt"]
@@ -891,8 +892,8 @@ class vbfhinvProcessor(processor.ProcessorABC):
             # MET
             ezfill('dpfcalo_cr',            dpfcalo=df["dPFCaloCR"][mask],       weight=rweight[mask] )
             ezfill('dpfcalo_sr',            dpfcalo=df["dPFCaloSR"][mask],       weight=rweight[mask] )
-            ezfill('calomet_pt',         met=df["CaloMET_pt"][mask],             weight=rweight[mask] )
-            ezfill('calomet_phi',        phi=df["CaloMET_phi"][mask],            weight=rweight[mask] )
+            ezfill('calomet_pt',         met=df["CaloRecoil_pt"][mask],             weight=rweight[mask] )
+            ezfill('calomet_phi',        phi=df["CaloRecoil_phi"][mask],            weight=rweight[mask] )
             ezfill('met',                met=met_pt[mask],            weight=rweight[mask] )
             ezfill('met_phi',            phi=met_phi[mask],           weight=rweight[mask] )
             ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=rweight[mask] )
