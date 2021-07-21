@@ -34,6 +34,8 @@ common_distributions = [
     'dphijr',
     'ak4_central_eta',
     'ak4_forward_eta',
+    'calomet_pt',
+    'calomet_phi',
 ]
 
 # Distributions to plot for each region
