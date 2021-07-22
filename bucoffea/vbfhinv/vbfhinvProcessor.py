@@ -706,6 +706,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["dphi_ak40_met"]     +=  processor.column_accumulator(np.float16(df["dphi_ak40_met"][mask]))
                     output['tree_float16'][region]["dphi_ak41_met"]     +=  processor.column_accumulator(np.float16(df["dphi_ak41_met"][mask]))
 
+                    if gen_v_pt is not None:
+                        output['tree_float16'][region]["gen_boson_pt"]  +=  processor.column_accumulator(np.float16(gen_v_pt[mask]))
+
                     output['tree_float16'][region]["htmiss"]            +=  processor.column_accumulator(np.float16(df['htmiss'][mask]))
                     output['tree_float16'][region]["ht"]                +=  processor.column_accumulator(np.float16(df['ht'][mask]))
                     output['tree_float16'][region]["vecb"]              +=  processor.column_accumulator(np.float16(vec_b[mask]))
