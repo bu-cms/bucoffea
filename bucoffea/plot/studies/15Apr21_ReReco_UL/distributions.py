@@ -16,6 +16,7 @@ common_distributions = [
     'ak4_pt1',
     'ak4_central_eta',
     'ak4_forward_eta',
+    'dphijr',
     # 'ak4_phi0',
     # 'ak4_phi1',
     # 'ak4_nef0',
@@ -33,7 +34,6 @@ common_distributions = [
     # 'met_phi',
     # 'ak4_mult',
     # 'extra_ak4_mult',
-    # 'dphijr',
     # 'calomet_pt',
     # 'calomet_phi',
 ]
