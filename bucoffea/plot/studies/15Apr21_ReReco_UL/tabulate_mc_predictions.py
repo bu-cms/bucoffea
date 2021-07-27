@@ -30,7 +30,7 @@ HEADERS = [
     '>3500',
 ]
 
-def tabulate_bkg_predictions(acc,outtag,region='sr_vbf_no_veto_all', isUL=True):
+def tabulate_bkg_predictions(acc,outtag,region='sr_vbf_no_veto_all', isUL=True, nlomc=True, latextable=True):
     '''Tabulate bkg predictions from MC in the SR.'''
     distribution='mjj'
     acc.load(distribution)
@@ -46,21 +46,33 @@ def tabulate_bkg_predictions(acc,outtag,region='sr_vbf_no_veto_all', isUL=True):
 
     h = h.integrate('region', region)
 
-    outdir = f'./output/prediction_tables'
+    outdir = f'./output/{outtag}/prediction_tables'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
     for year in [2017, 2018]:
-        datasets = [
-            ('QCD Z(vv)',   re.compile(f'ZJetsToNuNu.*{year}')),
-            ('EWK Z(vv)',   re.compile(f'EWKZ2Jets.*ZToNuNu.*{year}')),
-            ('QCD W(lv)',  re.compile(f'WJetsToLNu_HT.*{year}')),
-            ('EWK W(lv)',  re.compile(f'EWKW2Jets.*{year}')),
-            ('QCD Z(ll)', re.compile(f'DYJetsToLL.*HT.*{year}')),
-            ('EWK Z(ll)', re.compile(f'EWKZ2Jets.*ZToLL.*{year}')),
-            ('Top', f'Top_FXFX_{year}'),
-            ('Diboson', f'Diboson_{year}'),
-        ]
+        if not nlomc:
+            datasets = [
+                ('QCD Z(vv)',   re.compile(f'ZJetsToNuNu_HT.*{year}')),
+                ('EWK Z(vv)',   re.compile(f'EWKZ2Jets.*ZToNuNu.*{year}')),
+                ('QCD W(lv)',   re.compile(f'WJetsToLNu_HT.*{year}')),
+                ('EWK W(lv)',   re.compile(f'EWKW2Jets.*{year}')),
+                ('QCD Z(ll)',   re.compile(f'DYJetsToLL.*HT.*{year}')),
+                ('EWK Z(ll)',   re.compile(f'EWKZ2Jets.*ZToLL.*{year}')),
+                ('Top',     f'Top_FXFX_{year}'),
+                ('Diboson', f'Diboson_{year}'),
+            ]
+        else:
+            datasets = [
+                ('QCD Z(vv)',   re.compile(f'ZNJetsToNuNu.*LHEFilterPtZ.*{year}')),
+                ('EWK Z(vv)',   re.compile(f'EWKZ2Jets.*ZToNuNu.*{year}')),
+                ('QCD W(lv)',   re.compile(f'WJetsToLNu_Pt-FXFX.*{year}')),
+                ('EWK W(lv)',   re.compile(f'EWKW2Jets.*{year}')),
+                ('QCD Z(ll)',   re.compile(f'DYJetsToLL_Pt.*{year}')),
+                ('EWK Z(ll)',   re.compile(f'EWKZ2Jets.*ZToLL.*{year}')),
+                ('Top',     f'Top_FXFX_{year}'),
+                ('Diboson', f'Diboson_{year}'),
+            ]
 
         table = []
         d_sumw = {}
@@ -102,16 +114,21 @@ def tabulate_bkg_predictions(acc,outtag,region='sr_vbf_no_veto_all', isUL=True):
         table.append(data_to_add)
 
         # Write the table to an output file
-        outpath = pjoin(outdir, f'table_{year}_{"ul" if isUL else "eoy"}.txt')
+        outpath = pjoin(outdir, f'table_{year}_{"ul" if isUL else "eoy"}{"_latex" if latextable else ""}.txt')
         with open(outpath, 'w+') as f:
             f.write(f'Job tag: {outtag}')
             f.write('\n')
             f.write(f'{"UL" if isUL else "EOY"}')
             f.write('\n')
             
-            f.write(
-                tabulate.tabulate(table, headers=HEADERS, floatfmt=".1f")
-            )
+            if latextable:
+                f.write(
+                    tabulate.tabulate(table, headers=HEADERS, floatfmt=".1f", tablefmt='latex_raw')
+                )
+            else:
+                f.write(
+                    tabulate.tabulate(table, headers=HEADERS, floatfmt=".1f")
+                )
 
         print(f'File saved: {outpath}')
 
