@@ -5,6 +5,7 @@ from bucoffea.plot.util import acc_from_dir
 from klepto.archives import dir_archive
 import argparse
 from datetime import datetime
+from bucoffea.helpers.git import git_rev_parse, git_diff
 pjoin = os.path.join
 
 def parse_commandline():
@@ -50,6 +51,11 @@ def main():
     infofile = pjoin(outdir, 'INFO.txt')
     with open(infofile, 'w+') as f:
         f.write(f'Limit input creation: {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}\n')
+        f.write('Repo information:\n')
+
+        f.write(git_rev_parse()+'\n')
+        f.write(git_diff()+'\n')
+
         f.write('Command line arguments:\n\n')
         cli = vars(args)
         for arg, val in cli.items():
