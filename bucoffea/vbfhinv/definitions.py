@@ -635,10 +635,6 @@ def hfmask_sf(ak4, weights, evaluator, df, cfg):
     hfak4.pt[jetmask_1] = np.minimum(299., hfak4.pt[jetmask_1])
     hfak4.pt[jetmask_2] = np.minimum(199., hfak4.pt[jetmask_2])
 
-    print(hfak4.pt)
-    print(hfak4.pt[jetmask_1])
-    print(hfak4.pt[jetmask_2])
-
     sf = evaluator['hf_cuts_sf'](hfak4.abseta, hfak4.pt).prod()
     weights.add('hfmask_sf', sf)
     return weights
