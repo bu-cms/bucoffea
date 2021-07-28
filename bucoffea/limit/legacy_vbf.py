@@ -4,6 +4,8 @@ import os
 import re
 import numpy as np
 from collections import defaultdict
+from tabulate import tabulate
+from tqdm import tqdm
 
 import uproot
 from coffea import hist
@@ -213,42 +215,58 @@ def legacy_limit_input_vbf(acc, outdir='./output', unblind=False, years=[2017, 2
     scale_xs_lumi(h, ulxs=ulxs)
     h = merge_datasets(h)
 
-    for year in years:
-        f = uproot.recreate(pjoin(outdir, f'legacy_limit_vbf_{year}.root'))
-        data, mc = datasets(year, unblind=unblind, nlo=nlo)
-        for region in regions:
-            print('='*20)
-            print(f'Region {region}')
-            print('='*20)
-            tag = region.split('_')[0]
+    for year in tqdm(years):
+        # Dump dataset mapping into txt files
+        infofile = pjoin(outdir, f'dataset_mapping_{year}.txt')
+        with open(infofile, 'w+') as infolog:
 
-            ih = h.integrate(h.axis('region'),region)
+            f = uproot.recreate(pjoin(outdir, f'legacy_limit_vbf_{year}.root'))
+            data, mc = datasets(year, unblind=unblind, nlo=nlo)
+            for region in regions:
+                # print('='*20)
+                # print(f'Region {region}')
+                # print('='*20)
+                tag = region.split('_')[0]
 
-            for dataset in map(str, h.axis('dataset').identifiers()):
-                if not (data[region].match(dataset) or mc[region].match(dataset)):
-                    # Insert dummy data for the signal region
-                    if region == 'sr_vbf' and re.match('ZJetsToNuNu.*', dataset) and not unblind:
-                        th1 = export_coffea_histogram(ih.integrate('dataset', dataset))
-                        histo_name = 'signal_data'
-                        f[histo_name] = th1
+                ih = h.integrate(h.axis('region'),region)
+
+                table = {
+                    'Dataset name': [],
+                    'Histogram name': [],
+                }
+
+                for dataset in map(str, h.axis('dataset').identifiers()):
+                    if not (data[region].match(dataset) or mc[region].match(dataset)):
+                        # Insert dummy data for the signal region
+                        if region == 'sr_vbf' and re.match('ZJetsToNuNu.*', dataset) and not unblind:
+                            th1 = export_coffea_histogram(ih.integrate('dataset', dataset))
+                            histo_name = 'signal_data'
+                            f[histo_name] = th1
+                            continue
+                        else:
+                            continue
+                    # print(f"Dataset: {dataset}")
+
+                    h_cof = ih.integrate('dataset', dataset)
+                    if one_fifth_unblind and region == 'sr_vbf_no_veto_all':
+                        h_cof.scale(0.2)
+                    th1 = export_coffea_histogram(h_cof)
+                    try:
+                        histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name_vbf(dataset)}'
+                        # print(f'Saved under histogram: {histo_name}')
+                        table['Dataset name'].append(dataset)
+                        table['Histogram name'].append(legacy_dataset_name_vbf(dataset))
+                    except:
+                        print(f"Skipping {dataset}")
                         continue
-                    else:
-                        continue
-                print(f"Dataset: {dataset}")
 
-                h_cof = ih.integrate('dataset', dataset)
-                if one_fifth_unblind and region == 'sr_vbf_no_veto_all':
-                    h_cof.scale(0.2)
-                th1 = export_coffea_histogram(h_cof)
-                try:
-                    histo_name = f'{legacy_region_name(region)}_{legacy_dataset_name_vbf(dataset)}'
-                    print(f'Saved under histogram: {histo_name}')
-                except:
-                    print(f"Skipping {dataset}")
-                    continue
+                    # print('-'*20)
+                    f[histo_name] = th1
 
-                print('-'*20)
-                f[histo_name] = th1
+                infolog.write(f'Region: {region}\n\n')
+                infolog.write(tabulate(table, headers='keys'))
+                infolog.write('\n\n')
+        
         if not unblind:
             f[f'{legacy_region_name("sr_vbf")}_data'] = f[f'{legacy_region_name("sr_vbf")}_qcdzjets']
     merge_legacy_inputs(outdir)
