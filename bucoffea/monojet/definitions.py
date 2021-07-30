@@ -913,6 +913,23 @@ def photon_trigger_sf(weights, photons, df):
 
     weights.add("trigger_photon", sf)
 
+def gen_match_check_leptons(leptons, weights, tau=False):
+    '''
+    Return the updated lepton weight after checking if the leptons in the event are matched to a proper GEN-level lepton.
+    For gen-matching on taus, use tau=True, otherwise use tau=False.
+    '''
+    # For muons and electrons, we require the gen particle flavor to be non-zero
+    if not tau:
+        gen_match_ok = (leptons.counts == 0) | ((leptons.genpartflav != 0).all() )
+    # For taus, we require the gen particle flavor to be exactly 5
+    else:
+        gen_match_ok = (leptons.counts == 0) | ((leptons.genpartflav == 5).all() )
+
+    # If an event does not pass lepton gen-matching, assign a weight of 1 (e.g. discard the lepton weight)
+    new_weights = np.where(gen_match_ok, weights, 1.)
+
+    return new_weights
+
 def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     year = extract_year(df['dataset'])
     # Muon ID and Isolation for tight and loose WP
@@ -933,7 +950,10 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
         weights_2m_tight = 0.5*( l0 * t1 + l1 * t0)
         weights.add("muon_id_iso_tight", weight_muons_id_tight*weight_muons_iso_tight*(tight_dimuons.counts!=1) + weights_2m_tight*(tight_dimuons.counts==1))
     else:
-        weights.add("muon_id_iso_tight", weight_muons_id_tight*weight_muons_iso_tight )
+        w_muon_id_iso_tight = weight_muons_id_tight*weight_muons_iso_tight
+        w_muon_id_iso_tight = gen_match_check_leptons(muons[df['is_tight_muon']], w_muon_id_iso_tight)
+        
+        weights.add("muon_id_iso_tight", w_muon_id_iso_tight )
 
     weights.add("muon_id_loose", evaluator['muon_id_loose'](muons[~df['is_tight_muon']].abseta, muons[~df['is_tight_muon']].pt).prod())
     weights.add("muon_iso_loose", evaluator['muon_iso_loose'](muons[~df['is_tight_muon']].abseta, muons[~df['is_tight_muon']].pt).prod())
@@ -950,6 +970,7 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     else:
         ele_reco_sf = evaluator['ele_reco'](electrons.etasc, electrons.pt).prod()
     
+    ele_reco_sf = gen_match_check_leptons(electrons, ele_reco_sf)
     weights.add("ele_reco", ele_reco_sf)
     # ID/iso SF is not split
     # in case of 2 tight electrons, we want to apply 0.5*(T1L2+T2L1) instead of T1T2
@@ -963,8 +984,12 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
         weights_2e_tight = 0.5*( l0 * t1 + l1 * t0)
         weights.add("ele_id_tight", weights_electrons_tight*(tight_dielectrons.counts!=1) + weights_2e_tight*(tight_dielectrons.counts==1))
     else:
+        weights_electrons_tight = gen_match_check_leptons(electrons[df['is_tight_electron']], weights_electrons_tight)
         weights.add("ele_id_tight", weights_electrons_tight)
-    weights.add("ele_id_loose", evaluator['ele_id_loose'](electrons[~df['is_tight_electron']].etasc, electrons[~df['is_tight_electron']].pt).prod())
+    
+    weights_electrons_loose = evaluator['ele_id_loose'](electrons[~df['is_tight_electron']].etasc, electrons[~df['is_tight_electron']].pt).prod()
+    weights_electrons_loose = gen_match_check_leptons(electrons[~df['is_tight_electron']], weights_electrons_loose)
+    weights.add("ele_id_loose", weights_electrons_loose)
 
     # Photon ID and electron veto
     if cfg.SF.PHOTON.USETNP:
