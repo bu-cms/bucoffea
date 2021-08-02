@@ -619,7 +619,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
                             "ele_id_loose",
                             "tau_id"
                         ]
-                    region_weights.add("veto",veto_weights.partial_weight(include=["nominal"]))
+                    region_weights.add("veto_ele",veto_weights.partial_weight(include=["veto_ele"]))
+                    region_weights.add("veto_muo",veto_weights.partial_weight(include=["veto_muo"]))
+                    region_weights.add("veto_tau",veto_weights.partial_weight(include=["veto_tau"]))
 
                 # SR without prefiring weights applied
                 if region == 'sr_vbf_no_pref':
