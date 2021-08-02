@@ -206,7 +206,7 @@ def btag_weights(bjets, cfg):
                         systematic=variation,
                         flavor=bjets.hadflav,
                         abseta=bjets.abseta,
-                        pt=bjets.pt / bjets.jercorr,
+                        pt=bjets.ptnano,
                         ignore_missing=True)
 
         # Cap the weights just in case

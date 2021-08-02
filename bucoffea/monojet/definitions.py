@@ -419,6 +419,7 @@ def setup_candidates(df, cfg):
     ak4 = JaggedCandidateArray.candidatesfromcounts(
         df['nJet'],
         pt=df[f'Jet_pt{jes_suffix}'] if (df['is_data'] or cfg.AK4.JER) else df[f'Jet_pt{jes_suffix}']/df['Jet_corr_JER'],
+        ptnano=df['Jet_pt'],
         eta=df['Jet_eta'],
         abseta=np.abs(df['Jet_eta']),
         phi=df['Jet_phi'],
@@ -467,7 +468,7 @@ def setup_candidates(df, cfg):
     btag_discriminator = getattr(ak4, cfg.BTAG.algo)
     btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
     bjets = ak4[
-        (ak4.pt > cfg.BTAG.PT) \
+        (ak4.ptnano > cfg.BTAG.PT) \
         & (ak4.abseta < cfg.BTAG.ETA) \
         & (btag_discriminator > btag_cut)
     ]
