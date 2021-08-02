@@ -657,7 +657,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
             mask = selection.all(*cuts)
 
             if cfg.RUN.SAVE.TREE:
-                if region in ['sr_vbf', 'sr_vbf_no_veto_all']:
+                if (region == 'sr_vbf' and df['is_data']) or region == 'sr_vbf_no_veto_all': 
                     output['tree_int64'][region]["event"]             +=  processor.column_accumulator(df["event"][mask])
                     output['tree_int64'][region]["run"]               +=  processor.column_accumulator(df["run"][mask])
                     output['tree_int64'][region]["lumi"]              +=  processor.column_accumulator(df["luminosityBlock"][mask])
@@ -720,30 +720,46 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["nLooseMuon"]        +=  processor.column_accumulator(np.float16(muons.counts[mask]))
                     output['tree_float16'][region]["nLooseElectron"]    +=  processor.column_accumulator(np.float16(electrons.counts[mask]))
                     output['tree_float16'][region]["nLooseTau"]         +=  processor.column_accumulator(np.float16(taus.counts[mask]))
+                    output['tree_float16'][region]["nMediumBJet"]       +=  processor.column_accumulator(np.float16(bjets.counts[mask]))
                     
-                    event_has_ele = electrons[mask].counts != 0
-                    ele_pt = np.where(event_has_ele, electrons.pt.max()[mask], -999)
-                    ele_eta = np.where(event_has_ele, electrons[electrons.pt.argmax()].eta.max()[mask], -999)
-                    ele_phi = np.where(event_has_ele, electrons[electrons.pt.argmax()].phi.max()[mask], -999)
+                    if is_lo_z(dataset) or is_lo_z_ewk(dataset): 
+                        output['tree_float16'][region]["lead_muon_pt"]   +=  processor.column_accumulator(dimuons.i0.pt[mask].flatten())
+                        output['tree_float16'][region]["lead_muon_eta"]  +=  processor.column_accumulator(dimuons.i0.eta[mask].flatten())
+                        output['tree_float16'][region]["lead_muon_phi"]  +=  processor.column_accumulator(dimuons.i0.phi[mask].flatten())
+                        output['tree_float16'][region]["trail_muon_pt"]   +=  processor.column_accumulator(dimuons.i1.pt[mask].flatten())
+                        output['tree_float16'][region]["trail_muon_eta"]  +=  processor.column_accumulator(dimuons.i1.eta[mask].flatten())
+                        output['tree_float16'][region]["trail_muon_phi"]  +=  processor.column_accumulator(dimuons.i1.phi[mask].flatten())
 
-                    event_has_mu = muons[mask].counts != 0
-                    mu_pt = np.where(event_has_mu, muons.pt.max()[mask], -999)
-                    mu_eta = np.where(event_has_mu, muons[muons.pt.argmax()].eta.max()[mask], -999)
-                    mu_phi = np.where(event_has_mu, muons[muons.pt.argmax()].phi.max()[mask], -999)
+                        output['tree_float16'][region]["lead_electron_pt"]   +=  processor.column_accumulator(dielectrons.i0.pt[mask].flatten())
+                        output['tree_float16'][region]["lead_electron_eta"]  +=  processor.column_accumulator(dielectrons.i0.eta[mask].flatten())
+                        output['tree_float16'][region]["lead_electron_phi"]  +=  processor.column_accumulator(dielectrons.i0.phi[mask].flatten())
+                        output['tree_float16'][region]["trail_electron_pt"]   +=  processor.column_accumulator(dielectrons.i1.pt[mask].flatten())
+                        output['tree_float16'][region]["trail_electron_eta"]  +=  processor.column_accumulator(dielectrons.i1.eta[mask].flatten())
+                        output['tree_float16'][region]["trail_electron_phi"]  +=  processor.column_accumulator(dielectrons.i1.phi[mask].flatten())
 
-                    output['tree_float16'][region]["lead_ele_pt"]   +=  processor.column_accumulator(ele_pt)
-                    output['tree_float16'][region]["lead_ele_eta"]   +=  processor.column_accumulator(ele_eta)
-                    output['tree_float16'][region]["lead_ele_phi"]   +=  processor.column_accumulator(ele_phi)
+                    if is_lo_w(dataset) or is_lo_w_ewk(dataset):
+                        output['tree_float16'][region]["lead_muon_pt"]   +=  processor.column_accumulator(muons[leadmuon_index].pt[mask].max())
+                        output['tree_float16'][region]["lead_muon_eta"]  +=  processor.column_accumulator(muons[leadmuon_index].eta[mask].max())
+                        output['tree_float16'][region]["lead_muon_phi"]  +=  processor.column_accumulator(muons[leadmuon_index].phi[mask].max())
+                        output['tree_float16'][region]["trail_muon_pt"]   +=  processor.column_accumulator(-999. * np.ones_like(muons[leadmuon_index].pt[mask].max()))
+                        output['tree_float16'][region]["trail_muon_eta"]  +=  processor.column_accumulator(-999. * np.ones_like(muons[leadmuon_index].pt[mask].max()))
+                        output['tree_float16'][region]["trail_muon_phi"]  +=  processor.column_accumulator(-999. * np.ones_like(muons[leadmuon_index].pt[mask].max()))
 
-                    output['tree_float16'][region]["lead_muon_pt"]   +=  processor.column_accumulator(mu_pt)
-                    output['tree_float16'][region]["lead_muon_eta"]   +=  processor.column_accumulator(mu_eta)
-                    output['tree_float16'][region]["lead_muon_phi"]   +=  processor.column_accumulator(mu_phi)
 
-                    if not df['is_data']:                    
-                        ele_genpartflav = np.where(event_has_ele, electrons[electrons.pt.argmax()].genpartflav.max()[mask], -999)
-                        mu_genpartflav = np.where(event_has_mu, muons[muons.pt.argmax()].genpartflav.max()[mask], -999)
-                        output['tree_float16'][region]["lead_ele_genpartflav"]   +=  processor.column_accumulator(ele_genpartflav)
-                        output['tree_float16'][region]["lead_muon_genpartflav"]   +=  processor.column_accumulator(mu_genpartflav)
+                        output['tree_float16'][region]["lead_electron_pt"]   +=  processor.column_accumulator(electrons[leadelectron_index].pt[mask].max())
+                        output['tree_float16'][region]["lead_electron_eta"]  +=  processor.column_accumulator(electrons[leadelectron_index].eta[mask].max())
+                        output['tree_float16'][region]["lead_electron_phi"]  +=  processor.column_accumulator(electrons[leadelectron_index].phi[mask].max())
+                        output['tree_float16'][region]["trail_electron_pt"]   +=  processor.column_accumulator(-999. * np.ones_like(electrons[leadelectron_index].pt[mask].max()))
+                        output['tree_float16'][region]["trail_electron_eta"]  +=  processor.column_accumulator(-999. * np.ones_like(electrons[leadelectron_index].pt[mask].max()))
+                        output['tree_float16'][region]["trail_electron_phi"]  +=  processor.column_accumulator(-999. * np.ones_like(electrons[leadelectron_index].pt[mask].max()))
+
+                    event_has_bjets = bjets[mask].counts != 0
+                    bjet_pt = np.where(event_has_bjets, bjets.pt.max()[mask], -999)
+                    bjet_eta = np.where(event_has_bjets, bjets[bjets.pt.argmax()].eta.max()[mask], -999)
+                    bjet_phi = np.where(event_has_bjets, bjets[bjets.pt.argmax()].phi.max()[mask], -999)
+                    output['tree_float16'][region]["lead_bjet_pt"]   +=  processor.column_accumulator(bjet_pt)
+                    output['tree_float16'][region]["lead_bjet_eta"]  +=  processor.column_accumulator(bjet_eta)
+                    output['tree_float16'][region]["lead_bjet_phi"]  +=  processor.column_accumulator(bjet_phi)
 
                     for name, w in region_weights._weights.items():
                         output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w[mask]))
