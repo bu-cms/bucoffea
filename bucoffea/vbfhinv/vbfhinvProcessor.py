@@ -768,7 +768,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["lead_bjet_phi"]  +=  processor.column_accumulator(bjet_phi)
 
                     for name, w in region_weights._weights.items():
-                        output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float16(w[mask]))
+                        output['tree_float16'][region][f"weight_{name}"] += processor.column_accumulator(np.float32(w[mask]))
                     
                     output['tree_float16'][region][f"weight_total"] += processor.column_accumulator(np.float16(rweight[mask]))
 
