@@ -722,36 +722,42 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["nLooseTau"]         +=  processor.column_accumulator(np.float16(taus.counts[mask]))
                     output['tree_float16'][region]["nMediumBJet"]       +=  processor.column_accumulator(np.float16(bjets.counts[mask]))
                     
-                    if is_lo_z(dataset) or is_lo_z_ewk(dataset): 
-                        output['tree_float16'][region]["lead_muon_pt"]   +=  processor.column_accumulator(dimuons.i0.pt[mask].flatten())
-                        output['tree_float16'][region]["lead_muon_eta"]  +=  processor.column_accumulator(dimuons.i0.eta[mask].flatten())
-                        output['tree_float16'][region]["lead_muon_phi"]  +=  processor.column_accumulator(dimuons.i0.phi[mask].flatten())
-                        output['tree_float16'][region]["trail_muon_pt"]   +=  processor.column_accumulator(dimuons.i1.pt[mask].flatten())
-                        output['tree_float16'][region]["trail_muon_eta"]  +=  processor.column_accumulator(dimuons.i1.eta[mask].flatten())
-                        output['tree_float16'][region]["trail_muon_phi"]  +=  processor.column_accumulator(dimuons.i1.phi[mask].flatten())
+                    # Check for loose leptons in SR
+                    event_has_at_least_one_muon = muons.counts > 0
+                    event_has_at_least_two_muons = muons.counts > 1
 
-                        output['tree_float16'][region]["lead_electron_pt"]   +=  processor.column_accumulator(dielectrons.i0.pt[mask].flatten())
-                        output['tree_float16'][region]["lead_electron_eta"]  +=  processor.column_accumulator(dielectrons.i0.eta[mask].flatten())
-                        output['tree_float16'][region]["lead_electron_phi"]  +=  processor.column_accumulator(dielectrons.i0.phi[mask].flatten())
-                        output['tree_float16'][region]["trail_electron_pt"]   +=  processor.column_accumulator(dielectrons.i1.pt[mask].flatten())
-                        output['tree_float16'][region]["trail_electron_eta"]  +=  processor.column_accumulator(dielectrons.i1.eta[mask].flatten())
-                        output['tree_float16'][region]["trail_electron_phi"]  +=  processor.column_accumulator(dielectrons.i1.phi[mask].flatten())
+                    lead_muon_pt = -999. * np.ones(df.size)
+                    lead_muon_eta = -999. * np.ones(df.size)
+                    lead_muon_pt[event_has_at_least_one_muon] = muons[event_has_at_least_one_muon].pt[:,0].flatten()
+                    lead_muon_eta[event_has_at_least_one_muon] = muons[event_has_at_least_one_muon].eta[:,0].flatten()
 
-                    if is_lo_w(dataset) or is_lo_w_ewk(dataset):
-                        output['tree_float16'][region]["lead_muon_pt"]   +=  processor.column_accumulator(muons[leadmuon_index].pt[mask].max())
-                        output['tree_float16'][region]["lead_muon_eta"]  +=  processor.column_accumulator(muons[leadmuon_index].eta[mask].max())
-                        output['tree_float16'][region]["lead_muon_phi"]  +=  processor.column_accumulator(muons[leadmuon_index].phi[mask].max())
-                        output['tree_float16'][region]["trail_muon_pt"]   +=  processor.column_accumulator(-999. * np.ones_like(muons[leadmuon_index].pt[mask].max()))
-                        output['tree_float16'][region]["trail_muon_eta"]  +=  processor.column_accumulator(-999. * np.ones_like(muons[leadmuon_index].pt[mask].max()))
-                        output['tree_float16'][region]["trail_muon_phi"]  +=  processor.column_accumulator(-999. * np.ones_like(muons[leadmuon_index].pt[mask].max()))
+                    trail_muon_pt = -999. * np.ones(df.size)
+                    trail_muon_eta = -999. * np.ones(df.size)
+                    trail_muon_pt[event_has_at_least_two_muons] = muons[event_has_at_least_two_muons].pt[:,1].flatten()
+                    trail_muon_eta[event_has_at_least_two_muons] = muons[event_has_at_least_two_muons].eta[:,1].flatten()
 
+                    output['tree_float16'][region]["lead_muon_pt"]   +=  processor.column_accumulator(lead_muon_pt[mask])
+                    output['tree_float16'][region]["lead_muon_eta"]  +=  processor.column_accumulator(lead_muon_eta[mask])
+                    output['tree_float16'][region]["trail_muon_pt"]   +=  processor.column_accumulator(trail_muon_pt[mask])
+                    output['tree_float16'][region]["trail_muon_eta"]  +=  processor.column_accumulator(trail_muon_eta[mask])
 
-                        output['tree_float16'][region]["lead_electron_pt"]   +=  processor.column_accumulator(electrons[leadelectron_index].pt[mask].max())
-                        output['tree_float16'][region]["lead_electron_eta"]  +=  processor.column_accumulator(electrons[leadelectron_index].eta[mask].max())
-                        output['tree_float16'][region]["lead_electron_phi"]  +=  processor.column_accumulator(electrons[leadelectron_index].phi[mask].max())
-                        output['tree_float16'][region]["trail_electron_pt"]   +=  processor.column_accumulator(-999. * np.ones_like(electrons[leadelectron_index].pt[mask].max()))
-                        output['tree_float16'][region]["trail_electron_eta"]  +=  processor.column_accumulator(-999. * np.ones_like(electrons[leadelectron_index].pt[mask].max()))
-                        output['tree_float16'][region]["trail_electron_phi"]  +=  processor.column_accumulator(-999. * np.ones_like(electrons[leadelectron_index].pt[mask].max()))
+                    event_has_at_least_one_electron = electrons.counts > 0
+                    event_has_at_least_two_electrons = electrons.counts > 1
+
+                    lead_electron_pt = -999. * np.ones(df.size)
+                    lead_electron_eta = -999. * np.ones(df.size)
+                    lead_electron_pt[event_has_at_least_one_electron] = electrons[event_has_at_least_one_electron].pt[:,0].flatten()
+                    lead_electron_eta[event_has_at_least_one_electron] = electrons[event_has_at_least_one_electron].eta[:,0].flatten()
+
+                    trail_electron_pt = -999. * np.ones(df.size)
+                    trail_electron_eta = -999. * np.ones(df.size)
+                    trail_electron_pt[event_has_at_least_two_electrons] = electrons[event_has_at_least_two_electrons].pt[:,1].flatten()
+                    trail_electron_eta[event_has_at_least_two_electrons] = electrons[event_has_at_least_two_electrons].eta[:,1].flatten()
+
+                    output['tree_float16'][region]["lead_electron_pt"]   +=  processor.column_accumulator(lead_electron_pt[mask])
+                    output['tree_float16'][region]["lead_electron_eta"]  +=  processor.column_accumulator(lead_electron_eta[mask])
+                    output['tree_float16'][region]["trail_electron_pt"]   +=  processor.column_accumulator(trail_electron_pt[mask])
+                    output['tree_float16'][region]["trail_electron_eta"]  +=  processor.column_accumulator(trail_electron_eta[mask])
 
                     event_has_bjets = bjets[mask].counts != 0
                     bjet_pt = np.where(event_has_bjets, bjets.pt.max()[mask], -999)
