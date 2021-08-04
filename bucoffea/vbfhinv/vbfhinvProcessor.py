@@ -535,6 +535,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         if cfg.RUN.KINEMATICS.SAVE:
             for event in cfg.RUN.KINEMATICS.EVENTS:
                 mask = df['event'] == event
+
                 if not mask.any():
                     continue
                 output['kinematics']['event'] += [event]
@@ -546,6 +547,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt]
                 output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta]
                 output['kinematics']['leadbtag'] += [ak4.pt.max()<0][mask]
+
+                output['kinematics']['nMediumBJets'] += [bjets.counts[mask]]
+                output['kinematics']['bjetPt0'] += [bjets[bjets.pt.argmax()].pt[mask]]
+                output['kinematics']['bjetEta0'] += [bjets[bjets.pt.argmax()].eta[mask]]
+                output['kinematics']['bjetCSV0'] += [bjets[bjets.pt.argmax()].deepcsv[mask]]
 
                 output['kinematics']['nLooseMu'] += [muons.counts[mask]]
                 output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask]]
