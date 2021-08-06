@@ -244,6 +244,26 @@ class monojetProcessor(processor.ProcessorABC):
         df["vec_b"]    = calculate_vecB(ak4, met_pt, met_phi)
         df["vec_dphi"] = calculate_vecDPhi(ak4, met_pt, met_phi, df['TkMET_phi'])
 
+        # VBF veto
+        diak4 = ak4[:,:2].distincts()
+        leadak4_pt_eta = (diak4.i0.pt > cfg.SELECTION.SIGNAL.LEADAK4.PT) & (np.abs(diak4.i0.eta) < cfg.SELECTION.SIGNAL.LEADAK4.ETA)
+        trailak4_pt_eta = (diak4.i1.pt > cfg.SELECTION.SIGNAL.TRAILAK4.PT) & (np.abs(diak4.i1.eta) < cfg.SELECTION.SIGNAL.TRAILAK4.ETA)
+        hemisphere = (diak4.i0.eta * diak4.i1.eta < 0).any()
+        has_track0 = np.abs(diak4.i0.eta) <= 2.5
+        has_track1 = np.abs(diak4.i1.eta) <= 2.5
+        leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
+        trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
+        pass_vbf = True;
+        pass_vbf = pass_vbf & (diak4.counts>0)
+        pass_vbf = pass_vbf & (leadak4_pt_eta.any())
+        pass_vbf = pass_vbf & (trailak4_pt_eta.any())
+        pass_vbf = pass_vbf & (hemisphere)
+        pass_vbf = pass_vbf & (leadak4_id.any())
+        pass_vbf = pass_vbf & (trailak4_id.any())
+        pass_vbf = pass_vbf & (diak4.mass.max() > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.MASS)
+        pass_vbf = pass_vbf & (dphi(diak4.i0.phi.min(), diak4.i1.phi.max()) < cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DPHI)
+        pass_vbf = pass_vbf & (np.abs(diak4.i0.eta - diak4.i1.eta).max() > cfg.SELECTION.SIGNAL.DIJET.SHAPE_BASED.DETA)
+
         selection = processor.PackedSelection()
 
         # Triggers
@@ -257,6 +277,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_muo', muons.counts==0)
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', taus.counts==0)
+        selection.add('veto_vbf', ~pass_vbf)
 
         # B jets are treated using veto weights
         # So accept them in MC, but reject in data

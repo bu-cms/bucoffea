@@ -564,7 +564,8 @@ def monojet_regions(cfg):
         'mindphijr',
         'dpfcalo',
         'recoil',
-        'hemveto'
+        'hemveto',
+        'veto_vbf',
     ]
     j_cuts = [
         'leadak4_pt_eta',
