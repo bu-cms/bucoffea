@@ -114,6 +114,10 @@ def merge_dileptons(dilepton1, dilepton2, target, dilepton3=None):
     take3 = (dist3 < dist1) & (dist3 < dist2)
     take1 = ~(take2 | take3)
 
+    # If dressed electrons/muons are coming from taus, take the taus!
+    dressed_leptons_come_from_tau = ((dilepton2.i0.tauanc) & (dilepton2.i1.tauanc)).any()
+    take1[dressed_leptons_come_from_tau] = True
+
     vpt1 = dilepton1.pt.max()
     vphi1 = dilepton1.phi.max()
     vpt1[~take1] = 0
@@ -213,7 +217,6 @@ def fill_gen_v_info(df, gen, dressed):
     df['gen_v_pt_stat1'], df['gen_v_phi_stat1'] = stat1_dilepton(df, gen)
     df['gen_v_pt_dress'], df['gen_v_phi_dress'] = dressed_dilep(df, gen, dressed)
 
-
     # Combine in order of preference:
     # 1. Gen boson from generator history
     df['gen_v_pt_combined'], df['gen_v_phi_combined'] = df['gen_v_pt_part'], df['gen_v_phi_part']
@@ -274,7 +277,9 @@ def setup_dressed_gen_candidates(df):
         phi=df['GenDressedLepton_phi'],
         mass=0*df['GenDressedLepton_pt'],
         status=np.ones(df['GenDressedLepton_pt'].size),
-        pdg=df['GenDressedLepton_pdgId'])
+        pdg=df['GenDressedLepton_pdgId'],
+        tauanc=df['GenDressedLepton_hasTauAnc']
+    )
     return dressed
 
 def islep(pdg):
