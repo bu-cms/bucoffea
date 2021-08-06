@@ -563,12 +563,14 @@ class monojetProcessor(processor.ProcessorABC):
             mask = selection.all(*cuts)
 
 
+            # always save event list for data
+            if df["is_data"]:
+                # General properties
+                output['tree_int64'][region]["event"]                   += processor.column_accumulator(df["event"][mask])
+                output['tree_int64'][region]["run"]                     += processor.column_accumulator(df["run"][mask])
+                output['tree_int64'][region]["lumi"]                    += processor.column_accumulator(df["luminosityBlock"][mask])
             if cfg.RUN.SAVE.TREE:
                 if re.match(cfg.RUN.SAVE.TREEREGIONS, region):
-                    # General properties
-                    output['tree_int64'][region]["event"]                   += processor.column_accumulator(df["event"][mask])
-                    output['tree_int64'][region]["run"]                     += processor.column_accumulator(df["run"][mask])
-                    output['tree_int64'][region]["lumi"]                    += processor.column_accumulator(df["luminosityBlock"][mask])
 
 
 
