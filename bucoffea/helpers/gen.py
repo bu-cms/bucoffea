@@ -91,7 +91,7 @@ def stat1_dilepton(df, gen):
     return gen_dilep.pt.max(), gen_dilep.phi.max()
 
 
-def merge_dileptons(dilepton1, dilepton2, target, dilepton3=None):
+def merge_dileptons(dilepton1, dilepton2, target, is_z=True, dilepton3=None):
     """
     Choose highest mass dilepton from up to three option lists.
 
@@ -115,8 +115,13 @@ def merge_dileptons(dilepton1, dilepton2, target, dilepton3=None):
     take1 = ~(take2 | take3)
 
     # If dressed electrons/muons are coming from taus, take the taus!
-    dressed_leptons_come_from_tau = ((dilepton2.i0.tauanc) & (dilepton2.i1.tauanc)).any()
+    if is_z:
+        dressed_leptons_come_from_tau = ((dilepton2.i0.tauanc) & (dilepton2.i1.tauanc)).any()
+    else:
+        dressed_leptons_come_from_tau = dilepton2.i0.tauanc.any()
+
     take1[dressed_leptons_come_from_tau] = True
+    take2[dressed_leptons_come_from_tau] = False
 
     vpt1 = dilepton1.pt.max()
     vphi1 = dilepton1.phi.max()
@@ -196,7 +201,7 @@ def dressed_dilep(df, gen, dressed):
         # tau
         dilep_tau = find_gen_dilepton(gen[(np.abs(gen.pdg)==15) | (np.abs(gen.pdg)==16)], 1)
         dilep_tau = dilep_tau[np.abs(dilep_tau.mass-target).argmin()]
-        return  merge_dileptons(dilep_tau, dilep_dress, target=target)
+        return  merge_dileptons(dilep_tau, dilep_dress, target=target, is_z=False)
 
 
 def genv(gen):
