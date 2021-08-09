@@ -448,6 +448,16 @@ def setup_candidates(df, cfg):
     if not df['is_data']:
         ak4.add_attributes(jercorr=df['Jet_corr_JER'])
 
+    # B jets have their own overlap cleaning,
+    # so deal with them before applying filtering to jets
+    btag_discriminator = getattr(ak4, cfg.BTAG.algo)
+    btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
+    bjets = ak4[
+        (ak4.pt > cfg.BTAG.PT) \
+        & (ak4.abseta < cfg.BTAG.ETA) \
+        & (btag_discriminator > btag_cut)
+    ]
+
     ak4 = ak4[ak4.looseId]
 
     # Before cleaning, apply HEM veto
@@ -458,16 +468,6 @@ def setup_candidates(df, cfg):
         (ak4.phi < -0.87)
         ]
     df['hemveto'] = hem_ak4.counts == 0
-
-    # B jets have their own overlap cleaning,
-    # so deal with them before applying filtering to jets
-    btag_discriminator = getattr(ak4, cfg.BTAG.algo)
-    btag_cut = cfg.BTAG.CUTS[cfg.BTAG.algo][cfg.BTAG.wp]
-    bjets = ak4[
-        (ak4.pt > cfg.BTAG.PT) \
-        & (ak4.abseta < cfg.BTAG.ETA) \
-        & (btag_discriminator > btag_cut)
-    ]
 
     if cfg.OVERLAP.BTAG.MUON.CLEAN:
         bjets = bjets[object_overlap(bjets, muons, dr=cfg.OVERLAP.BTAG.MUON.DR)]
