@@ -239,6 +239,9 @@ default:
     save:
       passing: False
       tree: False
+      tree_regions:
+        - sr_vbf
+        - sr_vbf_no_veto_all
     kinematics:
       save: False
       events:
