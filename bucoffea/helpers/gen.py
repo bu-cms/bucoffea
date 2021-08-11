@@ -87,7 +87,8 @@ def stat1_dilepton(df, gen):
         pdgsum = 1
         target = 81
     gen_dilep = find_gen_dilepton(gen[(gen.flag&1)==1], pdgsum)
-    gen_dilep = gen_dilep[(np.abs(gen_dilep.mass-target)).argmin()]
+    gen_dilep = gen_dilep[:,:1]
+    # gen_dilep = gen_dilep[(np.abs(gen_dilep.mass-target)).argmin()]
     return gen_dilep.pt.max(), gen_dilep.phi.max()
 
 
