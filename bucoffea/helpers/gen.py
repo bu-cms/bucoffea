@@ -181,8 +181,8 @@ def dressed_dilep(df, gen, dressed):
 
         # tau
         dilep_tau = find_gen_dilepton(gen[np.abs(gen.pdg)==15], 0)
-        dilep_tau = dilep_tau[np.abs(dilep_tau.mass-target).argmin()]
-
+        # Take the first tau pair (to avoid low pt taus coming from elsewhere)
+        dilep_tau = dilep_tau[:,:1]
 
         # Merge by taking higher-mass
         return merge_dileptons(dilep_tau, dilep_dress, target=target)
