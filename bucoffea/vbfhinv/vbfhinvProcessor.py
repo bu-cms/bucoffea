@@ -460,7 +460,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         selection.add('two_electrons', electrons.counts==2)
         selection.add('at_least_one_tight_el', df['is_tight_electron'].any())
 
-
         selection.add('dielectron_mass', ((dielectrons.mass > cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MIN)  \
                                         & (dielectrons.mass < cfg.SELECTION.CONTROL.DOUBLEEL.MASS.MAX)).any())
         selection.add('dielectron_charge', (dielectron_charge==0).any())
@@ -724,7 +723,9 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["dphitkpf"]          +=  processor.column_accumulator(np.float16(dphitkpf[mask]))
                     
                     output['tree_float16'][region]["nLooseMuon"]        +=  processor.column_accumulator(np.float16(muons.counts[mask]))
+                    output['tree_float16'][region]["nTightMuon"]        +=  processor.column_accumulator(np.float16(muons[df['is_tight_muon']].counts[mask]))
                     output['tree_float16'][region]["nLooseElectron"]    +=  processor.column_accumulator(np.float16(electrons.counts[mask]))
+                    output['tree_float16'][region]["nTightElectron"]    +=  processor.column_accumulator(np.float16(electrons[df['is_tight_electron']].counts[mask]))
                     output['tree_float16'][region]["nLooseTau"]         +=  processor.column_accumulator(np.float16(taus.counts[mask]))
                     output['tree_float16'][region]["nMediumBJet"]       +=  processor.column_accumulator(np.float16(bjets.counts[mask]))
                     
