@@ -878,7 +878,7 @@ def pileup_weights(weights, df, evaluator, cfg):
         raise RuntimeError(f"Unknown value for cfg.PILEUP.MODE: {cfg.PILEUP.MODE}.")
 
     # Cap weights just in case
-    pu_weight[np.abs(pu_weight)>5] = 1
+    pu_weight[np.abs(pu_weight)>10] = 1
     weights.add("pileup", pu_weight)
     return weights
 
