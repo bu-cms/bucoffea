@@ -40,7 +40,7 @@ common_distributions = [
 
 # Distributions to plot for each region
 distributions = {
-    'sr_vbf' : common_distributions,
+    'sr_vbf' : common_distributions + ['ak4_nef0', 'ak4_nef1', 'ak4_nhf0', 'ak4_nhf1', 'ak4_chf0', 'ak4_chf1'],
     'cr_1m_vbf' : common_distributions + ['muon_pt', 'muon_eta', 'muon_phi', 'muon_mt'],
     'cr_1e_vbf' : common_distributions + ['electron_pt', 'electron_eta', 'electron_phi', 'electron_mt'],
     'cr_2m_vbf' : common_distributions + ['muon_pt0', 'muon_eta0', 'muon_phi0', 'muon_pt1', 'muon_eta1', 'muon_phi1', 'dimuon_mass'],
