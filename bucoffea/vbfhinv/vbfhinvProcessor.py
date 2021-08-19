@@ -1053,6 +1053,21 @@ class vbfhinvProcessor(processor.ProcessorABC):
                         weight=(rw_nopu * w)[mask]
                     )
 
+            if cfg.RUN.PREFIRE_SF_STUDY and not df['is_data']:
+                rw_nopref = region_weights.partial_weight(exclude=exclude+['prefire'])
+
+                pref_weights = {
+                    "up" : df['PrefireWeight_Up'],
+                    "down" : df['PrefireWeight_Down'],
+                }
+
+                for prefvar, w in pref_weights.items():
+                    ezfill('mjj_pref_weights',
+                        mjj=df['mjj'][mask],
+                        variation=prefvar,
+                        weight=(rw_nopref * w)[mask]
+                    )
+
             if cfg.RUN.VETO_WEIGHTS_STUDY and 'no_veto_all' in region and not df['is_data']:
                 variations = ['nominal', 'tau_id_up', 'tau_id_dn', 
                     'ele_id_up', 'ele_id_dn', 'ele_reco_up', 'ele_reco_dn',

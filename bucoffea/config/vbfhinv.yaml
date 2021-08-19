@@ -267,6 +267,7 @@ default:
     muon_sf_study: False
     veto_weights_study: False
     pileup_sf_study: False
+    prefire_sf_study: False
   triggers:
     ht:
       gammaeff:
