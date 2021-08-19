@@ -1058,6 +1058,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                 try:
                     pref_weights = {
+                        "nom" : df['PrefireWeight'],
                         "up" : df['PrefireWeight_Up'],
                         "down" : df['PrefireWeight_Down'],
                     }
