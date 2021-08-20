@@ -14,7 +14,7 @@ from pprint import pprint
 
 pjoin = os.path.join
 
-def plot_pileup_uncs(acc, outtag, dataset, year, region='sr_vbf_no_veto_all', outrootfile=None):
+def plot_pileup_uncs(acc, outtag, dataset, year, datasetlabel, regionlabel, region='sr_vbf_no_veto_all', outrootfile=None):
     distribution = 'mjj_pu_weights'
     acc.load(distribution)
     h = acc[distribution]
@@ -26,8 +26,8 @@ def plot_pileup_uncs(acc, outtag, dataset, year, region='sr_vbf_no_veto_all', ou
     mjj_bins = [200., 400., 600., 900., 1200., 1500., 2000., 2750., 3500., 5000.]
     mjj_ax = hist.Bin('mjj', r'$M_{jj} \ (GeV)$', mjj_bins)    
     h = h.rebin('mjj', mjj_ax)
-
-    h = h.integrate('region', region).integrate('dataset', re.compile(f'{dataset}.*{year}'))
+    
+    h = h.integrate('region', region).integrate('dataset', dataset)
 
     fig, ax, rax = fig_ratio()
     hist.plot1d(h, ax=ax, overlay='variation')
@@ -62,17 +62,18 @@ def plot_pileup_uncs(acc, outtag, dataset, year, region='sr_vbf_no_veto_all', ou
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     
-    outpath = pjoin(outdir, f'{dataset}_pileup_uncs_{year}.pdf')
+    outpath = pjoin(outdir, f'{regionlabel}_{datasetlabel}_pileup_uncs_{year}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
 
     print(f'File saved: {outpath}')
 
-    if outrootfile:
-        r_up = h.integrate('variation', 'up').values()[()] / h_nom.values()[()]
-        r_down = h.integrate('variation', 'down').values()[()] / h_nom.values()[()]
-        outrootfile[f'{dataset}_{year}_pileup_up'] = (r_up, h_nom.axis('mjj').edges())
-        outrootfile[f'{dataset}_{year}_pileup_down'] = (r_down, h_nom.axis('mjj').edges())
+    r_up = h.integrate('variation', 'up').values()[()] / h_nom.values()[()]
+    r_down = h.integrate('variation', 'down').values()[()] / h_nom.values()[()]
+    r_up[np.isnan(r_up) | np.isinf(r_up)] = 1.
+    r_down[np.isnan(r_down) | np.isinf(r_down)] = 1.
+    outrootfile[f'{regionlabel}_{datasetlabel}_{year}_CMS_pileup_up'] = (r_up, h_nom.axis('mjj').edges())
+    outrootfile[f'{regionlabel}_{datasetlabel}_{year}_CMS_pileup_down'] = (r_down, h_nom.axis('mjj').edges())
 
 
 def main():
@@ -90,13 +91,67 @@ def main():
     outrootpath = pjoin(outdir, 'vbf_pileup_uncs.root')
     outrootfile = uproot.recreate(outrootpath)
 
-    for dataset in ['ZJetsToNuNu', 'VBF_HToInvisible']:
-        for year in [2017, 2018]:
-            plot_pileup_uncs(acc, outtag, 
-                dataset=dataset, 
-                year=year,
-                outrootfile=outrootfile
-            )
+    for year in [2017, 2018]:
+        regions = { 
+            'sr_vbf_no_veto_all': 'signal',
+            'cr_1m_vbf' : 'Wmn',
+            'cr_1e_vbf' : 'Wen',
+            'cr_2m_vbf' : 'Zmm',
+            'cr_2e_vbf' : 'Zee',
+        }
+    
+        datasets = {
+            'cr_2m_vbf' : {
+                'top' : f'Top_FXFX_{year}',
+                'wjets' : f'WJetsToLNu_Pt-FXFX_{year}',
+                'diboson' : f'Diboson_{year}',
+                'ewkwjets' : re.compile(f'EWKW2Jets.*WToLNu.*{year}'),
+            },
+            'cr_2e_vbf' : {
+                'top' : f'Top_FXFX_{year}',
+                'wjets' : f'WJetsToLNu_Pt-FXFX_{year}',
+                'diboson' : f'Diboson_{year}',
+                'ewkwjets' : re.compile(f'EWKW2Jets.*WToLNu.*{year}'),
+            },
+            'cr_1m_vbf' : {
+                'top' : f'Top_FXFX_{year}',
+                'ewkzll' : re.compile(f'EWKZ2Jets.*ZToLL.*{year}'),
+                'diboson' : f'Diboson_{year}',
+                'qcdzll' : re.compile(f'DYJetsToLL_Pt.*{year}'),
+            },
+            'cr_1e_vbf' : {
+                'top' : f'Top_FXFX_{year}',
+                'ewkzll' : re.compile(f'EWKZ2Jets.*ZToLL.*{year}'),
+                'diboson' : f'Diboson_{year}',
+                'qcdzll' : re.compile(f'DYJetsToLL_Pt.*{year}'),
+            },
+            'sr_vbf_no_veto_all' : {
+                'vbf' : re.compile(f'VBF_HToInvisible.*{year}'),
+                'ggh' : re.compile(f'GluGlu_HToInvisible.*{year}'),
+                'tth' : re.compile(f'ttH.*M125.*{year}'),
+                'ggzh' : re.compile(f'ggZH.*M125.*{year}'),
+                'wh' : re.compile(f'WH.*M125_{year}'),
+                'zh' : re.compile(f'ZH.*M125.*{year}'),
+                'qcdzll' : re.compile(f'DYJetsToLL_Pt.*{year}'),
+                'ewkzll' : re.compile(f'EWKZ2Jets.*ZToLL.*{year}'),
+                'diboson' : f'Diboson_{year}',
+                'top' : f'Top_FXFX_{year}',
+            },
+        }
+
+        for region, regionlabel in regions.items():
+            datasetlist = datasets[region]
+            for label, dataset in datasetlist.items():
+
+
+                plot_pileup_uncs(acc, outtag, 
+                    dataset=dataset, 
+                    year=year,
+                    outrootfile=outrootfile,
+                    regionlabel=regionlabel,
+                    datasetlabel=label,
+                    region=region
+                )
 
 if __name__ == '__main__':
     main()
