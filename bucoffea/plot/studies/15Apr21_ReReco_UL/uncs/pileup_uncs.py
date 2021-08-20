@@ -14,12 +14,12 @@ from pprint import pprint
 
 pjoin = os.path.join
 
-def plot_prefire_uncs(acc, outtag, dataset, year, region='sr_vbf_no_veto_all', outrootfile=None):
-    distribution = 'mjj_pref_weights'
+def plot_pileup_uncs(acc, outtag, dataset, year, region='sr_vbf_no_veto_all', outrootfile=None):
+    distribution = 'mjj_pu_weights'
     acc.load(distribution)
     h = acc[distribution]
-
-    h = merge_extensions(h, acc)
+    
+    h = merge_extensions(h,acc)
     scale_xs_lumi(h)
     h = merge_datasets(h)
 
@@ -49,7 +49,7 @@ def plot_prefire_uncs(acc, outtag, dataset, year, region='sr_vbf_no_veto_all', o
             ax=rax,
             unc='num',
             error_opts=data_err_opts,
-            label=f'Prefire {variation}',
+            label=f'PU {variation}',
             clear=False
         )
 
@@ -62,16 +62,18 @@ def plot_prefire_uncs(acc, outtag, dataset, year, region='sr_vbf_no_veto_all', o
     if not os.path.exists(outdir):
         os.makedirs(outdir)
     
-    outpath = pjoin(outdir, f'{dataset}_prefire_uncs_{year}.pdf')
+    outpath = pjoin(outdir, f'{dataset}_pileup_uncs_{year}.pdf')
     fig.savefig(outpath)
     plt.close(fig)
 
     print(f'File saved: {outpath}')
 
-    r_up = h.integrate('variation', 'up').values()[()] / h_nom.values()[()]
-    r_down = h.integrate('variation', 'down').values()[()] / h_nom.values()[()]
-    outrootfile[f'{dataset}_{year}_prefire_up'] = (r_up, h_nom.axis('mjj').edges())
-    outrootfile[f'{dataset}_{year}_prefire_down'] = (r_down, h_nom.axis('mjj').edges())
+    if outrootfile:
+        r_up = h.integrate('variation', 'up').values()[()] / h_nom.values()[()]
+        r_down = h.integrate('variation', 'down').values()[()] / h_nom.values()[()]
+        outrootfile[f'{dataset}_{year}_pileup_up'] = (r_up, h_nom.axis('mjj').edges())
+        outrootfile[f'{dataset}_{year}_pileup_down'] = (r_down, h_nom.axis('mjj').edges())
+
 
 def main():
     inpath = sys.argv[1]
@@ -85,14 +87,15 @@ def main():
     outdir = f'./output/{outtag}'
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    outrootpath = pjoin(outdir, 'vbf_prefire_uncs.root')
+    outrootpath = pjoin(outdir, 'vbf_pileup_uncs.root')
     outrootfile = uproot.recreate(outrootpath)
 
-    for year in [2017]:
-        plot_prefire_uncs(acc, outtag, 
-            dataset='VBF_HToInvisible', 
-            year=year,
-            outrootfile=outrootfile
+    for dataset in ['ZJetsToNuNu', 'VBF_HToInvisible']:
+        for year in [2017, 2018]:
+            plot_pileup_uncs(acc, outtag, 
+                dataset=dataset, 
+                year=year,
+                outrootfile=outrootfile
             )
 
 if __name__ == '__main__':
