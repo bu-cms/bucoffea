@@ -70,8 +70,8 @@ def plot_prefire_uncs(acc, outtag, dataset, year, region='sr_vbf_no_veto_all', o
 
     r_up = h.integrate('variation', 'up').values()[()] / h_nom.values()[()]
     r_down = h.integrate('variation', 'down').values()[()] / h_nom.values()[()]
-    outrootfile[f'{dataset}_{year}_prefire_up'] = (r_up, h_nom.axis('mjj').edges())
-    outrootfile[f'{dataset}_{year}_prefire_down'] = (r_down, h_nom.axis('mjj').edges())
+    outrootfile[f'{dataset}_{year}_CMS_L1prefire_2017_up'] = (r_up, h_nom.axis('mjj').edges())
+    outrootfile[f'{dataset}_{year}_CMS_L1prefire_2017_down'] = (r_down, h_nom.axis('mjj').edges())
 
 def main():
     inpath = sys.argv[1]
