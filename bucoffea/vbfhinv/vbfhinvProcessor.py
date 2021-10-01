@@ -286,6 +286,7 @@ class vbfhinvProcessor(processor.ProcessorABC):
         hemisphere = (diak4.i0.eta * diak4.i1.eta < 0).any()
         has_track0 = np.abs(diak4.i0.eta) <= 2.5
         has_track1 = np.abs(diak4.i1.eta) <= 2.5
+        diak4_all = ak4.distincts()
 
         leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > cfg.SELECTION.SIGNAL.LEADAK4.CHF) & (diak4.i0.nhf < cfg.SELECTION.SIGNAL.LEADAK4.NHF)) + ~has_track0)
         trailak4_id = has_track1*((diak4.i1.chf > cfg.SELECTION.SIGNAL.TRAILAK4.CHF) & (diak4.i1.nhf < cfg.SELECTION.SIGNAL.TRAILAK4.NHF)) + ~has_track1
@@ -299,6 +300,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
             return (mask * diak4.i0.eta) + (~mask * diak4.i1.eta)
 
         df['mjj'] = diak4.mass.max()
+        highest_mass_diak4 = diak4_all[diak4_all.mass.argmax()]
+        df['mjj_maxmjj'] = highest_mass_diak4.mass.max()
+        df['dphijj_maxmjj'] = dphi(highest_mass_diak4.i0.phi.min(), highest_mass_diak4.i1.phi.max())
+        df['detajj_maxmjj'] = np.abs(highest_mass_diak4.i0.eta - highest_mass_diak4.i1.eta)
+
         df['dphijj'] = dphi(diak4.i0.phi.min(), diak4.i1.phi.max())
         df['detajj'] = np.abs(diak4.i0.eta - diak4.i1.eta).max()
 
@@ -319,6 +325,23 @@ class vbfhinvProcessor(processor.ProcessorABC):
         
         df['htmiss'] = ak4[ak4.pt>30].p4.sum().pt
         df['ht'] = ak4[ak4.pt>30].pt.sum()
+
+        for eta in [0.5,1.0,1.5,2.5,3.0,3.5,4.0,4.5,5.0]:
+            ak4_for_ht = ak4[(ak4.pt>30)&(ak4.abseta<eta)]
+            name = f"ht{eta}".replace(".","p")
+            df[name] = ak4_for_ht.pt.sum()
+            
+            name = f"ht{eta}_chf".replace(".","p")
+            df[name] = (ak4_for_ht.pt * ak4_for_ht.chf).sum()
+            
+            name = f"ht{eta}_cef".replace(".","p")
+            df[name] = (ak4_for_ht.pt * ak4_for_ht.cef).sum()
+            
+            name = f"ht{eta}_nef".replace(".","p")
+            df[name] = (ak4_for_ht.pt * ak4_for_ht.nef).sum()
+            
+            name = f"ht{eta}_nhf".replace(".","p")
+            df[name] = (ak4_for_ht.pt * ak4_for_ht.nhf).sum()
 
         if df['year'] == 2018:
             if df['is_data']:
@@ -481,17 +504,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
         # Fill histograms
         output = self.accumulator.identity()
 
-        # Gen
-        if df['has_lhe_v_pt']:
-            output['genvpt_check'].fill(vpt=gen_v_pt,type="Nano", dataset=dataset)
-
-        if 'LHE_Njets' in df:
-            output['lhe_njets'].fill(dataset=dataset, multiplicity=df['LHE_Njets'])
-        if 'LHE_HT' in df:
-            output['lhe_ht'].fill(dataset=dataset, ht=df['LHE_HT'])
-        if 'LHE_HTIncoming' in df:
-            output['lhe_htinc'].fill(dataset=dataset, ht=df['LHE_HTIncoming'])
-
         # Weights
         evaluator = evaluator_from_config(cfg)
 
@@ -529,43 +541,6 @@ class vbfhinvProcessor(processor.ProcessorABC):
                 weights = ak4_em_frac_weights(weights, diak4, evaluator)
             if not (gen_v_pt is None):
                 weights = theory_weights_vbf(weights, df, evaluator, gen_v_pt, df['mjj_gen'])
-
-        # Save per-event values for synchronization
-        if cfg.RUN.KINEMATICS.SAVE:
-            for event in cfg.RUN.KINEMATICS.EVENTS:
-                mask = df['event'] == event
-
-                if not mask.any():
-                    continue
-                output['kinematics']['event'] += [event]
-                output['kinematics']['met'] += [met_pt[mask]]
-                output['kinematics']['met_phi'] += [met_phi[mask]]
-                output['kinematics']['recoil'] += [df['recoil_pt'][mask]]
-                output['kinematics']['recoil_phi'] += [df['recoil_phi'][mask]]
-
-                output['kinematics']['ak4pt0'] += [ak4[leadak4_index][mask].pt]
-                output['kinematics']['ak4eta0'] += [ak4[leadak4_index][mask].eta]
-                output['kinematics']['leadbtag'] += [ak4.pt.max()<0][mask]
-
-                output['kinematics']['nMediumBJets'] += [bjets.counts[mask]]
-                output['kinematics']['bjetPt0'] += [bjets[bjets.pt.argmax()].pt[mask]]
-                output['kinematics']['bjetEta0'] += [bjets[bjets.pt.argmax()].eta[mask]]
-                output['kinematics']['bjetCSV0'] += [bjets[bjets.pt.argmax()].deepcsv[mask]]
-
-                output['kinematics']['nLooseMu'] += [muons.counts[mask]]
-                output['kinematics']['nTightMu'] += [muons[df['is_tight_muon']].counts[mask]]
-                output['kinematics']['mupt0'] += [muons[leadmuon_index][mask].pt]
-                output['kinematics']['mueta0'] += [muons[leadmuon_index][mask].eta]
-
-                output['kinematics']['nLooseEl'] += [electrons.counts[mask]]
-                output['kinematics']['nTightEl'] += [electrons[df['is_tight_electron']].counts[mask]]
-                output['kinematics']['elpt0'] += [electrons[leadelectron_index][mask].pt]
-                output['kinematics']['eleta0'] += [electrons[leadelectron_index][mask].eta]
-
-                output['kinematics']['nLooseGam'] += [photons.counts[mask]]
-                output['kinematics']['nTightGam'] += [photons[df['is_tight_photon']].counts[mask]]
-                output['kinematics']['gpt0'] += [photons[leadphoton_index][mask].pt]
-                output['kinematics']['geta0'] += [photons[leadphoton_index][mask].eta]
 
 
         # Sum of all weights to use for normalization
@@ -674,13 +649,15 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["leadak4_nhf"]       +=  processor.column_accumulator(np.float16(diak4.i0.nhf[mask]))
                     output['tree_float16'][region]["leadak4_chf"]       +=  processor.column_accumulator(np.float16(diak4.i0.chf[mask]))
                     output['tree_float16'][region]["leadak4_cef"]       +=  processor.column_accumulator(np.float16(diak4.i0.cef[mask]))
+                    
+                    output['tree_float16'][region]["leadak4_mjjmax_pt"]        +=  processor.column_accumulator(np.float16(highest_mass_diak4.i0.pt[mask]))
+                    output['tree_float16'][region]["leadak4_mjjmax_eta"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i0.eta[mask]))
+                    output['tree_float16'][region]["leadak4_mjjmax_phi"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i0.phi[mask]))
+                    output['tree_float16'][region]["leadak4_mjjmax_nef"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i0.nef[mask]))
+                    output['tree_float16'][region]["leadak4_mjjmax_nhf"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i0.nhf[mask]))
+                    output['tree_float16'][region]["leadak4_mjjmax_chf"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i0.chf[mask]))
+                    output['tree_float16'][region]["leadak4_mjjmax_cef"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i0.cef[mask]))
 
-                    if cfg.RUN.ULEGACYV8:
-                        output['tree_float16'][region]["leadak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i0.setaeta[mask]))
-                        output['tree_float16'][region]["leadak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i0.sphiphi[mask]))
-                        output['tree_float16'][region]["leadak4_cssize"]    +=  processor.column_accumulator(np.float16(diak4.i0.hfcentralstripsize[mask]))
-                        output['tree_float16'][region]["leadak4_btagDeepFlavQG"]    +=  processor.column_accumulator(np.float16(diak4.i0.btagdf[mask]))
-                
                     output['tree_float16'][region]["trailak4_pt"]        +=  processor.column_accumulator(np.float16(diak4.i1.pt[mask]))
                     output['tree_float16'][region]["trailak4_eta"]       +=  processor.column_accumulator(np.float16(diak4.i1.eta[mask]))
                     output['tree_float16'][region]["trailak4_phi"]       +=  processor.column_accumulator(np.float16(diak4.i1.phi[mask]))
@@ -688,26 +665,38 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     output['tree_float16'][region]["trailak4_nhf"]       +=  processor.column_accumulator(np.float16(diak4.i1.nhf[mask]))
                     output['tree_float16'][region]["trailak4_chf"]       +=  processor.column_accumulator(np.float16(diak4.i1.chf[mask]))
                     output['tree_float16'][region]["trailak4_cef"]       +=  processor.column_accumulator(np.float16(diak4.i1.cef[mask]))
+                    
+                    output['tree_float16'][region]["trailak4_mjjmax_pt"]        +=  processor.column_accumulator(np.float16(highest_mass_diak4.i1.pt[mask]))
+                    output['tree_float16'][region]["trailak4_mjjmax_eta"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i1.eta[mask]))
+                    output['tree_float16'][region]["trailak4_mjjmax_phi"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i1.phi[mask]))
+                    output['tree_float16'][region]["trailak4_mjjmax_nef"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i1.nef[mask]))
+                    output['tree_float16'][region]["trailak4_mjjmax_nhf"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i1.nhf[mask]))
+                    output['tree_float16'][region]["trailak4_mjjmax_chf"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i1.chf[mask]))
+                    output['tree_float16'][region]["trailak4_mjjmax_cef"]       +=  processor.column_accumulator(np.float16(highest_mass_diak4.i1.cef[mask]))
 
-                    if cfg.RUN.ULEGACYV8:
-                        output['tree_float16'][region]["trailak4_setaeta"]   +=  processor.column_accumulator(np.float16(diak4.i1.setaeta[mask]))
-                        output['tree_float16'][region]["trailak4_sphiphi"]   +=  processor.column_accumulator(np.float16(diak4.i1.sphiphi[mask]))
-                        output['tree_float16'][region]["trailak4_cssize"]    +=  processor.column_accumulator(np.float16(diak4.i1.hfcentralstripsize[mask]))
-                        output['tree_float16'][region]["trailak4_btagDeepFlavQG"]    +=  processor.column_accumulator(np.float16(diak4.i1.btagdf[mask]))
+                    output['tree_float16'][region]['njet'] += processor.column_accumulator(np.float16(ak4.counts[mask]))
+
+                    for ijet in range(5): 
+                        jets = ak4[:,ijet:ijet+1]
+                        pt = jets.pt.max()
+                        eta = jets.eta.max()
+                        phi = jets.phi.max()
+                        phi[pt < 0] = -999
+                        eta[pt < 0] = -999
+
+                        output['tree_float16'][region][f'ak4_pt{ijet}'] += processor.column_accumulator(np.float16(pt[mask]))
+                        output['tree_float16'][region][f'ak4_eta{ijet}'] += processor.column_accumulator(np.float16(eta[mask]))
+                        output['tree_float16'][region][f'ak4_phi{ijet}'] += processor.column_accumulator(np.float16(phi[mask]))
+
 
                     output['tree_float16'][region]["mjj"]               +=  processor.column_accumulator(np.float16(df["mjj"][mask]))
                     output['tree_float16'][region]["detajj"]            +=  processor.column_accumulator(np.float16(df["detajj"][mask]))
                     output['tree_float16'][region]["dphijj"]            +=  processor.column_accumulator(np.float16(df["dphijj"][mask]))
-                    output['tree_float16'][region]["uncorr_recoil_pt"]  +=  processor.column_accumulator(np.float16(df["recoil_pt_uncorr"][mask]))
-                    output['tree_float16'][region]["uncorr_recoil_phi"] +=  processor.column_accumulator(np.float16(df["recoil_phi_uncorr"][mask]))
+                    output['tree_float16'][region]["mjj_maxmjj"]               +=  processor.column_accumulator(np.float16(df["mjj_maxmjj"][mask]))
+                    output['tree_float16'][region]["dphijj_maxmjj"]               +=  processor.column_accumulator(np.float16(df["dphijj_maxmjj"][mask]))
+                    output['tree_float16'][region]["detajj_maxmjj"]               +=  processor.column_accumulator(np.float16(df["detajj_maxmjj"][mask]))
                     output['tree_float16'][region]["recoil_pt"]         +=  processor.column_accumulator(np.float16(df["recoil_pt"][mask]))
                     output['tree_float16'][region]["recoil_phi"]        +=  processor.column_accumulator(np.float16(df["recoil_phi"][mask]))
-                    output['tree_float16'][region]["uncorr_met_pt"]     +=  processor.column_accumulator(np.float16(met_pt_uncorr[mask]))
-                    output['tree_float16'][region]["uncorr_met_phi"]    +=  processor.column_accumulator(np.float16(met_phi_uncorr[mask]))
-                    output['tree_float16'][region]["met_pt"]            +=  processor.column_accumulator(np.float16(met_pt[mask]))
-                    output['tree_float16'][region]["met_phi"]           +=  processor.column_accumulator(np.float16(met_phi[mask]))
-                    output['tree_float16'][region]["CaloMet_pt"]        +=  processor.column_accumulator(np.float16(df['CaloMET_pt'][mask]))
-                    output['tree_float16'][region]["CaloMet_phi"]       +=  processor.column_accumulator(np.float16(df['CaloMET_phi'][mask]))
                     output['tree_float16'][region]["minDPhiJetMet"]     +=  processor.column_accumulator(np.float16(df["minDPhiJetMet"][mask]))
                     output['tree_float16'][region]["minDPhiJetRecoil"]  +=  processor.column_accumulator(np.float16(df["minDPhiJetRecoil"][mask]))
                     output['tree_float16'][region]["dphi_ak40_met"]     +=  processor.column_accumulator(np.float16(df["dphi_ak40_met"][mask]))
@@ -718,6 +707,13 @@ class vbfhinvProcessor(processor.ProcessorABC):
 
                     output['tree_float16'][region]["htmiss"]            +=  processor.column_accumulator(np.float16(df['htmiss'][mask]))
                     output['tree_float16'][region]["ht"]                +=  processor.column_accumulator(np.float16(df['ht'][mask]))
+
+                    for key in df.keys():
+                        if not re.match("ht_[0-9,p]+.*", key):
+                            continue
+                        output['tree_float16'][region][key] = df[key][mask]
+
+
                     output['tree_float16'][region]["vecb"]              +=  processor.column_accumulator(np.float16(vec_b[mask]))
                     output['tree_float16'][region]["vecdphi"]           +=  processor.column_accumulator(np.float16(vec_dphi[mask]))
                     output['tree_float16'][region]["dphitkpf"]          +=  processor.column_accumulator(np.float16(dphitkpf[mask]))
@@ -779,412 +775,11 @@ class vbfhinvProcessor(processor.ProcessorABC):
                     
                     output['tree_float16'][region][f"weight_total"] += processor.column_accumulator(np.float16(rweight[mask]))
 
+
             # Save the event numbers of events passing this selection
             if cfg.RUN.SAVE.PASSING:
                 output['selected_events'][region] += list(df['event'][mask])
 
-
-            # Multiplicities
-            def fill_mult(name, candidates):
-                output[name].fill(
-                                  dataset=dataset,
-                                  region=region,
-                                  multiplicity=candidates[mask].counts,
-                                  weight=rweight[mask]
-                                  )
-
-            fill_mult('ak4_mult', ak4[ak4.pt>30])
-            fill_mult('bjet_mult',bjets)
-            fill_mult('loose_ele_mult',electrons)
-            fill_mult('tight_ele_mult',electrons[df['is_tight_electron']])
-            fill_mult('loose_muo_mult',muons)
-            fill_mult('tight_muo_mult',muons[df['is_tight_muon']])
-            fill_mult('tau_mult',taus)
-            fill_mult('photon_mult',photons)
-            # Number of additional jets in the central region, |eta| < 2.5
-            fill_mult('extra_ak4_mult', extra_ak4_central[extra_ak4_central.pt>30])
-
-            def ezfill(name, **kwargs):
-                """Helper function to make filling easier."""
-                output[name].fill(
-                                  dataset=dataset,
-                                  region=region,
-                                  **kwargs
-                                  )
-
-            # Monitor weights
-            for wname, wvalue in region_weights._weights.items():
-                ezfill("weights", weight_type=wname, weight_value=wvalue[mask])
-                ezfill("weights_wide", weight_type=wname, weight_value=wvalue[mask])
-
-            # All ak4
-            # This is a workaround to create a weight array of the right dimension
-            w_alljets = weight_shape(ak4[mask].eta, rweight[mask])
-            w_alljets_nopref = weight_shape(ak4[mask].eta, region_weights.partial_weight(exclude=exclude+['prefire'])[mask])
-
-            ezfill('ak4_eta',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets)
-            ezfill('ak4_phi',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets)
-            ezfill('ak4_pt',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets)
-
-            ezfill('ak4_eta_phi',    jeteta=ak4[mask].eta.flatten(),   jetphi=ak4[mask].phi.flatten(),   weight=w_alljets)
-
-            ezfill('ak4_eta_nopref',    jeteta=ak4[mask].eta.flatten(), weight=w_alljets_nopref)
-            ezfill('ak4_phi_nopref',    jetphi=ak4[mask].phi.flatten(), weight=w_alljets_nopref)
-            ezfill('ak4_pt_nopref',     jetpt=ak4[mask].pt.flatten(),   weight=w_alljets_nopref)
-
-            # Leading ak4
-            w_diak4 = weight_shape(diak4.pt[mask], rweight[mask])
-            ezfill('ak4_eta0',      jeteta=diak4.i0.eta[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_phi0',      jetphi=diak4.i0.phi[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_pt0',       jetpt=diak4.i0.pt[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_ptraw0',    jetpt=diak4.i0.ptraw[mask].flatten(),   weight=w_diak4)
-            ezfill('ak4_chf0',      frac=diak4.i0.chf[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nhf0',      frac=diak4.i0.nhf[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nef0',      frac=diak4.i0.nef[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nconst0',   nconst=diak4.i0.nconst[mask].flatten(), weight=w_diak4)
-
-            # ezfill('ak4_pt0_eta0',  jetpt=diak4.i0.pt[mask].flatten(),     jeteta=diak4.i0.eta[mask].flatten(),     weight=w_diak4)
-
-            # Trailing ak4
-            ezfill('ak4_eta1',      jeteta=diak4.i1.eta[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_phi1',      jetphi=diak4.i1.phi[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_pt1',       jetpt=diak4.i1.pt[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_ptraw1',    jetpt=diak4.i1.ptraw[mask].flatten(),   weight=w_diak4)
-            ezfill('ak4_chf1',      frac=diak4.i1.chf[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nhf1',      frac=diak4.i1.nhf[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nef1',      frac=diak4.i1.nef[mask].flatten(),      weight=w_diak4)
-            ezfill('ak4_nconst1',   nconst=diak4.i1.nconst[mask].flatten(), weight=w_diak4)
-
-            # Eta of more central and more forward VBF jets
-            ezfill('ak4_central_eta',    jeteta=get_more_central_jeteta(diak4)[mask].flatten(),    weight=w_diak4)
-            ezfill('ak4_forward_eta',    jeteta=get_more_forward_jeteta(diak4)[mask].flatten(),    weight=w_diak4)
-
-            if cfg.RUN.ULEGACYV8 and cfg.RUN.SAVE_HF_VARIABLES:
-                def is_hf_jet(_ak4, ptmin=80, etamin=2.9, etamax=5.0):
-                    return (_ak4.pt > ptmin) & (_ak4.abseta > etamin) & (_ak4.abseta < etamax)
-
-                hfmask = is_hf_jet(ak4[mask])
-
-                # Consider only high pt jets with pt > 100 GeV
-                w_hfjets = np.where( hfmask.flatten(), w_alljets, 0.)
-                ezfill('ak4_sigma_eta_eta',   sigmaetaeta=ak4[mask].setaeta.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
-                ezfill('ak4_sigma_phi_phi',   sigmaphiphi=ak4[mask].sphiphi.flatten(),        jeta=ak4[mask].abseta.flatten(),   weight=w_hfjets)
-
-                # 2D sigma eta vs. phi
-                ezfill('ak4_sigma_eta_phi',   
-                        sigmaetaeta=ak4[mask].setaeta.flatten(),    
-                        sigmaphiphi=ak4[mask].sphiphi.flatten(),  
-                        jeta=ak4[mask].abseta.flatten(),   
-                        weight=w_hfjets
-                    )
-
-                ezfill('ak4_hfcentral_adjacent_etastripsize',   
-                        centraletastripsize=ak4[mask].hfcentralstripsize.flatten(),
-                        adjacentetastripsize=ak4[mask].hfadjacentstripsize.flatten(),
-                        jeta=ak4[mask].abseta.flatten(),
-                        weight=w_hfjets
-                    )
-
-                # Leading and trailing jets
-                hfmask_i0 = is_hf_jet(diak4.i0[mask])
-                hfmask_i1 = is_hf_jet(diak4.i1[mask])
-
-                w_hfjets_i0 = np.where(hfmask_i0.flatten(), w_diak4, 0.)
-                w_hfjets_i1 = np.where(hfmask_i1.flatten(), w_diak4, 0.)
-
-                ezfill('ak4_sigma_eta_phi0',   
-                    sigmaetaeta=diak4.i0.setaeta[mask].flatten(),    
-                    sigmaphiphi=diak4.i0.sphiphi[mask].flatten(),    
-                    jeta=diak4.i0.abseta[mask].flatten(),   
-                    weight=w_hfjets_i0
-                )
-                
-                ezfill('ak4_sigma_eta_phi1',   
-                    sigmaetaeta=diak4.i1.setaeta[mask].flatten(),    
-                    sigmaphiphi=diak4.i1.sphiphi[mask].flatten(),    
-                    jeta=diak4.i1.abseta[mask].flatten(),   
-                    weight=w_hfjets_i1
-                )
-            
-                ezfill('ak4_hfcentral_adjacent_etastripsize0',   
-                    centraletastripsize=diak4.i0.hfcentralstripsize[mask].flatten(),
-                    adjacentetastripsize=diak4.i0.hfadjacentstripsize[mask].flatten(),
-                    jeta=diak4.i0.abseta[mask].flatten(),
-                    weight=w_hfjets_i0
-                )
-
-                ezfill('ak4_hfcentral_adjacent_etastripsize1',   
-                    centraletastripsize=diak4.i1.hfcentralstripsize[mask].flatten(),
-                    adjacentetastripsize=diak4.i1.hfadjacentstripsize[mask].flatten(),
-                    jeta=diak4.i1.abseta[mask].flatten(),
-                    weight=w_hfjets_i1
-                )
-
-            # B tag discriminator
-            btag = getattr(ak4, cfg.BTAG.ALGO)
-            w_btag = weight_shape(btag[mask], rweight[mask])
-            ezfill('ak4_btag', btag=btag[mask].flatten(), weight=w_btag )
-
-            # MET
-            ezfill('dpfcalo_cr',            dpfcalo=df["dPFCaloCR"][mask],       weight=rweight[mask] )
-            ezfill('dpfcalo_sr',            dpfcalo=df["dPFCaloSR"][mask],       weight=rweight[mask] )
-            ezfill('calomet_pt',         met=df["CaloRecoil_pt"][mask],             weight=rweight[mask] )
-            ezfill('calomet_phi',        phi=df["CaloRecoil_phi"][mask],            weight=rweight[mask] )
-            ezfill('met',                met=met_pt[mask],            weight=rweight[mask] )
-            ezfill('met_phi',            phi=met_phi[mask],           weight=rweight[mask] )
-            ezfill('recoil',             recoil=df["recoil_pt"][mask],      weight=rweight[mask] )
-            ezfill('recoil_phi',         phi=df["recoil_phi"][mask],        weight=rweight[mask] )
-            ezfill('dphijm',             dphi=df["minDPhiJetMet"][mask],    weight=rweight[mask] )
-            ezfill('dphijr',             dphi=df["minDPhiJetRecoil"][mask], weight=rweight[mask] )
-
-            ezfill('dphijj',             dphi=df["dphijj"][mask],   weight=rweight[mask] )
-            ezfill('detajj',             deta=df["detajj"][mask],   weight=rweight[mask] )
-            ezfill('mjj',                mjj=df["mjj"][mask],      weight=rweight[mask] )
-
-            rweight_nopref = region_weights.partial_weight(exclude=exclude+['prefire'])
-            ezfill('mjj_nopref',                mjj=df["mjj"][mask],      weight=rweight_nopref[mask] )
-
-            ezfill('vecdphi',     vecdphi=vec_dphi[mask],       weight=rweight[mask] )
-            ezfill('vecb',        vecb=vec_b[mask],            weight=rweight[mask] )
-            ezfill('dphitkpf',    dphi=dphitkpf[mask],         weight=rweight[mask] )
-
-            # Consider events where only (at least) one of the jets is in horn
-            dpftkmet_weight = np.where(
-                leading_jet_in_horn | trailing_jet_in_horn,
-                rweight,
-                0
-            )
-
-            ezfill('dPFTkMET',   dpftk=df['dPFTkSR'][mask],    weight=dpftkmet_weight[mask])
-
-            # b-tag weight up and down variations
-            if cfg.RUN.BTAG_STUDY:
-                if not df['is_data']:
-                    rw = region_weights.partial_weight(exclude=exclude+['bveto'])
-                    ezfill('mjj_bveto_up',    mjj=df['mjj'][mask],  weight=(rw*(1-bsf_variations['up']).prod())[mask])
-                    ezfill('mjj_bveto_down',  mjj=df['mjj'][mask],  weight=(rw*(1-bsf_variations['down']).prod())[mask])
-
-            if gen_v_pt is not None:
-                ezfill('gen_vpt', vpt=gen_v_pt[mask], weight=df['Generator_weight'][mask])
-                ezfill('gen_mjj', mjj=df['mjj_gen'][mask], weight=df['Generator_weight'][mask])
-
-
-            if cfg.RUN.ELE_SF_STUDY and re.match('cr_(\d)e_vbf', region) and not df['is_data']:
-                eleloose_id_sf, eletight_id_sf, ele_reco_sf = get_varied_ele_sf(electrons, df, evaluator)
-                rw = region_weights.partial_weight(exclude=exclude+['ele_id_tight','ele_id_loose'])
-                for ele_id_variation in eletight_id_sf.keys():
-                    ezfill('mjj_ele_id', 
-                        mjj=df['mjj'][mask], 
-                        variation=ele_id_variation,
-                        weight=(rw * eletight_id_sf[ele_id_variation].prod() * eleloose_id_sf[ele_id_variation].prod())[mask],
-                    )
-
-                for ele_reco_variation, w in ele_reco_sf.items():
-                    ezfill('mjj_ele_reco',
-                        mjj=df['mjj'][mask],
-                        variation=ele_reco_variation,
-                        weight=(rw * w)[mask]
-                    )
-
-            if cfg.RUN.MUON_SF_STUDY and re.match('cr_(\d)m_vbf', region) and not df['is_data']:
-                muon_looseid_sf, muon_tightid_sf, muon_looseiso_sf, muon_tightiso_sf = get_varied_muon_sf(muons, df, evaluator)
-                rw = region_weights.partial_weight(exclude=exclude+['muon_id_tight','muon_id_loose'])
-
-                for mu_id_variation in muon_looseid_sf.keys():
-                    ezfill('mjj_muon_id', 
-                        mjj=df['mjj'][mask], 
-                        variation=mu_id_variation,
-                        weight=(rw * muon_tightid_sf[mu_id_variation].prod() * muon_looseid_sf[mu_id_variation].prod())[mask],
-                    )
-
-                for mu_iso_variation in muon_looseiso_sf.keys():
-                    ezfill('mjj_muon_iso', 
-                        mjj=df['mjj'][mask], 
-                        variation=mu_iso_variation,
-                        weight=(rw * muon_tightiso_sf[mu_iso_variation].prod() * muon_looseiso_sf[mu_iso_variation].prod())[mask],
-                    )
-
-            if cfg.RUN.ELE_TRIG_STUDY and not df['is_data'] and re.match('cr_(\d)e_vbf', region):
-                # Note that electrons in the gap do not count in this study
-                mask_electron_nogap = (np.abs(electrons.etasc)<1.4442) | (np.abs(electrons.etasc)>1.566)
-                electrons_nogap = electrons[mask_electron_nogap]
-
-                # Up and down variations: Vary the efficiency in data
-                data_eff_up = evaluator['trigger_electron_eff_data'](electrons_nogap.etasc, electrons_nogap.pt) + evaluator['trigger_electron_eff_data_error'](electrons_nogap.etasc, electrons_nogap.pt)
-                data_eff_down = evaluator['trigger_electron_eff_data'](electrons_nogap.etasc, electrons_nogap.pt) - evaluator['trigger_electron_eff_data_error'](electrons_nogap.etasc, electrons_nogap.pt)
-
-                p_pass_data = 1 - (1-evaluator["trigger_electron_eff_data"](electrons_nogap.etasc, electrons_nogap.pt)).prod()
-                p_pass_data_up = 1 - (1-data_eff_up).prod()
-                p_pass_data_down = 1 - (1-data_eff_down).prod()
-
-                p_pass_mc = 1 - (1-evaluator["trigger_electron_eff_mc"](electrons_nogap.etasc, electrons_nogap.pt)).prod()
-
-                trigger_weight_nom = p_pass_data / p_pass_mc
-                trigger_weight_up = p_pass_data_up / p_pass_mc
-                trigger_weight_down = p_pass_data_down / p_pass_mc
-
-                trigger_weight_nom[np.isnan(trigger_weight_nom) | np.isinf(trigger_weight_nom)] = 1.
-                trigger_weight_up[np.isnan(trigger_weight_up) | np.isinf(trigger_weight_up)] = 1.
-                trigger_weight_down[np.isnan(trigger_weight_down) | np.isinf(trigger_weight_down)] = 1.
-
-                ele_trig_sf = {
-                    "nom" : trigger_weight_nom,
-                    "up" : trigger_weight_up,
-                    "down" : trigger_weight_down,
-                }
-
-                for variation, trigw in ele_trig_sf.items():
-                    rw = region_weights.partial_weight(exclude=exclude+['trigger_ele'])
-                    ezfill(
-                        'mjj_ele_trig_weight',
-                        mjj=df['mjj'][mask],
-                        variation=variation,
-                        weight=(rw*trigw)[mask] 
-                    )
-
-            if cfg.RUN.PILEUP_SF_STUDY and not df['is_data']:
-                rw_nopu = region_weights.partial_weight(exclude=exclude+['pileup'])
-
-                puweights = pileup_sf_variations(df, evaluator, cfg)
-                for puvar, w in puweights.items():
-                    ezfill('mjj_pu_weights',
-                        mjj=df['mjj'][mask],
-                        variation=puvar,
-                        weight=(rw_nopu * w)[mask]
-                    )
-
-            if cfg.RUN.PREFIRE_SF_STUDY and not df['is_data']:
-                rw_nopref = region_weights.partial_weight(exclude=exclude+['prefire'])
-
-                try:
-                    pref_weights = {
-                        "nom" : df['PrefireWeight'],
-                        "up" : df['PrefireWeight_Up'],
-                        "down" : df['PrefireWeight_Down'],
-                    }
-    
-                    for prefvar, w in pref_weights.items():
-                        ezfill('mjj_pref_weights',
-                            mjj=df['mjj'][mask],
-                            variation=prefvar,
-                            weight=(rw_nopref * w)[mask]
-                        )
-                
-                except KeyError:
-                    pass
-
-            if cfg.RUN.VETO_WEIGHTS_STUDY and 'no_veto_all' in region and not df['is_data']:
-                variations = ['nominal', 'tau_id_up', 'tau_id_dn', 
-                    'ele_id_up', 'ele_id_dn', 'ele_reco_up', 'ele_reco_dn',
-                    'muon_id_up', 'muon_id_dn', 'muon_iso_up', 'muon_iso_dn'
-                    ]
-                rw_no_veto = region_weights.partial_weight(exclude=exclude+['veto'])
-                for v in variations:
-                    ezfill('mjj_veto_weight',
-                        mjj=df['mjj'][mask],
-                        variation=v,
-                        weight=(rw_no_veto * veto_weights.partial_weight(include=[v]))[mask]
-                    )
-
-
-            # Photon CR data-driven QCD estimate
-            if df['is_data'] and re.match("cr_g.*", region) and re.match("(SinglePhoton|EGamma).*", dataset):
-                w_imp = photon_impurity_weights(photons[leadphoton_index].pt.max()[mask], df["year"])
-                output['mjj'].fill(
-                                    dataset=data_driven_qcd_dataset(dataset),
-                                    region=region,
-                                    mjj=df["mjj"][mask],
-                                    weight=rweight[mask] * w_imp
-                                )
-                output['recoil'].fill(
-                                    dataset=data_driven_qcd_dataset(dataset),
-                                    region=region,
-                                    recoil=df["recoil_pt"][mask],
-                                    weight=rweight[mask] * w_imp
-                                )
-
-            # Uncertainty variations
-            if df['is_lo_z'] or df['is_nlo_z'] or df['is_lo_z_ewk']:
-                theory_uncs = [x for x in cfg.SF.keys() if x.startswith('unc')]
-                for unc in theory_uncs:
-                    reweight = evaluator[unc](gen_v_pt)
-                    w = (region_weights.weight() * reweight)[mask]
-                    ezfill(
-                        'mjj_unc',
-                        mjj=df['mjj'][mask],
-                        uncertainty=unc,
-                        weight=w)
-
-            # Muons
-            if '_1m_' in region or '_2m_' in region or 'no_veto' in region:
-                w_allmu = weight_shape(muons.pt[mask], rweight[mask])
-                ezfill('muon_pt',   pt=muons.pt[mask].flatten(),    weight=w_allmu )
-                ezfill('muon_pt_abseta',pt=muons.pt[mask].flatten(),abseta=muons.eta[mask].flatten(),    weight=w_allmu )
-                ezfill('muon_mt',   mt=df['MT_mu'][mask],           weight=rweight[mask])
-                ezfill('muon_eta',  eta=muons.eta[mask].flatten(),  weight=w_allmu)
-                ezfill('muon_phi',  phi=muons.phi[mask].flatten(),  weight=w_allmu)
-
-            # Dimuon
-            if '_2m_' in region:
-                w_dimu = weight_shape(dimuons.pt[mask], rweight[mask])
-                ezfill('muon_pt0',      pt=dimuons.i0.pt[mask].flatten(),           weight=w_dimu)
-                ezfill('muon_pt1',      pt=dimuons.i1.pt[mask].flatten(),           weight=w_dimu)
-                ezfill('muon_eta0',     eta=dimuons.i0.eta[mask].flatten(),         weight=w_dimu)
-                ezfill('muon_eta1',     eta=dimuons.i1.eta[mask].flatten(),         weight=w_dimu)
-                ezfill('muon_phi0',     phi=dimuons.i0.phi[mask].flatten(),         weight=w_dimu)
-                ezfill('muon_phi1',     phi=dimuons.i1.phi[mask].flatten(),         weight=w_dimu)
-                ezfill('dimuon_pt',     pt=dimuons.pt[mask].flatten(),              weight=w_dimu)
-                ezfill('dimuon_eta',    eta=dimuons.eta[mask].flatten(),            weight=w_dimu)
-                ezfill('dimuon_mass',   dilepton_mass=dimuons.mass[mask].flatten(), weight=w_dimu )
-
-            # Electrons
-            if '_1e_' in region or '_2e_' in region or 'no_veto' in region:
-                w_allel = weight_shape(electrons.pt[mask], rweight[mask])
-                ezfill('electron_pt',   pt=electrons.pt[mask].flatten(),    weight=w_allel)
-                ezfill('electron_pt_eta',   pt=electrons.pt[mask].flatten(), eta=electrons.eta[mask].flatten(),    weight=w_allel)
-                ezfill('electron_mt',   mt=df['MT_el'][mask],               weight=rweight[mask])
-                ezfill('electron_eta',  eta=electrons.eta[mask].flatten(),  weight=w_allel)
-                ezfill('electron_phi',  phi=electrons.phi[mask].flatten(),  weight=w_allel)
-
-            # Dielectron
-            if '_2e_' in region:
-                w_diel = weight_shape(dielectrons.pt[mask], rweight[mask])
-                ezfill('electron_pt0',      pt=dielectrons.i0.pt[mask].flatten(),               weight=w_diel)
-                ezfill('electron_pt1',      pt=dielectrons.i1.pt[mask].flatten(),               weight=w_diel)
-                ezfill('electron_eta0',     eta=dielectrons.i0.eta[mask].flatten(),             weight=w_diel)
-                ezfill('electron_eta1',     eta=dielectrons.i1.eta[mask].flatten(),             weight=w_diel)
-                ezfill('electron_phi0',     phi=dielectrons.i0.phi[mask].flatten(),             weight=w_diel)
-                ezfill('electron_phi1',     phi=dielectrons.i1.phi[mask].flatten(),             weight=w_diel)
-                ezfill('dielectron_pt',     pt=dielectrons.pt[mask].flatten(),                  weight=w_diel)
-                ezfill('dielectron_eta',    eta=dielectrons.eta[mask].flatten(),                weight=w_diel)
-                ezfill('dielectron_mass',   dilepton_mass=dielectrons.mass[mask].flatten(),     weight=w_diel)
-
-            # Photon
-            if '_g_' in region:
-                w_leading_photon = weight_shape(photons[leadphoton_index].pt[mask],rweight[mask])
-                ezfill('photon_pt0',              pt=photons[leadphoton_index].pt[mask].flatten(),    weight=w_leading_photon)
-                ezfill('photon_eta0',             eta=photons[leadphoton_index].eta[mask].flatten(),  weight=w_leading_photon)
-                ezfill('photon_phi0',             phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
-                ezfill('photon_eta_phi',          eta=photons[leadphoton_index].eta[mask].flatten(), phi=photons[leadphoton_index].phi[mask].flatten(),  weight=w_leading_photon)
-
-                # w_drphoton_jet = weight_shape(df['dRPhotonJet'][mask], rweight[mask])
-
-            # Tau
-            if 'no_veto' in region:
-                w_all_taus = weight_shape(taus.pt[mask], rweight[mask])
-                ezfill("tau_pt", pt=taus.pt[mask].flatten(), weight=w_all_taus)
-
-            # PV
-            ezfill('npv', nvtx=df['PV_npvs'][mask], weight=rweight[mask])
-            ezfill('npvgood', nvtx=df['PV_npvsGood'][mask], weight=rweight[mask])
-
-            ezfill('npv_nopu', nvtx=df['PV_npvs'][mask], weight=region_weights.partial_weight(exclude=exclude+['pileup'])[mask])
-            ezfill('npvgood_nopu', nvtx=df['PV_npvsGood'][mask], weight=region_weights.partial_weight(exclude=exclude+['pileup'])[mask])
-
-            ezfill('rho_all', rho=df['fixedGridRhoFastjetAll'][mask], weight=region_weights.partial_weight(exclude=exclude)[mask])
-            ezfill('rho_central', rho=df['fixedGridRhoFastjetCentral'][mask], weight=region_weights.partial_weight(exclude=exclude)[mask])
-            ezfill('rho_all_nopu', rho=df['fixedGridRhoFastjetAll'][mask], weight=region_weights.partial_weight(exclude=exclude+['pileup'])[mask])
-            ezfill('rho_central_nopu', rho=df['fixedGridRhoFastjetCentral'][mask], weight=region_weights.partial_weight(exclude=exclude+['pileup'])[mask])
         return output
 
     def postprocess(self, accumulator):

@@ -92,155 +92,155 @@ def vbfhinv_accumulator(cfg):
     items = {}
     items["genvpt_check"] = Hist("Counts", dataset_ax, type_ax, vpt_ax)
 
-    items["gen_vpt"] = Hist("Counts", dataset_ax, vpt_ax, region_ax)
-    items["gen_mjj"] = Hist("Counts", dataset_ax, mjj_ax, region_ax)
-    items["lhe_njets"] = Hist("Counts", dataset_ax, multiplicity_ax)
-    items["lhe_ht"] = Hist("Counts", dataset_ax, ht_ax)
-    items["lhe_htinc"] = Hist("Counts", dataset_ax, ht_ax)
-    items["calomet_pt"] = Hist("Counts", dataset_ax, region_ax, met_ax)
-    items["calomet_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
-    items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
-    items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    # items["gen_vpt"] = Hist("Counts", dataset_ax, vpt_ax, region_ax)
+    # items["gen_mjj"] = Hist("Counts", dataset_ax, mjj_ax, region_ax)
+    # items["lhe_njets"] = Hist("Counts", dataset_ax, multiplicity_ax)
+    # items["lhe_ht"] = Hist("Counts", dataset_ax, ht_ax)
+    # items["lhe_htinc"] = Hist("Counts", dataset_ax, ht_ax)
+    # items["calomet_pt"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    # items["calomet_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    # items["met"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    # items["met_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    # items["recoil"] = Hist("Counts", dataset_ax, region_ax, recoil_ax)
+    # items["recoil_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
-    items["met_pt_ak40_hf"] = Hist("Counts", dataset_ax, region_ax, met_ax)
-    items["met_pt_ak41_hf"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    # items["met_pt_ak40_hf"] = Hist("Counts", dataset_ax, region_ax, met_ax)
+    # items["met_pt_ak41_hf"] = Hist("Counts", dataset_ax, region_ax, met_ax)
 
-    items["mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
-    items["mjj_nopref"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
-    items["mjj_veto_weight"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
-    items["mjj_ele_trig_weight"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
-    items["mjj_ele_id"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
-    items["mjj_ele_reco"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
-    items["mjj_muon_id"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
-    items["mjj_muon_iso"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
-    items["mjj_pu_weights"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
-    items["mjj_pref_weights"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
-    items["mjj_unc"] = Hist("Counts", dataset_ax, region_ax, mjj_ax, unc_ax)
-    items["dphijj"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
-    items["detajj"] = Hist("Counts", dataset_ax, region_ax, deta_ax)
+    # items["mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
+    # items["mjj_nopref"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
+    # items["mjj_veto_weight"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    # items["mjj_ele_trig_weight"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    # items["mjj_ele_id"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    # items["mjj_ele_reco"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    # items["mjj_muon_id"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    # items["mjj_muon_iso"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    # items["mjj_pu_weights"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    # items["mjj_pref_weights"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    # items["mjj_unc"] = Hist("Counts", dataset_ax, region_ax, mjj_ax, unc_ax)
+    # items["dphijj"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
+    # items["detajj"] = Hist("Counts", dataset_ax, region_ax, deta_ax)
 
-    if cfg.RUN.BTAG_STUDY:
-        items["mjj_bveto_up"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
-        items["mjj_bveto_down"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
+    # if cfg.RUN.BTAG_STUDY:
+    #     items["mjj_bveto_up"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
+    #     items["mjj_bveto_down"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
 
-    items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["ak4_ptraw0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-    items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nef0_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
-    items["ak4_mt0"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
+    # items["ak4_pt0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    # items["ak4_ptraw0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    # items["ak4_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    # items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    # items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    # items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    # items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    # items["ak4_nef0_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    # items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
+    # items["ak4_mt0"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
 
-    items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["ak4_ptraw1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["ak4_eta1"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["ak4_phi1"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-    items["ak4_chf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nhf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nef1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nef1_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
-    items["ak4_nconst1"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
-    items["ak4_mt1"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
+    # items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    # items["ak4_ptraw1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    # items["ak4_eta1"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    # items["ak4_phi1"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    # items["ak4_chf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    # items["ak4_nhf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    # items["ak4_nef1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    # items["ak4_nef1_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    # items["ak4_nconst1"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
+    # items["ak4_mt1"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
 
-    # Eta of the leading jet when the trailing jet is in HF
-    items["ak4_eta0_trailjetHF"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["ak4_eta1_trailjetHF"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    # # Eta of the leading jet when the trailing jet is in HF
+    # items["ak4_eta0_trailjetHF"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    # items["ak4_eta1_trailjetHF"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
 
-    items["ak4_central_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["ak4_forward_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    # items["ak4_central_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    # items["ak4_forward_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
 
-    items["ak4_pt0_chf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
-    items["ak4_pt0_nhf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
-    items["ak4_pt0_nconst0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, nconst_ax)
-    items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
-    items["ak4_pt0_eta0_hf"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, eta_hf_ax)
+    # items["ak4_pt0_chf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
+    # items["ak4_pt0_nhf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
+    # items["ak4_pt0_nconst0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, nconst_ax)
+    # items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
+    # items["ak4_pt0_eta0_hf"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, eta_hf_ax)
 
-    items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-    items["ak4_pt_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
-    items["ak4_eta_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
-    items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
-    items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
+    # items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    # items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    # items["ak4_phi"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    # items["ak4_pt_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
+    # items["ak4_eta_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    # items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
+    # items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
-    items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax, jet_phi_ax)
+    # items["ak4_eta_phi"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax, jet_phi_ax)
 
-    items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
+    # items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
 
-    items["dpfcalo_cr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
-    items["dpfcalo_sr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
-    items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
-    items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
+    # items["dpfcalo_cr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    # items["dpfcalo_sr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
+    # items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
+    # items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
 
-    items["vecb"] = Hist("Counts", dataset_ax, region_ax, vecb_ax)
-    items["vecdphi"] = Hist("Counts", dataset_ax, region_ax, vecdphi_ax)
-    items["dphitkpf"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
-    items["dPFTkMET"] = Hist("Counts", dataset_ax, region_ax, dpftk_ax)
+    # items["vecb"] = Hist("Counts", dataset_ax, region_ax, vecb_ax)
+    # items["vecdphi"] = Hist("Counts", dataset_ax, region_ax, vecdphi_ax)
+    # items["dphitkpf"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
+    # items["dPFTkMET"] = Hist("Counts", dataset_ax, region_ax, dpftk_ax)
 
-    # Multiplicity histograms
-    for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
-        items[f"{cand}_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
+    # # Multiplicity histograms
+    # for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
+    #     items[f"{cand}_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
 
-    items["extra_ak4_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
+    # items["extra_ak4_mult"] = Hist(cand, dataset_ax, region_ax, multiplicity_ax)
 
-    if cfg.RUN.SAVE_HF_VARIABLES:
-        items["ak4_sigma_eta_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
-        items["ak4_sigma_phi_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
-        items["ak4_sigma_eta_eta1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
-        items["ak4_sigma_phi_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
-        items["ak4_sigma_eta_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, eta_hf_ax)
-        items["ak4_sigma_phi_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax, eta_hf_ax)
+    # if cfg.RUN.SAVE_HF_VARIABLES:
+    #     items["ak4_sigma_eta_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
+    #     items["ak4_sigma_phi_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+    #     items["ak4_sigma_eta_eta1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
+    #     items["ak4_sigma_phi_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+    #     items["ak4_sigma_eta_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, eta_hf_ax)
+    #     items["ak4_sigma_phi_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax, eta_hf_ax)
 
-        # Two dimensional
-        items["ak4_sigma_eta_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
-        items["ak4_sigma_eta_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
-        items["ak4_sigma_eta_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
-        items["ak4_hfcentral_adjacent_etastripsize"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
-        items["ak4_hfcentral_adjacent_etastripsize0"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
-        items["ak4_hfcentral_adjacent_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
+    #     # Two dimensional
+    #     items["ak4_sigma_eta_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
+    #     items["ak4_sigma_eta_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
+    #     items["ak4_sigma_eta_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
+    #     items["ak4_hfcentral_adjacent_etastripsize"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
+    #     items["ak4_hfcentral_adjacent_etastripsize0"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
+    #     items["ak4_hfcentral_adjacent_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
 
-    items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["muon_pt_abseta"] = Hist("Counts", dataset_ax, region_ax, pt_ax_mu, abseta_ax_mu)
-    items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
-    items["muon_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["muon_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["muon_eta0"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
-    items["muon_phi0"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["muon_pt1"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["muon_eta1"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
-    items["muon_phi1"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["muon_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
+    # items["muon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    # items["muon_pt_abseta"] = Hist("Counts", dataset_ax, region_ax, pt_ax_mu, abseta_ax_mu)
+    # items["muon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    # items["muon_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    # items["muon_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    # items["muon_eta0"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    # items["muon_phi0"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    # items["muon_pt1"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    # items["muon_eta1"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    # items["muon_phi1"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    # items["muon_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
 
-    items["dimuon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["dimuon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
-    items["dimuon_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
+    # items["dimuon_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    # items["dimuon_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    # items["dimuon_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
 
-    items["electron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["electron_pt_eta"] = Hist("Counts", dataset_ax, region_ax, pt_ax_el, eta_ax_el)
-    items["electron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
-    items["electron_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["electron_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["electron_eta0"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
-    items["electron_phi0"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["electron_pt1"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["electron_eta1"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
-    items["electron_phi1"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
-    items["electron_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
+    # items["electron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    # items["electron_pt_eta"] = Hist("Counts", dataset_ax, region_ax, pt_ax_el, eta_ax_el)
+    # items["electron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    # items["electron_phi"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    # items["electron_pt0"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    # items["electron_eta0"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    # items["electron_phi0"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    # items["electron_pt1"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    # items["electron_eta1"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    # items["electron_phi1"] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    # items["electron_mt"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
 
-    items["dielectron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items["dielectron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
-    items["dielectron_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
+    # items["dielectron_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    # items["dielectron_eta"] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    # items["dielectron_mass"] = Hist("Counts", dataset_ax, region_ax, dilepton_mass_ax)
 
-    items['photon_pt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
-    items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
-    items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
+    # items['photon_pt0'] = Hist("Counts", dataset_ax, region_ax, pt_ax)
+    # items['photon_eta0'] = Hist("Counts", dataset_ax, region_ax, eta_ax)
+    # items['photon_phi0'] = Hist("Counts", dataset_ax, region_ax, phi_ax)
 
-    items["tau_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax_tau)
+    # items["tau_pt"] = Hist("Counts", dataset_ax, region_ax, pt_ax_tau)
 
     # One cutflow counter per region
     regions = vbfhinv_regions(cfg).keys()
@@ -264,10 +264,10 @@ def vbfhinv_accumulator(cfg):
     items['npv_nopu'] = Hist('Number of primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
     items['npvgood_nopu'] = Hist('Number of good primary vertices (No PU weights)', dataset_ax, region_ax, nvtx_ax)
 
-    items['rho_all'] = Hist(r'$\rho$ for all PF candidates', dataset_ax, region_ax, rho_ax)
-    items['rho_central'] = Hist(r'$\rho$ for central PF candidates', dataset_ax, region_ax, rho_ax)
-    items['rho_all_nopu'] = Hist(r'$\rho$ for all PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax)
-    items['rho_central_nopu'] = Hist(r'$\rho$ for central PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax)
+    # items['rho_all'] = Hist(r'$\rho$ for all PF candidates', dataset_ax, region_ax, rho_ax)
+    # items['rho_central'] = Hist(r'$\rho$ for central PF candidates', dataset_ax, region_ax, rho_ax)
+    # items['rho_all_nopu'] = Hist(r'$\rho$ for all PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax)
+    # items['rho_central_nopu'] = Hist(r'$\rho$ for central PF candidates (No PU weights)', dataset_ax, region_ax, rho_ax)
 
     items['tree_float16'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_float16)
     items['tree_int64'] = processor.defaultdict_accumulator(defaultdict_accumulator_of_empty_column_accumulator_int64)
@@ -287,9 +287,6 @@ def vbfhinv_regions(cfg):
         'trailak4_pt_eta',
         'trailak4_id',
         'hemisphere',
-        'mjj',
-        'dphijj',
-        'detajj',
         'veto_photon',
         'veto_tau',
         'veto_b',
@@ -377,39 +374,39 @@ def vbfhinv_regions(cfg):
             'detajj'
         ]
 
-    # Dimuon CR
-    cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'veto_ele', 'dimuon_charge'] + common_cuts[1:] + ['dpfcalo_cr']
+    # # Dimuon CR
+    # cr_2m_cuts = ['trig_met','two_muons', 'at_least_one_tight_mu', 'dimuon_mass', 'veto_ele', 'dimuon_charge'] + common_cuts[1:] + ['dpfcalo_cr']
 
-    cr_2m_cuts.remove('veto_muo')
+    # cr_2m_cuts.remove('veto_muo')
 
-    regions['cr_2m_vbf'] = cr_2m_cuts
+    # regions['cr_2m_vbf'] = cr_2m_cuts
 
-    # Single muon CR
-    cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']
-    cr_1m_cuts.remove('veto_muo')
-    regions['cr_1m_vbf'] = cr_1m_cuts
+    # # Single muon CR
+    # cr_1m_cuts = ['trig_met','one_muon', 'at_least_one_tight_mu',  'veto_ele'] + common_cuts[1:] + ['dpfcalo_cr']
+    # cr_1m_cuts.remove('veto_muo')
+    # regions['cr_1m_vbf'] = cr_1m_cuts
 
-    # Dielectron CR
-    cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'veto_muo', 'dielectron_charge'] + common_cuts[2:] + ['dpfcalo_cr']
-    # cr_2e_cuts.remove('veto_ele')
-    regions['cr_2e_vbf'] = cr_2e_cuts
+    # # Dielectron CR
+    # cr_2e_cuts = ['trig_ele','two_electrons', 'at_least_one_tight_el', 'dielectron_mass', 'veto_muo', 'dielectron_charge'] + common_cuts[2:] + ['dpfcalo_cr']
+    # # cr_2e_cuts.remove('veto_ele')
+    # regions['cr_2e_vbf'] = cr_2e_cuts
 
-    # Z CRs with CaloMETNoLep cut
-    if cfg.RUN.CALOMET_CHECK:
-        for r in ['cr_2e_vbf', 'cr_2m_vbf']:
-            regions[f'{r}_calocut'] = copy.deepcopy(regions[r])
-            regions[f'{r}_calocut'].append('calo_metptnolep')
+    # # Z CRs with CaloMETNoLep cut
+    # if cfg.RUN.CALOMET_CHECK:
+    #     for r in ['cr_2e_vbf', 'cr_2m_vbf']:
+    #         regions[f'{r}_calocut'] = copy.deepcopy(regions[r])
+    #         regions[f'{r}_calocut'].append('calo_metptnolep')
 
-    # Single electron CR
-    cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:] + ['dpfcalo_cr', 'no_el_in_hem']
-    # cr_1e_cuts.remove('veto_ele')
-    regions['cr_1e_vbf'] =  cr_1e_cuts
+    # # Single electron CR
+    # cr_1e_cuts = ['trig_ele','one_electron', 'at_least_one_tight_el', 'veto_muo','met_el'] + common_cuts[1:] + ['dpfcalo_cr', 'no_el_in_hem']
+    # # cr_1e_cuts.remove('veto_ele')
+    # regions['cr_1e_vbf'] =  cr_1e_cuts
 
-    # Photon CR
-    cr_g_cuts = ['trig_photon', 'one_photon', 'at_least_one_tight_photon','photon_pt'] + common_cuts + ['dpfcalo_cr']
-    cr_g_cuts.remove('veto_photon')
+    # # Photon CR
+    # cr_g_cuts = ['trig_photon', 'one_photon', 'at_least_one_tight_photon','photon_pt'] + common_cuts + ['dpfcalo_cr']
+    # cr_g_cuts.remove('veto_photon')
 
-    regions['cr_g_vbf'] = cr_g_cuts
+    # regions['cr_g_vbf'] = cr_g_cuts
 
     if cfg and cfg.RUN.SYNC:
         regions['sync_sr_vbf_round1'] = [
