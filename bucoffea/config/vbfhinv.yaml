@@ -6,8 +6,8 @@ default:
       dijet:
         shape_based:
           mass: 200
-          dphi: 1.5
-          deta: 1
+          dphi: 2
+          deta: 0.5
         cut_based:
           mass: 1300
           dphi: 1.5
@@ -238,7 +238,7 @@ default:
       endcap: False
     save:
       passing: False
-      tree: False
+      tree: True
       tree_regions:
         - sr_vbf
         - sr_vbf_no_veto_all
