@@ -45,7 +45,7 @@ def datasets(year, unblind=False, nlo=False):
                 'cr_2m_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}'),
                 'cr_2e_j' : re.compile(f'(Top_FXFX|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|DYNJetsToLL*).*{year}'),
                 'cr_g_j' : re.compile(f'((GJets_1j_.*|WQQGamma|ZQQGamma|QCD_data.*|Diboson|{wjets_nlo_regex}).*{year})'),
-                'sr_j_no_veto_all' : re.compile(f'((.*ZNJetsTo.*LHE.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*|{wjets_nlo_regex}).*{year})'),
+                'sr_j_no_veto_all' : re.compile(f'((.*ZNJetsTo.*LHE.*|Top_FXFX.*|(WZ|ZZ|WW)(_PSweights)?|QCD_HT.*|.*Hinv.*|.*HToInv.*|DMSimp|DMsimp|ADD|ScalarFirstGenLeptoquark|(Scalar|Pseudoscalar).*|{wjets_nlo_regex}|SVJ).*{year})'),
                 'sr_j' : re.compile('nomatch'),
                 }
     else:
@@ -147,6 +147,11 @@ def legacy_dataset_name(dataset):
     m = re.match("ZH_HToInv_JHU_ptH150_201[0-9]", dataset)
     if m:
         return "zh_jhu"
+
+    m = re.match("SVJ_mZprime_(\d+)_mDark_(\d+)_rinv_([0-9,.]+)_alpha_(peak|high|low)_201[0-9]", dataset)
+    if m:
+        mzp, mdark, rinv, alpha = m.groups()
+        return f"svj_mzp{mzp}_mdark{mdark}_rinv{rinv}_alpha{alpha}"
 
     patterns = {
         '.*DY.*' : 'zll',
