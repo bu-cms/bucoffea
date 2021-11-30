@@ -4085,3 +4085,1945 @@ ggZH_ZToQQ_HToInvisible_M125_pow_pythia8_2017:
   gen: 0.085780797
 ggZH_ZToQQ_HToInvisible_M125_pow_pythia8_2018:
   gen: 0.085780797
+ggZH_HToInvisible_ZToQQ_M125_pow_pythia8_2016:
+  gen: 0.085780797
+pseudo_monozll_mmed200_mdm1_2017:
+  gen: 1.271e-03
+pseudo_monozqq_mmed200_mdm1_2017:
+  gen: 0.01771
+ttH_HToInvisible_M125_pow_pythia8_2017:
+  nlo: 0.5071
+ttH_HToInvisible_M125_PSweights_pow_pythia8_2018:
+  nlo: 0.5071
+DYJetsToLL_Pt-100To250_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 94.2
+DYJetsToLL_Pt-100To250_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 94.46
+DYJetsToLL_Pt-250To400_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 3.637
+DYJetsToLL_Pt-250To400_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 3.628
+DYJetsToLL_Pt-400To650_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 0.4965
+DYJetsToLL_Pt-400To650_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 0.4998
+DYJetsToLL_Pt-50To100_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 397.9
+DYJetsToLL_Pt-50To100_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 397.7
+DYJetsToLL_Pt-650ToInf_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 0.04741
+DYJetsToLL_Pt-650ToInf_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 0.04676
+DYJetsToLL_M-50_HT-100to200-MLM_2020:
+  gen: 139.9
+DYJetsToLL_M-50_HT-1200to2500-MLM_2020:
+  gen: 0.133
+DYJetsToLL_M-50_HT-200to400-MLM_2020:
+  gen: 38.59
+DYJetsToLL_M-50_HT-2500toInf-MLM_2020:
+  gen: 0.002991
+DYJetsToLL_M-50_HT-400to600-MLM_2020:
+  gen: 5.237
+DYJetsToLL_M-50_HT-600to800-MLM_2020:
+  gen: 1.268
+DYJetsToLL_M-50_HT-70to100-MLM_2020:
+  gen: 139.5
+DYJetsToLL_M-50_HT-800to1200-MLM_2020:
+  gen: 0.567
+DYJetsToLL_M-50_HT-100to200_PSweights-MLM_2020:
+  gen: 139.9
+DYJetsToLL_M-50_HT-1200to2500_PSweights-MLM_2020:
+  gen: 0.133
+DYJetsToLL_M-50_HT-200to400_PSweights-MLM_2020:
+  gen: 38.59
+DYJetsToLL_M-50_HT-2500toInf_PSweights-MLM_2020:
+  gen: 0.002991
+DYJetsToLL_M-50_HT-400to600_PSweights-MLM_2020:
+  gen: 5.237
+DYJetsToLL_M-50_HT-600to800_PSweights-MLM_2020:
+  gen: 1.268
+DYJetsToLL_M-50_HT-70to100_PSweights-MLM_2020:
+  gen: 139.5
+DYJetsToLL_M-50_HT-800to1200_PSweights-MLM_2020:
+  gen: 0.567
+EWKWMinus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2020:
+  gen: 32.11
+EWKWPlus2Jets_WToLNu_M-50_withDipoleRecoil-mg_2020:
+  gen: 39.04
+EWKZ2Jets_ZToLL_M-50_withDipoleRecoil-mg_2020:
+  gen: 6.203
+EWKZ2Jets_ZToNuNu_M-50_withDipoleRecoil-mg_2020:
+  gen: 10.65
+GJets_HT-200To400-MLM_2020:
+  gen: 2186.0
+GJets_HT-400To600-MLM_2020:
+  gen: 259.8
+GJets_HT-40To100-MLM_2020:
+  gen: 18610.0
+GJets_HT-600ToInf-MLM_2020:
+  gen: 86.03
+VBFGamma_5f_DipoleRecoil-mg_2020:
+  gen: 21.08
+WJetsToLNu_HT-100To200-MLM_2020:
+  gen: 1254.0
+WJetsToLNu_HT-1200To2500-MLM_2020:
+  gen: 1.153
+WJetsToLNu_HT-200To400-MLM_2020:
+  gen: 336.9
+WJetsToLNu_HT-2500ToInf-MLM_2020:
+  gen: 0.02613
+WJetsToLNu_HT-400To600-MLM_2020:
+  gen: 45.42
+WJetsToLNu_HT-600To800-MLM_2020:
+  gen: 10.96
+WJetsToLNu_HT-70To100-MLM_2020:
+  gen: 1263.0
+WJetsToLNu_HT-800To1200-MLM_2020:
+  gen: 4.923
+ZJetsToNuNu_HT-100To200-MLM_2020:
+  gen: 265.8
+ZJetsToNuNu_HT-1200To2500-MLM_2020:
+  gen: 0.2521
+ZJetsToNuNu_HT-200To400-MLM_2020:
+  gen: 73.07
+ZJetsToNuNu_HT-2500ToInf-MLM_2020:
+  gen: 0.005649
+ZJetsToNuNu_HT-400To600-MLM_2020:
+  gen: 9.901
+ZJetsToNuNu_HT-600To800-MLM_2020:
+  gen: 2.421
+ZJetsToNuNu_HT-800To1200-MLM_2020:
+  gen: 1.072
+WJetsToLNu_Pt-100To250_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 763.7
+WJetsToLNu_Pt-250To400_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 27.55
+WJetsToLNu_Pt-400To600_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 3.477
+WJetsToLNu_Pt-600ToInf_MatchEWPDG20-amcatnloFXFX_2020:
+  gen: 0.5415
+SVJ_mZprime_1500_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.77
+SVJ_mZprime_1500_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.77
+SVJ_mZprime_1700_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.4327
+SVJ_mZprime_1700_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.4327
+SVJ_mZprime_1900_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.2479
+SVJ_mZprime_1900_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.2479
+SVJ_mZprime_2100_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.1384
+SVJ_mZprime_2100_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.1384
+SVJ_mZprime_2300_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.08124
+SVJ_mZprime_2300_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.08124
+SVJ_mZprime_2500_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.04977
+SVJ_mZprime_2500_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.04977
+SVJ_mZprime_2700_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.03042
+SVJ_mZprime_2700_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.03042
+SVJ_mZprime_2900_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.01969
+SVJ_mZprime_2900_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.01969
+SVJ_mZprime_3100_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.01209
+SVJ_mZprime_3100_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.01209
+SVJ_mZprime_3300_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.007494
+SVJ_mZprime_3300_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.007494
+SVJ_mZprime_3500_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.005036
+SVJ_mZprime_3500_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.005036
+SVJ_mZprime_3700_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.003252
+SVJ_mZprime_3700_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.003252
+SVJ_mZprime_3900_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.0021
+SVJ_mZprime_3900_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.0021
+SVJ_mZprime_4100_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.001356
+SVJ_mZprime_4100_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.001356
+SVJ_mZprime_4300_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.0008757
+SVJ_mZprime_4300_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.0008757
+SVJ_mZprime_4500_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.0005655
+SVJ_mZprime_4500_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.0005655
+SVJ_mZprime_4700_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.0003652
+SVJ_mZprime_4700_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.0003652
+SVJ_mZprime_4900_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.0002358
+SVJ_mZprime_4900_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.0002358
+SVJ_mZprime_5100_mDark_100_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_100_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_10_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_10_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_1_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_1_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.1_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.1_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.2_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.2_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.3_alpha_high_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.3_alpha_high_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.3_alpha_low_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.3_alpha_low_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.4_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.4_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.5_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.5_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.6_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.6_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.7_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.7_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.8_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.8_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.9_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0.9_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_0_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_1_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_20_rinv_1_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_30_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_30_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_40_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_40_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_50_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_50_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_5_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_5_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_60_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_60_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_70_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_70_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_80_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_80_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_90_rinv_0.3_alpha_peak_2017:
+  gen: 0.0001523
+SVJ_mZprime_5100_mDark_90_rinv_0.3_alpha_peak_2018:
+  gen: 0.0001523
