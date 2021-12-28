@@ -17,17 +17,27 @@ def parse_commandline():
 
 def main():
 
-    fileset = {
-        "VBF_HToInvisible_M125_pow_pythia8_2017" : [
-            "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/03Sep20v7/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/VBF_HToInvisible_M125_pow_pythia8_2017/200925_184136/0000/tree_1.root"
-        ]
+    # Testing files for different processors (UL for VBF, EOY for monojet)
+    filesets = {
+        "monojet": {
+            "VBF_HToInvisible_M125_pow_pythia8_2017" : [
+                "root://cmsxrootd.fnal.gov//store/user/aandreas/nanopost/03Sep20v7/VBF_HToInvisible_M125_13TeV_TuneCP5_powheg_pythia8/VBF_HToInvisible_M125_pow_pythia8_2017/200925_184136/0000/tree_1.root"
+            ]
+        },
+        "vbfhinv" : {
+            "VBF_HToInvisible_M125_withDipoleRecoil_pow_pythia8_2017" : [
+                "root://cmsxrootd.fnal.gov//store/user/aakpinar/nanopost/ULv8_05Feb21/VBF_HToInvisible_M125_TuneCP5_withDipoleRecoil_13TeV_powheg_pythia8/VBF_HToInvisible_M125_withDipoleRecoil_pow_pythia8_2017/210516_212317/0000/tree_1.root"
+            ]
+        }
     }
-
-    years = list(set(map(extract_year, fileset.keys())))
-    assert(len(years)==1)
 
     args = parse_commandline()
     processor_class = args.processor
+
+    fileset = filesets[processor_class]
+
+    years = list(set(map(extract_year, fileset.keys())))
+    assert(len(years)==1)
 
     if processor_class == 'monojet':
         from bucoffea.monojet import monojetProcessor

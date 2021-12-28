@@ -490,7 +490,7 @@ class monojetProcessor(processor.ProcessorABC):
                 elif re.match(r'cr_(\d+)m.*', region) or re.match('sr_.*', region):
                     region_weights.add('trigger_met', evaluator["trigger_met"](recoil_pt))
                 elif re.match(r'cr_g.*', region):
-                    photon_trigger_sf(region_weights, photons, df)
+                    photon_trigger_sf(region_weights, photons, df, cfg)
 
                 # Veto weights
                 if re.match('.*no_veto.*', region):

@@ -360,13 +360,17 @@ def setup_candidates(df, cfg):
         dz=df['Muon_dz']
     )
 
+    # For MC, add the matched gen-particle info for checking
+    if not df['is_data']:
+        kwargs = {'genpartflav' : df['Muon_genPartFlav']}
+        muons.add_attributes(**kwargs) 
+
     # All muons must be at least loose
     muons = muons[muons.looseId \
                     & (muons.iso < cfg.MUON.CUTS.LOOSE.ISO) \
                     & (muons.pt > cfg.MUON.CUTS.LOOSE.PT) \
                     & (muons.abseta<cfg.MUON.CUTS.LOOSE.ETA) \
                     ]
-
 
     electrons = JaggedCandidateArray.candidatesfromcounts(
         df['nElectron'],
@@ -384,6 +388,12 @@ def setup_candidates(df, cfg):
         dz=np.abs(df['Electron_dz']),
         barrel=np.abs(df['Electron_eta']+df['Electron_deltaEtaSC']) <= 1.4442
     )
+
+    # For MC, add the matched gen-particle info for checking
+    if not df['is_data']:
+        kwargs = {'genpartflav' : df['Electron_genPartFlav']}
+        electrons.add_attributes(**kwargs) 
+
     # All electrons must be at least loose
     pass_dxy = (electrons.barrel & (np.abs(electrons.dxy) < cfg.ELECTRON.CUTS.LOOSE.DXY.BARREL)) \
     | (~electrons.barrel & (np.abs(electrons.dxy) < cfg.ELECTRON.CUTS.LOOSE.DXY.ENDCAP))
@@ -476,6 +486,22 @@ def setup_candidates(df, cfg):
         hadflav= 0*df['Jet_pt'] if df['is_data'] else df['Jet_hadronFlavour']
     )
 
+    # Only fur UL v8 samples, the new HF shape variables
+    if cfg.RUN.ULEGACYV8:
+        kwargs = {
+            'setaeta': df['Jet_hfsigmaEtaEta'],
+            'sphiphi': df['Jet_hfsigmaPhiPhi'],
+            'hfcentralstripsize': df['Jet_hfcentralEtaStripSize'],
+            'hfadjacentstripsize': df['Jet_hfadjacentEtaStripsSize'],
+            'btagdf': df['Jet_btagDeepFlavQG'],
+        }
+        ak4.add_attributes(**kwargs)
+
+    if not df['is_data']:
+        ak4.add_attributes(jercorr=df['Jet_corr_JER'])
+
+    ak4 = ak4[ak4.looseId]
+
     # Before cleaning, apply HEM veto
     hem_ak4 = ak4[ (ak4.pt>30) &
         (-3.0 < ak4.eta) &
@@ -501,8 +527,6 @@ def setup_candidates(df, cfg):
         bjets = bjets[object_overlap(bjets, electrons, dr=cfg.OVERLAP.BTAG.ELECTRON.DR)]
     if cfg.OVERLAP.BTAG.PHOTON.CLEAN:
         bjets = bjets[object_overlap(bjets, photons, dr=cfg.OVERLAP.BTAG.PHOTON.DR)]
-
-    ak4 = ak4[ak4.looseId]
 
     if cfg.OVERLAP.AK4.MUON.CLEAN:
         ak4 = ak4[object_overlap(ak4, muons, dr=cfg.OVERLAP.AK4.MUON.DR)]
@@ -543,10 +567,10 @@ def setup_candidates(df, cfg):
     )
     ak8 = ak8[ak8.tightId & object_overlap(ak8, muons) & object_overlap(ak8, electrons) & object_overlap(ak8, photons)]
 
-    if extract_year(df['dataset']) == 2017:
-        met_branch = 'METFixEE2017'
-    else:
+    if cfg.RUN.ULEGACYV8 or extract_year(df['dataset']) != 2017:
         met_branch = 'MET'
+    else:
+        met_branch = 'METFixEE2017'
 
     met_pt = df[f'{met_branch}_pt{jes_suffix_met}']
     met_phi = df[f'{met_branch}_phi{jes_suffix_met}']
@@ -945,7 +969,7 @@ def pileup_weights(weights, df, evaluator, cfg):
     weights.add("pileup", pu_weight)
     return weights
 
-def photon_trigger_sf(weights, photons, df):
+def photon_trigger_sf(weights, photons, df, cfg):
     """MC-to-data photon trigger scale factor.
 
     The scale factor is obtained by separately fitting the
@@ -962,12 +986,19 @@ def photon_trigger_sf(weights, photons, df):
     """
     year = extract_year(df['dataset'])
     x = photons.pt.max()
+
     if year == 2016:
         sf =  np.ones(df.size)
     elif year == 2017:
-        sf = sigmoid(x,0.335,217.91,0.065,0.996) / sigmoid(x,0.244,212.34,0.050,1.000)
+        if cfg.RUN.ULEGACYV8:
+            sf = sigmoid(x,1.140,219.12,0.086,0.996) / sigmoid(x,0.171,207.22,0.092,1.000)
+        else:
+            sf = sigmoid(x,0.335,217.91,0.065,0.996) / sigmoid(x,0.244,212.34,0.050,1.000)
     elif year == 2018:
-        sf = sigmoid(x,1.022, 218.39, 0.086, 0.999) / sigmoid(x, 0.301,212.83,0.062,1.000)
+        if cfg.RUN.ULEGACYV8:
+            sf = sigmoid(x,0.875, 218.14, 0.097, 0.996) / sigmoid(x, 0.944,218.67,0.080,1.000)
+        else:
+            sf = sigmoid(x,1.022, 218.39, 0.086, 0.999) / sigmoid(x, 0.301,212.83,0.062,1.000)
 
     sf[np.isnan(sf) | np.isinf(sf)] == 1
 
@@ -977,38 +1008,58 @@ def candidate_weights(weights, df, evaluator, muons, electrons, photons, cfg):
     year = extract_year(df['dataset'])
     # Muon ID and Isolation for tight and loose WP
     # Function of pT, eta (Order!)
-    weight_muons_id_tight = evaluator['muon_id_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod()
-    weight_muons_iso_tight = evaluator['muon_iso_tight'](muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta).prod()
+
+    # Annoying but needed: Order is different for monojet (EOY) and VBF (UL)
+
+    if cfg.RUN.ULEGACYV8:
+        args = (muons[df['is_tight_muon']].abseta, muons[df['is_tight_muon']].pt)
+    else:
+        args = (muons[df['is_tight_muon']].pt, muons[df['is_tight_muon']].abseta)
+
+    weight_muons_id_tight = evaluator['muon_id_tight'](*args).prod()
+    weight_muons_iso_tight = evaluator['muon_iso_tight'](*args).prod()
 
     if cfg.SF.DIMUO_ID_SF.USE_AVERAGE:
         tight_dimuons = muons[df["is_tight_muon"]].distincts()
-        t0 = (evaluator['muon_id_tight'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta) \
-             * evaluator['muon_iso_tight'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta)).prod()
-        t1 = (evaluator['muon_id_tight'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta) \
-             * evaluator['muon_iso_tight'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta)).prod()
-        l0 = (evaluator['muon_id_loose'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta) \
-             * evaluator['muon_iso_loose'](tight_dimuons.i0.pt, tight_dimuons.i0.abseta)).prod()
-        l1 = (evaluator['muon_id_loose'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta) \
-             * evaluator['muon_iso_loose'](tight_dimuons.i1.pt, tight_dimuons.i1.abseta)).prod()
-        weights_2m_tight = 0.5*( l0 * t1 + l1 * t0)
+        if cfg.RUN.ULEGACYV8:
+            args0 = (tight_dimuons.i0.abseta, tight_dimuons.i0.pt)
+            args1 = (tight_dimuons.i1.abseta, tight_dimuons.i1.pt)
+        else:
+            args0 = (tight_dimuons.i0.pt, tight_dimuons.i0.abseta)
+            args1 = (tight_dimuons.i1.pt, tight_dimuons.i1.abseta)
+
+        t0 = (evaluator['muon_id_tight'](*args0) * evaluator['muon_iso_tight'](*args0)).prod()
+        t1 = (evaluator['muon_id_tight'](*args1) * evaluator['muon_iso_tight'](*args1)).prod()
+        l0 = (evaluator['muon_id_loose'](*args0) * evaluator['muon_iso_loose'](*args0)).prod()
+        l1 = (evaluator['muon_id_loose'](*args1) * evaluator['muon_iso_loose'](*args1)).prod()
+        weights_2m_tight = 0.5 * ( l0 * t1 + l1 * t0 )
         weights.add("muon_id_iso_tight", weight_muons_id_tight*weight_muons_iso_tight*(tight_dimuons.counts!=1) + weights_2m_tight*(tight_dimuons.counts==1))
     else:
         weights.add("muon_id_iso_tight", weight_muons_id_tight*weight_muons_iso_tight )
 
-    weights.add("muon_id_loose", evaluator['muon_id_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
-    weights.add("muon_iso_loose", evaluator['muon_iso_loose'](muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta).prod())
+    if cfg.RUN.ULEGACYV8:
+        args = (muons[~df['is_tight_muon']].abseta, muons[~df['is_tight_muon']].pt)
+    else:
+        args = (muons[~df['is_tight_muon']].pt, muons[~df['is_tight_muon']].abseta)
+
+    weights.add("muon_id_loose", evaluator['muon_id_loose'](*args).prod())
+    weights.add("muon_iso_loose", evaluator['muon_iso_loose'](*args).prod())
 
     # Electron ID and reco
     # Function of eta, pT (Other way round relative to muons!)
 
-    # For 2017, the reco SF is split below/above 20 GeV
-    if year == 2017:
+    # For UL, both 2017 and 2018 have electron SF split by pt < 20 and pt > 20
+    # For EOY, this is only done for 2017
+    if cfg.RUN.ULEGACYV8 or year == 2017:
         high_et = electrons.pt>20
         ele_reco_sf = evaluator['ele_reco'](electrons.etasc[high_et], electrons.pt[high_et]).prod()
         ele_reco_sf *= evaluator['ele_reco_pt_lt_20'](electrons.etasc[~high_et], electrons.pt[~high_et]).prod()
+
     else:
         ele_reco_sf = evaluator['ele_reco'](electrons.etasc, electrons.pt).prod()
+
     weights.add("ele_reco", ele_reco_sf)
+
     # ID/iso SF is not split
     # in case of 2 tight electrons, we want to apply 0.5*(T1L2+T2L1) instead of T1T2
     weights_electrons_tight = evaluator['ele_id_tight'](electrons[df['is_tight_electron']].etasc, electrons[df['is_tight_electron']].pt).prod()

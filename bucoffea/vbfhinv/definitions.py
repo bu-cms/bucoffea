@@ -10,7 +10,7 @@ from coffea.analysis_objects import JaggedCandidateArray
 import coffea.processor as processor
 from awkward import JaggedArray
 import numpy as np
-from bucoffea.helpers import object_overlap, sigmoid3
+from bucoffea.helpers import object_overlap, sigmoid3, dphi
 from bucoffea.helpers.dataset import extract_year
 from bucoffea.helpers.paths import bucoffea_path
 from bucoffea.helpers.gen import find_first_parent
@@ -36,9 +36,12 @@ def vbfhinv_accumulator(cfg):
     jet_eta_ax_coarse = Bin("jeteta", r"$\eta$", 10, -5, 5)
     jet_phi_ax = Bin("jetphi", r"$\phi$", 50,-np.pi, np.pi)
 
+    jet_eta_ax_very_coarse = Bin("jeteta", r"$\eta$", [0, 2.5, 3, 3.25, 5])
+
     jet_mass_ax = Bin("mass", r"$M_{jet}$ (GeV)", 100,0,300)
 
     dpfcalo_ax = Bin("dpfcalo", r"$(PFMET-CaloMET) / Recoil$", 20, -1, 1)
+    dpftk_ax = Bin("dpftk", r"$(PFMET-TkMET) / MET$", 20, -1, 1)
     btag_ax = Bin("btag", r"B tag discriminator", 20, 0, 1)
     multiplicity_ax = Bin("multiplicity", r"multiplicity", 10, -0.5, 9.5)
     nconst_ax = Bin("nconst", r"Number of constituents", 25, -0.5, 99.5)
@@ -66,6 +69,18 @@ def vbfhinv_accumulator(cfg):
 
     dilepton_mass_ax = Bin("dilepton_mass", r"$M(\ell\ell)$ (GeV)", 100,50,150)
 
+    sigma_eta_eta_ax = Bin("sigmaetaeta", r"$\sigma_{\eta\eta}$", 50, 0, 0.5)
+    sigma_phi_phi_ax = Bin("sigmaphiphi", r"$\sigma_{\phi\phi}$", 50, 0, 0.5)
+    central_eta_stripsize_ax = Bin("centraletastripsize", r"HF central $\eta$ Strip Size", 5, -0.5, 4.5)
+    adjacent_eta_stripsize_ax = Bin("adjacentetastripsize", r"HF adjacent $\eta$ Strip Size", 5, -0.5, 4.5)
+    eta_hf_ax = Bin("jeta", r"Jet $|\eta|$", [2.9, 3.25, 5])
+    ak40_abseta_ax = Bin("jeta", r"Jet $|\eta|$", [0, 2.5, 2.9, 5])
+
+    sigma_eta_phi_diff_ax = Bin("sigmaetaminusphi", r"$\sigma_{\eta\eta} - \sigma_{\phi\phi}$", 30, -0.3, 0.3)
+
+    vecb_ax = Bin("vecb", r"VecB", 50, 0, 1)
+    vecdphi_ax = Bin("vecdphi", r"VecDPhi", 60, 0, 3)
+
     weight_type_ax = Cat("weight_type", "Weight type")
     weight_ax = Bin("weight_value", "Weight",100,0.5,1.5)
     weight_wide_ax = Bin("weight_value", "Weight",100,-10,10)
@@ -89,6 +104,11 @@ def vbfhinv_accumulator(cfg):
 
     items["mjj"] = Hist("Counts", dataset_ax, region_ax, mjj_ax)
     items["mjj_veto_weight"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    items["mjj_ele_trig_weight"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    items["mjj_ele_id"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    items["mjj_ele_reco"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    items["mjj_muon_id"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
+    items["mjj_muon_iso"] = Hist("Counts", dataset_ax, region_ax, variation_ax, mjj_ax)
     items["mjj_unc"] = Hist("Counts", dataset_ax, region_ax, mjj_ax, unc_ax)
     items["dphijj"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
     items["detajj"] = Hist("Counts", dataset_ax, region_ax, deta_ax)
@@ -103,7 +123,12 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi0"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef0"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef0_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst0"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
+    items["ak4_sigma_eta_eta0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
+    items["ak4_sigma_phi_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+    items["ak4_mt0"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
 
     items["ak4_pt1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_ptraw1"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
@@ -111,12 +136,32 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi1"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_chf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nhf1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef1"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
+    items["ak4_nef1_eeonly"] = Hist("Counts", dataset_ax, region_ax, frac_ax)
     items["ak4_nconst1"] = Hist("Counts", dataset_ax, region_ax, nconst_ax)
+    items["ak4_sigma_eta_eta1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax)
+    items["ak4_sigma_phi_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax)
+    items["ak4_mt1"] = Hist("Counts", dataset_ax, region_ax, mt_ax)
+
+    # Eta of the leading jet when the trailing jet is in HF
+    items["ak4_eta0_trailjetHF"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak4_eta1_trailjetHF"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+
+    items["ak4_central_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
+    items["ak4_forward_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
 
     items["ak4_pt0_chf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
     items["ak4_pt0_nhf0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, frac_ax)
     items["ak4_pt0_nconst0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax_coarse, nconst_ax)
     items["ak4_pt0_eta0"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax,jet_eta_ax_coarse)
+    items["ak4_pt0_eta0_hf"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax, eta_hf_ax)
+
+    items["ak4_sigma_eta_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
+    items["ak4_sigma_eta_phi0"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
+    items["ak4_sigma_eta_phi1"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, sigma_phi_phi_ax, eta_hf_ax)
+    items["ak4_hfcentral_adjacent_etastripsize"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
+    items["ak4_hfcentral_adjacent_etastripsize0"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
+    items["ak4_hfcentral_adjacent_etastripsize1"] = Hist("Counts", dataset_ax, region_ax, central_eta_stripsize_ax, adjacent_eta_stripsize_ax, eta_hf_ax)
 
     items["ak4_pt"] = Hist("Counts", dataset_ax, region_ax, jet_pt_ax)
     items["ak4_eta"] = Hist("Counts", dataset_ax, region_ax, jet_eta_ax)
@@ -126,6 +171,9 @@ def vbfhinv_accumulator(cfg):
     items["ak4_phi_nopref"] = Hist("Counts", dataset_ax, region_ax, jet_phi_ax)
     items["ak4_btag"] = Hist("Counts", dataset_ax, region_ax, btag_ax)
 
+    items["ak4_sigma_eta_eta"] = Hist("Counts", dataset_ax, region_ax, sigma_eta_eta_ax, eta_hf_ax)
+    items["ak4_sigma_phi_phi"] = Hist("Counts", dataset_ax, region_ax, sigma_phi_phi_ax, eta_hf_ax)
+
     items["recoil_mjj"] = Hist("Counts", dataset_ax, region_ax, recoil_ax, mjj_ax)
     items["photon_eta_phi"] = Hist("Counts", dataset_ax, region_ax, eta_ax_coarse, phi_ax_coarse)
 
@@ -133,6 +181,11 @@ def vbfhinv_accumulator(cfg):
     items["dpfcalo_sr"] = Hist("Counts", dataset_ax, region_ax, dpfcalo_ax)
     items["dphijm"] = Hist("min(4 leading jets, MET)", dataset_ax, region_ax, dphi_ax)
     items["dphijr"] = Hist("min(4 leading jets, Recoil)", dataset_ax, region_ax, dphi_ax)
+
+    items["vecb"] = Hist("Counts", dataset_ax, region_ax, vecb_ax)
+    items["vecdphi"] = Hist("Counts", dataset_ax, region_ax, vecdphi_ax)
+    items["dphitkpf"] = Hist("Counts", dataset_ax, region_ax, dphi_ax)
+    items["dPFTkMET"] = Hist("Counts", dataset_ax, region_ax, dpftk_ax)
 
     # Multiplicity histograms
     for cand in ['ak4', 'ak8', 'bjet', 'loose_ele', 'loose_muo', 'tight_ele', 'tight_muo', 'tau', 'photon','hlt_single_muon','muons_hltmatch']:
@@ -229,15 +282,66 @@ def vbfhinv_regions(cfg):
         'veto_photon',
         'veto_tau',
         'veto_b',
-        'max_neEmEF',
-        'veto_hfhf'
+        'leadak4_clean'
     ]
+
+    if cfg.RUN.APPLY_HF_CUTS:
+        common_cuts.extend([
+            'central_stripsize_cut',
+            'sigma_eta_minus_phi'
+        ])
+
+    # The regular ReReco cleaning cuts
+    if cfg.RUN.APPLY_CLEANING_CUTS:
+        common_cuts.extend([
+            'max_neEmEF',
+            'veto_hfhf',
+            # 'leadak4_not_in_hf',
+        ])
 
     regions = {}
     regions['inclusive'] = ['inclusive']
 
     # Signal regions (v = mono-V, j = mono-jet)
     regions['sr_vbf'] = ['trig_met','metphihemextveto','hornveto'] + common_cuts + ['dpfcalo_sr', 'eemitigation']
+
+    if cfg.RUN.ONE_FIFTH_UNBLIND:
+        regions['sr_vbf'].insert(0, 'one_fifth_mask')
+
+    if not cfg.RUN.APPLY_CLEANING_CUTS:
+        regions['sr_vbf'].remove('hornveto')
+        regions['sr_vbf'].remove('eemitigation')
+
+    # SR without PU weights
+    # regions['sr_vbf_no_pu'] = copy.deepcopy(regions['sr_vbf'])
+
+    # SR without HEM veto
+    if cfg.RUN.HEMCHECK:
+        regions['sr_vbf_no_hem_veto'] = copy.deepcopy(regions['sr_vbf'])
+        regions['sr_vbf_no_hem_veto'].remove('metphihemextveto')
+
+    # QCD CR with the HF shape cuts inverted
+    if cfg.RUN.QCD_ESTIMATION:
+        regions['cr_vbf_qcd'] = copy.deepcopy(regions['sr_vbf'])
+        if 'one_fifth_mask' in regions['cr_vbf_qcd']:
+            regions['cr_vbf_qcd'].remove('one_fifth_mask')
+        try:
+            regions['cr_vbf_qcd'].remove('central_stripsize_cut')
+            regions['cr_vbf_qcd'].remove('sigma_eta_minus_phi')
+        except:
+            pass
+        regions['cr_vbf_qcd'].append('fail_hf_cuts')
+
+    # QCD CR to check with deltaphi(jet,MET) cut inverted
+    # Will be used to compare the yields with the QCD template obtained from R&S
+    if cfg.RUN.REBSMEAR_CHECK:
+        regions['cr_vbf_qcd_rs'] = copy.deepcopy(regions['sr_vbf'])
+        regions['cr_vbf_qcd_rs'].remove('mindphijr')
+        regions['cr_vbf_qcd_rs'].append('mindphijr_inv')
+
+    # For prefiring study, SR without prefiring weights
+    if cfg.RUN.PREFIRE_STUDY:
+        regions['sr_vbf_no_pref'] = copy.deepcopy(regions['sr_vbf'])
 
     # For sync mode
     if cfg and cfg.RUN.SYNC:
@@ -324,19 +428,17 @@ def vbfhinv_regions(cfg):
         # num = numerator, den = denominator
         # Single Mu region: Remove mjj cut, add SingleMu trigger, toggle MET trigger
         tr_1m_num_cuts = copy.deepcopy(cr_1m_cuts)
-        tr_1m_num_cuts.remove('mjj')
+        tr_1m_num_cuts.remove('recoil')
         tr_1m_num_cuts.append('trig_mu')
         tr_1m_num_cuts.append('mu_pt_trig_safe')
 
         regions['tr_1m_num_two_central_jets'] = tr_1m_num_cuts + ['two_central_jets']
-        regions['tr_1m_num_two_forward_jets'] = tr_1m_num_cuts + ['two_forward_jets']
         regions['tr_1m_num_one_jet_forward_one_jet_central'] = tr_1m_num_cuts + ['one_jet_forward_one_jet_central']
 
         tr_1m_den_cuts = copy.deepcopy(tr_1m_num_cuts)
         tr_1m_den_cuts.remove('trig_met')
 
         regions['tr_1m_den_two_central_jets'] = tr_1m_den_cuts + ['two_central_jets']
-        regions['tr_1m_den_two_forward_jets'] = tr_1m_den_cuts + ['two_forward_jets']
         regions['tr_1m_den_one_jet_forward_one_jet_central'] = tr_1m_den_cuts + ['one_jet_forward_one_jet_central']
 
         # Double Mu region: Remove mjj cut, toggle MET trigger
@@ -346,85 +448,33 @@ def vbfhinv_regions(cfg):
         tr_2m_num_cuts.append('mu_pt_trig_safe')
 
         regions['tr_2m_num_two_central_jets'] = tr_2m_num_cuts + ['two_central_jets']
-        regions['tr_2m_num_two_forward_jets'] = tr_2m_num_cuts + ['two_forward_jets']
         regions['tr_2m_num_one_jet_forward_one_jet_central'] = tr_2m_num_cuts + ['one_jet_forward_one_jet_central']
 
         tr_2m_den_cuts = copy.deepcopy(tr_2m_num_cuts)
         tr_2m_den_cuts.remove('trig_met')
 
         regions['tr_2m_den_two_central_jets'] = tr_2m_den_cuts + ['two_central_jets']
-        regions['tr_2m_den_two_forward_jets'] = tr_2m_den_cuts + ['two_forward_jets']
         regions['tr_2m_den_one_jet_forward_one_jet_central'] = tr_2m_den_cuts + ['one_jet_forward_one_jet_central']
 
-        # Single Electron region: Remove mjj cut, toggle MET trigger
-        tr_1e_num_cuts = copy.deepcopy(cr_1e_cuts)
-        tr_1e_num_cuts.remove('mjj')
-        tr_1e_num_cuts.append('trig_met')
+        # Photon region
+        tr_g_num_cuts = copy.deepcopy(cr_g_cuts)
+        tr_g_num_cuts.remove('recoil')
+        tr_g_num_cuts.remove('photon_pt')
 
-        regions['tr_1e_num_two_central_jets'] = tr_1e_num_cuts + ['two_central_jets']
-        regions['tr_1e_num_two_forward_jets'] = tr_1e_num_cuts + ['two_forward_jets']
-        regions['tr_1e_num_one_jet_forward_one_jet_central'] = tr_1e_num_cuts + ['one_jet_forward_one_jet_central']
+        tr_g_den_cuts = copy.deepcopy(tr_g_num_cuts)
+        tr_g_den_cuts.remove('trig_photon')
 
-        tr_1e_den_cuts = copy.deepcopy(tr_1e_num_cuts)
-        tr_1e_den_cuts.remove('trig_met')
+        regions[f'tr_g_notrig_num'] = copy.deepcopy(tr_g_num_cuts)
+        regions[f'tr_g_notrig_den'] = copy.deepcopy(tr_g_den_cuts)
 
-        regions['tr_1e_den_two_central_jets'] = tr_1e_den_cuts + ['two_central_jets']
-        regions['tr_1e_den_two_forward_jets'] = tr_1e_den_cuts + ['two_forward_jets']
-        regions['tr_1e_den_one_jet_forward_one_jet_central'] = tr_1e_den_cuts + ['one_jet_forward_one_jet_central']
+        for trgname in cfg.TRIGGERS.HT.GAMMAEFF:
+            regions[f'tr_g_{trgname}_num'] = tr_g_num_cuts + [trgname]
+            regions[f'tr_g_{trgname}_den'] = tr_g_den_cuts + [trgname]
 
-        # Double Electron region: Remove mjj cut, toggle MET trigger
-        tr_2e_num_cuts = copy.deepcopy(cr_2e_cuts)
-        tr_2e_num_cuts.remove('mjj')
-        tr_2e_num_cuts.append('trig_met')
+            regions[f'tr_g_{trgname}_photon_pt_trig_cut_num'] = tr_g_num_cuts + [trgname, 'photon_pt_trig']
+            regions[f'tr_g_{trgname}_photon_pt_trig_cut_den'] = tr_g_den_cuts + [trgname, 'photon_pt_trig']
 
-        regions['tr_2e_num_two_central_jets'] = tr_2e_num_cuts + ['two_central_jets']
-        regions['tr_2e_num_two_forward_jets'] = tr_2e_num_cuts + ['two_forward_jets']
-        regions['tr_2e_num_one_jet_forward_one_jet_central'] = tr_2e_num_cuts + ['one_jet_forward_one_jet_central']
-
-        tr_2e_den_cuts = copy.deepcopy(tr_2e_num_cuts)
-        tr_2e_den_cuts.remove('trig_met')
-
-        regions['tr_2e_den_two_central_jets'] = tr_2e_den_cuts + ['two_central_jets']
-        regions['tr_2e_den_two_forward_jets'] = tr_2e_den_cuts + ['two_forward_jets']
-        regions['tr_2e_den_one_jet_forward_one_jet_central'] = tr_2e_den_cuts + ['one_jet_forward_one_jet_central']
-    
     return regions
-
-def ak4_em_frac_weights(weights, diak4, evaluator):
-    '''Apply SF for EM fraction cut on jets. Event weight = (Leading jet weight) * (Trailing jet weight)'''
-    # Separate weights for the two leading jets:
-    # Calculate each jet weight based on the jet pt, if the jet is not in the endcap, assign a weight of 1.
-    ak40_in_pos_endcap = ((diak4.i0.eta > 2.5) & (diak4.i0.eta < 3.0)).any()
-    ak40_in_neg_endcap = ((diak4.i0.eta > -3.0) & (diak4.i0.eta < -2.5)).any()
-    
-    ak41_in_pos_endcap = ((diak4.i1.eta > 2.5) & (diak4.i1.eta < 3.0)).any()
-    ak41_in_neg_endcap = ((diak4.i1.eta > -3.0) & (diak4.i1.eta < -2.5)).any()
-
-    w_ak40 = np.where(
-        ak40_in_pos_endcap,
-        evaluator['ak4_em_frac_sf_pos_endcap'](diak4.i0.pt).prod(),
-        np.where(
-            ak40_in_neg_endcap,
-            evaluator['ak4_em_frac_sf_neg_endcap'](diak4.i0.pt).prod(),
-            1.
-        )
-    )
-
-    w_ak41 = np.where(
-        ak41_in_pos_endcap,
-        evaluator['ak4_em_frac_sf_pos_endcap'](diak4.i1.pt).prod(),
-        np.where(
-            ak41_in_neg_endcap,
-            evaluator['ak4_em_frac_sf_neg_endcap'](diak4.i1.pt).prod(),
-            1.
-        )
-    )
-
-    em_frac_weight = w_ak40 * w_ak41
-
-    weights.add('em_frac_weight', em_frac_weight)
-
-    return weights
 
 def met_trigger_sf(weights, diak4, df, apply_categorized=True):
     '''
@@ -438,31 +488,31 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
     
     data_params = {
         'two_central_jets' : {
-            2017 : (0.044, 164.881, 0.990),
-            2018 : (0.045, 176.266, 0.993)
+            2017 : (0.048, 165.562, 0.989),
+            2018 : (0.046, 174.326, 0.990)
         },
         'mixed' : {
-            2017 : (0.039, 173.351, 0.986),
-            2018 : (0.041, 182.607, 0.990)
+            2017 : (0.044, 165.823, 0.989),
+            2018 : (0.041, 179.190, 0.991)
         },
         'inclusive' : {
-            2017 : (0.043, 167.896, 0.99),
-            2018 : (0.044, 178.364, 0.992)
+            2017 : (0.047, 165.573, 0.989),
+            2018 : (0.045, 175.975, 0.991)
         }
     }
 
     mc_params = {
         'two_central_jets' : {
-            2017 : (0.046, 144.881, 0.994),
-            2018 : (0.052, 152.838, 0.993)
+            2017 : (0.050, 150.112, 0.992),
+            2018 : (0.052, 157.964, 0.992)
         },
         'mixed' : {
-            2017 : (0.039, 154.035, 0.992),
-            2018 : (0.048, 159.329, 0.992)
+            2017 : (0.045, 150.706, 0.987),
+            2018 : (0.045, 160.679, 0.992)
         },
         'inclusive' : {
-            2017 : (0.044, 147.932, 0.994),
-            2018 : (0.051, 155.016, 0.993)
+            2017 : (0.048, 150.315, 0.992),
+            2018 : (0.049, 158.786, 0.992)
         }
     }
 
@@ -487,6 +537,31 @@ def met_trigger_sf(weights, diak4, df, apply_categorized=True):
     sf[np.isnan(sf) | np.isinf(sf)] == 1
     weights.add("trigger_met", sf)
 
+def apply_hf_weights_for_qcd_estimation(ak4, weights, evaluator, df, cfg, region):
+    '''HF weights for the QCD estimation.'''
+    # Don't do anything except for the two QCD regions
+    if region not in ['cr_vbf_qcd']:
+        return
+    hfak4 = ak4[(ak4.pt > cfg.RUN.HF_PT_THRESH) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
+
+    transferfactor = evaluator['hf_mask_noise_passing_rate'](hfak4.abseta, hfak4.pt).prod() / (1 - evaluator['hf_mask_noise_passing_rate'](hfak4.abseta, hfak4.pt).prod())
+    transferfactor[np.isnan(transferfactor) | np.isinf(transferfactor)] = 0.
+
+    # CR -> SR transfer factor
+    weights.add('hf_qcd_est_weight', transferfactor)
+
+def hfmask_sf(ak4, weights, evaluator, df, cfg):
+    '''Apply data/MC SF to account for the HF shape cuts.'''
+    hfak4 = ak4[(ak4.pt > cfg.RUN.HF_PT_THRESH) & (ak4.abseta > 2.99) & (ak4.abseta < 5.0)]
+
+    dphi_hfjet_met = dphi(hfak4.phi, df['recoil_phi'])
+    dphimask = dphi_hfjet_met > 2.5
+    hfak4 = hfak4[dphimask]
+
+    sf = evaluator['hf_cuts_sf'](hfak4.abseta, hfak4.pt).prod()
+    weights.add('hfmask_sf', sf)
+    return weights
+
 def met_xy_correction(df, met_pt, met_phi):
     '''Apply MET XY corrections (UL based).'''
     import yaml
@@ -495,12 +570,12 @@ def met_xy_correction(df, met_pt, met_phi):
 
     with open(correction_src_file) as f:
         xycorr = yaml.load(f.read(),Loader=yaml.SafeLoader)
-    
-    npv = df['PV_npvsGood']
+
+    npv = df['PV_npvs']
 
     met_px = met_pt * np.cos(met_phi)
     met_py = met_pt * np.sin(met_phi)
-    
+
     def correction(a,b):
         return -(a * npv + b)
 
@@ -517,7 +592,7 @@ def met_xy_correction(df, met_pt, met_phi):
     else:
         # No run info needed, just extract the corrections for MC, based on year
         xycorrections = xycorr[year]['MC']
-    
+
     # Extract the coefficients for the X and Y corrections
     xcorr_coef = ( xycorrections['X']['a'], xycorrections['X']['b'] )
     ycorr_coef = ( xycorrections['Y']['a'], xycorrections['Y']['b'] )
