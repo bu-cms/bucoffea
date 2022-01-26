@@ -244,6 +244,26 @@ class monojetProcessor(processor.ProcessorABC):
         df["vec_b"]    = calculate_vecB(ak4, met_pt, met_phi)
         df["vec_dphi"] = calculate_vecDPhi(ak4, met_pt, met_phi, df['TkMET_phi'])
 
+        # VBF veto
+        diak4 = ak4[:,:2].distincts()
+        leadak4_pt_eta = (diak4.i0.pt > 80) & (np.abs(diak4.i0.eta) < 4.7)
+        trailak4_pt_eta = (diak4.i1.pt > 40) & (np.abs(diak4.i1.eta) < 4.7)
+        hemisphere = (diak4.i0.eta * diak4.i1.eta < 0).any()
+        has_track0 = np.abs(diak4.i0.eta) <= 2.5
+        has_track1 = np.abs(diak4.i1.eta) <= 2.5
+        leadak4_id = diak4.i0.tightId & (has_track0*((diak4.i0.chf > 0.1) & (diak4.i0.nhf < 0.8)) + ~has_track0)
+        trailak4_id = has_track1*((diak4.i1.chf > 0.1) & (diak4.i1.nhf < 0.8)) + ~has_track1
+        pass_vbf = True;
+        pass_vbf = pass_vbf & (diak4.counts>0)
+        pass_vbf = pass_vbf & (leadak4_pt_eta.any())
+        pass_vbf = pass_vbf & (trailak4_pt_eta.any())
+        pass_vbf = pass_vbf & (hemisphere)
+        pass_vbf = pass_vbf & (leadak4_id.any())
+        pass_vbf = pass_vbf & (trailak4_id.any())
+        pass_vbf = pass_vbf & (diak4.mass.max() > 200)
+        pass_vbf = pass_vbf & (dphi(diak4.i0.phi.min(), diak4.i1.phi.max()) < 1.5)
+        pass_vbf = pass_vbf & (np.abs(diak4.i0.eta - diak4.i1.eta).max() > 1)
+
         selection = processor.PackedSelection()
 
         # Triggers
@@ -257,6 +277,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_muo', muons.counts==0)
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', taus.counts==0)
+        selection.add('veto_vbf', ~pass_vbf)
 
         # B jets are treated using veto weights
         # So accept them in MC, but reject in data
@@ -563,12 +584,14 @@ class monojetProcessor(processor.ProcessorABC):
             mask = selection.all(*cuts)
 
 
+            # always save event list for data
+            if df["is_data"]:
+                # General properties
+                output['tree_int64'][region]["event"]                   += processor.column_accumulator(df["event"][mask])
+                output['tree_int64'][region]["run"]                     += processor.column_accumulator(df["run"][mask])
+                output['tree_int64'][region]["lumi"]                    += processor.column_accumulator(df["luminosityBlock"][mask])
             if cfg.RUN.SAVE.TREE:
                 if re.match(cfg.RUN.SAVE.TREEREGIONS, region):
-                    # General properties
-                    output['tree_int64'][region]["event"]                   += processor.column_accumulator(df["event"][mask])
-                    output['tree_int64'][region]["run"]                     += processor.column_accumulator(df["run"][mask])
-                    output['tree_int64'][region]["lumi"]                    += processor.column_accumulator(df["luminosityBlock"][mask])
 
 
 
