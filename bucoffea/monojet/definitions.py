@@ -652,6 +652,9 @@ def monojet_regions(cfg):
                     regions[noMistagNoMassRegionName]=copy.deepcopy(regions[newRegionName])
                     regions[noMistagNoMassRegionName].remove('leadak8_mass')
 
+    regions['sr_loose_v'].append("veto_vh_resolved")
+    regions['sr_v'].append("veto_vh_resolved")
+
     # Veto weight region
     tmp = {}
     for region in regions.keys():

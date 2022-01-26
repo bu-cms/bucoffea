@@ -264,6 +264,12 @@ class monojetProcessor(processor.ProcessorABC):
         pass_vbf = pass_vbf & (dphi(diak4.i0.phi.min(), diak4.i1.phi.max()) < 1.5)
         pass_vbf = pass_vbf & (np.abs(diak4.i0.eta - diak4.i1.eta).max() > 1)
 
+        # VH resolved veto
+        mjj = diak4.mass.max()
+        pass_vh_resolved = True
+        pass_vh_resolved = pass_vh_resolved & (ak4.counts==2)
+        pass_vh_resolved = pass_vh_resolved & (mjj > 65) & (mjj < 120)
+
         selection = processor.PackedSelection()
 
         # Triggers
@@ -278,6 +284,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('veto_photon', photons.counts==0)
         selection.add('veto_tau', taus.counts==0)
         selection.add('veto_vbf', ~pass_vbf)
+        selection.add('veto_vh_resolved', ~pass_vh_resolved)
 
         # B jets are treated using veto weights
         # So accept them in MC, but reject in data
@@ -292,7 +299,7 @@ class monojetProcessor(processor.ProcessorABC):
         selection.add('dpfcalo',np.abs(df['dPFCalo']) < cfg.SELECTION.SIGNAL.DPFCALO)
         selection.add('recoil', df['recoil_pt']>cfg.SELECTION.SIGNAL.RECOIL)
         selection.add('met_sr', met_pt>cfg.SELECTION.SIGNAL.RECOIL)
-        
+
         selection.add('dphipftkvetoinv', df["dPhiTkPf"] > 2.)
         selection.add('dphipftkveto', df["dPhiTkPf"] <= 2. )
 
