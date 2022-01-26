@@ -332,8 +332,6 @@ class monojetProcessor(processor.ProcessorABC):
                                     trailak8_ak4_pairs.i0.eta - trailak8_ak4_pairs.i1.eta,
                                     dphi(trailak8_ak4_pairs.i0.phi, trailak8_ak4_pairs.i1.phi)
                             )
-        # print(dr_trailak8_ak4[trailak8.counts>0])
-        # print(dr_trailak8_ak4.argmin()[trailak8.counts>0])
         trailak8_ak4_best_pair = trailak8_ak4_pairs[dr_trailak8_ak4.argmin()]
         trailak8_ak4_dr_min = dr_trailak8_ak4.min()
         trailak8_ak4_pt = trailak8_ak4_best_pair.i1.pt
@@ -554,24 +552,19 @@ class monojetProcessor(processor.ProcessorABC):
                                         "sf_nlo_qcd",
                                         theory_weights.partial_weight(include=[sf_qcd_name])
                     )
-                    print(region, dataset, sf_qcd_name, theory_weights.partial_weight(include=[sf_qcd_name]))
             if not (df['is_data']):
                 suffix_usepol1 = ("_pol1" if cfg.RUN.MONOVMISTAG_USEPOL1 else "")
                 for wp in ['loose','tight','medium']:
                     if re.match(f'.*_{wp}_v.*', region):
                         if ('nomistag' in region) or wp=='medium':
-                            #print(f'dataset {dataset} in region {region} not using mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod()
                         elif df['is_lo_w'] or df['is_nlo_w']:
-                            #print(f'dataset {dataset} in region {region} using W mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
                                     * evaluator[f'wtag_mistag_w_{wp}{suffix_usepol1}'](unmatched_leadak8.pt).prod()
                         elif df['is_lo_g'] or df['is_nlo_g'] or re.match(r'QCD.*', dataset):
-                            #print(f'dataset {dataset} in region {region} using G mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
                                     * evaluator[f'wtag_mistag_g_{wp}{suffix_usepol1}'](unmatched_leadak8.pt).prod()
                         else:
-                            #print(f'dataset {dataset} in region {region} using Z mistag SF')
                             matched_weights = evaluator[f'wtag_{wp}'](matched_leadak8.pt).prod() \
                                     * evaluator[f'wtag_mistag_z_{wp}{suffix_usepol1}'](unmatched_leadak8.pt).prod()
 
@@ -788,14 +781,6 @@ class monojetProcessor(processor.ProcessorABC):
                 ezfill('vlowmass_ak8_pt',     jetpt=vlowmass_ak8[mask].pt.flatten(),   weight=w_vlowmass_ak8)
                 ezfill('vlowmass_ak8_mass',   mass=vlowmass_ak8[mask].mass.flatten(),  weight=w_vlowmass_ak8)
 
-                # w_trailak8 = weight_shape(trailak8.eta[mask&(trailak8.counts>0)], region_weights.partial_weight(exclude=exclude)[mask&(trailak8.counts>0)])
-                # print(trailak8_ak4_pt[trailak8.counts>0])
-                # print(trailak8.pt[trailak8.counts>0])
-                # ezfill("trailak8_ak4_pt", jetpt=trailak8_ak4_pt[mask&(trailak8.counts>0)].flatten(), weight=w_trailak8)
-
-                # print(trailak8.eta[mask&(trailak8.counts>0)].flatten())
-                # print(trailak8_ak4_dr_min[mask&(trailak8.counts>0)].flatten())
-                # ezfill("trailak8_ak4_dr_min", dr=trailak8_ak4_dr_min[mask&(trailak8.counts>0)].flatten(), weight=w_trailak8)
                 # Leading
                 w_leadak8 = weight_shape(ak8[leadak8_index].eta[mask], region_weights.partial_weight(exclude=exclude)[mask])
 
