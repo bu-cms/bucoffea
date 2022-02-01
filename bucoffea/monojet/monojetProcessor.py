@@ -265,9 +265,12 @@ class monojetProcessor(processor.ProcessorABC):
         pass_vbf = pass_vbf & (np.abs(diak4.i0.eta - diak4.i1.eta).max() > 1)
 
         # VH resolved veto
-        mjj = diak4.mass.max()
+        ak4_for_vh = ak4[
+            ((ak4.pt>30)&(ak4.abseta<2.4)) | ((ak4.pt>30)&(ak4.pt<50)&(ak4.abseta>2.4))
+            ]
+        mjj = ak4_for_vh[:,:2].distincts().mass.max()
         pass_vh_resolved = True
-        pass_vh_resolved = pass_vh_resolved & (ak4.counts==2)
+        pass_vh_resolved = pass_vh_resolved & (ak4_for_vh.counts==2)
         pass_vh_resolved = pass_vh_resolved & (mjj > 65) & (mjj < 120)
 
         selection = processor.PackedSelection()
