@@ -652,9 +652,6 @@ def monojet_regions(cfg):
                     regions[noMistagNoMassRegionName]=copy.deepcopy(regions[newRegionName])
                     regions[noMistagNoMassRegionName].remove('leadak8_mass')
 
-    regions['sr_loose_v'].append("veto_vh_resolved")
-    regions['sr_v'].append("veto_vh_resolved")
-
     # Veto weight region
     tmp = {}
     for region in regions.keys():
@@ -826,6 +823,18 @@ def monojet_regions(cfg):
         keys_to_remove = [ x for x in regions.keys() if x.endswith('_j') or '_j_' in x]
         for key in keys_to_remove:
             regions.pop(key)
+
+    # Add VH resolved veto to loose mono-V
+    for region in list(regions.keys()):
+        if not re.match("(cr.*|sr)_loose_v(_no_veto_all)?$",region):
+            continue
+        regions[region].append("veto_vh_resolved")
+
+    # Add VH resolved veto to tau21
+    for region in list(regions.keys()):
+        if not re.match("(cr_(g|(1|2)(e|m))|sr)_v(_no_veto_all)?$",region):
+            continue
+        regions[region].append("veto_vh_resolved")
 
     return regions
 
