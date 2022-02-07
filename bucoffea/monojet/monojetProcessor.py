@@ -266,7 +266,7 @@ class monojetProcessor(processor.ProcessorABC):
 
         # VH resolved veto
         ak4_for_vh = ak4[
-            ((ak4.pt>30)&(ak4.abseta<2.4)) | ((ak4.pt>30)&(ak4.pt<50)&(ak4.abseta>2.4))
+            ((ak4.pt>30)&(ak4.abseta<2.4))
             ]
         mjj = ak4_for_vh[:,:2].distincts().mass.max()
         pass_vh_resolved = True
